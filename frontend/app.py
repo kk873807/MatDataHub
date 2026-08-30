@@ -13,14 +13,26 @@ import pandas as pd
 import os
 
 # ── Config ──
-# Streamlit Cloud: reads from st.secrets. Local: reads from env var or defaults to localhost.
+# Priority: st.secrets > env var > hardcoded Render URL
+RENDER_API = "https://matdatahub-api.onrender.com/api/v1"
+
 def get_api_base():
+    # 1. Streamlit Cloud secrets (highest priority)
     try:
-        return st.secrets["API_BASE_URL"]
+        url = st.secrets["API_BASE_URL"]
+        if url:
+            return url
     except Exception:
-        return os.getenv("API_BASE_URL", "http://127.0.0.1:8000/api/v1")
+        pass
+    # 2. Environment variable (for local dev)
+    env_url = os.getenv("API_BASE_URL")
+    if env_url:
+        return env_url
+    # 3. Default to Render production URL
+    return RENDER_API
 
 API_BASE = get_api_base()
+print(f"[MatDataHub] Using API_BASE = {API_BASE}")  # visible in Streamlit Cloud logs
 
 st.set_page_config(
     page_title="MatDataHub",
