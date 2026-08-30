@@ -185,7 +185,7 @@ else:
         })
 
     df = pd.DataFrame(table_data)
-    st.dataframe(df, use_container_width=True, hide_index=True)
+    st.dataframe(df, width='stretch', hide_index=True)
 
     # ── Detail View ──
     st.divider()
@@ -216,17 +216,17 @@ else:
             st.markdown("#### Mechanical Properties")
             mech_data = {}
             if m.get("density") is not None:
-                mech_data["Density (g/cm3)"] = m["density"]
+                mech_data["Density (g/cm3)"] = str(m["density"])
             if m.get("tensile_strength_min") is not None:
                 mech_data["Tensile Strength (MPa)"] = f"{m['tensile_strength_min']} - {m['tensile_strength_max']}"
             if m.get("yield_strength_min") is not None:
                 mech_data["Yield Strength (MPa)"] = f"{m['yield_strength_min']} - {m['yield_strength_max']}"
             if m.get("elongation") is not None:
-                mech_data["Elongation (%)"] = m["elongation"]
+                mech_data["Elongation (%)"] = str(m["elongation"])
             if m.get("hardness"):
                 mech_data["Hardness"] = m["hardness"]
             if m.get("elastic_modulus") is not None:
-                mech_data["Elastic Modulus (GPa)"] = m["elastic_modulus"]
+                mech_data["Elastic Modulus (GPa)"] = str(m["elastic_modulus"])
             if mech_data:
                 st.table(pd.DataFrame(mech_data.items(), columns=["Property", "Value"]))
 
@@ -234,13 +234,13 @@ else:
             st.markdown("#### Thermal Properties")
             therm_data = {}
             if m.get("thermal_conductivity") is not None:
-                therm_data["Thermal Conductivity W/(m*K)"] = m["thermal_conductivity"]
+                therm_data["Thermal Conductivity W/(m*K)"] = str(m["thermal_conductivity"])
             if m.get("specific_heat") is not None:
-                therm_data["Specific Heat J/(kg*K)"] = m["specific_heat"]
+                therm_data["Specific Heat J/(kg*K)"] = str(m["specific_heat"])
             if m.get("melting_point_min") is not None:
                 therm_data["Melting Point (C)"] = f"{m['melting_point_min']} - {m['melting_point_max']}"
             if m.get("max_service_temp") is not None:
-                therm_data["Max Service Temp (C)"] = m["max_service_temp"]
+                therm_data["Max Service Temp (C)"] = str(m["max_service_temp"])
             if therm_data:
                 st.table(pd.DataFrame(therm_data.items(), columns=["Property", "Value"]))
 
