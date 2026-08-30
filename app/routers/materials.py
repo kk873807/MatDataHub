@@ -26,7 +26,7 @@ router = APIRouter(prefix="/materials", tags=["Materials"])
 def list_materials(
     # Pagination
     page: int = Query(1, ge=1, description="Page number"),
-    per_page: int = Query(20, ge=1, le=400, description="Items per page"),
+    per_page: int = Query(20, ge=1, le=500, description="Items per page"),
     # Filters
     category: Optional[str] = Query(None, description="Filter by category: Metal, Polymer, Ceramic, Composite"),
     subcategory: Optional[str] = Query(None, description="Filter by subcategory"),
@@ -84,7 +84,11 @@ def list_materials(
 def search_materials(
     q: str = Query(..., min_length=1, description="Search query (searches name, grade, applications, equivalent_grades)"),
     page: int = Query(1, ge=1),
+<<<<<<< HEAD
     per_page: int = Query(20, ge=1, le=400),
+=======
+    per_page: int = Query(20, ge=1, le=500),
+>>>>>>> 632d7c8 (Fix: raise per_page limit to 500 for compare tab, remove debug output)
     db: Session = Depends(get_db),
 ):
     """

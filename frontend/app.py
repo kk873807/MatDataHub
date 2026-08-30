@@ -349,7 +349,9 @@ with tab_compare:
         st.stop()
 
     if "materials" not in all_result.get("data", {}):
-        st.warning("⏳ API returned unexpected data structure.")
+        st.warning("⏳ API returned unexpected data. Please refresh.")
+        if st.button("🔄 Retry", key="retry_compare_data"):
+            st.rerun()
         st.stop()
 
     all_materials = all_result["data"].get("materials", [])
