@@ -7,10 +7,13 @@ Connects to the FastAPI backend.
 Run with:
     streamlit run frontend/app.py
 """
-import streamlit as st
-import requests
-import pandas as pd
 import os
+import time
+from urllib.parse import urlparse
+
+import pandas as pd
+import requests
+import streamlit as st
 
 # ── Config ──
 # Priority: st.secrets > env var > hardcoded Render URL
@@ -69,16 +72,35 @@ st.markdown('<p class="sub-header">Engineering Material Properties Database  |  
 # ══════════════════════════════════════════════
 #  Helper: API calls with retry for Render cold starts
 # ══════════════════════════════════════════════
-import time
 
 def api_get(path, params=None, retries=3, timeout=60):
-    """Make an API GET request with automatic retries for cold starts."""
+    """Make an API GET request with automatic retries for cold starts.
+
+    Returns {"ok": True, "data": <json>} on success, or
+    {"ok": False, "error": <message>, "url": <url>} on failure.
+    A non-2xx HTTP response (e.g. 404/422/500) is treated as a failure,
+    not silently wrapped as "ok" data.
+    """
     url = f"{API_BASE}{path}"
     last_err = None
     for attempt in range(retries):
         try:
             r = requests.get(url, params=params, timeout=timeout)
-            return {"ok": True, "data": r.json()}
+            try:
+                payload = r.json()
+            except ValueError:
+                payload = None
+
+            if r.status_code >= 400:
+                last_err = f"HTTP {r.status_code}: {payload if payload is not None else r.text[:200]}"
+                # Client errors (4xx) won't fix themselves on retry.
+                if r.status_code < 500:
+                    return {"ok": False, "error": last_err, "url": url, "status_code": r.status_code}
+                if attempt < retries - 1:
+                    time.sleep(5)
+                continue
+
+            return {"ok": True, "data": payload}
         except Exception as e:
             last_err = f"Attempt {attempt+1}: {type(e).__name__}: {e}"
             if attempt < retries - 1:
@@ -89,17 +111,16 @@ def api_get(path, params=None, retries=3, timeout=60):
 def wake_api():
     """Ping the API root to trigger Render cold start."""
     try:
-        requests.get(API_BASE.replace("/api/v1", "/"), timeout=10)
+        parsed = urlparse(API_BASE)
+        root_url = f"{parsed.scheme}://{parsed.netloc}/"
+        requests.get(root_url, timeout=10)
     except Exception:
         pass
 
 
 def fetch_all_materials():
     """Fetch all materials from the API with retry."""
-    result = api_get("/materials/", params={"per_page": 200})
-    if result["ok"] and "materials" in result["data"]:
-        return result
-    return result
+    return api_get("/materials/", params={"per_page": 200})
 
 
 @st.cache_data(ttl=300)
@@ -179,7 +200,7 @@ with tab_browse:
             result = api_get("/materials/", params=params)
 
     if not result["ok"]:
-        st.error(f"❌ Could not reach the API server.")
+        st.error("❌ Could not reach the API server.")
         st.code(f"URL: {result.get('url', 'N/A')}\nError: {result.get('error', 'Unknown')}", language="text")
         if st.button("🔄 Retry", key="retry_browse"):
             st.rerun()
@@ -327,18 +348,6 @@ with tab_compare:
             st.rerun()
         st.stop()
 
-    # Debug: show what we got from the API
-    st.info(f"API_BASE = {API_BASE}")
-    st.info(f"Result keys: {list(all_result.keys())}")
-    if "data" in all_result:
-        data_val = all_result["data"]
-        if isinstance(data_val, dict):
-            st.info(f"Data keys: {list(data_val.keys())}")
-        else:
-            st.info(f"Data type: {type(data_val).__name__}, value preview: {str(data_val)[:200]}")
-    else:
-        st.info("No 'data' key in result")
-
     if "materials" not in all_result.get("data", {}):
         st.warning("⏳ API returned unexpected data structure.")
         st.stop()
@@ -371,10 +380,17 @@ with tab_compare:
     else:
         # Fetch full details for each
         mat_details = []
+        fetch_failed = False
         for name in selections:
             mid = name_to_id[name]
             detail = fetch_material_detail(mid)
+            if detail is None:
+                fetch_failed = True
+                st.error(f"Could not load details for **{name}**. Please try again.")
             mat_details.append(detail)
+
+        if fetch_failed:
+            st.stop()
 
         st.divider()
 
@@ -459,14 +475,14 @@ with tab_compare:
         st.divider()
         st.markdown("#### Key Takeaways")
 
-        # Auto-generate comparison insights
+        # Auto-generate comparison insights (based on the first two selected materials)
         insights = []
         m0, m1 = mat_details[0], mat_details[1]
 
         # Strength comparison
         t0 = m0.get("tensile_strength_max")
         t1 = m1.get("tensile_strength_max")
-        if t0 and t1:
+        if t0 is not None and t1 is not None and min(t0, t1) > 0:
             stronger = selections[0] if t0 > t1 else selections[1]
             pct = abs(t0 - t1) / min(t0, t1) * 100
             insights.append(f"**{stronger}** is **{pct:.0f}% stronger** in tensile strength")
@@ -474,7 +490,7 @@ with tab_compare:
         # Weight comparison
         d0 = m0.get("density")
         d1 = m1.get("density")
-        if d0 and d1:
+        if d0 is not None and d1 is not None and max(d0, d1) > 0:
             lighter = selections[0] if d0 < d1 else selections[1]
             pct = abs(d0 - d1) / max(d0, d1) * 100
             insights.append(f"**{lighter}** is **{pct:.0f}% lighter**")
@@ -482,7 +498,7 @@ with tab_compare:
         # Cost comparison
         c0 = m0.get("cost_per_kg_min")
         c1 = m1.get("cost_per_kg_min")
-        if c0 and c1:
+        if c0 is not None and c1 is not None and max(c0, c1) > 0:
             cheaper = selections[0] if c0 < c1 else selections[1]
             pct = abs(c0 - c1) / max(c0, c1) * 100
             insights.append(f"**{cheaper}** is **{pct:.0f}% cheaper**")
@@ -490,7 +506,7 @@ with tab_compare:
         # Thermal comparison
         th0 = m0.get("thermal_conductivity")
         th1 = m1.get("thermal_conductivity")
-        if th0 and th1:
+        if th0 is not None and th1 is not None:
             better_cond = selections[0] if th0 > th1 else selections[1]
             factor = max(th0, th1) / max(min(th0, th1), 0.01)
             insights.append(f"**{better_cond}** conducts heat **{factor:.1f}x better**")
