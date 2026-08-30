@@ -326,8 +326,21 @@ with tab_compare:
         if st.button("🔄 Retry", key="retry_compare"):
             st.rerun()
         st.stop()
-    elif "materials" not in all_result.get("data", {}):
-        st.warning("⏳ API returned unexpected data. Please refresh.")
+
+    # Debug: show what we got from the API
+    st.info(f"API_BASE = {API_BASE}")
+    st.info(f"Result keys: {list(all_result.keys())}")
+    if "data" in all_result:
+        data_val = all_result["data"]
+        if isinstance(data_val, dict):
+            st.info(f"Data keys: {list(data_val.keys())}")
+        else:
+            st.info(f"Data type: {type(data_val).__name__}, value preview: {str(data_val)[:200]}")
+    else:
+        st.info("No 'data' key in result")
+
+    if "materials" not in all_result.get("data", {}):
+        st.warning("⏳ API returned unexpected data structure.")
         st.stop()
 
     all_materials = all_result["data"].get("materials", [])
