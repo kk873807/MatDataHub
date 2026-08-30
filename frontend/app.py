@@ -54,16 +54,19 @@ st.markdown('<p class="sub-header">Engineering Material Properties Database  |  
 def fetch_all_materials():
     """Fetch all materials from the API (cached 5 min)."""
     try:
-        r = requests.get(f"{API_BASE}/materials/", params={"per_page": 200}, timeout=10)
-        return r.json()
-    except requests.exceptions.ConnectionError:
+        r = requests.get(f"{API_BASE}/materials/", params={"per_page": 200}, timeout=30)
+        data = r.json()
+        if "materials" not in data:
+            return None
+        return data
+    except Exception:
         return None
 
 
 @st.cache_data(ttl=300)
 def fetch_material_detail(mat_id):
     """Fetch a single material's full details."""
-    r = requests.get(f"{API_BASE}/materials/{mat_id}", timeout=10)
+    r = requests.get(f"{API_BASE}/materials/{mat_id}", timeout=30)
     return r.json()
 
 
@@ -120,7 +123,7 @@ with tab_browse:
     try:
         if search_query:
             params = {"q": search_query, "per_page": per_page}
-            response = requests.get(f"{API_BASE}/materials/search", params=params, timeout=5)
+            response = requests.get(f"{API_BASE}/materials/search", params=params, timeout=30)
         else:
             params = {"per_page": per_page}
             if category != "All":
@@ -131,7 +134,7 @@ with tab_browse:
                 params["max_cost"] = max_cost
             if min_thermal > 0:
                 params["min_thermal_conductivity"] = min_thermal
-            response = requests.get(f"{API_BASE}/materials/", params=params, timeout=5)
+            response = requests.get(f"{API_BASE}/materials/", params=params, timeout=30)
 
         data = response.json()
 
@@ -268,10 +271,10 @@ with tab_compare:
 
     all_data = fetch_all_materials()
     if all_data is None:
-        st.error("Cannot connect to the API. Make sure it's running.")
+        st.warning("The API server is waking up (free tier sleeps after 15 min of inactivity). Please wait 30 seconds and refresh the page.")
         st.stop()
 
-    all_materials = all_data["materials"]
+    all_materials = all_data.get("materials", [])
     name_to_id = {m["name"]: m["id"] for m in all_materials}
     sorted_names = sorted(name_to_id.keys())
 
