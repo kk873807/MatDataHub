@@ -1,0 +1,15 @@
+# render.yaml — Infrastructure-as-code for Render.com
+# Render reads this file and auto-configures your service.
+
+services:
+  - type: web
+    name: matdatahub-api
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: DATABASE_URL
+        sync: false    # You'll set this manually in Render dashboard (Supabase URL)
+      - key: PYTHON_VERSION
+        value: "3.12.4"

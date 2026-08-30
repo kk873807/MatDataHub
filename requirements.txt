@@ -1,0 +1,19 @@
+# Backend
+fastapi>=0.115
+uvicorn>=0.30
+
+# Database
+sqlalchemy>=2.0
+psycopg2-binary>=2.9    # PostgreSQL driver (for Supabase production DB)
+python-dotenv>=1.0
+
+# Scraping (we'll use these in Week 2)
+beautifulsoup4>=4.12
+scrapy>=2.11
+requests>=2.32
+
+# Frontend MVP
+streamlit>=1.40
+
+# Utilities
+pydantic>=2.10
