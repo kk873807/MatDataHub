@@ -13,7 +13,14 @@ import pandas as pd
 import os
 
 # ── Config ──
-API_BASE = os.getenv("API_BASE_URL", "http://127.0.0.1:8000/api/v1")
+# Streamlit Cloud: reads from st.secrets. Local: reads from env var or defaults to localhost.
+def get_api_base():
+    try:
+        return st.secrets["API_BASE_URL"]
+    except Exception:
+        return os.getenv("API_BASE_URL", "http://127.0.0.1:8000/api/v1")
+
+API_BASE = get_api_base()
 
 st.set_page_config(
     page_title="MatDataHub",
@@ -50,9 +57,8 @@ st.markdown('<p class="sub-header">Engineering Material Properties Database  |  
 # ══════════════════════════════════════════════
 #  Helper: fetch all material names for selectors
 # ══════════════════════════════════════════════
-@st.cache_data(ttl=300)
 def fetch_all_materials():
-    """Fetch all materials from the API (cached 5 min)."""
+    """Fetch all materials from the API (no cache — so failed results don't stick)."""
     try:
         r = requests.get(f"{API_BASE}/materials/", params={"per_page": 200}, timeout=30)
         data = r.json()
