@@ -55,25 +55,36 @@ st.markdown('<p class="sub-header">Engineering Material Properties Database  |  
 
 
 # ══════════════════════════════════════════════
-#  Helper: fetch all material names for selectors
+#  Helper: API calls with retry for Render cold starts
 # ══════════════════════════════════════════════
+import time
+
+def api_get(path, params=None, retries=3, timeout=60):
+    """Make an API GET request with automatic retries for cold starts."""
+    last_err = None
+    for attempt in range(retries):
+        try:
+            r = requests.get(f"{API_BASE}{path}", params=params, timeout=timeout)
+            return r.json()
+        except Exception as e:
+            last_err = e
+            if attempt < retries - 1:
+                time.sleep(2)
+    return None
+
+
 def fetch_all_materials():
-    """Fetch all materials from the API (no cache — so failed results don't stick)."""
-    try:
-        r = requests.get(f"{API_BASE}/materials/", params={"per_page": 200}, timeout=30)
-        data = r.json()
-        if "materials" not in data:
-            return None
+    """Fetch all materials from the API with retry."""
+    data = api_get("/materials/", params={"per_page": 200})
+    if data and "materials" in data:
         return data
-    except Exception:
-        return None
+    return None
 
 
 @st.cache_data(ttl=300)
 def fetch_material_detail(mat_id):
     """Fetch a single material's full details."""
-    r = requests.get(f"{API_BASE}/materials/{mat_id}", timeout=30)
-    return r.json()
+    return api_get(f"/materials/{mat_id}")
 
 
 # ══════════════════════════════════════════════
@@ -126,10 +137,10 @@ with tab_browse:
     )
 
     # ── Build API call ──
-    try:
+    with st.spinner("Loading materials (API may take ~30s on first load)..."):
         if search_query:
             params = {"q": search_query, "per_page": per_page}
-            response = requests.get(f"{API_BASE}/materials/search", params=params, timeout=30)
+            data = api_get("/materials/search", params=params)
         else:
             params = {"per_page": per_page}
             if category != "All":
@@ -140,13 +151,10 @@ with tab_browse:
                 params["max_cost"] = max_cost
             if min_thermal > 0:
                 params["min_thermal_conductivity"] = min_thermal
-            response = requests.get(f"{API_BASE}/materials/", params=params, timeout=30)
+            data = api_get("/materials/", params=params)
 
-        data = response.json()
-
-    except requests.exceptions.ConnectionError:
-        st.error("Cannot connect to the API server. Make sure it's running:")
-        st.code("cd MatDataHub\n.\\venv\\Scripts\\activate\nuvicorn app.main:app --reload", language="powershell")
+    if data is None or "total" not in data:
+        st.warning("The API server is waking up (Render free tier sleeps after inactivity). Please wait 30-60 seconds and refresh the page.")
         st.stop()
 
     # ── Summary metrics ──
@@ -275,9 +283,10 @@ with tab_compare:
     st.subheader("Side-by-Side Material Comparison")
     st.caption("Select 2 or 3 materials to compare their properties head-to-head.")
 
-    all_data = fetch_all_materials()
+    with st.spinner("Loading material list (API may take ~30s on first load)..."):
+        all_data = fetch_all_materials()
     if all_data is None:
-        st.warning("The API server is waking up (free tier sleeps after 15 min of inactivity). Please wait 30 seconds and refresh the page.")
+        st.warning("The API server is waking up (Render free tier sleeps after inactivity). Please wait 30-60 seconds and refresh the page.")
         st.stop()
 
     all_materials = all_data.get("materials", [])
