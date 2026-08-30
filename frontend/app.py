@@ -77,31 +77,38 @@ def api_get(path, params=None, retries=3, timeout=60):
     last_err = None
     for attempt in range(retries):
         try:
-            print(f"[MatDataHub] api_get attempt {attempt+1}/{retries}: {url}")
             r = requests.get(url, params=params, timeout=timeout)
-            print(f"[MatDataHub] api_get success: status={r.status_code}")
-            return r.json()
+            return {"ok": True, "data": r.json()}
         except Exception as e:
-            last_err = e
-            print(f"[MatDataHub] api_get attempt {attempt+1} FAILED: {type(e).__name__}: {e}")
+            last_err = f"Attempt {attempt+1}: {type(e).__name__}: {e}"
             if attempt < retries - 1:
                 time.sleep(5)
-    print(f"[MatDataHub] api_get all retries exhausted for {url}")
-    return None
+    return {"ok": False, "error": last_err, "url": url}
+
+
+def wake_api():
+    """Ping the API root to trigger Render cold start."""
+    try:
+        requests.get(API_BASE.replace("/api/v1", "/"), timeout=10)
+    except Exception:
+        pass
 
 
 def fetch_all_materials():
     """Fetch all materials from the API with retry."""
-    data = api_get("/materials/", params={"per_page": 200})
-    if data and "materials" in data:
-        return data
-    return None
+    result = api_get("/materials/", params={"per_page": 200})
+    if result["ok"] and "materials" in result["data"]:
+        return result
+    return result
 
 
 @st.cache_data(ttl=300)
 def fetch_material_detail(mat_id):
     """Fetch a single material's full details."""
-    return api_get(f"/materials/{mat_id}")
+    result = api_get(f"/materials/{mat_id}")
+    if result["ok"]:
+        return result["data"]
+    return None
 
 
 # ══════════════════════════════════════════════
@@ -155,9 +162,10 @@ with tab_browse:
 
     # ── Build API call ──
     with st.spinner("Loading materials (API may take ~30s on first load)..."):
+        wake_api()  # ping root to trigger cold start
         if search_query:
             params = {"q": search_query, "per_page": per_page}
-            data = api_get("/materials/search", params=params)
+            result = api_get("/materials/search", params=params)
         else:
             params = {"per_page": per_page}
             if category != "All":
@@ -168,11 +176,17 @@ with tab_browse:
                 params["max_cost"] = max_cost
             if min_thermal > 0:
                 params["min_thermal_conductivity"] = min_thermal
-            data = api_get("/materials/", params=params)
+            result = api_get("/materials/", params=params)
 
-    if data is None or "total" not in data:
-        st.warning("⏳ The API server is waking up (Render free tier sleeps after inactivity). Please wait 30-60 seconds and refresh the page.")
+    if not result["ok"]:
+        st.error(f"❌ Could not reach the API server.")
+        st.code(f"URL: {result.get('url', 'N/A')}\nError: {result.get('error', 'Unknown')}", language="text")
+        if st.button("🔄 Retry", key="retry_browse"):
+            st.rerun()
+    elif "total" not in result["data"]:
+        st.warning("⏳ API returned unexpected data. Please refresh.")
     else:
+        data = result["data"]
         # ── Summary metrics ──
         total = data["total"]
         col1, col2, col3 = st.columns(3)
@@ -303,12 +317,20 @@ with tab_compare:
     st.caption("Select 2 or 3 materials to compare their properties head-to-head.")
 
     with st.spinner("Loading material list (API may take ~30s on first load)..."):
-        all_data = fetch_all_materials()
-    if all_data is None:
-        st.warning("The API server is waking up (Render free tier sleeps after inactivity). Please wait 30-60 seconds and refresh the page.")
+        wake_api()
+        all_result = fetch_all_materials()
+
+    if not all_result["ok"]:
+        st.error("❌ Could not reach the API server.")
+        st.code(f"URL: {all_result.get('url', 'N/A')}\nError: {all_result.get('error', 'Unknown')}", language="text")
+        if st.button("🔄 Retry", key="retry_compare"):
+            st.rerun()
+        st.stop()
+    elif "materials" not in all_result.get("data", {}):
+        st.warning("⏳ API returned unexpected data. Please refresh.")
         st.stop()
 
-    all_materials = all_data.get("materials", [])
+    all_materials = all_result["data"].get("materials", [])
     name_to_id = {m["name"]: m["id"] for m in all_materials}
     sorted_names = sorted(name_to_id.keys())
 
