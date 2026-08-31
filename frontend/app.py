@@ -271,7 +271,7 @@ def render_radar_chart(selections, mat_details, all_materials, tier):
         margin=dict(l=40, r=40, t=30, b=30),
     )
 
-        if tier == "free":
+    if tier == "free":
         st.plotly_chart(fig, config={"staticPlot": True}, use_container_width=True)
         st.caption("🔒 Static preview — ⭐ upgrade to Pro for an interactive chart (hover values, toggle materials on/off).")
     else:
