@@ -70,26 +70,83 @@ st.markdown('<p class="sub-header">Engineering Material Properties Database  |  
 
 
 # ══════════════════════════════════════════════
+#  Auth helpers
+# ══════════════════════════════════════════════
+
+def get_auth_headers():
+    """Return auth headers if user is logged in."""
+    token = st.session_state.get("token")
+    if token:
+        return {"Authorization": f"Bearer {token}"}
+    return {}
+
+
+def api_post(path, json_data=None, timeout=30):
+    """Make an API POST request. Returns {"ok": True, "data": ...} or {"ok": False, ...}."""
+    url = f"{API_BASE}{path}"
+    try:
+        r = requests.post(url, json=json_data, headers=get_auth_headers(), timeout=timeout)
+        payload = r.json()
+        if r.status_code >= 400:
+            return {"ok": False, "error": payload.get("detail", str(payload)), "status_code": r.status_code}
+        return {"ok": True, "data": payload}
+    except Exception as e:
+        return {"ok": False, "error": f"{type(e).__name__}: {e}"}
+
+
+def api_get_auth(path, timeout=30):
+    """Make an authenticated API GET request (no retry — for profile etc.)."""
+    url = f"{API_BASE}{path}"
+    try:
+        r = requests.get(url, headers=get_auth_headers(), timeout=timeout)
+        payload = r.json()
+        if r.status_code >= 400:
+            return {"ok": False, "error": payload.get("detail", str(payload)), "status_code": r.status_code}
+        return {"ok": True, "data": payload}
+    except Exception as e:
+        return {"ok": False, "error": f"{type(e).__name__}: {e}"}
+
+
+# ══════════════════════════════════════════════
 #  Helper: API calls with retry for Render cold starts
 # ══════════════════════════════════════════════
 
 def api_get(path, params=None, retries=3, timeout=60):
-    """Make an API GET request with automatic retries for cold starts.
+    """Make an AUTHENTICATED API GET request with automatic retries for cold starts.
+
+    Sends the logged-in user's token (if any) via get_auth_headers(), so the
+    backend can identify the caller and apply per-tier rate limiting.
 
     Returns {"ok": True, "data": <json>} on success, or
-    {"ok": False, "error": <message>, "url": <url>} on failure.
-    A non-2xx HTTP response (e.g. 404/422/500) is treated as a failure,
+    {"ok": False, "error": <message>, "url": <url>, "status_code": <int>} on failure.
+    A non-2xx HTTP response (e.g. 401/403/404/422/429/500) is treated as a failure,
     not silently wrapped as "ok" data.
     """
     url = f"{API_BASE}{path}"
     last_err = None
     for attempt in range(retries):
         try:
-            r = requests.get(url, params=params, timeout=timeout)
+            r = requests.get(url, params=params, headers=get_auth_headers(), timeout=timeout)
             try:
                 payload = r.json()
             except ValueError:
                 payload = None
+
+            if r.status_code == 401:
+                return {
+                    "ok": False,
+                    "error": "You need to be logged in to do this. Please sign in from the sidebar.",
+                    "url": url,
+                    "status_code": 401,
+                }
+
+            if r.status_code == 403:
+                detail = payload.get("detail") if isinstance(payload, dict) else "Not allowed on your current tier."
+                return {"ok": False, "error": detail, "url": url, "status_code": 403}
+
+            if r.status_code == 429:
+                detail = payload.get("detail") if isinstance(payload, dict) else "Rate limit exceeded."
+                return {"ok": False, "error": detail, "url": url, "status_code": 429}
 
             if r.status_code >= 400:
                 last_err = f"HTTP {r.status_code}: {payload if payload is not None else r.text[:200]}"
@@ -132,42 +189,26 @@ def fetch_material_detail(mat_id):
     return None
 
 
-# ══════════════════════════════════════════════
-#  Auth helpers
-# ══════════════════════════════════════════════
-
-def get_auth_headers():
-    """Return auth headers if user is logged in."""
-    token = st.session_state.get("token")
-    if token:
-        return {"Authorization": f"Bearer {token}"}
-    return {}
-
-
-def api_post(path, json_data=None, timeout=30):
-    """Make an API POST request. Returns {"ok": True, "data": ...} or {"ok": False, ...}."""
-    url = f"{API_BASE}{path}"
-    try:
-        r = requests.post(url, json=json_data, headers=get_auth_headers(), timeout=timeout)
-        payload = r.json()
-        if r.status_code >= 400:
-            return {"ok": False, "error": payload.get("detail", str(payload)), "status_code": r.status_code}
-        return {"ok": True, "data": payload}
-    except Exception as e:
-        return {"ok": False, "error": f"{type(e).__name__}: {e}"}
+def show_api_error(result, retry_key):
+    """Render a friendly error, with special handling for 401/403/429."""
+    status = result.get("status_code")
+    if status == 401:
+        st.warning(f"🔒 {result.get('error')}")
+    elif status == 403:
+        st.warning(f"⭐ {result.get('error')}")
+    elif status == 429:
+        st.warning(f"🚦 {result.get('error')}")
+    else:
+        st.error("❌ Could not reach the API server.")
+        st.code(f"URL: {result.get('url', 'N/A')}\nError: {result.get('error', 'Unknown')}", language="text")
+        if st.button("🔄 Retry", key=retry_key):
+            st.rerun()
 
 
-def api_get_auth(path, timeout=30):
-    """Make an authenticated API GET request (no retry — for profile etc.)."""
-    url = f"{API_BASE}{path}"
-    try:
-        r = requests.get(url, headers=get_auth_headers(), timeout=timeout)
-        payload = r.json()
-        if r.status_code >= 400:
-            return {"ok": False, "error": payload.get("detail", str(payload))}
-        return {"ok": True, "data": payload}
-    except Exception as e:
-        return {"ok": False, "error": f"{type(e).__name__}: {e}"}
+# Mirrors backend TIER_LIMITS[tier]["compare_max"] (app/auth.py) — used here
+# only to shape the UI (hide/disable selectors). The backend's /materials/compare
+# endpoint is the actual enforcement point; this is a courtesy, not security.
+FRONTEND_COMPARE_MAX = {"free": 2, "pro": 5, "advanced": 99}
 
 
 # ══════════════════════════════════════════════
@@ -320,10 +361,7 @@ with tab_browse:
             result = api_get("/materials/", params=params)
 
     if not result["ok"]:
-        st.error("❌ Could not reach the API server.")
-        st.code(f"URL: {result.get('url', 'N/A')}\nError: {result.get('error', 'Unknown')}", language="text")
-        if st.button("🔄 Retry", key="retry_browse"):
-            st.rerun()
+        show_api_error(result, retry_key="retry_browse")
     elif "total" not in result["data"]:
         st.warning("⏳ API returned unexpected data. Please refresh.")
     else:
@@ -462,10 +500,7 @@ with tab_compare:
         all_result = fetch_all_materials()
 
     if not all_result["ok"]:
-        st.error("❌ Could not reach the API server.")
-        st.code(f"URL: {all_result.get('url', 'N/A')}\nError: {all_result.get('error', 'Unknown')}", language="text")
-        if st.button("🔄 Retry", key="retry_compare"):
-            st.rerun()
+        show_api_error(all_result, retry_key="retry_compare")
         st.stop()
 
     if "materials" not in all_result.get("data", {}):
@@ -477,6 +512,11 @@ with tab_compare:
     all_materials = all_result["data"].get("materials", [])
     name_to_id = {m["name"]: m["id"] for m in all_materials}
     sorted_names = sorted(name_to_id.keys())
+
+    # Tier-based cap on how many materials this user can select (UI courtesy —
+    # the backend /materials/compare endpoint enforces this for real).
+    user_tier = (st.session_state.user or {}).get("tier", "free")
+    compare_max = FRONTEND_COMPARE_MAX.get(user_tier, 2)
 
     # ── Material selectors ──
     sel_cols = st.columns(3)
@@ -493,26 +533,27 @@ with tab_compare:
             selections.append(mat2)
 
     with sel_cols[2]:
-        mat3 = st.selectbox("Material 3 (optional)", ["-- Select --"] + sorted_names, key="cmp3")
-        if mat3 != "-- Select --":
-            selections.append(mat3)
+        if compare_max >= 3:
+            mat3 = st.selectbox("Material 3 (optional)", ["-- Select --"] + sorted_names, key="cmp3")
+            if mat3 != "-- Select --":
+                selections.append(mat3)
+        else:
+            st.selectbox("Material 3", ["-- Locked --"], key="cmp3", disabled=True)
+            st.caption(f"🔒 Your **{user_tier}** tier allows comparing up to {compare_max}. Upgrade to compare more.")
 
     if len(selections) < 2:
         st.info("Select at least 2 materials above to start comparing.")
     else:
-        # Fetch full details for each
-        mat_details = []
-        fetch_failed = False
-        for name in selections:
-            mid = name_to_id[name]
-            detail = fetch_material_detail(mid)
-            if detail is None:
-                fetch_failed = True
-                st.error(f"Could not load details for **{name}**. Please try again.")
-            mat_details.append(detail)
+        # Single backend call — server validates & enforces compare_max for real.
+        ids = [name_to_id[name] for name in selections]
+        with st.spinner("Loading comparison..."):
+            compare_result = api_get("/materials/compare", params={"ids": ids})
 
-        if fetch_failed:
+        if not compare_result["ok"]:
+            show_api_error(compare_result, retry_key="retry_compare_fetch")
             st.stop()
+
+        mat_details = compare_result["data"]
 
         st.divider()
 
