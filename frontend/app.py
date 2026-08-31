@@ -275,8 +275,15 @@ def render_radar_chart(selections, mat_details, all_materials, tier):
         st.plotly_chart(fig, config={"staticPlot": True}, use_container_width=True)
         st.caption("🔒 Static preview — ⭐ upgrade to Pro for an interactive chart (hover values, zoom, toggle materials on/off).")
     else:
-        st.plotly_chart(fig, use_container_width=True)
-        st.caption("Values normalized 0–100 across all materials in the database. Note: for Density and Cost, *lower* is usually better.")
+         st.plotly_chart(
+            fig,
+            use_container_width=True,
+            config={
+                "displayModeBar": False,  # hide the whole toolbar (no zoom, pan, etc.)
+                "scrollZoom": False,
+            },
+        )
+        st.caption("Hover over the shape for exact values. Click a material's name in the legend to toggle it on/off. Note: for Density and Cost, *lower* is usually better.")
 
 # ══════════════════════════════════════════════
 #  SIDEBAR: Account (Login / Register / Profile)
