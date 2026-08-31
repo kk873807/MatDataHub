@@ -7,6 +7,10 @@ sqlalchemy>=2.0
 psycopg2-binary>=2.9    # PostgreSQL driver (for Supabase production DB)
 python-dotenv>=1.0
 
+# Auth
+bcrypt>=4.0
+pyjwt>=2.8
+
 # Scraping (we'll use these in Week 2)
 beautifulsoup4>=4.12
 scrapy>=2.11
@@ -14,6 +18,7 @@ requests>=2.32
 
 # Frontend MVP
 streamlit>=1.40
+plotly>=5.22
 
 # Utilities
 pydantic>=2.10

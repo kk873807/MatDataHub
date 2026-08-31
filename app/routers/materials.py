@@ -84,11 +84,7 @@ def list_materials(
 def search_materials(
     q: str = Query(..., min_length=1, description="Search query (searches name, grade, applications, equivalent_grades)"),
     page: int = Query(1, ge=1),
-<<<<<<< HEAD
-    per_page: int = Query(20, ge=1, le=400),
-=======
     per_page: int = Query(20, ge=1, le=500),
->>>>>>> 632d7c8 (Fix: raise per_page limit to 500 for compare tab, remove debug output)
     db: Session = Depends(get_db),
 ):
     """

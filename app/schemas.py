@@ -69,3 +69,40 @@ class MaterialListResponse(BaseModel):
     page: int
     per_page: int
     materials: list[MaterialResponse]
+
+
+# ══════════════════════════════════════════════
+#  Auth Schemas
+# ══════════════════════════════════════════════
+
+class RegisterRequest(BaseModel):
+    """Schema for user registration."""
+    email: str = Field(..., examples=["kishan@example.com"])
+    password: str = Field(..., min_length=6, examples=["securepass123"])
+    name: Optional[str] = Field(None, max_length=100, examples=["Kishan"])
+
+
+class LoginRequest(BaseModel):
+    """Schema for user login."""
+    email: str = Field(..., examples=["kishan@example.com"])
+    password: str = Field(..., examples=["securepass123"])
+
+
+class TokenResponse(BaseModel):
+    """Returned after successful register/login."""
+    access_token: str
+    token_type: str = "bearer"
+    tier: str
+    name: Optional[str] = None
+
+
+class UserProfile(BaseModel):
+    """User profile info returned by /auth/me."""
+    id: int
+    email: str
+    name: Optional[str] = None
+    tier: str
+    api_key: Optional[str] = None
+    created_at: Optional[datetime] = None
+
+    model_config = {"from_attributes": True}

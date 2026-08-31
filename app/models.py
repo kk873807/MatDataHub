@@ -78,3 +78,32 @@ class Material(Base):
 
     def __repr__(self):
         return f"<Material(id={self.id}, name='{self.name}', grade='{self.grade}')>"
+
+
+class User(Base):
+    """
+    User accounts for authentication and tier-based access.
+
+    Tiers:
+        free     - All data visible, compare 2, no export
+        pro      - Compare 5, export, find similar, AI advisor
+        advanced - Unlimited compare, API access, PDF reports
+    """
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    email = Column(String(255), unique=True, nullable=False, index=True)
+    hashed_password = Column(String(255), nullable=False)
+    name = Column(String(100), nullable=True)
+
+    # Tier: "free", "pro", "advanced"
+    tier = Column(String(20), default="free", nullable=False)
+
+    # API key for programmatic access (Advanced tier only)
+    api_key = Column(String(64), unique=True, nullable=True, index=True)
+
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    def __repr__(self):
+        return f"<User(id={self.id}, email='{self.email}', tier='{self.tier}')>"

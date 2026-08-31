@@ -133,6 +133,126 @@ def fetch_material_detail(mat_id):
 
 
 # ══════════════════════════════════════════════
+#  Auth helpers
+# ══════════════════════════════════════════════
+
+def get_auth_headers():
+    """Return auth headers if user is logged in."""
+    token = st.session_state.get("token")
+    if token:
+        return {"Authorization": f"Bearer {token}"}
+    return {}
+
+
+def api_post(path, json_data=None, timeout=30):
+    """Make an API POST request. Returns {"ok": True, "data": ...} or {"ok": False, ...}."""
+    url = f"{API_BASE}{path}"
+    try:
+        r = requests.post(url, json=json_data, headers=get_auth_headers(), timeout=timeout)
+        payload = r.json()
+        if r.status_code >= 400:
+            return {"ok": False, "error": payload.get("detail", str(payload)), "status_code": r.status_code}
+        return {"ok": True, "data": payload}
+    except Exception as e:
+        return {"ok": False, "error": f"{type(e).__name__}: {e}"}
+
+
+def api_get_auth(path, timeout=30):
+    """Make an authenticated API GET request (no retry — for profile etc.)."""
+    url = f"{API_BASE}{path}"
+    try:
+        r = requests.get(url, headers=get_auth_headers(), timeout=timeout)
+        payload = r.json()
+        if r.status_code >= 400:
+            return {"ok": False, "error": payload.get("detail", str(payload))}
+        return {"ok": True, "data": payload}
+    except Exception as e:
+        return {"ok": False, "error": f"{type(e).__name__}: {e}"}
+
+
+# ══════════════════════════════════════════════
+#  SIDEBAR: Account (Login / Register / Profile)
+# ══════════════════════════════════════════════
+
+# Initialize session state
+if "token" not in st.session_state:
+    st.session_state.token = None
+if "user" not in st.session_state:
+    st.session_state.user = None
+
+TIER_BADGES = {"free": "🆓 Free", "pro": "⭐ Pro", "advanced": "🚀 Advanced"}
+
+with st.sidebar:
+    st.markdown("### 🔐 Account")
+
+    if st.session_state.token and st.session_state.user:
+        # ── Logged in view ──
+        user = st.session_state.user
+        tier_badge = TIER_BADGES.get(user.get("tier", "free"), "🆓 Free")
+        st.success(f"Welcome, **{user.get('name') or user['email']}**!")
+        st.caption(f"Tier: {tier_badge}")
+
+        if user.get("api_key"):
+            with st.expander("🔑 API Key"):
+                st.code(user["api_key"], language="text")
+
+        if st.button("Logout", use_container_width=True):
+            st.session_state.token = None
+            st.session_state.user = None
+            st.rerun()
+
+    else:
+        # ── Login / Register tabs ──
+        auth_tab = st.radio("", ["Login", "Register"], horizontal=True, label_visibility="collapsed")
+
+        if auth_tab == "Login":
+            with st.form("login_form"):
+                email = st.text_input("Email")
+                password = st.text_input("Password", type="password")
+                submitted = st.form_submit_button("Login", use_container_width=True)
+
+                if submitted and email and password:
+                    result = api_post("/auth/login", {"email": email, "password": password})
+                    if result["ok"]:
+                        st.session_state.token = result["data"]["access_token"]
+                        # Fetch full profile
+                        profile = api_get_auth("/auth/me")
+                        if profile["ok"]:
+                            st.session_state.user = profile["data"]
+                        else:
+                            st.session_state.user = {"email": email, "tier": result["data"]["tier"], "name": result["data"].get("name")}
+                        st.rerun()
+                    else:
+                        st.error(result.get("error", "Login failed"))
+
+        else:  # Register
+            with st.form("register_form"):
+                name = st.text_input("Name (optional)")
+                email = st.text_input("Email")
+                password = st.text_input("Password (min 6 chars)", type="password")
+                submitted = st.form_submit_button("Create Account", use_container_width=True)
+
+                if submitted and email and password:
+                    body = {"email": email, "password": password}
+                    if name:
+                        body["name"] = name
+                    result = api_post("/auth/register", body)
+                    if result["ok"]:
+                        st.session_state.token = result["data"]["access_token"]
+                        # Fetch full profile
+                        profile = api_get_auth("/auth/me")
+                        if profile["ok"]:
+                            st.session_state.user = profile["data"]
+                        else:
+                            st.session_state.user = {"email": email, "tier": "free", "name": name}
+                        st.rerun()
+                    else:
+                        st.error(result.get("error", "Registration failed"))
+
+    st.divider()
+
+
+# ══════════════════════════════════════════════
 #  TABS: Browse | Compare
 # ══════════════════════════════════════════════
 tab_browse, tab_compare = st.tabs(["Browse Materials", "Compare Materials"])
