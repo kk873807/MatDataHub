@@ -185,7 +185,113 @@ def compare_materials(
     by_id = {m.id: m for m in materials}
     return [by_id[i] for i in ids]
 
+# ──────────────────────────────────────────────
+# GET /materials/{id}/similar  — Find Similar Materials (Pro+ only)
+#
+# Uses Euclidean distance across a set of normalized numeric properties to
+# find the materials "closest" to the target material. This is a Pro+ tool
+# feature per the pricing table (find_similar=True for pro/advanced).
+#
+# IMPORTANT: this route MUST be declared before "/{material_id}" below,
+# same route-ordering reason as "/compare" above.
+# ──────────────────────────────────────────────
 
+# Properties used for similarity — same set as the frontend radar chart,
+# so "similar" visually and "similar" numerically stay consistent.
+SIMILARITY_PROPS = [
+    "tensile_strength_max",
+    "yield_strength_max",
+    "elastic_modulus",
+    "thermal_conductivity",
+    "density",
+    "cost_per_kg_max",
+]
+
+
+def _normalize_value(val, min_v, max_v):
+    """Scale a value to 0-1 based on min/max across all materials. None-safe."""
+    if val is None or min_v is None or max_v is None or max_v == min_v:
+        return None
+    return (val - min_v) / (max_v - min_v)
+
+
+@router.get("/{material_id}/similar", response_model=List[MaterialResponse])
+def find_similar_materials(
+    material_id: int,
+    limit: int = Query(5, ge=1, le=20, description="How many similar materials to return"),
+    db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_optional_user),
+):
+    """
+    Find materials numerically similar to the given material, based on
+    Euclidean distance across normalized mechanical/thermal/cost properties.
+
+    Pro+ only. Free users (including anonymous) get a 403 with an upgrade
+    message.
+
+    Example:
+        GET /materials/12/similar?limit=5
+    """
+    tier = current_user.tier if current_user else "free"
+    tier_config = TIER_LIMITS.get(tier, TIER_LIMITS["free"])
+
+    if not tier_config["find_similar"]:
+        raise HTTPException(
+            status_code=403,
+            detail=f"Find Similar Materials is a Pro+ feature. Your '{tier}' tier doesn't include it — upgrade to unlock.",
+        )
+
+    target = db.query(Material).filter(Material.id == material_id).first()
+    if not target:
+        raise HTTPException(status_code=404, detail=f"Material with id {material_id} not found")
+
+    all_materials = db.query(Material).all()
+
+    # Compute min/max for each property across ALL materials, for normalization
+    ranges = {}
+    for prop in SIMILARITY_PROPS:
+        vals = [getattr(m, prop) for m in all_materials if getattr(m, prop) is not None]
+        if vals:
+            ranges[prop] = (min(vals), max(vals))
+
+    def normalized_vector(material):
+        """Return a dict of {prop: normalized_value} for the properties we can compute."""
+        vec = {}
+        for prop in SIMILARITY_PROPS:
+            if prop not in ranges:
+                continue
+            raw = getattr(material, prop)
+            min_v, max_v = ranges[prop]
+            norm = _normalize_value(raw, min_v, max_v)
+            if norm is not None:
+                vec[prop] = norm
+        return vec
+
+    target_vec = normalized_vector(target)
+    if not target_vec:
+        raise HTTPException(
+            status_code=400,
+            detail="This material doesn't have enough numeric property data to compute similarity.",
+        )
+
+    # Compute Euclidean distance from target to every other material,
+    # using only properties BOTH materials have data for.
+    scored = []
+    for m in all_materials:
+        if m.id == target.id:
+            continue
+        vec = normalized_vector(m)
+        shared_props = set(vec.keys()) & set(target_vec.keys())
+        if not shared_props:
+            continue
+        squared_diffs = [(vec[p] - target_vec[p]) ** 2 for p in shared_props]
+        distance = sum(squared_diffs) ** 0.5
+        scored.append((distance, m))
+
+    scored.sort(key=lambda pair: pair[0])
+    top_matches = [m for _, m in scored[:limit]]
+
+    return top_matches
 # ──────────────────────────────────────────────
 # GET /materials/{id}  — Get one
 # ──────────────────────────────────────────────
