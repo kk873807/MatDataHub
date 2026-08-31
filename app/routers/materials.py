@@ -1,20 +1,28 @@
 """
 Materials API routes.
 
+Per the "hook with free" strategy: ALL material data is public. Nobody needs
+an account to browse, search, or view a material's full details. Tier gating
+applies only to *tools* built on top of the data (comparison limits, Find
+Similar, exports, etc.) — not the data itself.
+
 Endpoints:
-    GET  /materials          - List all materials (paginated, filterable)
-    GET  /materials/search   - Full-text search by name/grade/applications
-    GET  /materials/{id}     - Get one material by ID
+    GET  /materials          - List all materials (paginated, filterable) — public
+    GET  /materials/search   - Full-text search by name/grade/applications — public
+    GET  /materials/compare  - Fetch N materials for side-by-side comparison — public,
+                                but capped by tier (anonymous visitors get the free-tier cap)
+    GET  /materials/{id}     - Get one material by ID — public
     POST /materials          - Add a new material
 """
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
-from typing import Optional
+from typing import List, Optional
 
 from app.database import get_db
-from app.models import Material
+from app.models import Material, User
 from app.schemas import MaterialCreate, MaterialResponse, MaterialListResponse
+from app.auth import get_optional_user, TIER_LIMITS
 
 router = APIRouter(prefix="/materials", tags=["Materials"])
 
@@ -37,9 +45,10 @@ def list_materials(
     # Sorting
     sort_by: Optional[str] = Query("name", description="Sort by field name"),
     db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_optional_user),  # public — used only if we personalize later
 ):
     """
-    List materials with optional filters.
+    List materials with optional filters. Public — no login required.
 
     Example:
         GET /materials?category=Metal&min_tensile=500&page=1&per_page=10
@@ -86,9 +95,10 @@ def search_materials(
     page: int = Query(1, ge=1),
     per_page: int = Query(20, ge=1, le=500),
     db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_optional_user),  # public
 ):
     """
-    Search materials by keyword across multiple fields.
+    Search materials by keyword across multiple fields. Public — no login required.
 
     Example:
         GET /materials/search?q=stainless
@@ -120,12 +130,73 @@ def search_materials(
 
 
 # ──────────────────────────────────────────────
+# GET /materials/compare  — Side-by-side comparison, tier-capped
+#
+# Public endpoint, but the number of materials allowed is capped by tier.
+# Anonymous visitors (no token) are treated as "free" tier, consistent with
+# the pricing table: free=2, pro=5, advanced=unlimited.
+#
+# IMPORTANT: this route MUST be declared before "/{material_id}" below.
+# FastAPI matches routes in declaration order, and "/{material_id}" expects
+# an int — if "/compare" were declared after it, a request to
+# /materials/compare would be swallowed by "/{material_id}" and fail
+# validation (since "compare" isn't a valid int), returning a confusing 422.
+# ──────────────────────────────────────────────
+@router.get("/compare", response_model=List[MaterialResponse])
+def compare_materials(
+    ids: List[int] = Query(..., description="Material IDs to compare, e.g. ?ids=1&ids=2&ids=3"),
+    db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_optional_user),
+):
+    """
+    Fetch full details for a set of materials to compare side-by-side.
+
+    No login is required to compare — but the count allowed is capped by
+    tier (TIER_LIMITS[tier]['compare_max']). Not-logged-in visitors get the
+    free-tier cap.
+
+    Example:
+        GET /materials/compare?ids=12&ids=45&ids=69
+    """
+    tier = current_user.tier if current_user else "free"
+    tier_config = TIER_LIMITS.get(tier, TIER_LIMITS["free"])
+    limit = tier_config["compare_max"]
+
+    if len(ids) < 2:
+        raise HTTPException(status_code=400, detail="Select at least 2 materials to compare.")
+
+    if len(ids) > limit:
+        raise HTTPException(
+            status_code=403,
+            detail=(
+                f"Your '{tier}' tier allows comparing up to {limit} materials at once. "
+                f"You requested {len(ids)}. Upgrade your tier to compare more."
+            ),
+        )
+
+    materials = db.query(Material).filter(Material.id.in_(ids)).all()
+    found_ids = {m.id for m in materials}
+    missing = [i for i in ids if i not in found_ids]
+    if missing:
+        raise HTTPException(status_code=404, detail=f"Material IDs not found: {missing}")
+
+    # Preserve the order the caller requested (matches the order of their
+    # material selectors in the frontend).
+    by_id = {m.id: m for m in materials}
+    return [by_id[i] for i in ids]
+
+
+# ──────────────────────────────────────────────
 # GET /materials/{id}  — Get one
 # ──────────────────────────────────────────────
 @router.get("/{material_id}", response_model=MaterialResponse)
-def get_material(material_id: int, db: Session = Depends(get_db)):
+def get_material(
+    material_id: int,
+    db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_optional_user),  # public
+):
     """
-    Get a single material by its ID.
+    Get a single material by its ID. Public — no login required.
 
     Example:
         GET /materials/42
@@ -138,6 +209,10 @@ def get_material(material_id: int, db: Session = Depends(get_db)):
 
 # ──────────────────────────────────────────────
 # POST /materials  — Create one
+#
+# NOTE: left unauthenticated for now — outside today's scope. This means
+# anyone can currently add materials. Worth locking down (e.g. admin-only)
+# separately, since it's unrelated to the free-data/paid-tools model.
 # ──────────────────────────────────────────────
 @router.post("/", response_model=MaterialResponse, status_code=201)
 def create_material(material: MaterialCreate, db: Session = Depends(get_db)):
