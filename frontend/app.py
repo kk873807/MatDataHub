@@ -14,6 +14,7 @@ from urllib.parse import urlparse
 import pandas as pd
 import requests
 import streamlit as st
+import plotly.graph_objects as go
 
 # ── Config ──
 # Priority: st.secrets > env var > hardcoded Render URL
@@ -210,6 +211,72 @@ def show_api_error(result, retry_key):
 # endpoint is the actual enforcement point; this is a courtesy, not security.
 FRONTEND_COMPARE_MAX = {"free": 2, "pro": 5, "advanced": 99}
 
+# ══════════════════════════════════════════════
+#  Radar Chart helpers (8e)
+# ══════════════════════════════════════════════
+
+RADAR_PROPS = [
+    ("Tensile Strength", "tensile_strength_max"),
+    ("Yield Strength", "yield_strength_max"),
+    ("Elastic Modulus", "elastic_modulus"),
+    ("Thermal Conductivity", "thermal_conductivity"),
+    ("Density", "density"),
+    ("Cost", "cost_per_kg_max"),
+]
+
+
+def _normalize(val, min_v, max_v):
+    """Scale a value to 0-100 based on the min/max seen across all materials."""
+    if val is None or min_v is None or max_v is None or max_v == min_v:
+        return 0
+    return round((val - min_v) / (max_v - min_v) * 100, 1)
+
+
+def _compute_radar_data(mat_details, all_materials):
+    """Build {property_label: [normalized_value_per_selected_material]}."""
+    radar_data = {}
+    for label, key in RADAR_PROPS:
+        all_vals = [m.get(key) for m in all_materials if m.get(key) is not None]
+        if not all_vals:
+            continue
+        min_v, max_v = min(all_vals), max(all_vals)
+        radar_data[label] = [_normalize(m.get(key), min_v, max_v) for m in mat_details]
+    return radar_data
+
+
+def render_radar_chart(selections, mat_details, all_materials, tier):
+    """Render a Plotly radar chart. Free tier = static preview, Pro+ = interactive."""
+    radar_data = _compute_radar_data(mat_details, all_materials)
+    if not radar_data:
+        st.info("Not enough numeric data on these materials to draw a radar chart.")
+        return
+
+    categories = list(radar_data.keys())
+    fig = go.Figure()
+
+    for i, name in enumerate(selections):
+        values = [radar_data[cat][i] for cat in categories]
+        values += values[:1]  # close the shape
+        fig.add_trace(go.Scatterpolar(
+            r=values,
+            theta=categories + [categories[0]],
+            fill="toself",
+            name=name,
+        ))
+
+    fig.update_layout(
+        polar=dict(radialaxis=dict(visible=True, range=[0, 100])),
+        showlegend=True,
+        height=450,
+        margin=dict(l=40, r=40, t=30, b=30),
+    )
+
+    if tier == "free":
+        st.plotly_chart(fig, config={"staticPlot": True}, use_container_width=True)
+        st.caption("🔒 Static preview — ⭐ upgrade to Pro for an interactive chart (hover values, zoom, toggle materials on/off).")
+    else:
+        st.plotly_chart(fig, use_container_width=True)
+        st.caption("Values normalized 0–100 across all materials in the database. Note: for Density and Cost, *lower* is usually better.")
 
 # ══════════════════════════════════════════════
 #  SIDEBAR: Account (Login / Register / Profile)
@@ -606,6 +673,10 @@ with tab_compare:
 
         # ── Bar Charts ──
         st.divider()
+        # ── Radar Chart ──
+        st.divider()
+        st.markdown("#### 🕸️ Radar Chart — Property Fingerprint")
+        render_radar_chart(selections, mat_details, all_materials, user_tier)
         st.markdown("#### Visual Comparison")
 
         CHART_PROPS = [
