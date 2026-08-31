@@ -518,28 +518,31 @@ with tab_compare:
     user_tier = (st.session_state.user or {}).get("tier", "free")
     compare_max = FRONTEND_COMPARE_MAX.get(user_tier, 2)
 
-    # ── Material selectors ──
-    sel_cols = st.columns(3)
+    # Even "unlimited" (advanced, compare_max=99) shouldn't render 99 dropdowns —
+    # cap the number of *slots shown* at a sane UI limit. The backend is the
+    # real source of truth for what's actually allowed.
+    UI_MAX_SELECTORS = min(compare_max, 8)
+
+    st.caption(f"Your **{TIER_BADGES.get(user_tier, user_tier)}** tier allows comparing up to **{compare_max}** materials at once.")
+
+    # ── Material selectors — rendered dynamically, up to UI_MAX_SELECTORS ──
     selections = []
+    SELECTORS_PER_ROW = 4
+    for row_start in range(0, UI_MAX_SELECTORS, SELECTORS_PER_ROW):
+        row_count = min(SELECTORS_PER_ROW, UI_MAX_SELECTORS - row_start)
+        row_cols = st.columns(row_count)
+        for i in range(row_count):
+            slot_num = row_start + i + 1
+            with row_cols[i]:
+                label = f"Material {slot_num}" + (" (optional)" if slot_num > 2 else "")
+                choice = st.selectbox(label, ["-- Select --"] + sorted_names, key=f"cmp{slot_num}")
+                if choice != "-- Select --":
+                    selections.append(choice)
 
-    with sel_cols[0]:
-        mat1 = st.selectbox("Material 1", ["-- Select --"] + sorted_names, key="cmp1")
-        if mat1 != "-- Select --":
-            selections.append(mat1)
-
-    with sel_cols[1]:
-        mat2 = st.selectbox("Material 2", ["-- Select --"] + sorted_names, key="cmp2")
-        if mat2 != "-- Select --":
-            selections.append(mat2)
-
-    with sel_cols[2]:
-        if compare_max >= 3:
-            mat3 = st.selectbox("Material 3 (optional)", ["-- Select --"] + sorted_names, key="cmp3")
-            if mat3 != "-- Select --":
-                selections.append(mat3)
-        else:
-            st.selectbox("Material 3", ["-- Locked --"], key="cmp3", disabled=True)
-            st.caption(f"🔒 Your **{user_tier}** tier allows comparing up to {compare_max}. Upgrade to compare more.")
+    if compare_max > UI_MAX_SELECTORS:
+        st.caption(f"Showing {UI_MAX_SELECTORS} slots. Your tier technically allows up to {compare_max} — let us know if you need more at once.")
+    elif user_tier == "free":
+        st.caption("⭐ Upgrade to Pro to compare up to 5 materials at once.")
 
     if len(selections) < 2:
         st.info("Select at least 2 materials above to start comparing.")
