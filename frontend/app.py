@@ -272,12 +272,12 @@ def render_radar_chart(selections, mat_details, all_materials, tier):
     )
 
     if tier == "free":
-        st.plotly_chart(fig, config={"staticPlot": True}, use_container_width=True)
+        st.plotly_chart(fig, config={"staticPlot": True}, width="stretch")
         st.caption("🔒 Static preview — ⭐ upgrade to Pro for an interactive chart (hover values, toggle materials on/off).")
     else:
         st.plotly_chart(
             fig,
-            use_container_width=True,
+            width="stretch",
             config={
                 "displayModeBar": False,  # hide the whole toolbar (no zoom, pan, etc.)
                 "scrollZoom": False,
@@ -318,7 +318,7 @@ with st.sidebar:
 
     else:
         # ── Login / Register tabs ──
-        auth_tab = st.radio("", ["Login", "Register"], horizontal=True, label_visibility="collapsed")
+        auth_tab = st.radio("Auth mode", ["Login", "Register"], horizontal=True, label_visibility="collapsed")
 
         if auth_tab == "Login":
             with st.form("login_form"):
@@ -559,6 +559,32 @@ with tab_browse:
                         if m.get("applications"):
                             st.markdown("#### Applications")
                             st.write(m["applications"])
+
+                    # ── Find Similar Materials (8f) ──
+                    st.divider()
+                    user_tier = (st.session_state.user or {}).get("tier", "free")
+
+                    if user_tier in ("pro", "advanced"):
+                        if st.button(f"🔍 Find Materials Similar to {m['name']}", key=f"similar_{mat_id}"):
+                            with st.spinner("Finding similar materials..."):
+                                sim_result = api_get(f"/materials/{mat_id}/similar", params={"limit": 5})
+                            if sim_result["ok"]:
+                                st.markdown(f"#### Top 5 Materials Similar to **{m['name']}**")
+                                sim_data = []
+                                for s in sim_result["data"]:
+                                    sim_data.append({
+                                        "Name": s["name"],
+                                        "Category": s["category"],
+                                        "Grade": s.get("grade", "-"),
+                                        "Density": s.get("density", "-"),
+                                        "Tensile Max (MPa)": s.get("tensile_strength_max", "-"),
+                                        "Cost Max (₹/kg)": s.get("cost_per_kg_max", "-"),
+                                    })
+                                st.dataframe(pd.DataFrame(sim_data), width="stretch", hide_index=True)
+                            else:
+                                show_api_error(sim_result, retry_key=f"retry_similar_{mat_id}")
+                    else:
+                        st.info("🔍 **Find Similar Materials** — Discover alternatives you never knew about! ⭐ Upgrade to Pro to unlock.")
 
 
 # ══════════════════════════════════════════════
