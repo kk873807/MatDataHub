@@ -387,9 +387,7 @@ with st.sidebar:
         else:
             st.success("You're on the Advanced plan 🚀")
 
-        if user.get("api_key"):
-            with st.expander("🔑 API Key"):
-                st.code(user["api_key"], language="text")
+
 
         if st.button("Logout", use_container_width=True):
             st.session_state.token = None
