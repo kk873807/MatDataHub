@@ -24,7 +24,42 @@ from app.schemas import (
     LoginRequest,
     TokenResponse,
     UserProfile,
-)
+)# Adjust these two imports to match your actual project layout
+from app.auth import get_current_user, generate_api_key, create_access_token
+from app.schemas import UpgradeRequest, UpgradeResponse
+# from app.models import User  # should already be imported if /auth/me works
+
+VALID_TIERS = {"pro", "advanced"}
+
+@router.post("/upgrade", response_model=UpgradeResponse)
+def upgrade_tier(
+    payload: UpgradeRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),  # use whatever your /auth/me endpoint already uses here
+):
+    tier = payload.tier.lower()
+    if tier not in VALID_TIERS:
+        raise HTTPException(status_code=400, detail="tier must be 'pro' or 'advanced'")
+
+    current_user.tier = tier
+
+    # Advanced unlocks API access — generate a key if they don't have one yet
+    if tier == "advanced" and not current_user.api_key:
+        current_user.api_key = generate_api_key()
+
+    db.commit()
+    db.refresh(current_user)
+
+    # Re-issue the token — copy the exact same create_access_token(...) call
+    # your /auth/login endpoint uses, so the payload shape matches
+    new_token = create_access_token({"sub": current_user.email})
+
+    return UpgradeResponse(
+        message=f"Upgraded to {tier}! 🎉",
+        tier=current_user.tier,
+        api_key=current_user.api_key,
+        token=new_token,
+    )
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
