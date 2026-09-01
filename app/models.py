@@ -118,3 +118,28 @@ class User(Base):
 
     def __repr__(self):
         return f"<User(id={self.id}, email='{self.email}', tier='{self.tier}')>"
+
+
+class Feedback(Base):
+    """
+    User feedback / comments / bug reports / feature requests.
+    user_id is nullable — anonymous (not logged in) users can also submit feedback.
+    """
+    __tablename__ = "feedback"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+
+    user_id = Column(Integer, nullable=True, index=True)   # not a FK constraint, just a soft link to users.id
+    name = Column(String(100), nullable=True)
+    email = Column(String(255), nullable=True)
+
+    category = Column(String(50), default="General")        # Bug Report / Feature Request / General Feedback / Data Correction / Other
+    message = Column(Text, nullable=False)
+    rating = Column(Integer, nullable=True)                  # 1-5, optional
+    page_context = Column(String(100), nullable=True)        # which tab/page it came from
+
+    status = Column(String(20), default="new")               # "new" or "reviewed"
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    def __repr__(self):
+        return f"<Feedback(id={self.id}, category='{self.category}', status='{self.status}')>"
