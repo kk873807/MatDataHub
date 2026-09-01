@@ -115,5 +115,5 @@ class UpgradeRequest(BaseModel):
 class UpgradeResponse(BaseModel):
     message: str
     tier: str
-    api_key: Optional[str] = None
+    api_key: str | None = None
     token: str
