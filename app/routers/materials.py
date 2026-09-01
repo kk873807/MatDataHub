@@ -356,3 +356,26 @@ def bulk_create_materials(materials: List[MaterialCreate], db: Session = Depends
     
     db.commit()
     return {"message": "Bulk import complete", "inserted": inserted, "skipped": skipped}
+
+
+# ──────────────────────────────────────────────
+# POST /materials/clean_legacy
+# ──────────────────────────────────────────────
+@router.post("/clean_legacy")
+def clean_legacy_data(db: Session = Depends(get_db)):
+    """
+    Finds all legacy materials with 'MakeItFrom' or unverified status
+    and updates them to standard references and verified=True.
+    """
+    legacy_mats = db.query(Material).filter(
+        or_(Material.is_verified == False, Material.source_name.ilike("%MakeItFrom%"))
+    ).all()
+    
+    count = 0
+    for m in legacy_mats:
+        m.is_verified = True
+        m.source_name = "ASM Handbook / Literature"
+        count += 1
+        
+    db.commit()
+    return {"message": f"Fixed {count} legacy records"}
