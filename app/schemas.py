@@ -153,3 +153,38 @@ class AdminActionResponse(BaseModel):
     message: str
     user_email: str
     tier: str
+
+
+# ══════════════════════════════════════════════
+#  Feedback Schemas
+# ══════════════════════════════════════════════
+
+class FeedbackCreate(BaseModel):
+    """Body sent by the frontend when a user submits feedback."""
+    name: Optional[str] = Field(None, max_length=100)
+    email: Optional[str] = Field(None, max_length=255)
+    category: str = Field("General Feedback", max_length=50)
+    message: str = Field(..., min_length=3, max_length=2000, examples=["Would love a dark mode toggle!"])
+    rating: Optional[int] = Field(None, ge=1, le=5)
+    page_context: Optional[str] = Field(None, max_length=100, examples=["Feedback Tab"])
+
+
+class FeedbackOut(BaseModel):
+    """One feedback row, as returned to the admin panel."""
+    id: int
+    name: Optional[str] = None
+    email: Optional[str] = None
+    category: str
+    message: str
+    rating: Optional[int] = None
+    page_context: Optional[str] = None
+    status: str
+    created_at: Optional[datetime] = None
+
+    model_config = {"from_attributes": True}
+
+
+class FeedbackResponse(BaseModel):
+    """Returned after successfully submitting or resolving feedback."""
+    message: str
+    id: int
