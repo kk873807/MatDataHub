@@ -48,32 +48,34 @@ st.set_page_config(
 
 
 def upgrade_tier(tier: str):
-    token = st.session_state.get("token")  # adjust key name if 8c used a different one
+    """
+    Submit an upgrade REQUEST — this does NOT change the user's tier.
+    The backend records requested_tier + upgrade_status="pending"; an admin
+    must approve it from the Admin panel before the tier actually changes.
+    """
+    token = st.session_state.get("token")
     if not token:
         st.sidebar.error("Please log in first.")
         return
     try:
         resp = requests.post(
-            f"{API_BASE}/auth/upgrade",   # reuse your existing API_BASE variable
+            f"{API_BASE}/auth/upgrade",
             json={"tier": tier},
             headers={"Authorization": f"Bearer {token}"},
             timeout=30,
         )
         if resp.status_code == 200:
             data = resp.json()
-            st.session_state["token"] = data["token"]
-            # Update the SAME dict the rest of the app reads tier/api_key from
-            # (welcome badge, Browse tab gate, Compare tab compare_max all use
-            # st.session_state.user.get("tier", ...)) instead of a separate,
-            # disconnected "tier" key that only this block was reading.
+            # Only pending-request fields change here — the actual "tier"
+            # value is updated later by an admin, then picked up client-side
+            # via the "Check status" button (which re-fetches /auth/me).
             if st.session_state.get("user"):
-                st.session_state["user"]["tier"] = data["tier"]
-                if data.get("api_key"):
-                    st.session_state["user"]["api_key"] = data["api_key"]
+                st.session_state["user"]["upgrade_status"] = data["upgrade_status"]
+                st.session_state["user"]["requested_tier"] = data["requested_tier"]
             st.sidebar.success(data["message"])
             st.rerun()
         else:
-            st.sidebar.error(f"Upgrade failed: {resp.json().get('detail', 'Unknown error')}")
+            st.sidebar.error(f"Request failed: {resp.json().get('detail', 'Unknown error')}")
     except Exception as e:
         st.sidebar.error(f"Couldn't reach the server: {e}")
 
@@ -338,19 +340,33 @@ with st.sidebar:
         user = st.session_state.user
         current_tier = user.get("tier", "free")
         tier_badge = TIER_BADGES.get(current_tier, "🆓 Free")
+        upgrade_status = user.get("upgrade_status")
+        requested_tier = user.get("requested_tier")
+
         st.success(f"Welcome, **{user.get('name') or user['email']}**!")
         st.caption(f"Tier: {tier_badge}")
 
         st.markdown("---")
-        if current_tier == "free":
-            st.caption("🧪 Test mode — instant, no payment yet")
-            if st.button("⭐ Upgrade to Pro — ₹499/mo"):
+        if upgrade_status == "pending":
+            # A request is already in flight — don't show more upgrade buttons,
+            # just let the user re-check whether it's been approved yet.
+            st.info(f"⏳ Your request to upgrade to **{requested_tier}** is pending approval.")
+            if st.button("🔄 Check status"):
+                profile = api_get_auth("/auth/me")
+                if profile["ok"]:
+                    st.session_state.user = profile["data"]
+                    st.rerun()
+                else:
+                    st.error(profile.get("error", "Could not refresh status."))
+        elif current_tier == "free":
+            st.caption("Upgrades are reviewed manually — you'll see a pending badge after requesting.")
+            if st.button("⭐ Request Upgrade to Pro — ₹499/mo"):
                 upgrade_tier("pro")
-            if st.button("🚀 Upgrade to Advanced — ₹1499/mo"):
+            if st.button("🚀 Request Upgrade to Advanced — ₹1499/mo"):
                 upgrade_tier("advanced")
         elif current_tier == "pro":
-            st.caption("🧪 Test mode — instant, no payment yet")
-            if st.button("🚀 Upgrade to Advanced — ₹1499/mo"):
+            st.caption("Upgrades are reviewed manually — you'll see a pending badge after requesting.")
+            if st.button("🚀 Request Upgrade to Advanced — ₹1499/mo"):
                 upgrade_tier("advanced")
         else:
             st.success("You're on the Advanced plan 🚀")
@@ -413,6 +429,53 @@ with st.sidebar:
                         st.error(result.get("error", "Registration failed"))
 
     st.divider()
+
+    # ── Admin panel: approve/reject pending upgrade requests ──
+    # Gated by ADMIN_SECRET (set the same value in Render + Streamlit secrets).
+    # This is a single-operator password gate, not a full roles system.
+    with st.expander("🛠️ Admin"):
+        admin_pw = st.text_input("Admin password", type="password", key="admin_pw")
+        if admin_pw:
+            admin_headers = {"X-Admin-Secret": admin_pw}
+            try:
+                r = requests.get(f"{API_BASE}/admin/upgrade-requests", headers=admin_headers, timeout=15)
+                if r.status_code == 403:
+                    st.error("Wrong password.")
+                elif r.status_code != 200:
+                    st.error(f"Error: {r.status_code}")
+                else:
+                    pending = r.json()
+                    if not pending:
+                        st.caption("No pending requests.")
+                    for req in pending:
+                        st.markdown(f"**{req['email']}** ({req.get('name') or '—'})")
+                        st.caption(f"{req['current_tier']} → {req['requested_tier']}  ·  {req['requested_at']}")
+                        c1, c2 = st.columns(2)
+                        with c1:
+                            if st.button("✅ Approve", key=f"approve_{req['id']}"):
+                                ar = requests.post(
+                                    f"{API_BASE}/admin/upgrade-requests/{req['id']}/approve",
+                                    headers=admin_headers, timeout=15,
+                                )
+                                if ar.status_code == 200:
+                                    st.success(ar.json()["message"])
+                                else:
+                                    st.error(ar.json().get("detail", "Approve failed"))
+                                st.rerun()
+                        with c2:
+                            if st.button("❌ Reject", key=f"reject_{req['id']}"):
+                                rr = requests.post(
+                                    f"{API_BASE}/admin/upgrade-requests/{req['id']}/reject",
+                                    headers=admin_headers, timeout=15,
+                                )
+                                if rr.status_code == 200:
+                                    st.success(rr.json()["message"])
+                                else:
+                                    st.error(rr.json().get("detail", "Reject failed"))
+                                st.rerun()
+                        st.divider()
+            except Exception as e:
+                st.error(f"Couldn't reach server: {e}")
 
 
 # ══════════════════════════════════════════════
