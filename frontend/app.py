@@ -355,7 +355,7 @@ else:
             with st.expander("🔑 API Key"):
                 st.code(user["api_key"], language="text")
 
-        if st.button("Logout", use_container_width=True):
+    if st.button("Logout", use_container_width=True):
             st.session_state.token = None
             st.session_state.user = None
             st.rerun()
