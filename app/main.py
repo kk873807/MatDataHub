@@ -9,9 +9,11 @@ Then open:
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine, Base
-from app.routers import materials, auth, admin
+from app.routers import materials, auth, admin, feedback   # <-- added feedback
+
 # Create tables on startup (safe to call multiple times)
 Base.metadata.create_all(bind=engine)
+
 app = FastAPI(
     title="MatDataHub API",
     description="Engineering Material Data API - Search, filter, and compare 500+ engineering materials.",
@@ -20,10 +22,13 @@ app = FastAPI(
         "name": "MatDataHub",
     },
 )
+
 # Register route modules
 app.include_router(materials.router, prefix="/api/v1")
 app.include_router(auth.router, prefix="/api/v1")
 app.include_router(admin.router, prefix="/api/v1")
+app.include_router(feedback.router, prefix="/api/v1")       # <-- added feedback
+
 # Allow cross-origin requests (so Streamlit Cloud can call Render-hosted API)
 app.add_middleware(
     CORSMiddleware,
@@ -32,12 +37,14 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
 @app.get("/")
 def root():
     """Health check / welcome endpoint."""
     return {
         "app": "MatDataHub API",
-        "version": "0.1.0",
+        "version": "0.2.0",
         "docs": "/docs",
         "status": "running",
     }
