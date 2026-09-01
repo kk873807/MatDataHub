@@ -62,9 +62,14 @@ def upgrade_tier(tier: str):
         if resp.status_code == 200:
             data = resp.json()
             st.session_state["token"] = data["token"]
-            st.session_state["tier"] = data["tier"]
-            if data.get("api_key"):
-                st.session_state["api_key"] = data["api_key"]
+            # Update the SAME dict the rest of the app reads tier/api_key from
+            # (welcome badge, Browse tab gate, Compare tab compare_max all use
+            # st.session_state.user.get("tier", ...)) instead of a separate,
+            # disconnected "tier" key that only this block was reading.
+            if st.session_state.get("user"):
+                st.session_state["user"]["tier"] = data["tier"]
+                if data.get("api_key"):
+                    st.session_state["user"]["api_key"] = data["api_key"]
             st.sidebar.success(data["message"])
             st.rerun()
         else:
@@ -331,31 +336,30 @@ with st.sidebar:
     if st.session_state.token and st.session_state.user:
         # ── Logged in view ──
         user = st.session_state.user
-        tier_badge = TIER_BADGES.get(user.get("tier", "free"), "🆓 Free")
+        current_tier = user.get("tier", "free")
+        tier_badge = TIER_BADGES.get(current_tier, "🆓 Free")
         st.success(f"Welcome, **{user.get('name') or user['email']}**!")
         st.caption(f"Tier: {tier_badge}")
-        
-current_tier = st.session_state.get("tier", "free")
 
-st.sidebar.markdown("---")
-if current_tier == "free":
-    st.sidebar.caption("🧪 Test mode — instant, no payment yet")
-    if st.sidebar.button("⭐ Upgrade to Pro — ₹499/mo"):
-        upgrade_tier("pro")
-    if st.sidebar.button("🚀 Upgrade to Advanced — ₹1499/mo"):
-        upgrade_tier("advanced")
-elif current_tier == "pro":
-    st.sidebar.caption("🧪 Test mode — instant, no payment yet")
-    if st.sidebar.button("🚀 Upgrade to Advanced — ₹1499/mo"):
-        upgrade_tier("advanced")
-else:
-    st.sidebar.success("You're on the Advanced plan 🚀")
+        st.markdown("---")
+        if current_tier == "free":
+            st.caption("🧪 Test mode — instant, no payment yet")
+            if st.button("⭐ Upgrade to Pro — ₹499/mo"):
+                upgrade_tier("pro")
+            if st.button("🚀 Upgrade to Advanced — ₹1499/mo"):
+                upgrade_tier("advanced")
+        elif current_tier == "pro":
+            st.caption("🧪 Test mode — instant, no payment yet")
+            if st.button("🚀 Upgrade to Advanced — ₹1499/mo"):
+                upgrade_tier("advanced")
+        else:
+            st.success("You're on the Advanced plan 🚀")
 
-    if user.get("api_key"):
+        if user.get("api_key"):
             with st.expander("🔑 API Key"):
                 st.code(user["api_key"], language="text")
 
-    if st.button("Logout", use_container_width=True):
+        if st.button("Logout", use_container_width=True):
             st.session_state.token = None
             st.session_state.user = None
             st.rerun()
