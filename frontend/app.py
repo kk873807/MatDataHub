@@ -46,7 +46,6 @@ st.set_page_config(
 )
 
 
-
 def upgrade_tier(tier: str):
     """
     Submit an upgrade REQUEST — this does NOT change the user's tier.
@@ -66,9 +65,6 @@ def upgrade_tier(tier: str):
         )
         if resp.status_code == 200:
             data = resp.json()
-            # Only pending-request fields change here — the actual "tier"
-            # value is updated later by an admin, then picked up client-side
-            # via the "Check status" button (which re-fetches /auth/me).
             if st.session_state.get("user"):
                 st.session_state["user"]["upgrade_status"] = data["upgrade_status"]
                 st.session_state["user"]["requested_tier"] = data["requested_tier"]
@@ -79,30 +75,49 @@ def upgrade_tier(tier: str):
     except Exception as e:
         st.sidebar.error(f"Couldn't reach the server: {e}")
 
+
 # ── Custom CSS ──
 st.markdown("""
 <style>
-    .main-header {
-        font-size: 2.2rem;
-        font-weight: 700;
-        color: #1E3A5F;
-        margin-bottom: 0;
+    .hero-title {
+        font-size: 3.2rem;
+        font-weight: 800;
+        background: linear-gradient(90deg, #1E3A5F 0%, #2E86AB 50%, #4FC3A1 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.2rem;
+        letter-spacing: -1px;
     }
-    .sub-header {
-        font-size: 1.1rem;
-        color: #666;
-        margin-top: -10px;
-        margin-bottom: 20px;
+    .hero-sub {
+        font-size: 1.25rem;
+        color: #555;
+        margin-bottom: 1.5rem;
+        font-weight: 400;
     }
+    .stat-card {
+        background: linear-gradient(135deg, #f8f9fb 0%, #eef2f7 100%);
+        border-radius: 14px;
+        padding: 18px 10px;
+        text-align: center;
+        border: 1px solid #e3e8ef;
+    }
+    .stat-num { font-size: 1.8rem; font-weight: 700; color: #1E3A5F; }
+    .stat-label { font-size: 0.85rem; color: #777; }
+    .feature-card {
+        background: white;
+        border-radius: 14px;
+        padding: 20px;
+        border: 1px solid #e8ecf1;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        height: 100%;
+    }
+    .feature-card h4 { margin-bottom: 6px; color: #1E3A5F; }
+    .feature-card p { color: #666; font-size: 0.92rem; margin: 0; }
     .compare-better { color: #28a745; font-weight: 600; }
     .compare-worse  { color: #dc3545; }
 </style>
 """, unsafe_allow_html=True)
-
-
-# ── Header ──
-st.markdown('<p class="main-header">MatDataHub</p>', unsafe_allow_html=True)
-st.markdown('<p class="sub-header">Engineering Material Properties Database  |  Search, Filter & Compare</p>', unsafe_allow_html=True)
 
 
 # ══════════════════════════════════════════════
@@ -148,16 +163,7 @@ def api_get_auth(path, timeout=30):
 # ══════════════════════════════════════════════
 
 def api_get(path, params=None, retries=3, timeout=60):
-    """Make an AUTHENTICATED API GET request with automatic retries for cold starts.
-
-    Sends the logged-in user's token (if any) via get_auth_headers(), so the
-    backend can identify the caller and apply per-tier rate limiting.
-
-    Returns {"ok": True, "data": <json>} on success, or
-    {"ok": False, "error": <message>, "url": <url>, "status_code": <int>} on failure.
-    A non-2xx HTTP response (e.g. 401/403/404/422/429/500) is treated as a failure,
-    not silently wrapped as "ok" data.
-    """
+    """Make an AUTHENTICATED API GET request with automatic retries for cold starts."""
     url = f"{API_BASE}{path}"
     last_err = None
     for attempt in range(retries):
@@ -186,7 +192,6 @@ def api_get(path, params=None, retries=3, timeout=60):
 
             if r.status_code >= 400:
                 last_err = f"HTTP {r.status_code}: {payload if payload is not None else r.text[:200]}"
-                # Client errors (4xx) won't fix themselves on retry.
                 if r.status_code < 500:
                     return {"ok": False, "error": last_err, "url": url, "status_code": r.status_code}
                 if attempt < retries - 1:
@@ -223,6 +228,19 @@ def fetch_material_detail(mat_id):
     if result["ok"]:
         return result["data"]
     return None
+
+
+def submit_feedback(name, email, category, message, rating, page_context):
+    """Submit user feedback to the backend. Works for anonymous or logged-in users."""
+    body = {
+        "name": name or None,
+        "email": email or None,
+        "category": category,
+        "message": message,
+        "rating": rating,
+        "page_context": page_context,
+    }
+    return api_post("/feedback/", body)
 
 
 def show_api_error(result, retry_key):
@@ -314,19 +332,16 @@ def render_radar_chart(selections, mat_details, all_materials, tier):
             fig,
             width="stretch",
             config={
-                "displayModeBar": False,  # hide the whole toolbar (no zoom, pan, etc.)
+                "displayModeBar": False,
                 "scrollZoom": False,
             },
         )
         st.caption("Hover over the shape for exact values. Click a material's name in the legend to toggle it on/off. Note: for Density and Cost, *lower* is usually better.")
 
 # ══════════════════════════════════════════════
-#  SIDEBAR: Account (Login / Register / Profile) — sidebar is reserved
-#  exclusively for account/admin controls; Filters live in the main
-#  content area of the Browse tab (see below).
+#  SIDEBAR: Account (Login / Register / Profile)
 # ══════════════════════════════════════════════
 
-# Initialize session state
 if "token" not in st.session_state:
     st.session_state.token = None
 if "user" not in st.session_state:
@@ -338,7 +353,6 @@ with st.sidebar:
     st.markdown("### 🔐 Account")
 
     if st.session_state.token and st.session_state.user:
-        # ── Logged in view ──
         user = st.session_state.user
         current_tier = user.get("tier", "free")
         tier_badge = TIER_BADGES.get(current_tier, "🆓 Free")
@@ -350,8 +364,6 @@ with st.sidebar:
 
         st.markdown("---")
         if upgrade_status == "pending":
-            # A request is already in flight — don't show more upgrade buttons,
-            # just let the user re-check whether it's been approved yet.
             st.info(f"⏳ Your request to upgrade to **{requested_tier}** is pending approval.")
             if st.button("🔄 Check status"):
                 profile = api_get_auth("/auth/me")
@@ -383,7 +395,6 @@ with st.sidebar:
             st.rerun()
 
     else:
-        # ── Login / Register tabs ──
         auth_tab = st.radio("Auth mode", ["Login", "Register"], horizontal=True, label_visibility="collapsed")
 
         if auth_tab == "Login":
@@ -396,7 +407,6 @@ with st.sidebar:
                     result = api_post("/auth/login", {"email": email, "password": password})
                     if result["ok"]:
                         st.session_state.token = result["data"]["access_token"]
-                        # Fetch full profile
                         profile = api_get_auth("/auth/me")
                         if profile["ok"]:
                             st.session_state.user = profile["data"]
@@ -420,7 +430,6 @@ with st.sidebar:
                     result = api_post("/auth/register", body)
                     if result["ok"]:
                         st.session_state.token = result["data"]["access_token"]
-                        # Fetch full profile
                         profile = api_get_auth("/auth/me")
                         if profile["ok"]:
                             st.session_state.user = profile["data"]
@@ -432,9 +441,7 @@ with st.sidebar:
 
     st.divider()
 
-    # ── Admin panel: approve/reject pending upgrade requests ──
-    # Gated by ADMIN_SECRET (set the same value in Render + Streamlit secrets).
-    # This is a single-operator password gate, not a full roles system.
+    # ── Admin panel: approve/reject pending upgrade requests + view feedback ──
     with st.expander("🛠️ Admin"):
         admin_pw = st.text_input("Admin password", type="password", key="admin_pw")
         if admin_pw:
@@ -447,6 +454,7 @@ with st.sidebar:
                     st.error(f"Error: {r.status_code}")
                 else:
                     pending = r.json()
+                    st.markdown("**⏳ Pending Upgrade Requests**")
                     if not pending:
                         st.caption("No pending requests.")
                     for req in pending:
@@ -479,26 +487,112 @@ with st.sidebar:
             except Exception as e:
                 st.error(f"Couldn't reach server: {e}")
 
+            # ── Recent Feedback ──
+            st.markdown("**📬 Recent Feedback**")
+            try:
+                fr = requests.get(f"{API_BASE}/feedback/", headers=admin_headers, timeout=15)
+                if fr.status_code == 403:
+                    st.error("Wrong password.")
+                elif fr.status_code != 200:
+                    st.caption(f"Could not load feedback ({fr.status_code}).")
+                else:
+                    fb_list = fr.json()
+                    if not fb_list:
+                        st.caption("No feedback yet.")
+                    for item in fb_list[:20]:
+                        stars = "⭐" * (item.get("rating") or 0)
+                        st.markdown(f"**{item['category']}** {stars} — *{item.get('name') or 'Anonymous'}*")
+                        st.caption(item["message"])
+                        st.caption(f"{item.get('email','—')} · {item['created_at']} · {item['status']}")
+                        st.divider()
+            except Exception as e:
+                st.caption(f"Error loading feedback: {e}")
+
 
 # ══════════════════════════════════════════════
-#  TABS: Browse | Compare
+#  TABS: Home | Browse | Compare | Feedback
 # ══════════════════════════════════════════════
-tab_browse, tab_compare = st.tabs(["Browse Materials", "Compare Materials"])
+tab_home, tab_browse, tab_compare, tab_feedback = st.tabs(
+    ["🏠 Home", "🔍 Browse Materials", "⚖️ Compare Materials", "💬 Feedback"]
+)
 
 
 # ══════════════════════════════════════════════
-#  TAB 1: BROWSE (existing functionality)
+#  TAB 0: HOME
+# ══════════════════════════════════════════════
+with tab_home:
+    st.markdown('<p class="hero-title">🔧 MatDataHub</p>', unsafe_allow_html=True)
+    st.markdown(
+        '<p class="hero-sub">The engineering material database that gets you to the right material, faster — '
+        'search, filter, and compare 75+ metals, polymers, ceramics & composites side by side.</p>',
+        unsafe_allow_html=True,
+    )
+
+    if st.session_state.get("user"):
+        st.info(f"👋 Welcome back, **{st.session_state.user.get('name') or st.session_state.user['email']}**! "
+                f"Jump into **Browse Materials** or **Compare Materials** using the tabs above.")
+    else:
+        st.info("👋 New here? Browse materials freely — sign in from the sidebar to unlock comparisons, "
+                "similarity search, and saved history.")
+
+    st.markdown("#### At a glance")
+    s1, s2, s3, s4 = st.columns(4)
+    for col, num, label in [
+        (s1, "75+", "Materials"),
+        (s2, "4", "Categories"),
+        (s3, "20+", "Properties Tracked"),
+        (s4, "MatWeb · BIS · ASM", "Data Sources"),
+    ]:
+        with col:
+            st.markdown(
+                f'<div class="stat-card"><div class="stat-num">{num}</div><div class="stat-label">{label}</div></div>',
+                unsafe_allow_html=True,
+            )
+
+    st.markdown("####  ")
+    st.markdown("#### Why MatDataHub")
+    f1, f2, f3 = st.columns(3)
+    with f1:
+        st.markdown(
+            '<div class="feature-card"><h4>🔍 Smart Search & Filters</h4>'
+            '<p>Search by name, grade, standard, or application — then narrow by strength, cost, or thermal conductivity.</p></div>',
+            unsafe_allow_html=True,
+        )
+    with f2:
+        st.markdown(
+            '<div class="feature-card"><h4>⚖️ Side-by-Side Compare</h4>'
+            '<p>Put up to 5 materials head-to-head with auto-generated insights and radar charts.</p></div>',
+            unsafe_allow_html=True,
+        )
+    with f3:
+        st.markdown(
+            '<div class="feature-card"><h4>🎯 Find Similar Materials</h4>'
+            '<p>Discover close alternatives to any material based on real property data — great for substitutions.</p></div>',
+            unsafe_allow_html=True,
+        )
+
+    st.markdown("####  ")
+    st.markdown("#### Get started")
+    g1, g2 = st.columns(2)
+    with g1:
+        st.markdown("**🔍 Browse Materials** — head to the *Browse Materials* tab above to search and filter the full database.")
+    with g2:
+        st.markdown("**⚖️ Compare Materials** — head to the *Compare Materials* tab to pick 2+ materials and see them side by side.")
+
+    st.markdown("####  ")
+    st.caption("Have an idea or spotted an issue? Use the **💬 Feedback** tab — we read every submission.")
+
+
+# ══════════════════════════════════════════════
+#  TAB 1: BROWSE
 # ══════════════════════════════════════════════
 with tab_browse:
 
-    # ── Search bar ──
     search_query = st.text_input(
         "Search materials by name, grade, standard, or application...",
         placeholder="e.g. stainless, 6061, aerospace, corrosion",
     )
 
-    # ── Filters — main content area (not the sidebar, which is reserved
-    #     for Account/Admin). Collapsible so it doesn't crowd the results. ──
     with st.expander("🔍 Filters", expanded=True):
         fcol1, fcol2, fcol3, fcol4, fcol5 = st.columns(5)
 
@@ -529,9 +623,8 @@ with tab_browse:
         with fcol5:
             per_page = st.selectbox("Results per page", [10, 20, 50], index=1)
 
-    # ── Build API call ──
     with st.spinner("Loading materials (API may take ~30s on first load)..."):
-        wake_api()  # ping root to trigger cold start
+        wake_api()
         if search_query:
             params = {"q": search_query, "per_page": per_page}
             result = api_get("/materials/search", params=params)
@@ -553,7 +646,6 @@ with tab_browse:
         st.warning("⏳ API returned unexpected data. Please refresh.")
     else:
         data = result["data"]
-        # ── Summary metrics ──
         total = data["total"]
         col1, col2, col3 = st.columns(3)
         with col1:
@@ -569,7 +661,6 @@ with tab_browse:
 
         st.divider()
 
-        # ── Results Table ──
         if total == 0:
             st.info("No materials match your search/filter criteria. Try adjusting your filters.")
         else:
@@ -603,7 +694,6 @@ with tab_browse:
             df = pd.DataFrame(table_data)
             st.dataframe(df, width='stretch', hide_index=True)
 
-            # ── Detail View ──
             st.divider()
             st.subheader("Material Detail View")
 
@@ -673,7 +763,6 @@ with tab_browse:
                             st.markdown("#### Applications")
                             st.write(m["applications"])
 
-                    # ── Find Similar Materials (8f) ──
                     st.divider()
                     user_tier = (st.session_state.user or {}).get("tier", "free")
 
@@ -726,19 +815,13 @@ with tab_compare:
     name_to_id = {m["name"]: m["id"] for m in all_materials}
     sorted_names = sorted(name_to_id.keys())
 
-    # Tier-based cap on how many materials this user can select (UI courtesy —
-    # the backend /materials/compare endpoint enforces this for real).
     user_tier = (st.session_state.user or {}).get("tier", "free")
     compare_max = FRONTEND_COMPARE_MAX.get(user_tier, 2)
 
-    # Even "unlimited" (advanced, compare_max=99) shouldn't render 99 dropdowns —
-    # cap the number of *slots shown* at a sane UI limit. The backend is the
-    # real source of truth for what's actually allowed.
     UI_MAX_SELECTORS = min(compare_max, 8)
 
     st.caption(f"Your **{TIER_BADGES.get(user_tier, user_tier)}** tier allows comparing up to **{compare_max}** materials at once.")
 
-    # ── Material selectors — rendered dynamically, up to UI_MAX_SELECTORS ──
     selections = []
     SELECTORS_PER_ROW = 4
     for row_start in range(0, UI_MAX_SELECTORS, SELECTORS_PER_ROW):
@@ -760,7 +843,6 @@ with tab_compare:
     if len(selections) < 2:
         st.info("Select at least 2 materials above to start comparing.")
     else:
-        # Single backend call — server validates & enforces compare_max for real.
         ids = [name_to_id[name] for name in selections]
         with st.spinner("Loading comparison..."):
             compare_result = api_get("/materials/compare", params={"ids": ids})
@@ -773,7 +855,6 @@ with tab_compare:
 
         st.divider()
 
-        # ── Comparison Table ──
         COMPARE_PROPS = [
             ("Category",               "category",              None),
             ("Subcategory",             "subcategory",           None),
@@ -797,7 +878,6 @@ with tab_compare:
             ("Data Source",             "source_name",           None),
         ]
 
-        # Build comparison data
         rows = []
         for label, key, best_dir in COMPARE_PROPS:
             row = {"Property": label}
@@ -810,16 +890,12 @@ with tab_compare:
             rows.append(row)
 
         compare_df = pd.DataFrame(rows)
-        # Ensure all columns are strings for clean display
         for col in compare_df.columns:
             compare_df[col] = compare_df[col].astype(str)
 
         st.markdown("#### Properties Comparison")
         st.dataframe(compare_df, width='stretch', hide_index=True, height=735)
 
-        # ── Bar Charts ──
-        st.divider()
-        # ── Radar Chart ──
         st.divider()
         st.markdown("#### 🕸️ Radar Chart — Property Fingerprint")
         render_radar_chart(selections, mat_details, all_materials, user_tier)
@@ -841,7 +917,6 @@ with tab_compare:
             for name, m in zip(selections, mat_details):
                 val = m.get(chart_key)
                 if val is not None and isinstance(val, (int, float)):
-                    # Truncate long names for chart readability
                     short_name = name[:25] + "..." if len(name) > 28 else name
                     chart_data[short_name] = val
 
@@ -854,15 +929,12 @@ with tab_compare:
                     )
                     st.bar_chart(chart_df, x="Material", y="Value", horizontal=False)
 
-        # ── Key Differences Summary ──
         st.divider()
         st.markdown("#### Key Takeaways")
 
-        # Auto-generate comparison insights (based on the first two selected materials)
         insights = []
         m0, m1 = mat_details[0], mat_details[1]
 
-        # Strength comparison
         t0 = m0.get("tensile_strength_max")
         t1 = m1.get("tensile_strength_max")
         if t0 is not None and t1 is not None and min(t0, t1) > 0:
@@ -870,7 +942,6 @@ with tab_compare:
             pct = abs(t0 - t1) / min(t0, t1) * 100
             insights.append(f"**{stronger}** is **{pct:.0f}% stronger** in tensile strength")
 
-        # Weight comparison
         d0 = m0.get("density")
         d1 = m1.get("density")
         if d0 is not None and d1 is not None and max(d0, d1) > 0:
@@ -878,7 +949,6 @@ with tab_compare:
             pct = abs(d0 - d1) / max(d0, d1) * 100
             insights.append(f"**{lighter}** is **{pct:.0f}% lighter**")
 
-        # Cost comparison
         c0 = m0.get("cost_per_kg_min")
         c1 = m1.get("cost_per_kg_min")
         if c0 is not None and c1 is not None and max(c0, c1) > 0:
@@ -886,7 +956,6 @@ with tab_compare:
             pct = abs(c0 - c1) / max(c0, c1) * 100
             insights.append(f"**{cheaper}** is **{pct:.0f}% cheaper**")
 
-        # Thermal comparison
         th0 = m0.get("thermal_conductivity")
         th1 = m1.get("thermal_conductivity")
         if th0 is not None and th1 is not None:
@@ -899,6 +968,50 @@ with tab_compare:
                 st.markdown(f"- {insight}")
         else:
             st.write("Select materials with more numeric properties for auto-generated insights.")
+
+
+# ══════════════════════════════════════════════
+#  TAB 3: FEEDBACK
+# ══════════════════════════════════════════════
+with tab_feedback:
+    st.markdown("## 💬 We'd love your feedback")
+    st.caption("Found a bug? Want a new feature? Just want to say hi? Tell us below.")
+
+    user = st.session_state.get("user")
+    default_name = user.get("name", "") if user else ""
+    default_email = user.get("email", "") if user else ""
+
+    with st.form("feedback_form", clear_on_submit=True):
+        fcol1, fcol2 = st.columns(2)
+        with fcol1:
+            fb_name = st.text_input("Name (optional)", value=default_name)
+        with fcol2:
+            fb_email = st.text_input("Email (optional)", value=default_email)
+
+        fb_category = st.selectbox(
+            "What's this about?",
+            ["General Feedback", "Bug Report", "Feature Request", "Data Correction", "Other"],
+        )
+        fb_rating = st.slider("How's your experience so far?", 1, 5, 4, help="1 = Poor, 5 = Excellent")
+        fb_message = st.text_area(
+            "Your message",
+            placeholder="Tell us what's working, what's not, or what you'd love to see next...",
+            height=140,
+        )
+        fb_submit = st.form_submit_button("📤 Send Feedback", use_container_width=True)
+
+        if fb_submit:
+            if not fb_message or len(fb_message.strip()) < 3:
+                st.error("Please write a bit more detail before submitting.")
+            else:
+                result = submit_feedback(
+                    fb_name, fb_email, fb_category, fb_message.strip(), fb_rating, "Feedback Tab"
+                )
+                if result["ok"]:
+                    st.success("Thanks! Your feedback has been recorded. 🙌")
+                    st.balloons()
+                else:
+                    st.error(result.get("error", "Couldn't submit feedback. Try again later."))
 
 
 # ── Footer ──
