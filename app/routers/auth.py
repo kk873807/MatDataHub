@@ -1,126 +1,155 @@
 """
-Auth API routes.
-
-Endpoints:
-    POST /auth/register  - Create a new account
-    POST /auth/login     - Login and get JWT token
-    GET  /auth/me        - Get current user profile (requires auth)
-    POST /auth/upgrade   - Upgrade current user's tier (requires auth)
+Pydantic schemas for the Materials API.
+These define what data looks like in API requests and responses.
 """
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-
-from app.database import get_db
-from app.models import User
-from app.auth import (
-    hash_password,
-    verify_password,
-    create_access_token,
-    generate_api_key,
-    get_current_user,
-    TIER_LIMITS,
-)
-from app.schemas import (
-    RegisterRequest,
-    LoginRequest,
-    TokenResponse,
-    UserProfile,
-    UpgradeRequest,
-    UpgradeResponse,
-)
-
-router = APIRouter(prefix="/auth", tags=["Authentication"])
-
-VALID_TIERS = {"pro", "advanced"}
+from pydantic import BaseModel, Field
+from typing import Optional
+from datetime import datetime
+from typing import Optional 
 
 
-# ──────────────────────────────────────────────
-# POST /auth/register
-# ──────────────────────────────────────────────
-@router.post("/register", response_model=TokenResponse, status_code=201)
-def register(req: RegisterRequest, db: Session = Depends(get_db)):
-    existing = db.query(User).filter(User.email == req.email.lower().strip()).first()
-    if existing:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="An account with this email already exists. Please login instead.",
-        )
+class MaterialBase(BaseModel):
+    """Fields shared by create and response schemas."""
+    name: str = Field(..., min_length=1, max_length=200, examples=["AISI 304 Stainless Steel"])
+    category: str = Field(..., min_length=1, max_length=50, examples=["Metal"])
+    subcategory: Optional[str] = Field(None, max_length=100, examples=["Stainless Steel"])
+    grade: Optional[str] = Field(None, max_length=100, examples=["304"])
+    standard: Optional[str] = Field(None, max_length=200, examples=["ASTM A240"])
 
-    user = User(
-        email=req.email.lower().strip(),
-        hashed_password=hash_password(req.password),
-        name=req.name,
-        tier="free",
-        api_key=generate_api_key(),
-    )
-    db.add(user)
-    db.commit()
-    db.refresh(user)
+    # Mechanical
+    density: Optional[float] = Field(None, ge=0, examples=[7.93])
+    tensile_strength_min: Optional[float] = Field(None, ge=0, examples=[515.0])
+    tensile_strength_max: Optional[float] = Field(None, ge=0, examples=[750.0])
+    yield_strength_min: Optional[float] = Field(None, ge=0, examples=[205.0])
+    yield_strength_max: Optional[float] = Field(None, ge=0, examples=[310.0])
+    elongation: Optional[float] = Field(None, ge=0, examples=[40.0])
+    hardness: Optional[str] = Field(None, max_length=50, examples=["85 HRB"])
+    elastic_modulus: Optional[float] = Field(None, ge=0, examples=[193.0])
 
-    token = create_access_token(user.id, user.email, user.tier)
+    # Thermal
+    thermal_conductivity: Optional[float] = Field(None, ge=0, examples=[16.2])
+    specific_heat: Optional[float] = Field(None, ge=0, examples=[500.0])
+    melting_point_min: Optional[float] = Field(None, examples=[1400.0])
+    melting_point_max: Optional[float] = Field(None, examples=[1455.0])
+    max_service_temp: Optional[float] = Field(None, examples=[870.0])
 
-    return TokenResponse(access_token=token, tier=user.tier, name=user.name)
+    # Cost
+    cost_per_kg_min: Optional[float] = Field(None, ge=0, examples=[250.0])
+    cost_per_kg_max: Optional[float] = Field(None, ge=0, examples=[400.0])
+    cost_currency: Optional[str] = Field("INR", max_length=3)
 
+    # Descriptive
+    applications: Optional[str] = Field(None, examples=["Kitchen sinks, chemical tanks, food processing"])
+    equivalent_grades: Optional[str] = Field(None, examples=["SUS 304 (JIS), X5CrNi18-10 (EN)"])
+    composition: Optional[str] = Field(None, examples=["Fe 66-74%, Cr 18-20%, Ni 8-10.5%"])
+    description: Optional[str] = None
 
-# ──────────────────────────────────────────────
-# POST /auth/login
-# ──────────────────────────────────────────────
-@router.post("/login", response_model=TokenResponse)
-def login(req: LoginRequest, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == req.email.lower().strip()).first()
-
-    if not user or not verify_password(req.password, user.hashed_password):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid email or password.",
-        )
-
-    if not user.is_active:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Account is deactivated. Please contact support.",
-        )
-
-    token = create_access_token(user.id, user.email, user.tier)
-
-    return TokenResponse(access_token=token, tier=user.tier, name=user.name)
+    # Source
+    source_url: Optional[str] = Field(None, max_length=500)
+    source_name: Optional[str] = Field(None, max_length=100, examples=["MatWeb"])
+    is_verified: Optional[bool] = False
 
 
-# ──────────────────────────────────────────────
-# GET /auth/me
-# ──────────────────────────────────────────────
-@router.get("/me", response_model=UserProfile)
-def get_profile(current_user: User = Depends(get_current_user)):
-    return current_user
+class MaterialCreate(MaterialBase):
+    """Schema for creating a new material (POST request body)."""
+    pass
 
 
-# ──────────────────────────────────────────────
-# POST /auth/upgrade
-# ──────────────────────────────────────────────
-@router.post("/upgrade", response_model=UpgradeResponse)
-def upgrade_tier(
-    payload: UpgradeRequest,
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db),
-):
-    tier = payload.tier.lower()
-    if tier not in VALID_TIERS:
-        raise HTTPException(status_code=400, detail="tier must be 'pro' or 'advanced'")
+class MaterialResponse(MaterialBase):
+    """Schema for returning a material (API response)."""
+    id: int
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
-    current_user.tier = tier
+    model_config = {"from_attributes": True}
 
-    if tier == "advanced" and not current_user.api_key:
-        current_user.api_key = generate_api_key()
 
-    db.commit()
-    db.refresh(current_user)
+class MaterialListResponse(BaseModel):
+    """Paginated list response."""
+    total: int
+    page: int
+    per_page: int
+    materials: list[MaterialResponse]
 
-    # Same 3-arg call signature as /login and /register use
-    new_token = create_access_token(current_user.id, current_user.email, current_user.tier)
 
-    return UpgradeResponse(
-        message=f"Upgraded to {tier}! 🎉",
-        tier=current_user.tier,
-        api_key=current_user.api_key,
-        token=new_token,
-    )
+# ══════════════════════════════════════════════
+#  Auth Schemas
+# ══════════════════════════════════════════════
+
+class RegisterRequest(BaseModel):
+    """Schema for user registration."""
+    email: str = Field(..., examples=["kishan@example.com"])
+    password: str = Field(..., min_length=6, examples=["securepass123"])
+    name: Optional[str] = Field(None, max_length=100, examples=["Kishan"])
+
+
+class LoginRequest(BaseModel):
+    """Schema for user login."""
+    email: str = Field(..., examples=["kishan@example.com"])
+    password: str = Field(..., examples=["securepass123"])
+
+
+class TokenResponse(BaseModel):
+    """Returned after successful register/login."""
+    access_token: str
+    token_type: str = "bearer"
+    tier: str
+    name: Optional[str] = None
+
+
+class UserProfile(BaseModel):
+    """User profile info returned by /auth/me."""
+    id: int
+    email: str
+    name: Optional[str] = None
+    tier: str
+    api_key: Optional[str] = None
+    created_at: Optional[datetime] = None
+
+    # Upgrade-request state, so the frontend can show a "pending" badge
+    # after a fresh /auth/me refresh (e.g. the sidebar "Check status" button).
+    requested_tier: Optional[str] = None
+    upgrade_status: Optional[str] = None
+
+    model_config = {"from_attributes": True}
+
+
+# ══════════════════════════════════════════════
+#  Upgrade Request Schemas (user-facing)
+# ══════════════════════════════════════════════
+
+class UpgradeRequest(BaseModel):
+    """Body sent by the frontend when a user requests a tier upgrade."""
+    tier: str  # "pro" or "advanced"
+
+
+class UpgradeRequestResponse(BaseModel):
+    """
+    Returned by POST /auth/upgrade.
+    Note: this confirms the REQUEST was submitted — it does NOT mean the
+    tier changed. The tier only changes once an admin approves it.
+    """
+    message: str
+    upgrade_status: str
+    requested_tier: str
+
+
+# ══════════════════════════════════════════════
+#  Admin Schemas (approval workflow)
+# ══════════════════════════════════════════════
+
+class PendingRequestOut(BaseModel):
+    """One row in the admin's pending-upgrade-requests list."""
+    id: int
+    email: str
+    name: Optional[str] = None
+    current_tier: str
+    requested_tier: str
+    requested_at: Optional[datetime] = None
+
+
+class AdminActionResponse(BaseModel):
+    """Returned after an admin approves or rejects a request."""
+    message: str
+    user_email: str
+    tier: str
