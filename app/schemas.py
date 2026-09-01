@@ -106,14 +106,50 @@ class UserProfile(BaseModel):
     api_key: Optional[str] = None
     created_at: Optional[datetime] = None
 
+    # Upgrade-request state, so the frontend can show a "pending" badge
+    # after a fresh /auth/me refresh (e.g. the sidebar "Check status" button).
+    requested_tier: Optional[str] = None
+    upgrade_status: Optional[str] = None
+
     model_config = {"from_attributes": True}
 
 
+# ══════════════════════════════════════════════
+#  Upgrade Request Schemas (user-facing)
+# ══════════════════════════════════════════════
+
 class UpgradeRequest(BaseModel):
+    """Body sent by the frontend when a user requests a tier upgrade."""
     tier: str  # "pro" or "advanced"
 
-class UpgradeResponse(BaseModel):
+
+class UpgradeRequestResponse(BaseModel):
+    """
+    Returned by POST /auth/upgrade.
+    Note: this confirms the REQUEST was submitted — it does NOT mean the
+    tier changed. The tier only changes once an admin approves it.
+    """
     message: str
+    upgrade_status: str
+    requested_tier: str
+
+
+# ══════════════════════════════════════════════
+#  Admin Schemas (approval workflow)
+# ══════════════════════════════════════════════
+
+class PendingRequestOut(BaseModel):
+    """One row in the admin's pending-upgrade-requests list."""
+    id: int
+    email: str
+    name: Optional[str] = None
+    current_tier: str
+    requested_tier: str
+    requested_at: Optional[datetime] = None
+
+
+class AdminActionResponse(BaseModel):
+    """Returned after an admin approves or rejects a request."""
+    message: str
+    user_email: str
     tier: str
-    api_key: str | None = None
-    token: str
