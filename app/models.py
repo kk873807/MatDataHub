@@ -88,6 +88,12 @@ class User(Base):
         free     - All data visible, compare 2, no export
         pro      - Compare 5, export, find similar, AI advisor
         advanced - Unlimited compare, API access, PDF reports
+
+    Upgrade requests:
+        Upgrading tiers is a manual-approval flow, not instant. When a user
+        requests an upgrade, `requested_tier` and `upgrade_status` ("pending")
+        are set but `tier` is NOT changed. An admin approves/rejects via the
+        /admin endpoints, which is what actually updates `tier`.
     """
     __tablename__ = "users"
 
@@ -101,6 +107,11 @@ class User(Base):
 
     # API key for programmatic access (Advanced tier only)
     api_key = Column(String(64), unique=True, nullable=True, index=True)
+
+    # ---- Upgrade request tracking ----
+    requested_tier = Column(String(20), nullable=True)               # "pro" or "advanced" while pending
+    upgrade_status = Column(String(20), nullable=True)               # "pending" or None
+    requested_at = Column(DateTime(timezone=True), nullable=True)    # when the request was submitted
 
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
