@@ -98,4 +98,5 @@ Write a concise, professional engineering recommendation explaining why these sp
             "materials": mat_context
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail="Failed to generate AI recommendation.")
+        print(f"GEMINI ERROR: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to generate AI recommendation. Error: {str(e)}")
