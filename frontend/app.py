@@ -1,5 +1,5 @@
 """
-MatDataHub — Streamlit Frontend MVP
+MatDataHub â€” Streamlit Frontend MVP
 
 A searchable, filterable engineering material database with side-by-side comparison.
 Connects to the FastAPI backend.
@@ -17,7 +17,7 @@ import streamlit as st
 import plotly.graph_objects as go
 
 
-# ── Config ──
+# â”€â”€ Config â”€â”€
 # Priority: st.secrets > env var > hardcoded Render URL
 RENDER_API = "https://matdatahub-api.onrender.com/api/v1"
 
@@ -48,9 +48,7 @@ st.set_page_config(
 
 def upgrade_tier(tier: str):
     """
-    Submit an upgrade REQUEST — this does NOT change the user's tier.
-    The backend records requested_tier + upgrade_status="pending"; an admin
-    must approve it from the Admin panel before the tier actually changes.
+    Requests a Razorpay Payment Link for the selected tier and renders a checkout button.
     """
     token = st.session_state.get("token")
     if not token:
@@ -58,25 +56,26 @@ def upgrade_tier(tier: str):
         return
     try:
         resp = requests.post(
-            f"{API_BASE}/auth/upgrade",
+            f"{API_BASE}/payments/create-link",
             json={"tier": tier},
             headers={"Authorization": f"Bearer {token}"},
             timeout=30,
         )
         if resp.status_code == 200:
             data = resp.json()
-            if st.session_state.get("user"):
-                st.session_state["user"]["upgrade_status"] = data["upgrade_status"]
-                st.session_state["user"]["requested_tier"] = data["requested_tier"]
-            st.sidebar.success(data["message"])
-            st.rerun()
+            payment_url = data.get("payment_url")
+            if payment_url:
+                st.sidebar.markdown(f'**[🚀 Click here to Pay Securely via Razorpay]({payment_url})**')
+                st.sidebar.info("After payment, please refresh your profile to see the upgraded tier.")
+            else:
+                st.sidebar.error("Failed to generate payment URL.")
         else:
-            st.sidebar.error(f"Request failed: {resp.json().get('detail', 'Unknown error')}")
+            st.sidebar.error(f"Payment request failed: {resp.json().get('detail', 'Unknown error')}")
     except Exception as e:
         st.sidebar.error(f"Couldn't reach the server: {e}")
 
 
-# ── Custom CSS ──
+# â”€â”€ Custom CSS â”€â”€
 st.markdown("""
 <style>
     .block-container { padding-top: 4rem !important; }
@@ -123,9 +122,9 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-# ══════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 #  Auth helpers
-# ══════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 def get_auth_headers():
     """Return auth headers if user is logged in."""
@@ -149,7 +148,7 @@ def api_post(path, json_data=None, timeout=30):
 
 
 def api_get_auth(path, timeout=30):
-    """Make an authenticated API GET request (no retry — for profile etc.)."""
+    """Make an authenticated API GET request (no retry â€” for profile etc.)."""
     url = f"{API_BASE}{path}"
     try:
         r = requests.get(url, headers=get_auth_headers(), timeout=timeout)
@@ -161,9 +160,9 @@ def api_get_auth(path, timeout=30):
         return {"ok": False, "error": f"{type(e).__name__}: {e}"}
 
 
-# ══════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 #  Helper: API calls with retry for Render cold starts
-# ══════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 def api_get(path, params=None, retries=3, timeout=60):
     """Make an AUTHENTICATED API GET request with automatic retries for cold starts."""
@@ -250,26 +249,26 @@ def show_api_error(result, retry_key):
     """Render a friendly error, with special handling for 401/403/429."""
     status = result.get("status_code")
     if status == 401:
-        st.warning(f"🔒 {result.get('error')}")
+        st.warning(f"ðŸ”’ {result.get('error')}")
     elif status == 403:
-        st.warning(f"⭐ {result.get('error')}")
+        st.warning(f"â­ {result.get('error')}")
     elif status == 429:
-        st.warning(f"🚦 {result.get('error')}")
+        st.warning(f"ðŸš¦ {result.get('error')}")
     else:
-        st.error("❌ Could not reach the API server.")
+        st.error("âŒ Could not reach the API server.")
         st.code(f"URL: {result.get('url', 'N/A')}\nError: {result.get('error', 'Unknown')}", language="text")
-        if st.button("🔄 Retry", key=retry_key):
+        if st.button("ðŸ”„ Retry", key=retry_key):
             st.rerun()
 
 
-# Mirrors backend TIER_LIMITS[tier]["compare_max"] (app/auth.py) — used here
+# Mirrors backend TIER_LIMITS[tier]["compare_max"] (app/auth.py) â€” used here
 # only to shape the UI (hide/disable selectors). The backend's /materials/compare
 # endpoint is the actual enforcement point; this is a courtesy, not security.
 FRONTEND_COMPARE_MAX = {"free": 2, "pro": 5, "advanced": 99}
 
-# ══════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 #  Radar Chart helpers (8e)
-# ══════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 RADAR_PROPS = [
     ("Tensile Strength", "tensile_strength_max"),
@@ -329,7 +328,7 @@ def render_radar_chart(selections, mat_details, all_materials, tier):
 
     if tier == "free":
         st.plotly_chart(fig, config={"staticPlot": True}, width="stretch")
-        st.caption("🔒 Static preview — ⭐ upgrade to Pro for an interactive chart (hover values, toggle materials on/off).")
+        st.caption("ðŸ”’ Static preview â€” â­ upgrade to Pro for an interactive chart (hover values, toggle materials on/off).")
     else:
         st.plotly_chart(
             fig,
@@ -341,24 +340,24 @@ def render_radar_chart(selections, mat_details, all_materials, tier):
         )
         st.caption("Hover over the shape for exact values. Click a material's name in the legend to toggle it on/off. Note: for Density and Cost, *lower* is usually better.")
 
-# ══════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 #  SIDEBAR: Account (Login / Register / Profile)
-# ══════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 if "token" not in st.session_state:
     st.session_state.token = None
 if "user" not in st.session_state:
     st.session_state.user = None
 
-TIER_BADGES = {"free": "🆓 Free", "pro": "⭐ Pro", "advanced": "🚀 Advanced"}
+TIER_BADGES = {"free": "ðŸ†“ Free", "pro": "â­ Pro", "advanced": "ðŸš€ Advanced"}
 
 with st.sidebar:
-    st.markdown("### 🔐 Account")
+    st.markdown("### ðŸ” Account")
 
     if st.session_state.token and st.session_state.user:
         user = st.session_state.user
         current_tier = user.get("tier", "free")
-        tier_badge = TIER_BADGES.get(current_tier, "🆓 Free")
+        tier_badge = TIER_BADGES.get(current_tier, "ðŸ†“ Free")
         upgrade_status = user.get("upgrade_status")
         requested_tier = user.get("requested_tier")
 
@@ -367,8 +366,8 @@ with st.sidebar:
 
         st.markdown("---")
         if upgrade_status == "pending":
-            st.info(f"⏳ Your request to upgrade to **{requested_tier}** is pending approval.")
-            if st.button("🔄 Check status"):
+            st.info(f"â³ Your request to upgrade to **{requested_tier}** is pending approval.")
+            if st.button("ðŸ”„ Check status"):
                 profile = api_get_auth("/auth/me")
                 if profile["ok"]:
                     st.session_state.user = profile["data"]
@@ -376,20 +375,20 @@ with st.sidebar:
                 else:
                     st.error(profile.get("error", "Could not refresh status."))
         elif current_tier == "free":
-            st.caption("Upgrades are reviewed manually — you'll see a pending badge after requesting.")
-            if st.button("⭐ Request Upgrade to Pro — ₹499/mo"):
+            st.caption("Upgrades are reviewed manually â€” you'll see a pending badge after requesting.")
+            if st.button("â­ Request Upgrade to Pro â€” â‚¹499/mo"):
                 upgrade_tier("pro")
-            if st.button("🚀 Request Upgrade to Advanced — ₹1499/mo"):
+            if st.button("ðŸš€ Request Upgrade to Advanced â€” â‚¹1499/mo"):
                 upgrade_tier("advanced")
         elif current_tier == "pro":
-            st.caption("Upgrades are reviewed manually — you'll see a pending badge after requesting.")
-            if st.button("🚀 Request Upgrade to Advanced — ₹1499/mo"):
+            st.caption("Upgrades are reviewed manually â€” you'll see a pending badge after requesting.")
+            if st.button("ðŸš€ Request Upgrade to Advanced â€” â‚¹1499/mo"):
                 upgrade_tier("advanced")
         else:
-            st.success("You're on the Advanced plan 🚀")
+            st.success("You're on the Advanced plan ðŸš€")
 
         if user.get("api_key"):
-            with st.expander("🔑 API Key"):
+            with st.expander("ðŸ”‘ API Key"):
                 st.code(user["api_key"], language="text")
 
         if st.button("Logout", use_container_width=True):
@@ -444,8 +443,8 @@ with st.sidebar:
 
     st.divider()
 
-    # ── Admin panel: approve/reject pending upgrade requests + view feedback ──
-    with st.expander("🛠️ Admin"):
+    # â”€â”€ Admin panel: approve/reject pending upgrade requests + view feedback â”€â”€
+    with st.expander("ðŸ› ï¸ Admin"):
         admin_pw = st.text_input("Admin password", type="password", key="admin_pw")
         if admin_pw:
             admin_headers = {"X-Admin-Secret": admin_pw}
@@ -457,15 +456,15 @@ with st.sidebar:
                     st.error(f"Error: {r.status_code}")
                 else:
                     pending = r.json()
-                    st.markdown("**⏳ Pending Upgrade Requests**")
+                    st.markdown("**â³ Pending Upgrade Requests**")
                     if not pending:
                         st.caption("No pending requests.")
                     for req in pending:
-                        st.markdown(f"**{req['email']}** ({req.get('name') or '—'})")
-                        st.caption(f"{req['current_tier']} → {req['requested_tier']}  ·  {req['requested_at']}")
+                        st.markdown(f"**{req['email']}** ({req.get('name') or 'â€”'})")
+                        st.caption(f"{req['current_tier']} â†’ {req['requested_tier']}  Â·  {req['requested_at']}")
                         c1, c2 = st.columns(2)
                         with c1:
-                            if st.button("✅ Approve", key=f"approve_{req['id']}"):
+                            if st.button("âœ… Approve", key=f"approve_{req['id']}"):
                                 ar = requests.post(
                                     f"{API_BASE}/admin/upgrade-requests/{req['id']}/approve",
                                     headers=admin_headers, timeout=15,
@@ -476,7 +475,7 @@ with st.sidebar:
                                     st.error(ar.json().get("detail", "Approve failed"))
                                 st.rerun()
                         with c2:
-                            if st.button("❌ Reject", key=f"reject_{req['id']}"):
+                            if st.button("âŒ Reject", key=f"reject_{req['id']}"):
                                 rr = requests.post(
                                     f"{API_BASE}/admin/upgrade-requests/{req['id']}/reject",
                                     headers=admin_headers, timeout=15,
@@ -490,8 +489,8 @@ with st.sidebar:
             except Exception as e:
                 st.error(f"Couldn't reach server: {e}")
 
-            # ── Recent Feedback ──
-            st.markdown("**📬 Recent Feedback**")
+            # â”€â”€ Recent Feedback â”€â”€
+            st.markdown("**ðŸ“¬ Recent Feedback**")
             try:
                 fr = requests.get(f"{API_BASE}/feedback/", headers=admin_headers, timeout=15)
                 if fr.status_code == 403:
@@ -503,42 +502,42 @@ with st.sidebar:
                     if not fb_list:
                         st.caption("No feedback yet.")
                     for item in fb_list[:20]:
-                        stars = "⭐" * (item.get("rating") or 0)
-                        st.markdown(f"**{item['category']}** {stars} — *{item.get('name') or 'Anonymous'}*")
+                        stars = "â­" * (item.get("rating") or 0)
+                        st.markdown(f"**{item['category']}** {stars} â€” *{item.get('name') or 'Anonymous'}*")
                         st.caption(item["message"])
-                        st.caption(f"{item.get('email','—')} · {item['created_at']} · {item['status']}")
+                        st.caption(f"{item.get('email','â€”')} Â· {item['created_at']} Â· {item['status']}")
                         st.divider()
             except Exception as e:
                 st.caption(f"Error loading feedback: {e}")
                 
-# ══════════════════════════════════════════════
-#  PAGE HEADER — always visible above all tabs
-# ══════════════════════════════════════════════
-st.markdown('<p class="hero-title">🔧 MatDataHub</p>', unsafe_allow_html=True)
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+#  PAGE HEADER â€” always visible above all tabs
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+st.markdown('<p class="hero-title">ðŸ”§ MatDataHub</p>', unsafe_allow_html=True)
 st.markdown(
-    '<p class="hero-sub">The engineering material database that gets you to the right material, faster — '
+    '<p class="hero-sub">The engineering material database that gets you to the right material, faster â€” '
     'search, filter, and compare 500+ metals, polymers, ceramics & composites side by side.</p>',
     unsafe_allow_html=True,
 )
 
-# ══════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 #  TABS: Home | Browse | Compare | Feedback
-# ══════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 tab_home, tab_browse, tab_compare, tab_feedback = st.tabs(
-    ["🏠 Home", "🔍 Browse Materials", "⚖️ Compare Materials", "💬 Feedback"]
+    ["ðŸ  Home", "ðŸ” Browse Materials", "âš–ï¸ Compare Materials", "ðŸ’¬ Feedback"]
 )
 
 
-# ══════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 #  TAB 0: HOME
-# ══════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 with tab_home:
 
     if st.session_state.get("user"):
-        st.info(f"👋 Welcome back, **{st.session_state.user.get('name') or st.session_state.user['email']}**! "
+        st.info(f"ðŸ‘‹ Welcome back, **{st.session_state.user.get('name') or st.session_state.user['email']}**! "
                 f"Jump into **Browse Materials** or **Compare Materials** using the tabs above.")
     else:
-        st.info("👋 New here? Browse materials freely — sign in from the sidebar to unlock comparisons, "
+        st.info("ðŸ‘‹ New here? Browse materials freely â€” sign in from the sidebar to unlock comparisons, "
                 "similarity search, and saved history.")
 
     st.markdown("#### At a glance")
@@ -547,7 +546,7 @@ with tab_home:
         (s1, "500+", "Materials"),
         (s2, "4", "Categories"),
         (s3, "20+", "Properties Tracked"),
-        (s4, "ASTM · ASM · ISO", "Data Sources"),
+        (s4, "ASTM Â· ASM Â· ISO", "Data Sources"),
     ]:
         with col:
             st.markdown(
@@ -560,25 +559,25 @@ with tab_home:
     f1, f2, f3 = st.columns(3)
     with f1:
         st.markdown(
-            '<div class="feature-card"><h4>🔍 Smart Search & Filters</h4>'
-            '<p>Search by name, grade, standard, or application — then narrow by strength, cost, or thermal conductivity.</p></div>',
+            '<div class="feature-card"><h4>ðŸ” Smart Search & Filters</h4>'
+            '<p>Search by name, grade, standard, or application â€” then narrow by strength, cost, or thermal conductivity.</p></div>',
             unsafe_allow_html=True,
         )
     with f2:
         st.markdown(
-            '<div class="feature-card"><h4>⚖️ Side-by-Side Compare</h4>'
+            '<div class="feature-card"><h4>âš–ï¸ Side-by-Side Compare</h4>'
             '<p>Put up to 5 materials head-to-head with auto-generated insights and radar charts.</p></div>',
             unsafe_allow_html=True,
         )
     with f3:
         st.markdown(
-            '<div class="feature-card"><h4>🎯 Find Similar Materials</h4>'
-            '<p>Discover close alternatives to any material based on real property data — great for substitutions.</p></div>',
+            '<div class="feature-card"><h4>ðŸŽ¯ Find Similar Materials</h4>'
+            '<p>Discover close alternatives to any material based on real property data â€” great for substitutions.</p></div>',
             unsafe_allow_html=True,
         )
 
     st.markdown("####  ")
-    st.markdown("#### Data Sources & Authenticity 📚")
+    st.markdown("#### Data Sources & Authenticity ðŸ“š")
     st.info("""
     **MatDataHub aggregates material property data strictly from highly trusted engineering standards and industry handbooks.** 
     We do not rely on unverified sources. All properties are derived from:
@@ -589,24 +588,24 @@ with tab_home:
     * **MMPDS** (Metallic Materials Properties Development and Standardization)
     * **ISO & EN** (European standards for polymers and composites)
     
-    *Note: Mechanical properties are typical minimums. Cost data (₹/kg) represents approximate market ranges.*
+    *Note: Mechanical properties are typical minimums. Cost data (â‚¹/kg) represents approximate market ranges.*
     """)
 
     st.markdown("####  ")
     st.markdown("#### Get started")
     g1, g2 = st.columns(2)
     with g1:
-        st.markdown("**🔍 Browse Materials** — head to the *Browse Materials* tab above to search and filter the full database.")
+        st.markdown("**ðŸ” Browse Materials** â€” head to the *Browse Materials* tab above to search and filter the full database.")
     with g2:
-        st.markdown("**⚖️ Compare Materials** — head to the *Compare Materials* tab to pick 2+ materials and see them side by side.")
+        st.markdown("**âš–ï¸ Compare Materials** â€” head to the *Compare Materials* tab to pick 2+ materials and see them side by side.")
 
     st.markdown("####  ")
-    st.caption("Have an idea or spotted an issue? Use the **💬 Feedback** tab — we read every submission.")
+    st.caption("Have an idea or spotted an issue? Use the **ðŸ’¬ Feedback** tab â€” we read every submission.")
 
 
-# ══════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 #  TAB 1: BROWSE
-# ══════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 with tab_browse:
 
     search_query = st.text_input(
@@ -614,7 +613,7 @@ with tab_browse:
         placeholder="e.g. stainless, 6061, aerospace, corrosion",
     )
 
-    with st.expander("🔍 Filters", expanded=True):
+    with st.expander("ðŸ” Filters", expanded=True):
         fcol1, fcol2, fcol3, fcol4, fcol5 = st.columns(5)
 
         with fcol1:
@@ -664,7 +663,7 @@ with tab_browse:
     if not result["ok"]:
         show_api_error(result, retry_key="retry_browse")
     elif "total" not in result["data"]:
-        st.warning("⏳ API returned unexpected data. Please refresh.")
+        st.warning("â³ API returned unexpected data. Please refresh.")
     else:
         data = result["data"]
         total = data["total"]
@@ -788,7 +787,7 @@ with tab_browse:
                     user_tier = (st.session_state.user or {}).get("tier", "free")
 
                     if user_tier in ("pro", "advanced"):
-                        if st.button(f"🔍 Find Materials Similar to {m['name']}", key=f"similar_{mat_id}"):
+                        if st.button(f"ðŸ” Find Materials Similar to {m['name']}", key=f"similar_{mat_id}"):
                             with st.spinner("Finding similar materials..."):
                                 sim_result = api_get(f"/materials/{mat_id}/similar", params={"limit": 5})
                             if sim_result["ok"]:
@@ -801,18 +800,18 @@ with tab_browse:
                                         "Grade": s.get("grade", "-"),
                                         "Density": s.get("density", "-"),
                                         "Tensile Max (MPa)": s.get("tensile_strength_max", "-"),
-                                        "Cost Max (₹/kg)": s.get("cost_per_kg_max", "-"),
+                                        "Cost Max (â‚¹/kg)": s.get("cost_per_kg_max", "-"),
                                     })
                                 st.dataframe(pd.DataFrame(sim_data), width="stretch", hide_index=True)
                             else:
                                 show_api_error(sim_result, retry_key=f"retry_similar_{mat_id}")
                     else:
-                        st.info("🔍 **Find Similar Materials** — Discover alternatives you never knew about! ⭐ Upgrade to Pro to unlock.")
+                        st.info("ðŸ” **Find Similar Materials** â€” Discover alternatives you never knew about! â­ Upgrade to Pro to unlock.")
 
 
-# ══════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 #  TAB 2: COMPARE MATERIALS
-# ══════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 with tab_compare:
 
     st.subheader("Side-by-Side Material Comparison")
@@ -827,8 +826,8 @@ with tab_compare:
         st.stop()
 
     if "materials" not in all_result.get("data", {}):
-        st.warning("⏳ API returned unexpected data. Please refresh.")
-        if st.button("🔄 Retry", key="retry_compare_data"):
+        st.warning("â³ API returned unexpected data. Please refresh.")
+        if st.button("ðŸ”„ Retry", key="retry_compare_data"):
             st.rerun()
         st.stop()
 
@@ -857,9 +856,9 @@ with tab_compare:
                     selections.append(choice)
 
     if compare_max > UI_MAX_SELECTORS:
-        st.caption(f"Showing {UI_MAX_SELECTORS} slots. Your tier technically allows up to {compare_max} — let us know if you need more at once.")
+        st.caption(f"Showing {UI_MAX_SELECTORS} slots. Your tier technically allows up to {compare_max} â€” let us know if you need more at once.")
     elif user_tier == "free":
-        st.caption("⭐ Upgrade to Pro to compare up to 5 materials at once.")
+        st.caption("â­ Upgrade to Pro to compare up to 5 materials at once.")
 
     if len(selections) < 2:
         st.info("Select at least 2 materials above to start comparing.")
@@ -918,7 +917,7 @@ with tab_compare:
         st.dataframe(compare_df, width='stretch', hide_index=True, height=735)
 
         st.divider()
-        st.markdown("#### 🕸️ Radar Chart — Property Fingerprint")
+        st.markdown("#### ðŸ•¸ï¸ Radar Chart â€” Property Fingerprint")
         render_radar_chart(selections, mat_details, all_materials, user_tier)
         st.markdown("#### Visual Comparison")
 
@@ -991,11 +990,11 @@ with tab_compare:
             st.write("Select materials with more numeric properties for auto-generated insights.")
 
 
-# ══════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 #  TAB 3: FEEDBACK
-# ══════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 with tab_feedback:
-    st.markdown("## 💬 We'd love your feedback")
+    st.markdown("## ðŸ’¬ We'd love your feedback")
     st.caption("Found a bug? Want a new feature? Just want to say hi? Tell us below.")
 
     user = st.session_state.get("user")
@@ -1019,7 +1018,7 @@ with tab_feedback:
             placeholder="Tell us what's working, what's not, or what you'd love to see next...",
             height=140,
         )
-        fb_submit = st.form_submit_button("📤 Send Feedback", use_container_width=True)
+        fb_submit = st.form_submit_button("ðŸ“¤ Send Feedback", use_container_width=True)
 
         if fb_submit:
             if not fb_message or len(fb_message.strip()) < 3:
@@ -1029,14 +1028,15 @@ with tab_feedback:
                     fb_name, fb_email, fb_category, fb_message.strip(), fb_rating, "Feedback Tab"
                 )
                 if result["ok"]:
-                    st.success("Thanks! Your feedback has been recorded. 🙌")
+                    st.success("Thanks! Your feedback has been recorded. ðŸ™Œ")
                     st.balloons()
                 else:
                     st.error(result.get("error", "Couldn't submit feedback. Try again later."))
 
 
-# ── Footer ──
+# â”€â”€ Footer â”€â”€
 st.divider()
 st.caption("MatDataHub v0.3 | Engineering Material Data-as-a-Service | 500+ materials | Data from ASTM, ASM, MMPDS, ISO, ACI")
+
 
 

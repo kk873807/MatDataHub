@@ -22,3 +22,4 @@ plotly>=5.22
 
 # Utilities
 pydantic>=2.10
+razorpay>=1.4.1
