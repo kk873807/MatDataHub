@@ -68,7 +68,25 @@ Allowed keys (omit if not mentioned):
         constraints = json.loads(text) if text.startswith('{') else {}
     except Exception as e:
         print(f"Extraction Error: {str(e)}")
-        constraints = {}
+        # HEURISTIC FALLBACK: If AI fails, use smart keyword matching
+        import re
+        c = {}
+        p = req.prompt.lower()
+        
+        if "metal" in p or "steel" in p or "aluminum" in p: c["category"] = "Metal"
+        elif "polymer" in p or "plastic" in p or "nylon" in p: c["category"] = "Polymer"
+        elif "ceramic" in p or "glass" in p: c["category"] = "Ceramic"
+        
+        temp_match = re.search(r'(\d+)\s*(degree|c|celsius|temp)', p)
+        if temp_match: c["max_temp"] = int(temp_match.group(1))
+        
+        cost_match = re.search(r'(under|below|max|cheaper than)?\s*(rs\.?|inr|rupees)?\s*(\d+)', p)
+        if cost_match and cost_match.group(3): c["max_cost"] = int(cost_match.group(3))
+        
+        strength_match = re.search(r'(\d+)\s*(mpa|strength|tensile)', p)
+        if strength_match: c["min_tensile"] = int(strength_match.group(1))
+        
+        constraints = c
 
     # STEP 2: Database Query
     query = db.query(Material)
