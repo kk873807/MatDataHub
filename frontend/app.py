@@ -14,7 +14,6 @@ from urllib.parse import urlparse
 import pandas as pd
 import requests
 import streamlit as st
-from streamlit_cookies_controller import CookieController
 import plotly.graph_objects as go
 
 
@@ -345,25 +344,23 @@ def render_radar_chart(selections, mat_details, all_materials, tier):
 #  SIDEBAR: Account (Login / Register / Profile)
 # ══════════════════════════════════════════════
 
-cookie_controller = CookieController()
-saved_token = cookie_controller.get("matdata_auth_token")
+saved_token = st.query_params.get("t")
 
 if "token" not in st.session_state:
     st.session_state.token = None
 if "user" not in st.session_state:
     st.session_state.user = None
 
-# If the cookie just loaded from the frontend, but we are logged out in Python memory:
 if saved_token and not st.session_state.token:
     st.session_state.token = saved_token
     try:
         r = requests.get(f"{API_BASE}/auth/me", headers={"Authorization": f"Bearer {saved_token}"}, timeout=5)
         if r.status_code == 200:
             st.session_state.user = r.json()
-            st.rerun() # Refresh the UI immediately with the logged-in user
         else:
             st.session_state.token = None
-            cookie_controller.remove("matdata_auth_token")
+            if "t" in st.query_params:
+                del st.query_params["t"]
     except:
         pass
 
@@ -412,7 +409,8 @@ with st.sidebar:
         if st.button("Logout", use_container_width=True):
             st.session_state.token = None
             st.session_state.user = None
-            cookie_controller.remove("matdata_auth_token")
+            if "t" in st.query_params:
+                del st.query_params["t"]
             st.rerun()
 
     else:
@@ -428,7 +426,7 @@ with st.sidebar:
                     result = api_post("/auth/login", {"email": email, "password": password})
                     if result["ok"]:
                         st.session_state.token = result["data"]["access_token"]
-                        cookie_controller.set("matdata_auth_token", result["data"]["access_token"])
+                        st.query_params["t"] = result["data"]["access_token"]
                         profile = api_get_auth("/auth/me")
                         if profile["ok"]:
                             st.session_state.user = profile["data"]
@@ -452,7 +450,7 @@ with st.sidebar:
                     result = api_post("/auth/register", body)
                     if result["ok"]:
                         st.session_state.token = result["data"]["access_token"]
-                        cookie_controller.set("matdata_auth_token", result["data"]["access_token"])
+                        st.query_params["t"] = result["data"]["access_token"]
                         profile = api_get_auth("/auth/me")
                         if profile["ok"]:
                             st.session_state.user = profile["data"]
