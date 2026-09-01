@@ -5,6 +5,7 @@ These define what data looks like in API requests and responses.
 from pydantic import BaseModel, Field
 from typing import Optional
 from datetime import datetime
+from typing import Optional 
 
 
 class MaterialBase(BaseModel):
@@ -106,3 +107,13 @@ class UserProfile(BaseModel):
     created_at: Optional[datetime] = None
 
     model_config = {"from_attributes": True}
+
+
+class UpgradeRequest(BaseModel):
+    tier: str  # "pro" or "advanced"
+
+class UpgradeResponse(BaseModel):
+    message: str
+    tier: str
+    api_key: Optional[str] = None
+    token: str
