@@ -79,7 +79,7 @@ def upgrade_tier(tier: str):
 # ── Custom CSS ──
 st.markdown("""
 <style>
-    .block-container { padding-top: 2rem !important; }
+    .block-container { padding-top: 4rem !important; }
     .hero-title {
         font-size: 7.5rem;
         font-weight: 800;
@@ -88,7 +88,7 @@ st.markdown("""
         -webkit-text-fill-color: transparent;
         background-clip: text;
         margin-bottom: 0.1rem;
-        margin-top: -1.5rem;
+        margin-top: 0;
         letter-spacing: -1.5px;
         line-height: 1.1;
     }
@@ -1038,4 +1038,5 @@ with tab_feedback:
 # ── Footer ──
 st.divider()
 st.caption("MatDataHub v0.3 | Engineering Material Data-as-a-Service | 500+ materials | Data from ASTM, ASM, MMPDS, ISO, ACI")
+
 
