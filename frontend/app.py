@@ -334,6 +334,22 @@ with st.sidebar:
         tier_badge = TIER_BADGES.get(user.get("tier", "free"), "🆓 Free")
         st.success(f"Welcome, **{user.get('name') or user['email']}**!")
         st.caption(f"Tier: {tier_badge}")
+        
+current_tier = st.session_state.get("tier", "free")
+
+st.sidebar.markdown("---")
+if current_tier == "free":
+    st.sidebar.caption("🧪 Test mode — instant, no payment yet")
+    if st.sidebar.button("⭐ Upgrade to Pro — ₹499/mo"):
+        upgrade_tier("pro")
+    if st.sidebar.button("🚀 Upgrade to Advanced — ₹1499/mo"):
+        upgrade_tier("advanced")
+elif current_tier == "pro":
+    st.sidebar.caption("🧪 Test mode — instant, no payment yet")
+    if st.sidebar.button("🚀 Upgrade to Advanced — ₹1499/mo"):
+        upgrade_tier("advanced")
+else:
+    st.sidebar.success("You're on the Advanced plan 🚀")
 
         if user.get("api_key"):
             with st.expander("🔑 API Key"):
