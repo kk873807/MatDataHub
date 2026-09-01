@@ -71,6 +71,12 @@ class MaterialListResponse(BaseModel):
     materials: list[MaterialResponse]
 
 
+class BulkImportResponse(BaseModel):
+    message: str
+    inserted: int
+    skipped: int
+
+
 # ══════════════════════════════════════════════
 #  Auth Schemas
 # ══════════════════════════════════════════════

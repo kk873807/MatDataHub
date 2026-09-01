@@ -21,7 +21,7 @@ from typing import List, Optional
 
 from app.database import get_db
 from app.models import Material, User
-from app.schemas import MaterialCreate, MaterialResponse, MaterialListResponse
+from app.schemas import MaterialCreate, MaterialResponse, MaterialListResponse, BulkImportResponse
 from app.auth import get_optional_user, TIER_LIMITS
 
 router = APIRouter(prefix="/materials", tags=["Materials"])
@@ -332,3 +332,27 @@ def create_material(material: MaterialCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(db_material)
     return db_material
+
+
+# ──────────────────────────────────────────────
+# POST /materials/bulk  — Create multiple
+# ──────────────────────────────────────────────
+@router.post("/bulk", response_model=BulkImportResponse, status_code=201)
+def bulk_create_materials(materials: List[MaterialCreate], db: Session = Depends(get_db)):
+    """
+    Bulk import multiple materials. Skips existing materials based on name.
+    """
+    inserted = 0
+    skipped = 0
+    for mat in materials:
+        existing = db.query(Material).filter(Material.name == mat.name).first()
+        if existing:
+            skipped += 1
+            continue
+        
+        db_material = Material(**mat.model_dump())
+        db.add(db_material)
+        inserted += 1
+    
+    db.commit()
+    return {"message": "Bulk import complete", "inserted": inserted, "skipped": skipped}

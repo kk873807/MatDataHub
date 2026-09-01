@@ -577,6 +577,21 @@ with tab_home:
         )
 
     st.markdown("####  ")
+    st.markdown("#### Data Sources & Authenticity 📚")
+    st.info("""
+    **MatDataHub aggregates material property data strictly from highly trusted engineering standards and industry handbooks.** 
+    We do not rely on unverified sources. All properties are derived from:
+    
+    * **ASTM International** (American Society for Testing and Materials)
+    * **ASM International** (Metals Handbooks & Aerospace Materials)
+    * **BIS** (Bureau of Indian Standards codes)
+    * **MMPDS** (Metallic Materials Properties Development and Standardization)
+    * **ISO & EN** (European standards for polymers and composites)
+    
+    *Note: Mechanical properties are typical minimums. Cost data (₹/kg) represents approximate market ranges.*
+    """)
+
+    st.markdown("####  ")
     st.markdown("#### Get started")
     g1, g2 = st.columns(2)
     with g1:

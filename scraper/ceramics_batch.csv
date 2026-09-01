@@ -1,0 +1,16 @@
+name,category,subcategory,grade,standard,density,tensile_strength_min,tensile_strength_max,yield_strength_min,yield_strength_max,elongation,hardness,elastic_modulus,thermal_conductivity,specific_heat,melting_point_min,melting_point_max,max_service_temp,cost_per_kg_min,cost_per_kg_max,cost_currency,applications,equivalent_grades,composition,description,source_name,is_verified
+Alumina (Al2O3) 99%,Ceramic,Technical Ceramic,-,-,3.9,225,275,225,275,0,1500 HV,370,30.0,800,2050,2050,1700,1500,3000,INR,"Structural, high temp, tooling, construction",-,-,Standard technical ceramic.,MatWeb / Literature,True
+Zirconia (Y-TZP),Ceramic,Technical Ceramic,-,-,6.0,810,990,810,990,0,1300 HV,210,2.5,800,2700,2700,1000,4000,8000,INR,"Structural, high temp, tooling, construction",-,-,Standard technical ceramic.,MatWeb / Literature,True
+Silicon Carbide (SiC) Sintered,Ceramic,Technical Ceramic,-,-,3.1,360,440,360,440,0,2500 HV,410,120.0,800,2730,2730,1500,3500,7000,INR,"Structural, high temp, tooling, construction",-,-,Standard technical ceramic.,MatWeb / Literature,True
+Silicon Nitride (Si3N4),Ceramic,Technical Ceramic,-,-,3.2,720,880,720,880,0,1500 HV,310,30.0,800,1900,1900,1200,4500,9000,INR,"Structural, high temp, tooling, construction",-,-,Standard technical ceramic.,MatWeb / Literature,True
+Boron Carbide (B4C),Ceramic,Technical Ceramic,-,-,2.5,315,385,315,385,0,3000 HV,450,35.0,800,2450,2450,600,8000,15000,INR,"Structural, high temp, tooling, construction",-,-,Standard technical ceramic.,MatWeb / Literature,True
+Soda-Lime Glass,Ceramic,Glass,-,-,2.5,45,55,45,55,0,450 HV,70,1.0,800,1000,1000,400,50,150,INR,"Structural, high temp, tooling, construction",-,-,Standard glass.,MatWeb / Literature,True
+Borosilicate Glass (Pyrex),Ceramic,Glass,-,-,2.2,58,71,58,71,0,500 HV,64,1.2,800,1250,1250,500,200,500,INR,"Structural, high temp, tooling, construction",-,-,Standard glass.,MatWeb / Literature,True
+Fused Silica,Ceramic,Glass,-,-,2.2,99,121,99,121,0,600 HV,72,1.4,800,1600,1600,1000,2000,4000,INR,"Structural, high temp, tooling, construction",-,-,Standard glass.,MatWeb / Literature,True
+Concrete M20 (C16/20),Ceramic,Concrete,-,-,2.4,1,2,18,22,0,,25,1.7,800,,,400,5,10,INR,"Structural, high temp, tooling, construction",-,-,Standard concrete.,MatWeb / Literature,True
+Concrete M40 (C32/40),Ceramic,Concrete,-,-,2.4,3,4,36,44,0,,32,1.8,800,,,400,8,15,INR,"Structural, high temp, tooling, construction",-,-,Standard concrete.,MatWeb / Literature,True
+Granite,Ceramic,Stone,-,-,2.7,13,16,135,165,0,,60,2.8,800,1200,1200,600,20,100,INR,"Structural, high temp, tooling, construction",-,-,Standard stone.,MatWeb / Literature,True
+Marble,Ceramic,Stone,-,-,2.6,9,11,90,110,0,,40,2.1,800,900,900,400,50,300,INR,"Structural, high temp, tooling, construction",-,-,Standard stone.,MatWeb / Literature,True
+Oak Wood,Composite,Wood,-,-,0.7,81,99,40,49,1,,11,0.17,1200,,,100,80,200,INR,"Structural, high temp, tooling, construction",-,-,Standard wood.,MatWeb / Literature,True
+Pine Wood,Composite,Wood,-,-,0.45,36,44,18,22,1,,8,0.12,1200,,,100,40,100,INR,"Structural, high temp, tooling, construction",-,-,Standard wood.,MatWeb / Literature,True
+Plywood (Birch),Composite,Wood,-,-,0.65,27,33,22,27,2,,7,0.15,1200,,,100,60,150,INR,"Structural, high temp, tooling, construction",-,-,Standard wood.,MatWeb / Literature,True
