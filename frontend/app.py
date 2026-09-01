@@ -351,7 +351,7 @@ elif current_tier == "pro":
 else:
     st.sidebar.success("You're on the Advanced plan 🚀")
 
-        if user.get("api_key"):
+    if user.get("api_key"):
             with st.expander("🔑 API Key"):
                 st.code(user["api_key"], language="text")
 
