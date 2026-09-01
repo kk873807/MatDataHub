@@ -346,26 +346,27 @@ def render_radar_chart(selections, mat_details, all_materials, tier):
 # ══════════════════════════════════════════════
 
 cookie_controller = CookieController()
-time.sleep(0.1) # give it a moment to read cookies
 saved_token = cookie_controller.get("matdata_auth_token")
 
 if "token" not in st.session_state:
-    st.session_state.token = saved_token or None
+    st.session_state.token = None
+if "user" not in st.session_state:
+    st.session_state.user = None
 
-if saved_token and not st.session_state.get("user") and st.session_state.token == saved_token:
-    # Auto-fetch user profile if we just loaded the token from cookie
+# If the cookie just loaded from the frontend, but we are logged out in Python memory:
+if saved_token and not st.session_state.token:
+    st.session_state.token = saved_token
     try:
         r = requests.get(f"{API_BASE}/auth/me", headers={"Authorization": f"Bearer {saved_token}"}, timeout=5)
         if r.status_code == 200:
             st.session_state.user = r.json()
+            st.rerun() # Refresh the UI immediately with the logged-in user
         else:
             st.session_state.token = None
             cookie_controller.remove("matdata_auth_token")
     except:
         pass
 
-if "user" not in st.session_state:
-    st.session_state.user = None
 
 
 TIER_BADGES = {"free": "🆓 Free", "pro": "⭐ Pro", "advanced": "🚀 Advanced"}
