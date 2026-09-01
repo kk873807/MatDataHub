@@ -1,0 +1,201 @@
+name,category,subcategory,grade,standard,density,tensile_strength_min,tensile_strength_max,yield_strength_min,yield_strength_max,elongation,hardness,elastic_modulus,thermal_conductivity,specific_heat,melting_point_min,melting_point_max,max_service_temp,cost_per_kg_min,cost_per_kg_max,cost_currency,applications,equivalent_grades,composition,description,source_name,is_verified
+Carbon Fiber T300,Composite,Carbon Fiber,T300,-,1.76,3530,3530,3530,3530,1.5,-,230,10.0,900,,,150,2000,5000,INR,Aerospace,-,-,Standard Carbon Fiber variant.,MIL-HDBK-17,True
+Carbon Fiber T400,Composite,Carbon Fiber,T400,-,1.76,3630,3630,3630,3630,1.5,-,240,10.0,900,,,150,2000,5000,INR,Aerospace,-,-,Standard Carbon Fiber variant.,MIL-HDBK-17,True
+Carbon Fiber T500,Composite,Carbon Fiber,T500,-,1.76,3730,3730,3730,3730,1.5,-,250,10.0,900,,,150,2000,5000,INR,Aerospace,-,-,Standard Carbon Fiber variant.,MIL-HDBK-17,True
+Carbon Fiber T600,Composite,Carbon Fiber,T600,-,1.76,3830,3830,3830,3830,1.5,-,260,10.0,900,,,150,2000,5000,INR,Aerospace,-,-,Standard Carbon Fiber variant.,MIL-HDBK-17,True
+Carbon Fiber T700,Composite,Carbon Fiber,T700,-,1.76,3930,3930,3930,3930,1.5,-,270,10.0,900,,,150,2000,5000,INR,Aerospace,-,-,Standard Carbon Fiber variant.,MIL-HDBK-17,True
+Carbon Fiber T800,Composite,Carbon Fiber,T800,-,1.76,4030,4030,4030,4030,1.5,-,280,10.0,900,,,150,2000,5000,INR,Aerospace,-,-,Standard Carbon Fiber variant.,MIL-HDBK-17,True
+Carbon Fiber T900,Composite,Carbon Fiber,T900,-,1.76,4130,4130,4130,4130,1.5,-,290,10.0,900,,,150,2000,5000,INR,Aerospace,-,-,Standard Carbon Fiber variant.,MIL-HDBK-17,True
+Carbon Fiber T1000,Composite,Carbon Fiber,T1000,-,1.76,4230,4230,4230,4230,1.5,-,300,10.0,900,,,150,2000,5000,INR,Aerospace,-,-,Standard Carbon Fiber variant.,MIL-HDBK-17,True
+Carbon Fiber T1100,Composite,Carbon Fiber,T1100,-,1.76,4330,4330,4330,4330,1.5,-,310,10.0,900,,,150,2000,5000,INR,Aerospace,-,-,Standard Carbon Fiber variant.,MIL-HDBK-17,True
+Carbon Fiber T1200,Composite,Carbon Fiber,T1200,-,1.76,4430,4430,4430,4430,1.5,-,320,10.0,900,,,150,2000,5000,INR,Aerospace,-,-,Standard Carbon Fiber variant.,MIL-HDBK-17,True
+Concrete M90 (UHPC),Ceramic,Concrete,M90,-,2.5,9,12,90,110,0.1,-,45,1.8,800,,,400,5,15,INR,Construction,-,-,Standard Concrete variant.,ACI 318,True
+Concrete M100 (UHPC),Ceramic,Concrete,M100,-,2.5,10,15,100,120,0.1,-,50,1.8,800,,,400,5,20,INR,Construction,-,-,Standard Concrete variant.,ACI 318,True
+Aerated Autoclaved Concrete (AAC),Ceramic,Concrete,AAC,-,0.6,2,4,2,4,0.1,-,2,0.15,800,,,400,2,6,INR,Construction,-,-,Standard Concrete variant.,ACI 318,True
+Geopolymer Concrete,Ceramic,Concrete,GPC,-,2.4,5,8,40,60,0.1,-,30,1.2,800,,,600,3,10,INR,Construction,-,-,Standard Concrete variant.,ACI 318,True
+Inconel 600 (Annealed),Metal,Superalloy,Annealed,-,8.47,622,687,294,325,40.0,150 HB,207,14.8,450,1330,1380,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Inconel 600 (Solution Treated),Metal,Superalloy,Solution Treated,-,8.47,684,756,338,374,36.0,150 HB,207,14.8,450,1330,1380,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Inconel 600 (Aged),Metal,Superalloy,Aged,-,8.47,808,894,412,455,24.0,150 HB,207,14.8,450,1330,1380,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Inconel 600 (Cold Worked),Metal,Superalloy,Cold Worked,-,8.47,871,962,441,488,16.0,150 HB,207,14.8,450,1330,1380,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Inconel 600 (Hot Rolled),Metal,Superalloy,Hot Rolled,-,8.47,653,722,309,341,38.0,150 HB,207,14.8,450,1330,1380,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Inconel 625 (Annealed),Metal,Superalloy,Annealed,-,8.44,785,868,393,434,30.0,180 HB,207,9.8,450,1330,1380,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Inconel 625 (Solution Treated),Metal,Superalloy,Solution Treated,-,8.44,864,955,452,499,27.0,180 HB,207,9.8,450,1330,1380,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Inconel 625 (Aged),Metal,Superalloy,Aged,-,8.44,1021,1128,550,608,18.0,180 HB,207,9.8,450,1330,1380,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Inconel 625 (Cold Worked),Metal,Superalloy,Cold Worked,-,8.44,1099,1215,589,652,12.0,180 HB,207,9.8,450,1330,1380,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Inconel 625 (Hot Rolled),Metal,Superalloy,Hot Rolled,-,8.44,824,911,412,456,28.5,180 HB,207,9.8,450,1330,1380,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Inconel 718 (Annealed),Metal,Superalloy,Annealed,-,8.19,1306,1443,1045,1155,15.0,36 HRC,200,11.4,450,1330,1380,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Inconel 718 (Solution Treated),Metal,Superalloy,Solution Treated,-,8.19,1436,1588,1201,1328,13.5,36 HRC,200,11.4,450,1330,1380,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Inconel 718 (Aged),Metal,Superalloy,Aged,-,8.19,1698,1876,1463,1617,9.0,36 HRC,200,11.4,450,1330,1380,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Inconel 718 (Cold Worked),Metal,Superalloy,Cold Worked,-,8.19,1828,2021,1567,1732,6.0,36 HRC,200,11.4,450,1330,1380,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Inconel 718 (Hot Rolled),Metal,Superalloy,Hot Rolled,-,8.19,1371,1515,1097,1212,14.2,36 HRC,200,11.4,450,1330,1380,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Hastelloy C-276 (Annealed),Metal,Superalloy,Annealed,-,8.89,750,829,337,372,40.0,180 HB,205,10.2,450,1330,1380,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Hastelloy C-276 (Solution Treated),Metal,Superalloy,Solution Treated,-,8.89,825,912,387,428,36.0,180 HB,205,10.2,450,1330,1380,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Hastelloy C-276 (Aged),Metal,Superalloy,Aged,-,8.89,975,1078,472,521,24.0,180 HB,205,10.2,450,1330,1380,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Hastelloy C-276 (Cold Worked),Metal,Superalloy,Cold Worked,-,8.89,1050,1161,505,559,16.0,180 HB,205,10.2,450,1330,1380,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Hastelloy C-276 (Hot Rolled),Metal,Superalloy,Hot Rolled,-,8.89,788,870,354,391,38.0,180 HB,205,10.2,450,1330,1380,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Monel 400 (Annealed),Metal,Superalloy,Annealed,-,8.8,489,540,161,178,35.0,130 HB,179,21.8,450,1330,1380,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Monel 400 (Solution Treated),Metal,Superalloy,Solution Treated,-,8.8,538,594,185,205,31.5,130 HB,179,21.8,450,1330,1380,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Monel 400 (Aged),Metal,Superalloy,Aged,-,8.8,636,702,226,249,21.0,130 HB,179,21.8,450,1330,1380,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Monel 400 (Cold Worked),Metal,Superalloy,Cold Worked,-,8.8,684,757,242,267,14.0,130 HB,179,21.8,450,1330,1380,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Monel 400 (Hot Rolled),Metal,Superalloy,Hot Rolled,-,8.8,513,567,169,187,33.2,130 HB,179,21.8,450,1330,1380,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Titanium Grade 2 (Annealed),Metal,Superalloy,Annealed,-,4.51,327,362,261,288,20.0,160 HB,105,16.4,450,1640,1690,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Titanium Grade 2 (Solution Treated),Metal,Superalloy,Solution Treated,-,4.51,360,398,300,332,18.0,160 HB,105,16.4,450,1640,1690,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Titanium Grade 2 (Aged),Metal,Superalloy,Aged,-,4.51,426,470,365,404,12.0,160 HB,105,16.4,450,1640,1690,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Titanium Grade 2 (Cold Worked),Metal,Superalloy,Cold Worked,-,4.51,458,507,391,433,8.0,160 HB,105,16.4,450,1640,1690,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Titanium Grade 2 (Hot Rolled),Metal,Superalloy,Hot Rolled,-,4.51,344,380,274,303,19.0,160 HB,105,16.4,450,1640,1690,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Titanium Grade 5 (Annealed),Metal,Superalloy,Annealed,-,4.43,850,939,786,869,10.0,330 HB,114,6.7,450,1640,1690,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Titanium Grade 5 (Solution Treated),Metal,Superalloy,Solution Treated,-,4.43,935,1033,904,999,9.0,330 HB,114,6.7,450,1640,1690,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Titanium Grade 5 (Aged),Metal,Superalloy,Aged,-,4.43,1105,1221,1101,1217,6.0,330 HB,114,6.7,450,1640,1690,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Titanium Grade 5 (Cold Worked),Metal,Superalloy,Cold Worked,-,4.43,1190,1315,1179,1304,4.0,330 HB,114,6.7,450,1640,1690,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Titanium Grade 5 (Hot Rolled),Metal,Superalloy,Hot Rolled,-,4.43,892,986,825,912,9.5,330 HB,114,6.7,450,1640,1690,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Titanium Grade 23 (Annealed),Metal,Superalloy,Annealed,-,4.43,783,866,722,798,10.0,310 HB,114,6.7,450,1640,1690,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Titanium Grade 23 (Solution Treated),Metal,Superalloy,Solution Treated,-,4.43,862,952,830,917,9.0,310 HB,114,6.7,450,1640,1690,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Titanium Grade 23 (Aged),Metal,Superalloy,Aged,-,4.43,1018,1126,1010,1117,6.0,310 HB,114,6.7,450,1640,1690,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Titanium Grade 23 (Cold Worked),Metal,Superalloy,Cold Worked,-,4.43,1097,1212,1083,1197,4.0,310 HB,114,6.7,450,1640,1690,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Titanium Grade 23 (Hot Rolled),Metal,Superalloy,Hot Rolled,-,4.43,822,909,758,837,9.5,310 HB,114,6.7,450,1640,1690,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Waspaloy (Annealed),Metal,Superalloy,Annealed,-,8.2,1092,1207,760,840,20.0,35 HRC,212,11.0,450,1330,1380,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Waspaloy (Solution Treated),Metal,Superalloy,Solution Treated,-,8.2,1201,1328,873,965,18.0,35 HRC,212,11.0,450,1330,1380,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Waspaloy (Aged),Metal,Superalloy,Aged,-,8.2,1420,1569,1064,1176,12.0,35 HRC,212,11.0,450,1330,1380,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Waspaloy (Cold Worked),Metal,Superalloy,Cold Worked,-,8.2,1529,1690,1140,1260,8.0,35 HRC,212,11.0,450,1330,1380,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Waspaloy (Hot Rolled),Metal,Superalloy,Hot Rolled,-,8.2,1147,1267,798,882,19.0,35 HRC,212,11.0,450,1330,1380,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Rene 41 (Annealed),Metal,Superalloy,Annealed,-,8.25,1235,1365,950,1050,15.0,40 HRC,218,11.0,450,1330,1380,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Rene 41 (Solution Treated),Metal,Superalloy,Solution Treated,-,8.25,1358,1501,1092,1207,13.5,40 HRC,218,11.0,450,1330,1380,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Rene 41 (Aged),Metal,Superalloy,Aged,-,8.25,1605,1774,1330,1470,9.0,40 HRC,218,11.0,450,1330,1380,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Rene 41 (Cold Worked),Metal,Superalloy,Cold Worked,-,8.25,1728,1910,1425,1575,6.0,40 HRC,218,11.0,450,1330,1380,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+Rene 41 (Hot Rolled),Metal,Superalloy,Hot Rolled,-,8.25,1296,1433,997,1102,14.2,40 HRC,218,11.0,450,1330,1380,800,3000,6000,INR,Aerospace,-,-,Standard Superalloy variant.,MMPDS,True
+PEI (Ultem) Unfilled,Polymer,Thermoplastic,Unfilled,-,1.27,94,115,94,115,60.0,125 R,3.3,0.22,1100,340,360,210,3000,4500,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PEI (Ultem) 10% GF,Polymer,Thermoplastic,10% GF,-,1.4,103,127,113,138,30.0,125 R,3.6,0.22,1100,340,360,210,3000,4500,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PEI (Ultem) 20% GF,Polymer,Thermoplastic,20% GF,-,1.52,122,150,132,161,12.0,125 R,4.3,0.22,1100,340,360,210,3000,4500,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PEI (Ultem) 30% GF,Polymer,Thermoplastic,30% GF,-,1.65,141,173,151,184,6.0,125 R,4.9,0.22,1100,340,360,210,3000,4500,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PEI (Ultem) 40% GF,Polymer,Thermoplastic,40% GF,-,1.78,160,196,170,207,3.0,125 R,5.6,0.22,1100,340,360,210,3000,4500,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PEI (Ultem) 10% CF,Polymer,Thermoplastic,10% CF,-,1.33,132,161,141,173,6.0,125 R,4.6,0.22,1100,340,360,210,3000,4500,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PEI (Ultem) 20% CF,Polymer,Thermoplastic,20% CF,-,1.4,170,207,179,219,3.0,125 R,5.9,0.22,1100,340,360,210,3000,4500,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PEI (Ultem) 30% CF,Polymer,Thermoplastic,30% CF,-,1.46,207,254,217,265,1.2,125 R,7.3,0.22,1100,340,360,210,3000,4500,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PEI (Ultem) PTFE,Polymer,Thermoplastic,PTFE,-,1.27,85,103,85,103,72.0,125 R,3.0,0.22,1100,340,360,210,3000,4500,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PEI (Ultem) Graphite,Polymer,Thermoplastic,Graphite,-,1.33,103,127,103,127,30.0,125 R,3.6,0.22,1100,340,360,210,3000,4500,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PEEK Unfilled,Polymer,Thermoplastic,Unfilled,-,1.3,90,110,90,110,20.0,125 R,3.6,0.25,1100,340,360,250,8000,12000,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PEEK 10% GF,Polymer,Thermoplastic,10% GF,-,1.43,99,121,108,132,10.0,125 R,4.0,0.25,1100,340,360,250,8000,12000,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PEEK 20% GF,Polymer,Thermoplastic,20% GF,-,1.56,117,143,126,154,4.0,125 R,4.7,0.25,1100,340,360,250,8000,12000,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PEEK 30% GF,Polymer,Thermoplastic,30% GF,-,1.69,135,165,144,176,2.0,125 R,5.4,0.25,1100,340,360,250,8000,12000,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PEEK 40% GF,Polymer,Thermoplastic,40% GF,-,1.82,153,187,162,198,1.0,125 R,6.1,0.25,1100,340,360,250,8000,12000,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PEEK 10% CF,Polymer,Thermoplastic,10% CF,-,1.37,126,154,135,165,2.0,125 R,5.0,0.25,1100,340,360,250,8000,12000,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PEEK 20% CF,Polymer,Thermoplastic,20% CF,-,1.43,162,198,171,209,1.0,125 R,6.5,0.25,1100,340,360,250,8000,12000,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PEEK 30% CF,Polymer,Thermoplastic,30% CF,-,1.49,198,242,206,253,0.4,125 R,7.9,0.25,1100,340,360,250,8000,12000,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PEEK PTFE,Polymer,Thermoplastic,PTFE,-,1.3,81,99,81,99,24.0,125 R,3.2,0.25,1100,340,360,250,8000,12000,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PEEK Graphite,Polymer,Thermoplastic,Graphite,-,1.37,99,121,99,121,10.0,125 R,4.0,0.25,1100,340,360,250,8000,12000,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PPSU (Radel) Unfilled,Polymer,Thermoplastic,Unfilled,-,1.29,63,77,63,77,60.0,120 R,2.4,0.35,1100,340,360,200,2500,3750,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PPSU (Radel) 10% GF,Polymer,Thermoplastic,10% GF,-,1.42,69,84,75,92,30.0,120 R,2.6,0.35,1100,340,360,200,2500,3750,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PPSU (Radel) 20% GF,Polymer,Thermoplastic,20% GF,-,1.55,81,100,88,107,12.0,120 R,3.1,0.35,1100,340,360,200,2500,3750,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PPSU (Radel) 30% GF,Polymer,Thermoplastic,30% GF,-,1.68,94,115,100,123,6.0,120 R,3.6,0.35,1100,340,360,200,2500,3750,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PPSU (Radel) 40% GF,Polymer,Thermoplastic,40% GF,-,1.81,107,130,113,138,3.0,120 R,4.1,0.35,1100,340,360,200,2500,3750,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PPSU (Radel) 10% CF,Polymer,Thermoplastic,10% CF,-,1.35,88,107,94,115,6.0,120 R,3.4,0.35,1100,340,360,200,2500,3750,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PPSU (Radel) 20% CF,Polymer,Thermoplastic,20% CF,-,1.42,113,138,119,146,3.0,120 R,4.3,0.35,1100,340,360,200,2500,3750,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PPSU (Radel) 30% CF,Polymer,Thermoplastic,30% CF,-,1.48,138,169,144,177,1.2,120 R,5.3,0.35,1100,340,360,200,2500,3750,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PPSU (Radel) PTFE,Polymer,Thermoplastic,PTFE,-,1.29,56,69,56,69,72.0,120 R,2.2,0.35,1100,340,360,200,2500,3750,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PPSU (Radel) Graphite,Polymer,Thermoplastic,Graphite,-,1.35,69,84,69,84,30.0,120 R,2.6,0.35,1100,340,360,200,2500,3750,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PAI (Torlon) Unfilled,Polymer,Thermoplastic,Unfilled,-,1.4,135,165,126,154,15.0,125 R,4.5,0.26,1100,340,360,260,8000,12000,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PAI (Torlon) 10% GF,Polymer,Thermoplastic,10% GF,-,1.54,148,181,151,184,7.5,125 R,5.0,0.26,1100,340,360,260,8000,12000,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PAI (Torlon) 20% GF,Polymer,Thermoplastic,20% GF,-,1.68,175,214,176,215,3.0,125 R,5.9,0.26,1100,340,360,260,8000,12000,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PAI (Torlon) 30% GF,Polymer,Thermoplastic,30% GF,-,1.82,202,247,201,246,1.5,125 R,6.8,0.26,1100,340,360,260,8000,12000,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PAI (Torlon) 40% GF,Polymer,Thermoplastic,40% GF,-,1.96,229,280,226,277,0.8,125 R,7.6,0.26,1100,340,360,260,8000,12000,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PAI (Torlon) 10% CF,Polymer,Thermoplastic,10% CF,-,1.47,189,231,189,231,1.5,125 R,6.3,0.26,1100,340,360,260,8000,12000,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PAI (Torlon) 20% CF,Polymer,Thermoplastic,20% CF,-,1.54,243,297,239,292,0.8,125 R,8.1,0.26,1100,340,360,260,8000,12000,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PAI (Torlon) 30% CF,Polymer,Thermoplastic,30% CF,-,1.61,297,363,289,354,0.3,125 R,9.9,0.26,1100,340,360,260,8000,12000,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PAI (Torlon) PTFE,Polymer,Thermoplastic,PTFE,-,1.4,121,148,113,138,18.0,125 R,4.0,0.26,1100,340,360,260,8000,12000,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PAI (Torlon) Graphite,Polymer,Thermoplastic,Graphite,-,1.47,148,181,138,169,7.5,125 R,5.0,0.26,1100,340,360,260,8000,12000,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PI (Polyimide) Unfilled,Polymer,Thermoplastic,Unfilled,-,1.42,207,253,135,165,50.0,120 R,2.5,0.12,1100,340,360,300,15000,22500,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PI (Polyimide) 10% GF,Polymer,Thermoplastic,10% GF,-,1.56,227,278,162,198,25.0,120 R,2.8,0.12,1100,340,360,300,15000,22500,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PI (Polyimide) 20% GF,Polymer,Thermoplastic,20% GF,-,1.7,269,328,189,231,10.0,120 R,3.2,0.12,1100,340,360,300,15000,22500,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PI (Polyimide) 30% GF,Polymer,Thermoplastic,30% GF,-,1.85,310,379,216,264,5.0,120 R,3.8,0.12,1100,340,360,300,15000,22500,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PI (Polyimide) 40% GF,Polymer,Thermoplastic,40% GF,-,1.99,351,430,243,297,2.5,120 R,4.2,0.12,1100,340,360,300,15000,22500,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PI (Polyimide) 10% CF,Polymer,Thermoplastic,10% CF,-,1.49,289,354,202,247,5.0,120 R,3.5,0.12,1100,340,360,300,15000,22500,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PI (Polyimide) 20% CF,Polymer,Thermoplastic,20% CF,-,1.56,372,455,256,313,2.5,120 R,4.5,0.12,1100,340,360,300,15000,22500,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PI (Polyimide) 30% CF,Polymer,Thermoplastic,30% CF,-,1.63,455,556,310,379,1.0,120 R,5.5,0.12,1100,340,360,300,15000,22500,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PI (Polyimide) PTFE,Polymer,Thermoplastic,PTFE,-,1.42,186,227,121,148,60.0,120 R,2.2,0.12,1100,340,360,300,15000,22500,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+PI (Polyimide) Graphite,Polymer,Thermoplastic,Graphite,-,1.49,227,278,148,181,25.0,120 R,2.8,0.12,1100,340,360,300,15000,22500,INR,Engineering,-,-,Standard Thermoplastic variant.,ISO 10350,True
+Oak Wood (Dry),Composite,Wood,Dry,-,0.7,81,99,40,49,1.0,-,11,0.15,1600,,,100,50,200,INR,Structural,-,-,Standard Wood variant.,Wood Handbook,True
+Oak Wood (Green),Composite,Wood,Green,-,0.84,54,72,27,36,2.0,-,8.8,0.2,1800,,,100,30,150,INR,Raw,-,-,Standard Wood variant.,Wood Handbook,True
+Maple Wood (Dry),Composite,Wood,Dry,-,0.65,90,110,43,52,1.0,-,12,0.15,1600,,,100,50,200,INR,Structural,-,-,Standard Wood variant.,Wood Handbook,True
+Maple Wood (Green),Composite,Wood,Green,-,0.78,60,80,28,38,2.0,-,9.6,0.2,1800,,,100,30,150,INR,Raw,-,-,Standard Wood variant.,Wood Handbook,True
+Walnut Wood (Dry),Composite,Wood,Dry,-,0.6,90,110,45,55,1.0,-,11,0.15,1600,,,100,50,200,INR,Structural,-,-,Standard Wood variant.,Wood Handbook,True
+Walnut Wood (Green),Composite,Wood,Green,-,0.72,60,80,30,40,2.0,-,8.8,0.2,1800,,,100,30,150,INR,Raw,-,-,Standard Wood variant.,Wood Handbook,True
+Cherry Wood (Dry),Composite,Wood,Dry,-,0.56,76,93,37,46,1.0,-,10,0.15,1600,,,100,50,200,INR,Structural,-,-,Standard Wood variant.,Wood Handbook,True
+Cherry Wood (Green),Composite,Wood,Green,-,0.67,51,68,25,33,2.0,-,8.0,0.2,1800,,,100,30,150,INR,Raw,-,-,Standard Wood variant.,Wood Handbook,True
+Ash Wood (Dry),Composite,Wood,Dry,-,0.67,90,110,45,55,1.0,-,12,0.15,1600,,,100,50,200,INR,Structural,-,-,Standard Wood variant.,Wood Handbook,True
+Ash Wood (Green),Composite,Wood,Green,-,0.8,60,80,30,40,2.0,-,9.6,0.2,1800,,,100,30,150,INR,Raw,-,-,Standard Wood variant.,Wood Handbook,True
+Birch Wood (Dry),Composite,Wood,Dry,-,0.66,99,121,49,60,1.0,-,13,0.15,1600,,,100,50,200,INR,Structural,-,-,Standard Wood variant.,Wood Handbook,True
+Birch Wood (Green),Composite,Wood,Green,-,0.79,66,88,33,44,2.0,-,10.4,0.2,1800,,,100,30,150,INR,Raw,-,-,Standard Wood variant.,Wood Handbook,True
+Hickory Wood (Dry),Composite,Wood,Dry,-,0.8,117,143,54,66,1.0,-,15,0.15,1600,,,100,50,200,INR,Structural,-,-,Standard Wood variant.,Wood Handbook,True
+Hickory Wood (Green),Composite,Wood,Green,-,0.96,78,104,36,48,2.0,-,12.0,0.2,1800,,,100,30,150,INR,Raw,-,-,Standard Wood variant.,Wood Handbook,True
+Mahogany Wood (Dry),Composite,Wood,Dry,-,0.65,72,88,36,44,1.0,-,10,0.15,1600,,,100,50,200,INR,Structural,-,-,Standard Wood variant.,Wood Handbook,True
+Mahogany Wood (Green),Composite,Wood,Green,-,0.78,48,64,24,32,2.0,-,8.0,0.2,1800,,,100,30,150,INR,Raw,-,-,Standard Wood variant.,Wood Handbook,True
+Teak Wood (Dry),Composite,Wood,Dry,-,0.65,81,99,40,49,1.0,-,11,0.15,1600,,,100,50,200,INR,Structural,-,-,Standard Wood variant.,Wood Handbook,True
+Teak Wood (Green),Composite,Wood,Green,-,0.78,54,72,27,36,2.0,-,8.8,0.2,1800,,,100,30,150,INR,Raw,-,-,Standard Wood variant.,Wood Handbook,True
+Pine Wood (Dry),Composite,Wood,Dry,-,0.45,36,44,18,22,1.0,-,8,0.15,1600,,,100,50,200,INR,Structural,-,-,Standard Wood variant.,Wood Handbook,True
+Pine Wood (Green),Composite,Wood,Green,-,0.54,24,32,12,16,2.0,-,6.4,0.2,1800,,,100,30,150,INR,Raw,-,-,Standard Wood variant.,Wood Handbook,True
+Fir Wood (Dry),Composite,Wood,Dry,-,0.5,45,55,22,27,1.0,-,9,0.15,1600,,,100,50,200,INR,Structural,-,-,Standard Wood variant.,Wood Handbook,True
+Fir Wood (Green),Composite,Wood,Green,-,0.6,30,40,15,20,2.0,-,7.2,0.2,1800,,,100,30,150,INR,Raw,-,-,Standard Wood variant.,Wood Handbook,True
+Spruce Wood (Dry),Composite,Wood,Dry,-,0.4,40,49,19,24,1.0,-,8,0.15,1600,,,100,50,200,INR,Structural,-,-,Standard Wood variant.,Wood Handbook,True
+Spruce Wood (Green),Composite,Wood,Green,-,0.48,27,36,13,17,2.0,-,6.4,0.2,1800,,,100,30,150,INR,Raw,-,-,Standard Wood variant.,Wood Handbook,True
+Cedar Wood (Dry),Composite,Wood,Dry,-,0.35,31,38,16,19,1.0,-,7,0.15,1600,,,100,50,200,INR,Structural,-,-,Standard Wood variant.,Wood Handbook,True
+Cedar Wood (Green),Composite,Wood,Green,-,0.42,21,28,10,14,2.0,-,5.6,0.2,1800,,,100,30,150,INR,Raw,-,-,Standard Wood variant.,Wood Handbook,True
+Redwood Wood (Dry),Composite,Wood,Dry,-,0.42,43,52,21,26,1.0,-,8,0.15,1600,,,100,50,200,INR,Structural,-,-,Standard Wood variant.,Wood Handbook,True
+Redwood Wood (Green),Composite,Wood,Green,-,0.5,28,38,14,19,2.0,-,6.4,0.2,1800,,,100,30,150,INR,Raw,-,-,Standard Wood variant.,Wood Handbook,True
+Hemlock Wood (Dry),Composite,Wood,Dry,-,0.48,49,60,25,30,1.0,-,9,0.15,1600,,,100,50,200,INR,Structural,-,-,Standard Wood variant.,Wood Handbook,True
+Hemlock Wood (Green),Composite,Wood,Green,-,0.58,33,44,16,22,2.0,-,7.2,0.2,1800,,,100,30,150,INR,Raw,-,-,Standard Wood variant.,Wood Handbook,True
+Cypress Wood (Dry),Composite,Wood,Dry,-,0.46,40,49,19,24,1.0,-,8,0.15,1600,,,100,50,200,INR,Structural,-,-,Standard Wood variant.,Wood Handbook,True
+Cypress Wood (Green),Composite,Wood,Green,-,0.55,27,36,13,17,2.0,-,6.4,0.2,1800,,,100,30,150,INR,Raw,-,-,Standard Wood variant.,Wood Handbook,True
+Balsa Wood (Dry),Composite,Wood,Dry,-,0.15,13,16,6,7,1.0,-,3,0.15,1600,,,100,50,200,INR,Structural,-,-,Standard Wood variant.,Wood Handbook,True
+Balsa Wood (Green),Composite,Wood,Green,-,0.18,9,12,4,5,2.0,-,2.4,0.2,1800,,,100,30,150,INR,Raw,-,-,Standard Wood variant.,Wood Handbook,True
+Ebony Wood (Dry),Composite,Wood,Dry,-,1.05,135,165,72,88,1.0,-,18,0.15,1600,,,100,50,200,INR,Structural,-,-,Standard Wood variant.,Wood Handbook,True
+Ebony Wood (Green),Composite,Wood,Green,-,1.26,90,120,48,64,2.0,-,14.4,0.2,1800,,,100,30,150,INR,Raw,-,-,Standard Wood variant.,Wood Handbook,True
+Rosewood Wood (Dry),Composite,Wood,Dry,-,0.85,108,132,54,66,1.0,-,15,0.15,1600,,,100,50,200,INR,Structural,-,-,Standard Wood variant.,Wood Handbook,True
+Rosewood Wood (Green),Composite,Wood,Green,-,1.02,72,96,36,48,2.0,-,12.0,0.2,1800,,,100,30,150,INR,Raw,-,-,Standard Wood variant.,Wood Handbook,True
+Lignum Vitae Wood (Dry),Composite,Wood,Dry,-,1.25,144,176,76,93,1.0,-,20,0.15,1600,,,100,50,200,INR,Structural,-,-,Standard Wood variant.,Wood Handbook,True
+Lignum Vitae Wood (Green),Composite,Wood,Green,-,1.5,96,128,51,68,2.0,-,16.0,0.2,1800,,,100,30,150,INR,Raw,-,-,Standard Wood variant.,Wood Handbook,True
+Concrete M10,Ceramic,Concrete,M10,-,2.4,1.0,1.5,10,12.0,0.1,-,22.0,1.7,800,,,400,2,8,INR,Construction,-,-,Standard Concrete variant.,ACI 318,True
+Concrete M15,Ceramic,Concrete,M15,-,2.4,1.5,2.25,15,18.0,0.1,-,23.0,1.7,800,,,400,2,8,INR,Construction,-,-,Standard Concrete variant.,ACI 318,True
+Concrete M20,Ceramic,Concrete,M20,-,2.4,2.0,3.0,20,24.0,0.1,-,24.0,1.7,800,,,400,2,8,INR,Construction,-,-,Standard Concrete variant.,ACI 318,True
+Concrete M25,Ceramic,Concrete,M25,-,2.4,2.5,3.75,25,30.0,0.1,-,25.0,1.7,800,,,400,2,8,INR,Construction,-,-,Standard Concrete variant.,ACI 318,True
+Concrete M30,Ceramic,Concrete,M30,-,2.4,3.0,4.5,30,36.0,0.1,-,26.0,1.7,800,,,400,2,8,INR,Construction,-,-,Standard Concrete variant.,ACI 318,True
+Concrete M35,Ceramic,Concrete,M35,-,2.4,3.5,5.25,35,42.0,0.1,-,27.0,1.7,800,,,400,2,8,INR,Construction,-,-,Standard Concrete variant.,ACI 318,True
+Concrete M40,Ceramic,Concrete,M40,-,2.4,4.0,6.0,40,48.0,0.1,-,28.0,1.7,800,,,400,2,8,INR,Construction,-,-,Standard Concrete variant.,ACI 318,True
+Concrete M50,Ceramic,Concrete,M50,-,2.4,5.0,7.5,50,60.0,0.1,-,30.0,1.7,800,,,400,2,8,INR,Construction,-,-,Standard Concrete variant.,ACI 318,True
+Concrete M60,Ceramic,Concrete,M60,-,2.4,6.0,9.0,60,72.0,0.1,-,32.0,1.7,800,,,400,2,8,INR,Construction,-,-,Standard Concrete variant.,ACI 318,True
+Concrete M80,Ceramic,Concrete,M80,-,2.4,8.0,12.0,80,96.0,0.1,-,36.0,1.7,800,,,400,2,8,INR,Construction,-,-,Standard Concrete variant.,ACI 318,True
+Alumina 85%,Ceramic,Ceramic,-,-,3.4,135,165,135,165,0.0,1100 HV,250,30.0,800,2000,2100,1500,2000,5000,INR,High Temp,-,-,Standard Ceramic variant.,NIST,True
+Alumina 90%,Ceramic,Ceramic,-,-,3.6,180,220,180,220,0.0,1200 HV,300,30.0,800,2000,2100,1500,2000,5000,INR,High Temp,-,-,Standard Ceramic variant.,NIST,True
+Alumina 95%,Ceramic,Ceramic,-,-,3.7,225,275,225,275,0.0,1300 HV,350,30.0,800,2000,2100,1500,2000,5000,INR,High Temp,-,-,Standard Ceramic variant.,NIST,True
+Alumina 99%,Ceramic,Ceramic,-,-,3.9,270,330,270,330,0.0,1500 HV,380,30.0,800,2000,2100,1500,2000,5000,INR,High Temp,-,-,Standard Ceramic variant.,NIST,True
+Alumina 99.5%,Ceramic,Ceramic,-,-,3.95,315,385,315,385,0.0,1600 HV,390,30.0,800,2000,2100,1500,2000,5000,INR,High Temp,-,-,Standard Ceramic variant.,NIST,True
+Alumina 99.9%,Ceramic,Ceramic,-,-,3.98,360,440,360,440,0.0,1800 HV,400,30.0,800,2000,2100,1500,2000,5000,INR,High Temp,-,-,Standard Ceramic variant.,NIST,True
+Zirconia Y-TZP,Ceramic,Ceramic,-,-,6.0,810,990,810,990,0.0,1300 HV,210,30.0,800,2000,2100,1500,2000,5000,INR,High Temp,-,-,Standard Ceramic variant.,NIST,True
+Zirconia Mg-PSZ,Ceramic,Ceramic,-,-,5.7,630,770,630,770,0.0,1100 HV,200,30.0,800,2000,2100,1500,2000,5000,INR,High Temp,-,-,Standard Ceramic variant.,NIST,True
+Zirconia Ce-TZP,Ceramic,Ceramic,-,-,6.2,720,880,720,880,0.0,1200 HV,205,30.0,800,2000,2100,1500,2000,5000,INR,High Temp,-,-,Standard Ceramic variant.,NIST,True
+Zirconia CSZ,Ceramic,Ceramic,-,-,5.8,450,550,450,550,0.0,1000 HV,180,30.0,800,2000,2100,1500,2000,5000,INR,High Temp,-,-,Standard Ceramic variant.,NIST,True
+SiC Reaction Bonded,Ceramic,Ceramic,-,-,3.0,225,275,225,275,0.0,2000 HV,350,30.0,800,2000,2100,1500,2000,5000,INR,High Temp,-,-,Standard Ceramic variant.,NIST,True
+SiC Sintered,Ceramic,Ceramic,-,-,3.1,360,440,360,440,0.0,2500 HV,410,30.0,800,2000,2100,1500,2000,5000,INR,High Temp,-,-,Standard Ceramic variant.,NIST,True
+SiC CVD,Ceramic,Ceramic,-,-,3.2,450,550,450,550,0.0,2800 HV,450,30.0,800,2000,2100,1500,2000,5000,INR,High Temp,-,-,Standard Ceramic variant.,NIST,True
+SiC Hot Pressed,Ceramic,Ceramic,-,-,3.2,540,660,540,660,0.0,3000 HV,470,30.0,800,2000,2100,1500,2000,5000,INR,High Temp,-,-,Standard Ceramic variant.,NIST,True
+Si3N4 Reaction Bonded,Ceramic,Ceramic,-,-,2.8,180,220,180,220,0.0,1000 HV,250,30.0,800,2000,2100,1500,2000,5000,INR,High Temp,-,-,Standard Ceramic variant.,NIST,True
+Si3N4 Sintered,Ceramic,Ceramic,-,-,3.2,630,770,630,770,0.0,1500 HV,310,30.0,800,2000,2100,1500,2000,5000,INR,High Temp,-,-,Standard Ceramic variant.,NIST,True
+Si3N4 Hot Pressed,Ceramic,Ceramic,-,-,3.3,810,990,810,990,0.0,1800 HV,330,30.0,800,2000,2100,1500,2000,5000,INR,High Temp,-,-,Standard Ceramic variant.,NIST,True
+Boron Carbide (B4C),Ceramic,Ceramic,-,-,2.5,315,385,315,385,0.0,3000 HV,450,30.0,800,2000,2100,1500,2000,5000,INR,High Temp,-,-,Standard Ceramic variant.,NIST,True
+Aluminum Nitride (AlN),Ceramic,Ceramic,-,-,3.26,270,330,270,330,0.0,1100 HV,330,30.0,800,2000,2100,1500,2000,5000,INR,High Temp,-,-,Standard Ceramic variant.,NIST,True
+Titanium Carbide (TiC),Ceramic,Ceramic,-,-,4.93,360,440,360,440,0.0,2800 HV,440,30.0,800,2000,2100,1500,2000,5000,INR,High Temp,-,-,Standard Ceramic variant.,NIST,True
+Soda-Lime Glass (Sheet),Ceramic,Glass,Sheet,-,2.5,40,60,40,60,0.0,500 HV,70,1.2,800,1000,1500,500,100,800,INR,Optics,-,-,Standard Glass variant.,ACerS,True
+Soda-Lime Glass (Tube),Ceramic,Glass,Tube,-,2.5,40,60,40,60,0.0,500 HV,70,1.2,800,1000,1500,500,100,800,INR,Optics,-,-,Standard Glass variant.,ACerS,True
+Borosilicate Glass (Sheet),Ceramic,Glass,Sheet,-,2.2,52,78,52,78,0.0,500 HV,64,1.2,800,1000,1500,500,100,800,INR,Optics,-,-,Standard Glass variant.,ACerS,True
+Borosilicate Glass (Tube),Ceramic,Glass,Tube,-,2.2,52,78,52,78,0.0,500 HV,64,1.2,800,1000,1500,500,100,800,INR,Optics,-,-,Standard Glass variant.,ACerS,True
+Aluminosilicate Glass (Sheet),Ceramic,Glass,Sheet,-,2.6,64,96,64,96,0.0,500 HV,85,1.2,800,1000,1500,500,100,800,INR,Optics,-,-,Standard Glass variant.,ACerS,True
+Aluminosilicate Glass (Tube),Ceramic,Glass,Tube,-,2.6,64,96,64,96,0.0,500 HV,85,1.2,800,1000,1500,500,100,800,INR,Optics,-,-,Standard Glass variant.,ACerS,True
+Fused Silica (Sheet),Ceramic,Glass,Sheet,-,2.2,88,132,88,132,0.0,500 HV,72,1.2,800,1000,1500,500,100,800,INR,Optics,-,-,Standard Glass variant.,ACerS,True
+Fused Silica (Tube),Ceramic,Glass,Tube,-,2.2,88,132,88,132,0.0,500 HV,72,1.2,800,1000,1500,500,100,800,INR,Optics,-,-,Standard Glass variant.,ACerS,True
+Lead Glass (Sheet),Ceramic,Glass,Sheet,-,3.5,36,54,36,54,0.0,500 HV,60,1.2,800,1000,1500,500,100,800,INR,Optics,-,-,Standard Glass variant.,ACerS,True
+Lead Glass (Tube),Ceramic,Glass,Tube,-,3.5,36,54,36,54,0.0,500 HV,60,1.2,800,1000,1500,500,100,800,INR,Optics,-,-,Standard Glass variant.,ACerS,True
+Chalcogenide Glass (Sheet),Ceramic,Glass,Sheet,-,4.5,24,36,24,36,0.0,500 HV,40,1.2,800,1000,1500,500,100,800,INR,Optics,-,-,Standard Glass variant.,ACerS,True
+Chalcogenide Glass (Tube),Ceramic,Glass,Tube,-,4.5,24,36,24,36,0.0,500 HV,40,1.2,800,1000,1500,500,100,800,INR,Optics,-,-,Standard Glass variant.,ACerS,True
+Sapphire (Sheet),Ceramic,Glass,Sheet,-,3.98,320,480,320,480,0.0,500 HV,345,1.2,800,1000,1500,500,100,800,INR,Optics,-,-,Standard Glass variant.,ACerS,True
+Sapphire (Tube),Ceramic,Glass,Tube,-,3.98,320,480,320,480,0.0,500 HV,345,1.2,800,1000,1500,500,100,800,INR,Optics,-,-,Standard Glass variant.,ACerS,True
+Fluorozirconate (Sheet),Ceramic,Glass,Sheet,-,4.3,32,48,32,48,0.0,500 HV,50,1.2,800,1000,1500,500,100,800,INR,Optics,-,-,Standard Glass variant.,ACerS,True
+Fluorozirconate (Tube),Ceramic,Glass,Tube,-,4.3,32,48,32,48,0.0,500 HV,50,1.2,800,1000,1500,500,100,800,INR,Optics,-,-,Standard Glass variant.,ACerS,True
