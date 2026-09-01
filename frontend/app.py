@@ -516,7 +516,7 @@ with st.sidebar:
 st.markdown('<p class="hero-title">🔧 MatDataHub</p>', unsafe_allow_html=True)
 st.markdown(
     '<p class="hero-sub">The engineering material database that gets you to the right material, faster — '
-    'search, filter, and compare 75+ metals, polymers, ceramics & composites side by side.</p>',
+    'search, filter, and compare 500+ metals, polymers, ceramics & composites side by side.</p>',
     unsafe_allow_html=True,
 )
 
@@ -543,10 +543,10 @@ with tab_home:
     st.markdown("#### At a glance")
     s1, s2, s3, s4 = st.columns(4)
     for col, num, label in [
-        (s1, "75+", "Materials"),
+        (s1, "500+", "Materials"),
         (s2, "4", "Categories"),
         (s3, "20+", "Properties Tracked"),
-        (s4, "MatWeb · BIS · ASM", "Data Sources"),
+        (s4, "ASTM · ASM · ISO", "Data Sources"),
     ]:
         with col:
             st.markdown(
@@ -1036,4 +1036,4 @@ with tab_feedback:
 
 # ── Footer ──
 st.divider()
-st.caption("MatDataHub v0.2 | Engineering Material Data-as-a-Service | 75 materials | Data from MatWeb, MakeItFrom, BIS, ASM")
+st.caption("MatDataHub v0.3 | Engineering Material Data-as-a-Service | 500+ materials | Data from ASTM, ASM, MMPDS, ISO, ACI")
