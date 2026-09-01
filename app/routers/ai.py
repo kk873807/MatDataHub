@@ -30,7 +30,7 @@ def get_ai_advice(req: AIRequest, current_user: User = Depends(get_current_user)
     model = genai.GenerativeModel('gemini-1.5-flash')
 
     # STEP 1: Extract Constraints
-    extraction_prompt = f\"\"\"
+    extraction_prompt = f"""
 You are an engineering constraint extractor. Analyze the user's request and extract any material constraints.
 Respond ONLY with a raw JSON object (no markdown, no backticks).
 Allowed keys (omit if not mentioned):
@@ -41,7 +41,7 @@ Allowed keys (omit if not mentioned):
 - "max_temp": float (Celsius)
 
 User request: "{req.prompt}"
-\"\"\"
+"""
     
     try:
         response = model.generate_content(extraction_prompt)
@@ -81,7 +81,7 @@ User request: "{req.prompt}"
         })
 
     # STEP 3: Generate Recommendation
-    advisory_prompt = f\"\"\"
+    advisory_prompt = f"""
 You are a materials engineering advisor. 
 User request: "{req.prompt}"
 
@@ -89,7 +89,7 @@ Here are the top matches from our database:
 {json.dumps(mat_context, indent=2)}
 
 Write a concise, professional engineering recommendation explaining why these specific materials fit the user's criteria. Mention specific strengths and trade-offs. Format nicely with markdown bullet points. Do not invent materials not in the list.
-\"\"\"
+"""
 
     try:
         final_response = model.generate_content(advisory_prompt)
