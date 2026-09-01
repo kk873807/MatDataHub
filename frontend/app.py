@@ -16,6 +16,7 @@ import requests
 import streamlit as st
 import plotly.graph_objects as go
 
+
 # ── Config ──
 # Priority: st.secrets > env var > hardcoded Render URL
 RENDER_API = "https://matdatahub-api.onrender.com/api/v1"
@@ -43,6 +44,33 @@ st.set_page_config(
     page_icon=":hammer_and_wrench:",
     layout="wide",
 )
+
+
+
+def upgrade_tier(tier: str):
+    token = st.session_state.get("token")  # adjust key name if 8c used a different one
+    if not token:
+        st.sidebar.error("Please log in first.")
+        return
+    try:
+        resp = requests.post(
+            f"{API_BASE}/auth/upgrade",   # reuse your existing API_BASE variable
+            json={"tier": tier},
+            headers={"Authorization": f"Bearer {token}"},
+            timeout=30,
+        )
+        if resp.status_code == 200:
+            data = resp.json()
+            st.session_state["token"] = data["token"]
+            st.session_state["tier"] = data["tier"]
+            if data.get("api_key"):
+                st.session_state["api_key"] = data["api_key"]
+            st.sidebar.success(data["message"])
+            st.rerun()
+        else:
+            st.sidebar.error(f"Upgrade failed: {resp.json().get('detail', 'Unknown error')}")
+    except Exception as e:
+        st.sidebar.error(f"Couldn't reach the server: {e}")
 
 # ── Custom CSS ──
 st.markdown("""
