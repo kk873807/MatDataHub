@@ -24,3 +24,4 @@ plotly>=5.22
 pydantic>=2.10
 razorpay>=1.4.1
 google-generativeai>=0.5.2
+groq>=0.9.0

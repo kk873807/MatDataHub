@@ -3,8 +3,8 @@ import json
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
-import google.generativeai as genai
 from pydantic import BaseModel
+import groq
 
 from app.database import get_db
 from app.models import Material, User
@@ -12,25 +12,22 @@ from app.auth import get_current_user
 
 router = APIRouter(prefix="/ai", tags=["AI Advisor"])
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
-if GEMINI_API_KEY:
-    genai.configure(api_key=GEMINI_API_KEY)
+GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
+client = groq.Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 
 class AIRequest(BaseModel):
     prompt: str
 
 @router.post("/advise")
 def get_ai_advice(req: AIRequest, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    if not GEMINI_API_KEY:
-        raise HTTPException(status_code=500, detail="Gemini API is not configured.")
+    if not client:
+        raise HTTPException(status_code=500, detail="Groq API is not configured on the server.")
         
     if current_user.tier == "free":
         raise HTTPException(status_code=403, detail="AI Advisor is a Premium feature. Please upgrade to Pro or Advanced.")
 
-    model = genai.GenerativeModel('gemini-1.5-flash')
-
     # STEP 1: Extract Constraints
-    extraction_prompt = f"""
+    system_prompt_extract = """
 You are an engineering constraint extractor. Analyze the user's request and extract any material constraints.
 Respond ONLY with a raw JSON object (no markdown, no backticks).
 Allowed keys (omit if not mentioned):
@@ -39,15 +36,20 @@ Allowed keys (omit if not mentioned):
 - "max_cost": float (INR/kg)
 - "min_thermal": float (W/mK)
 - "max_temp": float (Celsius)
-
-User request: "{req.prompt}"
 """
     
     try:
-        response = model.generate_content(extraction_prompt)
-        text = response.text.strip().strip('').removeprefix('json').strip()
+        response = client.chat.completions.create(
+            messages=[
+                {"role": "system", "content": system_prompt_extract},
+                {"role": "user", "content": req.prompt}
+            ],
+            model="llama-3.1-8b-instant"
+        )
+        text = response.choices[0].message.content.strip().strip('').removeprefix('json').strip()
         constraints = json.loads(text) if text.startswith('{') else {}
     except Exception as e:
+        print(f"Extraction Error: {str(e)}")
         constraints = {}
 
     # STEP 2: Database Query
@@ -82,7 +84,6 @@ User request: "{req.prompt}"
 
     # STEP 3: Generate Recommendation
     advisory_prompt = f"""
-You are a materials engineering advisor. 
 User request: "{req.prompt}"
 
 Here are the top matches from our database:
@@ -92,11 +93,17 @@ Write a concise, professional engineering recommendation explaining why these sp
 """
 
     try:
-        final_response = model.generate_content(advisory_prompt)
+        final_response = client.chat.completions.create(
+            messages=[
+                {"role": "system", "content": "You are an expert materials engineering advisor."},
+                {"role": "user", "content": advisory_prompt}
+            ],
+            model="llama-3.1-70b-versatile"
+        )
         return {
-            "response": final_response.text,
+            "response": final_response.choices[0].message.content,
             "materials": mat_context
         }
     except Exception as e:
-        print(f"GEMINI ERROR: {str(e)}")
+        print(f"GROQ ERROR: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to generate AI recommendation. Error: {str(e)}")
