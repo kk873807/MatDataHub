@@ -80,7 +80,7 @@ def upgrade_tier(tier: str):
 st.markdown("""
 <style>
     .hero-title {
-        font-size: 4.2rem;
+        font-size: 6.2rem;
         font-weight: 800;
         background: linear-gradient(90deg, #1E3A5F 0%, #2E86AB 50%, #4FC3A1 100%);
         -webkit-background-clip: text;
