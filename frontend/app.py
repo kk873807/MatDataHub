@@ -321,7 +321,9 @@ def render_radar_chart(selections, mat_details, all_materials, tier):
         st.caption("Hover over the shape for exact values. Click a material's name in the legend to toggle it on/off. Note: for Density and Cost, *lower* is usually better.")
 
 # ══════════════════════════════════════════════
-#  SIDEBAR: Account (Login / Register / Profile)
+#  SIDEBAR: Account (Login / Register / Profile) — sidebar is reserved
+#  exclusively for account/admin controls; Filters live in the main
+#  content area of the Browse tab (see below).
 # ══════════════════════════════════════════════
 
 # Initialize session state
@@ -489,43 +491,43 @@ tab_browse, tab_compare = st.tabs(["Browse Materials", "Compare Materials"])
 # ══════════════════════════════════════════════
 with tab_browse:
 
-    # ── Sidebar Filters ──
-    with st.sidebar:
-        st.header("Filters")
-
-        category = st.selectbox(
-            "Material Category",
-            ["All", "Metal", "Polymer", "Ceramic", "Composite"],
-            index=0,
-        )
-
-        st.divider()
-        st.subheader("Mechanical Properties")
-
-        min_tensile = st.number_input(
-            "Min Tensile Strength (MPa)", min_value=0, max_value=5000, value=0, step=50,
-        )
-
-        st.subheader("Cost")
-        max_cost = st.number_input(
-            "Max Cost (Rs./kg)", min_value=0, max_value=10000, value=0, step=50,
-            help="Set to 0 for no limit",
-        )
-
-        st.subheader("Thermal")
-        min_thermal = st.number_input(
-            "Min Thermal Conductivity W/(m*K)", min_value=0.0, max_value=500.0, value=0.0, step=5.0,
-            help="Set to 0 for no limit",
-        )
-
-        st.divider()
-        per_page = st.selectbox("Results per page", [10, 20, 50], index=1)
-
     # ── Search bar ──
     search_query = st.text_input(
         "Search materials by name, grade, standard, or application...",
         placeholder="e.g. stainless, 6061, aerospace, corrosion",
     )
+
+    # ── Filters — main content area (not the sidebar, which is reserved
+    #     for Account/Admin). Collapsible so it doesn't crowd the results. ──
+    with st.expander("🔍 Filters", expanded=True):
+        fcol1, fcol2, fcol3, fcol4, fcol5 = st.columns(5)
+
+        with fcol1:
+            category = st.selectbox(
+                "Material Category",
+                ["All", "Metal", "Polymer", "Ceramic", "Composite"],
+                index=0,
+            )
+
+        with fcol2:
+            min_tensile = st.number_input(
+                "Min Tensile Strength (MPa)", min_value=0, max_value=5000, value=0, step=50,
+            )
+
+        with fcol3:
+            max_cost = st.number_input(
+                "Max Cost (Rs./kg)", min_value=0, max_value=10000, value=0, step=50,
+                help="Set to 0 for no limit",
+            )
+
+        with fcol4:
+            min_thermal = st.number_input(
+                "Min Thermal Conductivity W/(m*K)", min_value=0.0, max_value=500.0, value=0.0, step=5.0,
+                help="Set to 0 for no limit",
+            )
+
+        with fcol5:
+            per_page = st.selectbox("Results per page", [10, 20, 50], index=1)
 
     # ── Build API call ──
     with st.spinner("Loading materials (API may take ~30s on first load)..."):
