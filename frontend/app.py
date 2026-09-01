@@ -80,14 +80,16 @@ def upgrade_tier(tier: str):
 st.markdown("""
 <style>
     .hero-title {
-        font-size: 3.2rem;
+        font-size: 4.2rem;
         font-weight: 800;
         background: linear-gradient(90deg, #1E3A5F 0%, #2E86AB 50%, #4FC3A1 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        margin-bottom: 0.2rem;
-        letter-spacing: -1px;
+        margin-bottom: 0.1rem;
+        margin-top: 0;
+        letter-spacing: -1.5px;
+        line-height: 1.1;
     }
     .hero-sub {
         font-size: 1.25rem;
@@ -507,7 +509,16 @@ with st.sidebar:
                         st.divider()
             except Exception as e:
                 st.caption(f"Error loading feedback: {e}")
-
+                
+# ══════════════════════════════════════════════
+#  PAGE HEADER — always visible above all tabs
+# ══════════════════════════════════════════════
+st.markdown('<p class="hero-title">🔧 MatDataHub</p>', unsafe_allow_html=True)
+st.markdown(
+    '<p class="hero-sub">The engineering material database that gets you to the right material, faster — '
+    'search, filter, and compare 75+ metals, polymers, ceramics & composites side by side.</p>',
+    unsafe_allow_html=True,
+)
 
 # ══════════════════════════════════════════════
 #  TABS: Home | Browse | Compare | Feedback
@@ -521,12 +532,6 @@ tab_home, tab_browse, tab_compare, tab_feedback = st.tabs(
 #  TAB 0: HOME
 # ══════════════════════════════════════════════
 with tab_home:
-    st.markdown('<p class="hero-title">🔧 MatDataHub</p>', unsafe_allow_html=True)
-    st.markdown(
-        '<p class="hero-sub">The engineering material database that gets you to the right material, faster — '
-        'search, filter, and compare 75+ metals, polymers, ceramics & composites side by side.</p>',
-        unsafe_allow_html=True,
-    )
 
     if st.session_state.get("user"):
         st.info(f"👋 Welcome back, **{st.session_state.user.get('name') or st.session_state.user['email']}**! "
