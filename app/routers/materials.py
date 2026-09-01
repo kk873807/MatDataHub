@@ -285,7 +285,7 @@ def find_similar_materials(
         if not shared_props:
             continue
         squared_diffs = [(vec[p] - target_vec[p]) ** 2 for p in shared_props]
-        distance = sum(squared_diffs) ** 0.5
+        distance = (sum(squared_diffs) / len(shared_props)) ** 0.5  # RMS: normalized by dimension count
         scored.append((distance, m))
 
     scored.sort(key=lambda pair: pair[0])

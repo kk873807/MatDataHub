@@ -21,7 +21,6 @@ from app.auth import (
     create_access_token,
     generate_api_key,
     get_current_user,
-    TIER_LIMITS,
 )
 from app.schemas import (
     RegisterRequest,
@@ -155,8 +154,10 @@ def request_upgrade(
     if tier not in VALID_TIERS:
         raise HTTPException(status_code=400, detail="tier must be 'pro' or 'advanced'")
 
-    if current_user.tier == tier:
-        raise HTTPException(status_code=400, detail=f"You're already on the {tier} tier.")
+    # Prevent same-tier or downgrade requests
+    TIER_ORDER = {"free": 0, "pro": 1, "advanced": 2}
+    if TIER_ORDER.get(tier, 0) <= TIER_ORDER.get(current_user.tier, 0):
+        raise HTTPException(status_code=400, detail=f"You're already on the '{current_user.tier}' tier. Only upgrades are allowed.")
 
     if current_user.upgrade_status == "pending":
         raise HTTPException(
