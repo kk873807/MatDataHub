@@ -1,5 +1,5 @@
-"""
-MatDataHub API — Main application entry point.
+﻿"""
+MatDataHub API â€” Main application entry point.
 Run with:
     uvicorn app.main:app --reload
 Then open:
@@ -9,7 +9,7 @@ Then open:
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine, Base
-from app.routers import materials, auth, admin, feedback, payments   # <-- added payments
+from app.routers import materials, auth, admin, feedback, payments, ai   # <-- added payments
 
 # Create tables on startup (safe to call multiple times)
 Base.metadata.create_all(bind=engine)
@@ -28,7 +28,8 @@ app.include_router(materials.router, prefix="/api/v1")
 app.include_router(auth.router, prefix="/api/v1")
 app.include_router(admin.router, prefix="/api/v1")
 app.include_router(feedback.router, prefix="/api/v1")
-app.include_router(payments.router, prefix="/api/v1")       # <-- added payments
+app.include_router(payments.router, prefix="/api/v1")
+app.include_router(ai.router, prefix="/api/v1")       # <-- added payments
 
 # Allow cross-origin requests (so Streamlit Cloud can call Render-hosted API)
 app.add_middleware(
@@ -49,3 +50,4 @@ def root():
         "docs": "/docs",
         "status": "running",
     }
+

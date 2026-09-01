@@ -521,8 +521,8 @@ st.markdown(
 # ══════════════════════════════════════════════
 #  TABS: Home | Browse | Compare | Feedback
 # ══════════════════════════════════════════════
-tab_home, tab_browse, tab_compare, tab_feedback = st.tabs(
-    ["🏠 Home", "🔍 Browse Materials", "⚖️ Compare Materials", "💬 Feedback"]
+tab_home, tab_browse, tab_compare, tab_ai, tab_feedback = st.tabs(
+    ["🏠 Home", "🔍 Browse Materials", "⚖️ Compare Materials", "🤖 AI Advisor (Pro)", "💬 Feedback"]
 )
 
 
@@ -989,7 +989,56 @@ with tab_compare:
 
 
 # ══════════════════════════════════════════════
-#  TAB 3: FEEDBACK
+#  TAB: AI ADVISOR
+# ══════════════════════════════════════════════
+with tab_ai:
+    st.markdown("### 🤖 Engineering AI Advisor")
+    
+    if not st.session_state.get("user"):
+        st.warning("You must be logged in to access the AI Advisor.")
+    else:
+        tier = st.session_state.user.get("tier", "free")
+        if tier == "free":
+            st.info("🔒 **Premium Feature Locked**")
+            st.markdown("The AI Advisor analyzes your natural language requirements (e.g. *'Need a lightweight, high-strength metal for a drone under Rs. 1000/kg'*), intelligently queries the database, and provides engineering recommendations.")
+            st.markdown("Upgrade to **Pro** or **Advanced** to unlock this feature.")
+            if st.button("🚀 Upgrade to Pro (Rs. 499/mo)", key="ai_upgrade"):
+                upgrade_tier("pro")
+        else:
+            st.markdown("Describe your material requirements and let the AI find the best matches from our 600+ materials.")
+            
+            # Initialize chat history
+            if "messages" not in st.session_state:
+                st.session_state.messages = []
+
+            # Display chat messages from history on app rerun
+            for message in st.session_state.messages:
+                with st.chat_message(message["role"]):
+                    st.markdown(message["content"])
+
+            # React to user input
+            if prompt := st.chat_input("E.g., I need a corrosion-resistant metal that can withstand 500°C..."):
+                # Display user message in chat message container
+                st.chat_message("user").markdown(prompt)
+                # Add user message to chat history
+                st.session_state.messages.append({"role": "user", "content": prompt})
+                
+                with st.chat_message("assistant"):
+                    with st.spinner("Analyzing constraints and querying database..."):
+                        resp = api_post("/ai/advise", {"prompt": prompt})
+                        if resp["ok"]:
+                            response_text = resp["data"]["response"]
+                            st.markdown(response_text)
+                            st.session_state.messages.append({"role": "assistant", "content": response_text})
+                        else:
+                            err = resp.get("error", "Unknown error")
+                            if resp.get("status_code") == 403:
+                                st.error("Access denied. Please ensure you are on a paid tier.")
+                            else:
+                                st.error(f"AI Error: {err}")
+
+# ══════════════════════════════════════════════
+#  TAB: FEEDBACK
 # ══════════════════════════════════════════════
 with tab_feedback:
     st.markdown("## 💬 We'd love your feedback")
