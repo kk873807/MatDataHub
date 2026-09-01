@@ -44,7 +44,7 @@ Allowed keys (omit if not mentioned):
                 {"role": "system", "content": system_prompt_extract},
                 {"role": "user", "content": req.prompt}
             ],
-            model="llama-3.3-70b-versatile"
+            model="mixtral-8x7b-32768"
         )
         text = response.choices[0].message.content.strip().strip('').removeprefix('json').strip()
         constraints = json.loads(text) if text.startswith('{') else {}
@@ -98,7 +98,7 @@ Write a concise, professional engineering recommendation explaining why these sp
                 {"role": "system", "content": "You are an expert materials engineering advisor."},
                 {"role": "user", "content": advisory_prompt}
             ],
-            model="llama-3.3-70b-versatile"
+            model="mixtral-8x7b-32768"
         )
         return {
             "response": final_response.choices[0].message.content,
