@@ -640,6 +640,16 @@ with st.sidebar:
     else:
         auth_tab = st.radio("Auth mode", ["Login", "Register"], horizontal=True, label_visibility="collapsed")
 
+        st.markdown("---")
+        if st.button("Continue with Google 🌐", use_container_width=True, key="sb_google"):
+            st.info("Google OAuth endpoint: /auth/google")
+        if st.button("Continue with Apple 🍏", use_container_width=True, key="sb_apple"):
+            st.info("Apple OAuth endpoint: /auth/apple")
+        if st.button("Sign in with SMS 📱", use_container_width=True, key="sb_sms"):
+            st.info("SMS OTP endpoint: /auth/sms")
+        st.markdown("<p style='text-align: center; color: #888;'>or use email</p>", unsafe_allow_html=True)
+        st.markdown("---")
+
         if auth_tab == "Login":
             with st.form("login_form"):
                 email = st.text_input("Email")
@@ -797,9 +807,12 @@ if st.session_state.current_page == "account":
         with c2:
             with st.container(border=True):
                 st.markdown("#### Login or Create an Account")
-                if st.button("Continue with Google 🌐", use_container_width=True):
+                if st.button("Continue with Google 🌐", use_container_width=True, key="acc_google"):
                     st.info("Google OAuth flow will trigger here (backend endpoint: /auth/google/login)")
-                # Phone auth removed as per user request
+                if st.button("Continue with Apple 🍏", use_container_width=True, key="acc_apple"):
+                    st.info("Apple OAuth endpoint: /auth/apple")
+                if st.button("Sign in with SMS 📱", use_container_width=True, key="acc_sms"):
+                    st.info("SMS OTP endpoint: /auth/sms")
                 
                 st.divider()
                 
