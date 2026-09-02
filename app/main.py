@@ -71,23 +71,3 @@ def root():
     }
 
 
-@app.get("/api/v1/debug_db")
-def debug_db():
-    from sqlalchemy import text
-    try:
-        with engine.connect() as conn:
-            conn.execute(text("ALTER TABLE feedback ADD COLUMN helpful_votes INTEGER DEFAULT 0;"))
-            conn.commit()
-            return {"status": "success added helpful_votes"}
-    except Exception as e:
-        return {"status": "error", "message": str(e)}
-
-@app.get("/api/v1/debug2")
-def debug2(db: Session = Depends(get_db)):
-    from app.models import Feedback
-    try:
-        fb = db.query(Feedback).filter(Feedback.rating != None).order_by(Feedback.helpful_votes.desc()).all()
-        return {"status": "ok", "count": len(fb)}
-    except Exception as e:
-        import traceback
-        return {"status": "error", "error": str(e), "traceback": traceback.format_exc()}
