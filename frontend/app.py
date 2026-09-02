@@ -1463,20 +1463,17 @@ if st.session_state.current_page == "main":
     
         if not all_result["ok"]:
             show_api_error(all_result, retry_key="retry_compare")
-        all_materials = []
-    
-        if "materials" not in all_result.get("data", {}):
-            st.warning("⏳ API returned unexpected data. Please refresh.")
-            if st.button("🔄 Retry", key="retry_compare_data"):
-                st.rerun()
-        all_materials = []
-    
-        try:
-            all_materials = all_result["data"].get("materials", [])
-            name_to_id = {m["name"]: m["id"] for m in all_materials}
-        except (KeyError, TypeError):
             all_materials = []
             name_to_id = {}
+        elif "data" not in all_result or "materials" not in all_result.get("data", {}):
+            st.warning("⚠️ API returned unexpected data. Please refresh.")
+            if st.button("🔄 Retry", key="retry_compare_data"):
+                st.rerun()
+            all_materials = []
+            name_to_id = {}
+        else:
+            all_materials = all_result["data"].get("materials", [])
+            name_to_id = {m["name"]: m["id"] for m in all_materials}
         sorted_names = sorted(name_to_id.keys())
     
         user_tier = (st.session_state.user or {}).get("tier", "free")
