@@ -50,52 +50,61 @@ st.set_page_config(
 import streamlit.components.v1 as components
 
 
-# Global Keyboard Scrolling Injection V2 (Aggressive Capture)
+
+# Global Keyboard Scrolling Injection V3 (Parent Context Script Injection)
 components.html("""
 <script>
 try {
     const parentDoc = window.parent.document;
-    if (!parentDoc.getElementById('custom-keyboard-scroll-v2')) {
-        const marker = parentDoc.createElement('div');
-        marker.id = 'custom-keyboard-scroll-v2';
-        parentDoc.body.appendChild(marker);
-        
-        parentDoc.addEventListener('keydown', function(e) {
-            const active = parentDoc.activeElement;
-            if (active) {
-                const tag = active.tagName.toLowerCase();
-                if (tag === 'input' || tag === 'textarea') return;
-                const role = active.getAttribute('role');
-                if (role === 'slider' || role === 'spinbutton' || role === 'combobox' || role === 'listbox' || role === 'menuitem' || role === 'switch' || role === 'tab') return;
-                if (active.isContentEditable) return;
-            }
-            
-            const scrollAmount = window.parent.innerHeight * 0.15;
-            
-            if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-                const amt = e.key === 'ArrowDown' ? scrollAmount : -scrollAmount;
-                
-                const containers = [
-                    parentDoc.querySelector('[data-testid="stAppViewMain"]'),
-                    parentDoc.querySelector('.main'),
-                    parentDoc.documentElement,
-                    parentDoc.body,
-                    window.parent
-                ];
-                
-                for (let i = 0; i < containers.length; i++) {
-                    if (containers[i] && typeof containers[i].scrollBy === 'function') {
-                        containers[i].scrollBy({ top: amt, behavior: 'smooth' });
-                    }
+    if (!parentDoc.getElementById('scroll-script-v3')) {
+        const script = parentDoc.createElement('script');
+        script.id = 'scroll-script-v3';
+        script.innerHTML = 
+            window.addEventListener('keydown', function(e) {
+                const active = document.activeElement;
+                if (active) {
+                    const tag = active.tagName.toLowerCase();
+                    if (tag === 'input' || tag === 'textarea') return;
+                    const role = active.getAttribute('role');
+                    if (['slider', 'spinbutton', 'combobox', 'listbox', 'menuitem', 'switch', 'tab'].includes(role)) return;
+                    if (active.isContentEditable) return;
                 }
                 
-                e.stopPropagation();
-                e.preventDefault();
-            }
-        }, true); // TRUE = Capture Phase (intercepts before React swallows it)
+                if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                    let container = document.querySelector('[data-testid="stAppViewMain"]') || 
+                                    document.querySelector('.main') || 
+                                    document.querySelector('[data-testid="stMain"]');
+                                    
+                    if (!container || container.scrollHeight <= container.clientHeight) {
+                        const all = document.querySelectorAll('*');
+                        let maxArea = 0;
+                        for(let i=0; i<all.length; i++) {
+                            const style = window.getComputedStyle(all[i]);
+                            if (style.overflowY === 'auto' || style.overflowY === 'scroll' || style.overflowY === 'overlay') {
+                                if (all[i].scrollHeight > all[i].clientHeight) {
+                                    const area = all[i].clientWidth * all[i].clientHeight;
+                                    if (area > maxArea) {
+                                        maxArea = area;
+                                        container = all[i];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    const amt = e.key === 'ArrowDown' ? window.innerHeight * 0.20 : -(window.innerHeight * 0.20);
+                    if (container && typeof container.scrollBy === 'function') {
+                        container.scrollBy({ top: amt, behavior: 'auto' });
+                        e.stopPropagation();
+                        e.preventDefault();
+                    }
+                }
+            }, true);
+        ;
+        parentDoc.head.appendChild(script);
     }
 } catch (e) {
-    console.error("Scroll inject err:", e);
+    console.error("Scroll V3 failed:", e);
 }
 </script>
 """, height=0)
