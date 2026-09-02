@@ -654,8 +654,8 @@ st.markdown("""
 # ══════════════════════════════════════════════
 #  TABS: Home | Browse | Compare | Feedback
 # ══════════════════════════════════════════════
-tab_home, tab_browse, tab_compare, tab_ai, tab_feedback = st.tabs(
-    ["🏠 Home", "🔍 Browse Materials", "⚖️ Compare Materials", "🤖 AI Advisor (Pro)", "💬 Feedback"]
+tab_home, tab_browse, tab_compare, tab_projects, tab_ai, tab_feedback = st.tabs(
+    ["🏠 Home", "🔍 Browse", "⚖️ Compare", "📁 My Projects (BOM)", "🧠 AI Advisor (Pro)", "💬 Feedback"]
 )
 
 
