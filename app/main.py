@@ -9,7 +9,9 @@ Then open:
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine, Base
-from app.routers import materials, auth, admin, feedback, payments, ai   # <-- added payments
+from app.routers import materials, auth, admin, feedback, payments, ai
+from sqlalchemy.orm import Session
+from app.database import get_db   # <-- added payments
 
 
 # Create tables on startup (safe to call multiple times)
@@ -79,3 +81,13 @@ def debug_db():
             return {"status": "success added helpful_votes"}
     except Exception as e:
         return {"status": "error", "message": str(e)}
+
+@app.get("/api/v1/debug2")
+def debug2(db: Session = Depends(get_db)):
+    from app.models import Feedback
+    try:
+        fb = db.query(Feedback).filter(Feedback.rating != None).order_by(Feedback.helpful_votes.desc()).all()
+        return {"status": "ok", "count": len(fb)}
+    except Exception as e:
+        import traceback
+        return {"status": "error", "error": str(e), "traceback": traceback.format_exc()}
