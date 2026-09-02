@@ -51,12 +51,12 @@ if "current_page" not in st.session_state:
 
 
 
-import streamlit.components.v1 as components
+
 
 
 
 # Global Keyboard Scrolling Injection V3 (Parent Context Script Injection)
-components.html("""
+st.html("""
 <script>
 try {
     const parentDoc = window.parent.document;
@@ -529,7 +529,7 @@ with st.sidebar:
             if st.button("🏠 Back to Home", use_container_width=True):
                 st.session_state.current_page = "main"
                 st.rerun()
-        current_tier = user.get("tier", "free")
+        current_tier = st.session_state.user.get("tier", "free")
         if current_tier != "advanced":
             if st.button("✨ Upgrade Plan", type="primary", use_container_width=True):
                 st.session_state.current_page = "account"
