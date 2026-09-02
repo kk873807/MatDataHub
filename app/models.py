@@ -6,6 +6,9 @@ from sqlalchemy import (
     Column, Integer, String, Float, Text, DateTime, Boolean, Index
 )
 from sqlalchemy.sql import func
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import relationship
+
 
 from app.database import Base
 
