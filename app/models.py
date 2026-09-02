@@ -63,7 +63,6 @@ class Material(Base):
     equivalent_grades = Column(Text, nullable=True)                  # "SUS 304 (JIS), X5CrNi18-10 (EN)"
     composition = Column(Text, nullable=True)                        # "Fe 66-74%, Cr 18-20%, Ni 8-10.5%"
     description = Column(Text, nullable=True)
-    blueprint_data = Column(Text, nullable=True)                        # General notes
 
     # ---- Data Source ----
     source_url = Column(String(500), nullable=True)                  # Where we scraped this from
