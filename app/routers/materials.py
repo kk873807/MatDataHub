@@ -23,7 +23,8 @@ from app.database import get_db
 from app.models import Material, User
 from app.schemas import MaterialCreate, MaterialResponse, MaterialListResponse, BulkImportResponse
 from app.auth import get_optional_user
-from app.routers.admin import verify_admin, TIER_LIMITS
+from app.routers.admin import verify_admin
+from app.auth import TIER_LIMITS
 
 router = APIRouter(prefix="/materials", tags=["Materials"])
 
