@@ -1519,7 +1519,7 @@ with tab_projects:
                                         sf_display = f"{sf:.2f}" if sf < 100 else "100+ (Infinite)"
                                         
                                         st.markdown(f"**Applied Stress:** {stress_mpa:.2f} MPa")
-                                        st.markdown(f"**Material Yield Strength ($):** {y_str:.2f} MPa")
+                                        st.markdown(f"**Material Yield Strength ($S_y$):** {y_str:.2f} MPa")
                                         
                                         if sf >= 2.0:
                                             st.success(f"🟢 **Safety Factor: {sf_display}** (Highly Safe)")
@@ -1532,7 +1532,7 @@ with tab_projects:
                                 st.markdown("#### Cyclic Fatigue Life Estimator")
                                 st.caption("Estimate if a part will survive infinite cycles under alternating stress.")
                                 st.latex(r"S_e \approx k_a k_b k_c k_d k_e k_f \cdot S_e'")
-                                st.info("Note: This tool computes the **uncorrected endurance limit ('$)**. For final manufacturing, standard Marin surface/size modification factors ($) must be applied.")
+                                st.info("Note: This tool computes the **uncorrected endurance limit (Se')**. For final manufacturing, standard Marin surface/size modification factors (k) must be applied.")
                                 
                                 if not items:
                                     st.warning("Add parts to your BOM first.")
@@ -1548,15 +1548,15 @@ with tab_projects:
                                         cat = str(mat.get("category", "")).lower()
                                         if "metal" in cat and "aluminum" not in mat["name"].lower():
                                             endurance_limit = ts_val * 0.50 # Steel approx
-                                            note = r"Estimated Uncorrected Endurance Limit (' \approx 0.5 \cdot S_{ut}$)"
+                                            note = r"Estimated Uncorrected Endurance Limit ($S_e' \approx 0.5 \cdot S_{ut}$)"
                                         elif "aluminum" in mat["name"].lower() or "polymer" in cat:
                                             endurance_limit = ts_val * 0.35 # Al/Polymer approx
-                                            note = r"Estimated Fatigue Strength at \cdot 10^8$ cycles ( \approx 0.35 \cdot S_{ut}$)"
+                                            note = r"Estimated Fatigue Strength at $5\cdot 10^8$ cycles ($S_f \approx 0.35 \cdot S_{ut}$)"
                                         else:
                                             endurance_limit = ts_val * 0.40
-                                            note = r"Estimated Endurance Limit (' \approx 0.4 \cdot S_{ut}$)"
+                                            note = r"Estimated Endurance Limit ($S_e' \approx 0.4 \cdot S_{ut}$)"
                                             
-                                        st.markdown(f"**Material Tensile Strength ({{ut}}$):** {ts_val:.2f} MPa")
+                                        st.markdown(f"**Material Tensile Strength ($S_{{ut}}$):** {ts_val:.2f} MPa")
                                         st.markdown(f"**{note}:** {endurance_limit:.2f} MPa")
                                         
                                         alt_stress = st.number_input("Applied Alternating Stress Amplitude (MPa)", min_value=1.0, value=max(1.0, endurance_limit*0.8), step=10.0, key="alt_stress")
@@ -1636,15 +1636,15 @@ with tab_projects:
                                             E_gpa = 200.0 # Standard Steel
                                         st.info(f"Elastic Modulus not explicitly in DB. Using estimated value for {cat}: **{E_gpa} GPa**")
                                     else:
-                                        st.success(f"**Elastic Modulus ($):** {E_gpa} GPa")
+                                        st.success(f"**Elastic Modulus ($E$):** {E_gpa} GPa")
                                         
                                     f1, f2, f3 = st.columns(3)
                                     with f1:
-                                        force_n = st.number_input("Point Load ($) in Newtons", min_value=1.0, value=1000.0, step=100.0)
+                                        force_n = st.number_input("Point Load ($F$) in Newtons", min_value=1.0, value=1000.0, step=100.0)
                                     with f2:
-                                        length_mm = st.number_input("Beam Length ($) in mm", min_value=10.0, value=300.0, step=10.0)
+                                        length_mm = st.number_input("Beam Length ($L$) in mm", min_value=10.0, value=300.0, step=10.0)
                                     with f3:
-                                        diameter_mm = st.number_input("Shaft Diameter ($) in mm", min_value=1.0, value=25.0, step=1.0)
+                                        diameter_mm = st.number_input("Shaft Diameter ($d$) in mm", min_value=1.0, value=25.0, step=1.0)
                                         
                                     # Convert to standard units (meters and Pascals)
                                     E_pa = E_gpa * 1e9
@@ -1657,7 +1657,7 @@ with tab_projects:
                                     deflection_m = (force_n * (L_m ** 3)) / (3.0 * E_pa * I_m4)
                                     deflection_mm = deflection_m * 1000.0
                                     
-                                    st.markdown(f"**Area Moment of Inertia ($):** {I_m4:.2e} m⁴")
+                                    st.markdown(f"**Area Moment of Inertia ($I$):** {I_m4:.2e} m⁴")
                                     st.warning(rf"📐 **Maximum Tip Deflection ($\delta_{{max}}$): {deflection_mm:.4f} mm**")
                                     
                                     if deflection_mm > (length_mm / 100):
@@ -1667,7 +1667,7 @@ with tab_projects:
                                 st.markdown("#### Thermal Shock & Fracture Estimator")
                                 st.caption("Determine a part's resistance to fracturing when quenched or rapidly cooled.")
                                 st.latex(r"R_s = \frac{\sigma_f \cdot k}{E \cdot \alpha}")
-                                st.info("Higher $ values indicate better resistance to thermal shock. Commonly used to evaluate machinability and quenching limits.")
+                                st.info("Higher $R_s$ values indicate better resistance to thermal shock. Commonly used to evaluate machinability and quenching limits.")
                                 
                                 if not items:
                                     st.warning("Add parts to your BOM first.")
@@ -1698,10 +1698,10 @@ with tab_projects:
                                         
                                         sc1, sc2, sc3 = st.columns(3)
                                         sc1.metric(r"Strength ($\sigma_f$)", f"{sigma_f:.1f} MPa")
-                                        sc2.metric("Conductivity ($)", f"{k_cond:.1f} W/m·K")
+                                        sc2.metric("Conductivity ($k$)", f"{k_cond:.1f} W/m·K")
                                         sc3.metric(r"Expansion ($\alpha$)", f"{cte:.1f} µm/m·°C")
                                         
-                                        st.success(f"⚡ **Thermal Shock Resistance ($): {Rs:.2f} W/m**")
+                                        st.success(f"⚡ **Thermal Shock Resistance ($R_s$): {Rs:.2f} W/m**")
 
                             with t_cost:
                                 st.markdown("#### 📉 BOM Cost Optimization Engine")
