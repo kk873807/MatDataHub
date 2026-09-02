@@ -1246,10 +1246,34 @@ with tab_projects:
                 if not projects:
                     st.caption("No projects yet.")
                 
-                selected_proj_id = None
+                # Initialize session state for selected project if not present
+                if "selected_proj_id" not in st.session_state:
+                    st.session_state.selected_proj_id = projects[0]["id"] if projects else None
+
+                # Ensure the selected ID actually exists (in case it was deleted)
+                if projects and st.session_state.selected_proj_id not in [p["id"] for p in projects]:
+                    st.session_state.selected_proj_id = projects[0]["id"]
+
+                selected_proj_id = st.session_state.get("selected_proj_id")
+
                 if projects:
-                    proj_names = {p['id']: p['name'] for p in projects}
-                    selected_proj_id = st.selectbox("Select Project", options=list(proj_names.keys()), format_func=lambda x: proj_names[x], label_visibility="collapsed")
+                    st.markdown("---")
+                    for p in projects:
+                        # Highlight the selected project
+                        is_selected = (p["id"] == selected_proj_id)
+                        
+                        # Use a border container for each project to look like a list of cards
+                        with st.container(border=True):
+                            if is_selected:
+                                st.markdown(f"#### 📂 **{p['name']}**")
+                            else:
+                                st.markdown(f"**{p['name']}**")
+                                
+                            if not is_selected:
+                                if st.button(f"Open Workspace", key=f"open_proj_{p['id']}", use_container_width=True):
+                                    st.session_state.selected_proj_id = p["id"]
+                                    st.rerun()
+                    st.markdown("---")
                     
                 st.divider()
                 st.markdown("##### Create New")
@@ -1268,6 +1292,7 @@ with tab_projects:
                                 res = api_post("/projects/", {"name": new_name, "description": new_desc})
                                 if res["ok"]:
                                     st.success("Created!")
+                                    st.session_state.selected_proj_id = res["data"]["id"]
                                     st.rerun()
                                 else:
                                     st.error(res["error"])
