@@ -78,46 +78,126 @@ def upgrade_tier(tier: str):
 # ── Custom CSS ──
 st.markdown("""
 <style>
-    .block-container { padding-top: 4rem !important; }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    
+    /* Global Typography & Background */
+    html, body, [class*="css"] {
+        font-family: 'Inter', sans-serif !important;
+    }
+    
+    .block-container { padding-top: 3rem !important; }
+
+    /* Modern Hero Title with animated gradient */
     .hero-title {
-        font-size: 7.5rem;
+        font-size: 4.5rem;
         font-weight: 800;
-        background: linear-gradient(90deg, #1E3A5F 0%, #2E86AB 50%, #4FC3A1 100%);
+        background: linear-gradient(270deg, #1E3A5F, #2E86AB, #4FC3A1, #1E3A5F);
+        background-size: 300% 300%;
+        animation: gradient-shift 8s ease infinite;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        margin-bottom: 0.1rem;
+        margin-bottom: 0.5rem;
         margin-top: 0;
-        letter-spacing: -1.5px;
+        letter-spacing: -2px;
         line-height: 1.1;
+        text-align: center;
     }
+    
+    @keyframes gradient-shift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
     .hero-sub {
         font-size: 1.25rem;
-        color: #555;
-        margin-bottom: 1.5rem;
+        color: #8892b0;
+        margin-bottom: 2rem;
         font-weight: 400;
-    }
-    .stat-card {
-        background: linear-gradient(135deg, #f8f9fb 0%, #eef2f7 100%);
-        border-radius: 14px;
-        padding: 18px 10px;
         text-align: center;
-        border: 1px solid #e3e8ef;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
     }
-    .stat-num { font-size: 1.8rem; font-weight: 700; color: #1E3A5F; }
-    .stat-label { font-size: 0.85rem; color: #777; }
+
+    /* Glassmorphism Stat Cards */
+    .stat-card {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 24px 15px;
+        text-align: center;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+    }
+    .stat-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 40px 0 rgba(31, 38, 135, 0.15);
+        border-color: rgba(79, 195, 161, 0.4);
+    }
+    .stat-num { font-size: 2.2rem; font-weight: 800; color: #4FC3A1; margin-bottom: 5px; }
+    .stat-label { font-size: 0.9rem; color: #a8b2d1; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; }
+
+    /* Feature Cards */
     .feature-card {
-        background: white;
-        border-radius: 14px;
-        padding: 20px;
-        border: 1px solid #e8ecf1;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 16px;
+        padding: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
         height: 100%;
+        transition: all 0.3s ease;
     }
-    .feature-card h4 { margin-bottom: 6px; color: #1E3A5F; }
-    .feature-card p { color: #666; font-size: 0.92rem; margin: 0; }
-    .compare-better { color: #28a745; font-weight: 600; }
-    .compare-worse  { color: #dc3545; }
+    .feature-card:hover {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: #2E86AB;
+    }
+    .feature-card h4 { margin-bottom: 10px; color: #e6f1ff; font-weight: 700; }
+    .feature-card p { color: #8892b0; font-size: 0.95rem; margin: 0; line-height: 1.6; }
+
+    /* Review Cards */
+    .review-card {
+        background: rgba(46, 134, 171, 0.05);
+        border-left: 4px solid #4FC3A1;
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 16px;
+        transition: transform 0.2s ease;
+    }
+    .review-card:hover {
+        transform: translateX(5px);
+    }
+    .review-name { font-weight: 700; font-size: 1.1rem; color: #e6f1ff; }
+    .review-stars { color: #FFD700; font-size: 1.1rem; letter-spacing: 2px; }
+    .review-text { color: #8892b0; font-style: italic; margin-top: 8px; }
+
+    /* Customizing Streamlit Tabs */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 8px;
+        background-color: transparent;
+    }
+    .stTabs [data-baseweb="tab"] {
+        height: 50px;
+        white-space: pre-wrap;
+        background-color: rgba(255,255,255,0.05);
+        border-radius: 8px;
+        color: #a8b2d1;
+        padding: 0 20px;
+        border: 1px solid transparent;
+        transition: all 0.2s;
+    }
+    .stTabs [aria-selected="true"] {
+        background-color: rgba(79, 195, 161, 0.1) !important;
+        color: #4FC3A1 !important;
+        border: 1px solid rgba(79, 195, 161, 0.3) !important;
+        font-weight: 600;
+    }
+    .stTabs [data-baseweb="tab-highlight"] {
+        display: none;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -568,12 +648,25 @@ tab_home, tab_browse, tab_compare, tab_ai, tab_feedback = st.tabs(
 # ══════════════════════════════════════════════
 with tab_home:
 
+    st.markdown("""
+        <div style="text-align: center; margin-top: 2rem; margin-bottom: 2rem;">
+            <h1 class="hero-title">MatDataHub</h1>
+            <p class="hero-sub">The ultimate engineering material data-as-a-service platform. Discover, compare, and analyze over 500+ industrial materials instantly.</p>
+        </div>
+    """, unsafe_allow_html=True)
+
     if st.session_state.get("user"):
-        st.info(f"👋 Welcome back, **{st.session_state.user.get('name') or st.session_state.user['email']}**! "
-                f"Jump into **Browse Materials** or **Compare Materials** using the tabs above.")
+        st.markdown(f"""
+            <div style="background: rgba(79, 195, 161, 0.1); border: 1px solid rgba(79, 195, 161, 0.3); border-radius: 8px; padding: 12px 20px; color: #4FC3A1; margin-bottom: 2rem; font-weight: 500; text-align: center;">
+                ✨ Welcome back, {st.session_state.user.get('name') or st.session_state.user['email']}! Jump into Browse Materials or Compare Materials using the tabs above.
+            </div>
+        """, unsafe_allow_html=True)
     else:
-        st.info("👋 New here? Browse materials freely — sign in from the sidebar to unlock comparisons, "
-                "similarity search, and saved history.")
+        st.markdown("""
+            <div style="background: rgba(46, 134, 171, 0.1); border: 1px solid rgba(46, 134, 171, 0.3); border-radius: 8px; padding: 12px 20px; color: #2E86AB; margin-bottom: 2rem; font-weight: 500; text-align: center;">
+                👋 New here? Browse materials freely — sign in from the sidebar to unlock intelligent comparisons and the AI Advisor.
+            </div>
+        """, unsafe_allow_html=True)
 
     st.markdown("#### At a glance")
     s1, s2, s3, s4 = st.columns(4)
@@ -581,7 +674,7 @@ with tab_home:
         (s1, "500+", "Materials"),
         (s2, "4", "Categories"),
         (s3, "20+", "Properties Tracked"),
-        (s4, "ASTM · ASM · ISO", "Data Sources"),
+        (s4, "ASTM / ISO", "Global Standards"),
     ]:
         with col:
             st.markdown(
@@ -786,7 +879,18 @@ with tab_browse:
                 })
 
             df = pd.DataFrame(table_data)
-            st.dataframe(df, width='stretch', hide_index=True)
+            st.dataframe(
+                df, 
+                width='stretch', 
+                hide_index=True,
+                column_config={
+                    "Name": st.column_config.TextColumn("Material Name", width="medium"),
+                    "Category": st.column_config.TextColumn("Category", width="small"),
+                    "Tensile (MPa)": st.column_config.TextColumn("Tensile Strength (MPa)", width="medium"),
+                    "Cost (Rs./kg)": st.column_config.TextColumn("Cost (Rs./kg)", width="medium"),
+                    "Applications": st.column_config.TextColumn("Applications", width="large"),
+                }
+            )
 
             st.divider()
             st.subheader("Material Detail View")
