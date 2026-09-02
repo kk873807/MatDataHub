@@ -1313,6 +1313,24 @@ with tab_projects:
                             cost_display = f"Rs. {total_cost_min:,.0f} - {total_cost_max:,.0f}" if total_cost_min > 0 else "Rs. 0"
                             st.markdown(f'<div class="stat-card" style="padding: 15px;"><div class="stat-label">Total Estimated Cost</div><div class="stat-num" style="font-size:1.8rem;">{cost_display}</div></div>', unsafe_allow_html=True)
                         
+
+                        # Blueprint Section
+                        with st.expander("🖼️ Project Blueprint", expanded=True):
+                            b64 = curr_proj.get("blueprint_data")
+                            if b64:
+                                st.image(f"data:image/png;base64,{b64}", use_container_width=True)
+                                if st.button("Remove Blueprint"):
+                                    requests.patch(f"{API_BASE}/projects/{selected_proj_id}/blueprint", json={"blueprint_data": ""}, headers=get_auth_headers())
+                                    st.rerun()
+                            else:
+                                bp_file = st.file_uploader("Upload CAD/Sketch (.png, .jpg)", type=["png", "jpg", "jpeg"])
+                                if bp_file:
+                                    import base64
+                                    b64_str = base64.b64encode(bp_file.read()).decode()
+                                    res = requests.patch(f"{API_BASE}/projects/{selected_proj_id}/blueprint", json={"blueprint_data": b64_str}, headers=get_auth_headers())
+                                    if res.status_code == 200:
+                                        st.rerun()
+                                        
                         st.markdown("#### Bill of Materials (BOM)")
                         
                         if items:
@@ -1382,6 +1400,102 @@ with tab_projects:
                                         st.rerun()
                                     else:
                                         st.error(res["error"])
+                        
+                        st.divider()
+                        st.markdown("##### ⚡ Smart Import (CSV/Excel)")
+                        st.caption("Upload a file with columns: Part Name, Material ID, Volume (cm3)")
+                        bom_file = st.file_uploader("Upload BOM File", type=["csv", "xlsx"], label_visibility="collapsed")
+                        if bom_file and st.button("Auto-Build Project"):
+                            try:
+                                import pandas as pd
+                                df_bom = pd.read_csv(bom_file) if bom_file.name.endswith(".csv") else pd.read_excel(bom_file)
+                                if "Part Name" in df_bom.columns and "Material ID" in df_bom.columns and "Volume (cm3)" in df_bom.columns:
+                                    with st.spinner("Importing parts..."):
+                                        for _, row in df_bom.iterrows():
+                                            api_post(f"/projects/{selected_proj_id}/items", {"material_id": int(row["Material ID"]), "part_name": str(row["Part Name"]), "volume_cm3": float(row["Volume (cm3)"])})
+                                    st.success("BOM Imported Successfully!")
+                                    st.rerun()
+                                else:
+                                    st.error("Missing required columns: Part Name, Material ID, Volume (cm3)")
+                            except Exception as e:
+                                st.error(f"Failed to parse file: {e}")
+                        
+                        st.divider()
+                        st.markdown("### 🔬 Advanced Engineering Tools")
+                        
+                        t_synthesizer, t_safety = st.tabs(["🧬 Material Synthesizer", "🛡️ Safety Analyzer"])
+                        
+                        with t_synthesizer:
+                            st.markdown("#### Rule of Mixtures Synthesizer")
+                            st.caption("Estimate the properties of a composite or alloy by blending two materials.")
+                            
+                            with st.spinner("Loading material database..."):
+                                all_mats = fetch_all_materials()
+                                mat_options = {m["id"]: m for m in all_mats["data"].get("materials", [])} if all_mats["ok"] else {}
+                                
+                            c_syn1, c_syn2 = st.columns(2)
+                            with c_syn1:
+                                m1_id = st.selectbox("Base Material (Matrix)", options=list(mat_options.keys()), format_func=lambda x: mat_options[x]["name"], key="m1")
+                                vol_m1 = st.slider("Volume %", 0, 100, 70)
+                            with c_syn2:
+                                m2_id = st.selectbox("Secondary Material (Reinforcement)", options=list(mat_options.keys()), format_func=lambda x: mat_options[x]["name"], key="m2")
+                                vol_m2 = 100 - vol_m1
+                                st.metric("Secondary Volume %", f"{vol_m2}%")
+                                
+                            if m1_id and m2_id:
+                                mat1 = mat_options[m1_id]
+                                mat2 = mat_options[m2_id]
+                                
+                                den1 = mat1.get("density") or 0.0
+                                den2 = mat2.get("density") or 0.0
+                                blend_density = (den1 * (vol_m1/100.0)) + (den2 * (vol_m2/100.0))
+                                
+                                ts1 = mat1.get("tensile_strength_max") or mat1.get("tensile_strength_min") or 0.0
+                                ts2 = mat2.get("tensile_strength_max") or mat2.get("tensile_strength_min") or 0.0
+                                blend_ts = (ts1 * (vol_m1/100.0)) + (ts2 * (vol_m2/100.0))
+                                
+                                c_min1 = mat1.get("cost_per_kg_min") or 0.0
+                                c_min2 = mat2.get("cost_per_kg_min") or 0.0
+                                blend_cost = (c_min1 * (vol_m1/100.0)) + (c_min2 * (vol_m2/100.0))
+                                
+                                st.markdown("##### Estimated Composite Properties")
+                                sc1, sc2, sc3 = st.columns(3)
+                                sc1.metric("Blend Density", f"{blend_density:.2f} g/cm³")
+                                sc2.metric("Blend Tensile Strength", f"{blend_ts:.0f} MPa")
+                                sc3.metric("Est. Base Cost", f"Rs. {blend_cost:.0f} /kg")
+                                
+                        with t_safety:
+                            st.markdown("#### Structural Yield Analyzer")
+                            st.caption("Calculate the Safety Factor for a specific part under mechanical load.")
+                            if not items:
+                                st.warning("Add parts to your BOM first.")
+                            else:
+                                safe_part_idx = st.selectbox("Select Part to Analyze", options=range(len(items)), format_func=lambda i: f"{items[i]['part_name']} ({items[i]['material']['name']})")
+                                p_item = items[safe_part_idx]
+                                y_str = p_item["material"].get("yield_strength_min")
+                                
+                                if not y_str:
+                                    st.error(f"Material '{p_item['material']['name']}' lacks Yield Strength data.")
+                                else:
+                                    f_col1, f_col2 = st.columns(2)
+                                    with f_col1:
+                                        load_n = st.number_input("Max Applied Force (Newtons)", min_value=1.0, value=5000.0, step=500.0)
+                                    with f_col2:
+                                        area_cm2 = st.number_input("Cross-Sectional Area (cm²)", min_value=0.1, value=10.0, step=0.5)
+                                        
+                                    stress_mpa = load_n / (area_cm2 * 100.0)
+                                    sf = y_str / stress_mpa if stress_mpa > 0 else 0
+                                    
+                                    st.markdown(f"**Applied Stress:** {stress_mpa:.2f} MPa")
+                                    st.markdown(f"**Material Yield Strength:** {y_str:.2f} MPa")
+                                    
+                                    if sf >= 2.0:
+                                        st.success(f"🟢 **Safety Factor: {sf:.2f}** (Highly Safe)")
+                                    elif sf >= 1.0:
+                                        st.warning(f"🟡 **Safety Factor: {sf:.2f}** (Marginal/Warning)")
+                                    else:
+                                        st.error(f"🔴 **Safety Factor: {sf:.2f}** (Critical Failure Expected!)")
+
 with tab_ai:
     st.markdown("### 🤖 Engineering AI Advisor")
     

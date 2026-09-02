@@ -22,6 +22,11 @@ from sqlalchemy import text
 with engine.connect() as conn:
     try:
         conn.execute(text("ALTER TABLE users ADD COLUMN is_blocked BOOLEAN DEFAULT FALSE;"))
+        try:
+            conn.execute(text("ALTER TABLE projects ADD COLUMN blueprint_data TEXT;"))
+            conn.commit()
+        except Exception:
+            pass
         conn.commit()
     except Exception:
         pass # Probably already exists

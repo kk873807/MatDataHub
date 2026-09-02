@@ -42,6 +42,7 @@ class MaterialBase(BaseModel):
     equivalent_grades: Optional[str] = Field(None, examples=["SUS 304 (JIS), X5CrNi18-10 (EN)"])
     composition: Optional[str] = Field(None, examples=["Fe 66-74%, Cr 18-20%, Ni 8-10.5%"])
     description: Optional[str] = None
+    blueprint_data: Optional[str] = None
 
     # Source
     source_url: Optional[str] = Field(None, max_length=500)
@@ -216,13 +217,18 @@ class ProjectItemOut(BaseModel):
 class ProjectCreate(BaseModel):
     name: str
     description: Optional[str] = None
+    blueprint_data: Optional[str] = None
 
 class ProjectOut(BaseModel):
     id: int
     user_id: int
     name: str
     description: Optional[str] = None
+    blueprint_data: Optional[str] = None
     created_at: Optional[datetime] = None
     items: List[ProjectItemOut] = []
 
     model_config = {"from_attributes": True}
+
+class ProjectBlueprintUpdate(BaseModel):
+    blueprint_data: str

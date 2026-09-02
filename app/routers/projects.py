@@ -4,7 +4,7 @@ from typing import List
 
 from app.database import get_db
 from app.models import Project, ProjectItem, User
-from app.schemas import ProjectCreate, ProjectOut, ProjectItemCreate, ProjectItemOut
+from app.schemas import ProjectCreate, ProjectOut, ProjectItemCreate, ProjectItemOut, ProjectBlueprintUpdate
 from app.auth import get_current_user
 
 router = APIRouter(prefix="/projects", tags=["Projects"])
@@ -110,3 +110,20 @@ def delete_project_item(
     db.delete(item)
     db.commit()
     return {"ok": True, "message": "Item removed"}
+
+@router.patch("/{project_id}/blueprint", response_model=ProjectOut)
+def update_blueprint(
+    project_id: int,
+    payload: ProjectBlueprintUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    proj = db.query(Project).filter(Project.id == project_id, Project.user_id == current_user.id).first()
+    if not proj:
+        raise HTTPException(status_code=404, detail="Project not found")
+        
+    proj.blueprint_data = payload.blueprint_data
+    db.commit()
+    db.refresh(proj)
+    proj.items = db.query(ProjectItem).filter(ProjectItem.project_id == proj.id).all()
+    return proj

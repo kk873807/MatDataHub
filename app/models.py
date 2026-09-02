@@ -62,7 +62,8 @@ class Material(Base):
     applications = Column(Text, nullable=True)                       # "Automotive, Kitchen sinks, Chemical tanks"
     equivalent_grades = Column(Text, nullable=True)                  # "SUS 304 (JIS), X5CrNi18-10 (EN)"
     composition = Column(Text, nullable=True)                        # "Fe 66-74%, Cr 18-20%, Ni 8-10.5%"
-    description = Column(Text, nullable=True)                        # General notes
+    description = Column(Text, nullable=True)
+    blueprint_data = Column(Text, nullable=True)                        # General notes
 
     # ---- Data Source ----
     source_url = Column(String(500), nullable=True)                  # Where we scraped this from
@@ -156,6 +157,7 @@ class Project(Base):
     user_id = Column(Integer, index=True, nullable=False)
     name = Column(String(100), nullable=False)
     description = Column(Text, nullable=True)
+    blueprint_data = Column(Text, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 class ProjectItem(Base):
