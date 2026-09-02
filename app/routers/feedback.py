@@ -89,6 +89,17 @@ def submit_feedback(
     """Submit feedback. Works whether or not the user is logged in. Rate-limited per IP."""
     ip = _client_ip(request)
     _check_rate_limit(ip)
+    
+    BANNED_WORDS = {
+        "fuck", "shit", "bitch", "asshole", "porn", "sex", "cunt", 
+        "dick", "cock", "pussy", "nigger", "faggot", "slut", "whore", 
+        "bastard", "nude", "naked", "abuse"
+    }
+    
+    text_to_check = ((payload.message or "") + " " + (payload.name or "")).lower()
+    if any(word in text_to_check for word in BANNED_WORDS):
+        raise HTTPException(status_code=400, detail="Feedback contains inappropriate language and violates our Terms & Conditions.")
+
 
     fb = Feedback(
         user_id=current_user.id if current_user else None,
