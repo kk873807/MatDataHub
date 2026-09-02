@@ -219,7 +219,10 @@ def api_post(path, json_data=None, timeout=30):
     url = f"{API_BASE}{path}"
     try:
         r = requests.post(url, json=json_data, headers=get_auth_headers(), timeout=timeout)
-        payload = r.json()
+        try:
+            payload = r.json()
+        except Exception:
+            return {"ok": False, "error": f"Server Error ({r.status_code}): {r.text[:200]}"}
         if r.status_code >= 400:
             return {"ok": False, "error": payload.get("detail", str(payload)), "status_code": r.status_code}
         return {"ok": True, "data": payload}

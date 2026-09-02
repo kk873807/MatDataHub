@@ -11,10 +11,9 @@ router = APIRouter(prefix="/projects", tags=["Projects"])
 
 @router.get("/", response_model=List[ProjectOut])
 def get_user_projects(
-    request: Request,
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    current_user = get_current_user(request, db)
     
     # Optional: Enforce Pro/Advanced tier
     if current_user.tier == "free":
@@ -31,10 +30,9 @@ def get_user_projects(
 @router.post("/", response_model=ProjectOut)
 def create_project(
     payload: ProjectCreate,
-    request: Request,
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    current_user = get_current_user(request, db)
     
     if current_user.tier == "free":
         raise HTTPException(status_code=403, detail="Engineering Workspaces require a Pro or Advanced tier subscription.")
@@ -60,10 +58,9 @@ def create_project(
 @router.delete("/{project_id}")
 def delete_project(
     project_id: int,
-    request: Request,
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    current_user = get_current_user(request, db)
     proj = db.query(Project).filter(Project.id == project_id, Project.user_id == current_user.id).first()
     if not proj:
         raise HTTPException(status_code=404, detail="Project not found")
@@ -77,10 +74,9 @@ def delete_project(
 def add_project_item(
     project_id: int,
     payload: ProjectItemCreate,
-    request: Request,
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    current_user = get_current_user(request, db)
     proj = db.query(Project).filter(Project.id == project_id, Project.user_id == current_user.id).first()
     if not proj:
         raise HTTPException(status_code=404, detail="Project not found")
@@ -100,10 +96,9 @@ def add_project_item(
 def delete_project_item(
     project_id: int,
     item_id: int,
-    request: Request,
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    current_user = get_current_user(request, db)
     proj = db.query(Project).filter(Project.id == project_id, Project.user_id == current_user.id).first()
     if not proj:
         raise HTTPException(status_code=404, detail="Project not found")
