@@ -22,7 +22,8 @@ from typing import List, Optional
 from app.database import get_db
 from app.models import Material, User
 from app.schemas import MaterialCreate, MaterialResponse, MaterialListResponse, BulkImportResponse
-from app.auth import get_optional_user, TIER_LIMITS
+from app.auth import get_optional_user
+from app.routers.admin import verify_admin, TIER_LIMITS
 
 router = APIRouter(prefix="/materials", tags=["Materials"])
 
@@ -321,7 +322,7 @@ def get_material(
 # separately, since it's unrelated to the free-data/paid-tools model.
 # ──────────────────────────────────────────────
 @router.post("/", response_model=MaterialResponse, status_code=201)
-def create_material(material: MaterialCreate, db: Session = Depends(get_db)):
+def create_material(material: MaterialCreate, db: Session = Depends(get_db), _: bool = Depends(verify_admin)):
     """
     Add a new material to the database.
 
@@ -362,7 +363,7 @@ def bulk_create_materials(materials: List[MaterialCreate], db: Session = Depends
 # POST /materials/clean_legacy
 # ──────────────────────────────────────────────
 @router.post("/clean_legacy")
-def clean_legacy_data(db: Session = Depends(get_db)):
+def clean_legacy_data(db: Session = Depends(get_db), _: bool = Depends(verify_admin)):
     """
     Finds all legacy materials with 'MakeItFrom' or unverified status
     and updates them to standard references and verified=True.

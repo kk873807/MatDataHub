@@ -10,7 +10,40 @@ Endpoints:
 """
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
+
+# --- Rate Limiting for Security ---
+import time
+from collections import defaultdict
+from fastapi import Request
+
+# IP -> list of timestamps
+_auth_attempts: dict[str, list[float]] = defaultdict(list)
+AUTH_COOLDOWN = 1.0  # 1 second between attempts
+MAX_AUTH_PER_HOUR = 20
+
+def _get_ip(request: Request) -> str:
+    xff = request.headers.get("x-forwarded-for")
+    if xff:
+        return xff.split(",")[0].strip()
+    return request.client.host if request.client else "unknown"
+
+def _check_auth_rate_limit(request: Request):
+    ip = _get_ip(request)
+    now = time.time()
+    timestamps = _auth_attempts[ip]
+    
+    # Remove attempts older than 1 hour (3600 seconds)
+    timestamps[:] = [t for t in timestamps if now - t < 3600]
+    
+    if timestamps and (now - timestamps[-1]) < AUTH_COOLDOWN:
+        raise HTTPException(status.HTTP_429_TOO_MANY_REQUESTS, "Please wait a moment before trying again.")
+        
+    if len(timestamps) >= MAX_AUTH_PER_HOUR:
+        raise HTTPException(status.HTTP_429_TOO_MANY_REQUESTS, "Too many login attempts. Please try again later.")
+        
+    timestamps.append(now)
+
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -40,7 +73,8 @@ VALID_TIERS = {"pro", "advanced"}
 # POST /auth/register
 # ──────────────────────────────────────────────
 @router.post("/register", response_model=TokenResponse, status_code=201)
-def register(req: RegisterRequest, db: Session = Depends(get_db)):
+def register(req: RegisterRequest, request: Request, db: Session = Depends(get_db)):
+    _check_auth_rate_limit(request)
     """
     Create a new user account.
 
@@ -85,7 +119,8 @@ def register(req: RegisterRequest, db: Session = Depends(get_db)):
 # POST /auth/login
 # ──────────────────────────────────────────────
 @router.post("/login", response_model=TokenResponse)
-def login(req: LoginRequest, db: Session = Depends(get_db)):
+def login(req: LoginRequest, request: Request, db: Session = Depends(get_db)):
+    _check_auth_rate_limit(request)
     """
     Login with email and password.
 
