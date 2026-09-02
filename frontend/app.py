@@ -1242,10 +1242,6 @@ with tab_projects:
                 projects = proj_resp.json()
                 
             with pcol1:
-                st.markdown("#### Your Projects")
-                if not projects:
-                    st.caption("No projects yet.")
-                
                 # Initialize session state for selected project if not present
                 if "selected_proj_id" not in st.session_state:
                     st.session_state.selected_proj_id = projects[0]["id"] if projects else None
@@ -1256,26 +1252,7 @@ with tab_projects:
 
                 selected_proj_id = st.session_state.get("selected_proj_id")
 
-                if projects:
-                    st.markdown("---")
-                    for p in projects:
-                        # Highlight the selected project
-                        is_selected = (p["id"] == selected_proj_id)
-                        
-                        # Use a border container for each project to look like a list of cards
-                        with st.container(border=True):
-                            if is_selected:
-                                st.markdown(f"#### 📂 **{p['name']}**")
-                            else:
-                                st.markdown(f"**{p['name']}**")
-                                
-                            if not is_selected:
-                                if st.button(f"Open Workspace", key=f"open_proj_{p['id']}", use_container_width=True):
-                                    st.session_state.selected_proj_id = p["id"]
-                                    st.rerun()
-                    st.markdown("---")
-                    
-                st.divider()
+                # --- 1. CREATE NEW SECTION ---
                 st.markdown("##### Create New")
                 at_limit = (tier == "pro" and len(projects) >= 3)
                 
@@ -1296,6 +1273,29 @@ with tab_projects:
                                     st.rerun()
                                 else:
                                     st.error(res["error"])
+                                    
+                st.divider()
+
+                # --- 2. YOUR PROJECTS SECTION ---
+                st.markdown("#### Your Projects")
+                if not projects:
+                    st.caption("No projects yet.")
+                else:
+                    for p in projects:
+                        # Highlight the selected project
+                        is_selected = (p["id"] == selected_proj_id)
+                        
+                        # Use a border container for each project to look like a list of cards
+                        with st.container(border=True):
+                            if is_selected:
+                                st.markdown(f"#### 📂 **{p['name']}**")
+                            else:
+                                st.markdown(f"**{p['name']}**")
+                                
+                            if not is_selected:
+                                if st.button(f"Open Workspace", key=f"open_proj_{p['id']}", use_container_width=True):
+                                    st.session_state.selected_proj_id = p["id"]
+                                    st.rerun()
                                 
             with pcol2:
                 if selected_proj_id:
