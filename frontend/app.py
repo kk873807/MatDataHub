@@ -15,6 +15,7 @@ import pandas as pd
 import requests
 import streamlit as st
 import plotly.graph_objects as go
+import plotly.express as px
 
 
 # ── Config ──
@@ -389,21 +390,36 @@ def render_radar_chart(selections, mat_details, all_materials, tier):
     categories = list(radar_data.keys())
     fig = go.Figure()
 
+    # Modern vibrant colors
+    hex_colors = ["#4FC3A1", "#2E86AB", "#FFCA28", "#FF6B6B"]
+    fill_colors = ["rgba(79, 195, 161, 0.3)", "rgba(46, 134, 171, 0.3)", "rgba(255, 202, 40, 0.3)", "rgba(255, 107, 107, 0.3)"]
+
     for i, name in enumerate(selections):
         values = [radar_data[cat][i] for cat in categories]
         values += values[:1]  # close the shape
+        c_idx = i % len(hex_colors)
         fig.add_trace(go.Scatterpolar(
             r=values,
             theta=categories + [categories[0]],
             fill="toself",
             name=name,
+            line=dict(color=hex_colors[c_idx], width=3, shape='linear'),
+            fillcolor=fill_colors[c_idx],
+            marker=dict(size=8, symbol='circle', color=hex_colors[c_idx], line=dict(width=1, color='white'))
         ))
 
     fig.update_layout(
-        polar=dict(radialaxis=dict(visible=True, range=[0, 100])),
+        polar=dict(
+            radialaxis=dict(visible=True, range=[0, 100], showticklabels=False, gridcolor="rgba(128,128,128,0.15)"),
+            angularaxis=dict(gridcolor="rgba(128,128,128,0.15)", tickfont=dict(size=12, color="gray"))
+        ),
         showlegend=True,
-        height=450,
-        margin=dict(l=40, r=40, t=30, b=30),
+        legend=dict(orientation="h", yanchor="bottom", y=1.05, xanchor="center", x=0.5),
+        height=500,
+        margin=dict(l=40, r=40, t=60, b=40),
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        font=dict(family="Inter, sans-serif")
     )
 
     if tier == "free":
@@ -1119,7 +1135,33 @@ with tab_compare:
                     chart_df = pd.DataFrame(
                         {"Material": list(chart_data.keys()), "Value": list(chart_data.values())}
                     )
-                    st.bar_chart(chart_df, x="Material", y="Value", horizontal=False)
+                    fig_bar = px.bar(
+                        chart_df, 
+                        x="Value", 
+                        y="Material", 
+                        orientation='h',
+                        text_auto='.2s',
+                        color="Material",
+                        color_discrete_sequence=["#4FC3A1", "#2E86AB", "#FFCA28", "#FF6B6B"]
+                    )
+                    fig_bar.update_traces(
+                        textfont_size=13, 
+                        textangle=0, 
+                        textposition="outside", 
+                        cliponaxis=False,
+                        marker_line_width=0
+                    )
+                    fig_bar.update_layout(
+                        showlegend=False,
+                        height=180,
+                        margin=dict(l=0, r=60, t=10, b=10),
+                        paper_bgcolor='rgba(0,0,0,0)',
+                        plot_bgcolor='rgba(0,0,0,0)',
+                        font=dict(family="Inter, sans-serif"),
+                        xaxis=dict(visible=False, showgrid=False),
+                        yaxis=dict(title=None, showgrid=False, tickfont=dict(size=13, color="gray"))
+                    )
+                    st.plotly_chart(fig_bar, use_container_width=True, config={"displayModeBar": False})
 
         st.divider()
         st.markdown("#### Key Takeaways")
