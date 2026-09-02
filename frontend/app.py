@@ -124,33 +124,6 @@ def get_upgrade_link(tier: str):
     except Exception as e:
         return None, str(e)
 
-def upgrade_tier(tier: str):
-    """
-    Requests a Razorpay Payment Link for the selected tier and renders a checkout button.
-    """
-    token = st.session_state.get("token")
-    if not token:
-        st.sidebar.error("Please log in first.")
-        return
-    try:
-        resp = requests.post(
-            f"{API_BASE}/payments/create-link",
-            json={"tier": tier},
-            headers={"Authorization": f"Bearer {token}"},
-            timeout=30,
-        )
-        if resp.status_code == 200:
-            data = resp.json()
-            payment_url = data.get("payment_url")
-            if payment_url:
-                st.sidebar.markdown(f'**[🚀 Click here to Pay Securely via Razorpay]({payment_url})**')
-                st.sidebar.info("After payment, please refresh your profile to see the upgraded tier.")
-            else:
-                st.sidebar.error("Failed to generate payment URL.")
-        else:
-            st.sidebar.error(f"Payment request failed: {resp.json().get('detail', 'Unknown error')}")
-    except Exception as e:
-        st.sidebar.error(f"Couldn't reach the server: {e}")
 
 
 # ── Custom CSS ──
@@ -556,6 +529,11 @@ with st.sidebar:
             if st.button("🏠 Back to Home", use_container_width=True):
                 st.session_state.current_page = "main"
                 st.rerun()
+        current_tier = user.get("tier", "free")
+        if current_tier != "advanced":
+            if st.button("✨ Upgrade Plan", type="primary", use_container_width=True):
+                st.session_state.current_page = "account"
+                st.rerun()
         st.divider()
     if st.session_state.token and st.session_state.user:
         user = st.session_state.user
@@ -580,13 +558,16 @@ with st.sidebar:
         elif current_tier == "free":
             st.caption("Upgrades are reviewed manually — you'll see a pending badge after requesting.")
             if st.button("⭐ Request Upgrade to Pro — ₹499/mo"):
-                upgrade_tier("pro")
+                st.session_state.current_page = "account"
+                st.rerun()
             if st.button("🚀 Request Upgrade to Advanced — ₹1499/mo"):
-                upgrade_tier("advanced")
+                st.session_state.current_page = "account"
+                st.rerun()
         elif current_tier == "pro":
             st.caption("Upgrades are reviewed manually — you'll see a pending badge after requesting.")
             if st.button("🚀 Request Upgrade to Advanced — ₹1499/mo"):
-                upgrade_tier("advanced")
+                st.session_state.current_page = "account"
+                st.rerun()
         else:
             st.success("You're on the Advanced plan 🚀")
 
@@ -809,10 +790,7 @@ if st.session_state.current_page == "account":
                 if st.button("Save Changes"):
                     st.success("Profile updated.")
                 
-                st.markdown("### Security")
-                st.text_input("API Key (Advanced Tier)", value=user.get("api_key", "Requires Advanced Tier"), disabled=True)
-                if st.button("Generate New API Key"):
-                    st.info("Requires Advanced Tier")
+
                     
             elif account_menu == "💎 Subscriptions & Upgrades":
                 st.markdown("### Choose your Plan")
@@ -823,14 +801,14 @@ if st.session_state.current_page == "account":
                     with st.container(border=True):
                         st.markdown("### Free")
                         st.markdown("## ₹0 / mo")
-                        st.markdown("- ✅ Access to all 500+ materials\n- ✅ Compare up to 2 materials\n- ❌ AI Advisor\n- ❌ Cost Optimizer\n- ❌ API Access")
+                        st.markdown("- ✅ Access to all 500+ materials\n- ✅ Compare up to 2 materials\n- ❌ AI Advisor\n- ❌ Cost Optimizer\n")
                         st.button("Current Plan", disabled=True, use_container_width=True, key="btn_free")
                         
                 with p2:
                     with st.container(border=True):
                         st.markdown("### Pro")
                         st.markdown("## ₹499 / mo")
-                        st.markdown("- ✅ Compare up to 5 materials\n- ✅ Structural & Thermal Analyzers\n- ✅ AI Material Advisor\n- ❌ API Access\n- ❌ Offline PDF Reports")
+                        st.markdown("- ✅ Compare up to 5 materials\n- ✅ Structural & Thermal Analyzers\n- ✅ AI Material Advisor\n- ❌ Offline PDF Reports")
                         if user.get("tier") == "pro":
                             st.button("Current Plan", disabled=True, use_container_width=True, key="btn_pro1")
                         else:
@@ -845,7 +823,7 @@ if st.session_state.current_page == "account":
                     with st.container(border=True):
                         st.markdown("### Advanced")
                         st.markdown("## ₹1999 / mo")
-                        st.markdown("- ✅ Unlimited Comparisons\n- ✅ Cost Optimization Engine\n- ✅ Full REST API Access\n- ✅ Download PDF Reports\n- ✅ Priority Support")
+                        st.markdown("- ✅ Unlimited Comparisons\n- ✅ Cost Optimization Engine\n- ✅ Download PDF Reports\n- ✅ Priority Support")
                         if user.get("tier") == "advanced":
                             st.button("Current Plan", disabled=True, use_container_width=True, key="btn_adv1")
                         else:
@@ -971,10 +949,7 @@ def render_account_page():
                 if st.button("Save Changes"):
                     st.success("Profile updated.")
                 
-                st.markdown("### Security")
-                st.text_input("API Key (Advanced Tier)", value=user.get("api_key", "Requires Advanced Tier"), disabled=True)
-                if st.button("Generate New API Key"):
-                    st.info("Requires Advanced Tier")
+
                     
             elif account_menu == "💎 Subscriptions & Upgrades":
                 st.markdown("### Choose your Plan")
@@ -985,14 +960,14 @@ def render_account_page():
                     with st.container(border=True):
                         st.markdown("### Free")
                         st.markdown("## ₹0 / mo")
-                        st.markdown("- ✅ Access to all 500+ materials\n- ✅ Compare up to 2 materials\n- ❌ AI Advisor\n- ❌ Cost Optimizer\n- ❌ API Access")
+                        st.markdown("- ✅ Access to all 500+ materials\n- ✅ Compare up to 2 materials\n- ❌ AI Advisor\n- ❌ Cost Optimizer\n")
                         st.button("Current Plan", disabled=True, use_container_width=True, key="btn_free")
                         
                 with p2:
                     with st.container(border=True):
                         st.markdown("### Pro")
                         st.markdown("## ₹499 / mo")
-                        st.markdown("- ✅ Compare up to 5 materials\n- ✅ Structural & Thermal Analyzers\n- ✅ AI Material Advisor\n- ❌ API Access\n- ❌ Offline PDF Reports")
+                        st.markdown("- ✅ Compare up to 5 materials\n- ✅ Structural & Thermal Analyzers\n- ✅ AI Material Advisor\n- ❌ Offline PDF Reports")
                         if user.get("tier") == "pro":
                             st.button("Current Plan", disabled=True, use_container_width=True, key="btn_pro1")
                         else:
@@ -1007,7 +982,7 @@ def render_account_page():
                     with st.container(border=True):
                         st.markdown("### Advanced")
                         st.markdown("## ₹1999 / mo")
-                        st.markdown("- ✅ Unlimited Comparisons\n- ✅ Cost Optimization Engine\n- ✅ Full REST API Access\n- ✅ Download PDF Reports\n- ✅ Priority Support")
+                        st.markdown("- ✅ Unlimited Comparisons\n- ✅ Cost Optimization Engine\n- ✅ Download PDF Reports\n- ✅ Priority Support")
                         if user.get("tier") == "advanced":
                             st.button("Current Plan", disabled=True, use_container_width=True, key="btn_adv1")
                         else:
@@ -1525,9 +1500,15 @@ if st.session_state.current_page == "main":
                         selections.append(choice)
     
         if compare_max > UI_MAX_SELECTORS:
-            st.caption(f"Showing {UI_MAX_SELECTORS} slots. Your tier technically allows up to {compare_max} — let us know if you need more at once.")
+            st.caption(f"Showing {UI_MAX_SELECTORS} slots. Your tier technically allows up to {compare_max} - let us know if you need more at once.")
         elif user_tier == "free":
-            st.caption("⭐ Upgrade to Pro to compare up to 5 materials at once.")
+            st.markdown("---")
+            c1, c2 = st.columns([3, 1])
+            c1.info("💎 Upgrade to Pro to compare up to 5 materials at once and unlock AI tools.")
+            if c2.button("✨ Upgrade Plan", use_container_width=True):
+                st.session_state.current_page = "account"
+                st.rerun()
+            st.markdown("---")
     
         if len(selections) < 2:
             st.info("Select at least 2 materials above to start comparing.")
@@ -1704,7 +1685,8 @@ if st.session_state.current_page == "main":
                 st.markdown("Engineering Workspaces allow you to build custom Bill of Materials (BOM) for your products, instantly calculating **Total Mass** and **Total Estimated Cost** based on real-time material data.")
                 st.markdown("Upgrade to **Pro** or **Advanced** to unlock this active workspace feature.")
                 if st.button("🚀 Upgrade to Pro (Rs. 499/mo)", key="proj_upgrade"):
-                    upgrade_tier("pro")
+                    st.session_state.current_page = "account"
+                    st.rerun()
             else:
                 if tier == "pro":
                     st.warning("⚡ **Pro Tier**: You can create up to 3 active projects. Upgrade to **Advanced** for unlimited workspaces and CSV data exports.")
@@ -1737,7 +1719,8 @@ if st.session_state.current_page == "main":
                     if at_limit:
                         st.error("Pro limit reached (3/3). Delete a project or upgrade.")
                         if st.button("🚀 Upgrade to Advanced"):
-                            upgrade_tier("advanced")
+                            st.session_state.current_page = "account"
+                            st.rerun()
                     else:
                         with st.form("new_proj"):
                             new_name = st.text_input("Project Name")
@@ -2250,7 +2233,8 @@ if st.session_state.current_page == "main":
                 st.markdown("The AI Advisor analyzes your natural language requirements (e.g. *'Need a lightweight, high-strength metal for a drone under Rs. 1000/kg'*), intelligently queries the database, and provides engineering recommendations.")
                 st.markdown("Upgrade to **Pro** or **Advanced** to unlock this feature.")
                 if st.button("🚀 Upgrade to Pro (Rs. 499/mo)", key="ai_upgrade"):
-                    upgrade_tier("pro")
+                    st.session_state.current_page = "account"
+                    st.rerun()
             else:
                 st.markdown("Describe your material requirements and let the AI find the best matches from our 600+ materials.")
                 
