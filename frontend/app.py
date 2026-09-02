@@ -525,7 +525,22 @@ with st.sidebar:
                         stars = "⭐" * (item.get("rating") or 0)
                         st.markdown(f"**{item['category']}** {stars} — *{item.get('name') or 'Anonymous'}*")
                         st.caption(item["message"])
-                        st.caption(f"{item.get('email','—')} · {item['created_at']} · {item['status']}")
+                        st.caption(f"{item.get('email','—')} • {item['created_at']} • {item['status']}")
+                        
+                        col1, col2 = st.columns(2)
+                        with col1:
+                            if st.button("🗑️ Delete", key=f"del_fb_{item['id']}"):
+                                dr = requests.delete(f"{API_BASE}/feedback/{item['id']}", headers=admin_headers)
+                                if dr.status_code == 200:
+                                    st.success("Deleted!")
+                                    st.rerun()
+                        with col2:
+                            if item.get("user_id"):
+                                if st.button("🚫 Block User", key=f"block_user_{item['id']}"):
+                                    br = requests.post(f"{API_BASE}/admin/users/{item['user_id']}/block", headers=admin_headers)
+                                    if br.status_code == 200:
+                                        st.success("Blocked!")
+                                        st.rerun()
                         st.divider()
             except Exception as e:
                 st.caption(f"Error loading feedback: {e}")
