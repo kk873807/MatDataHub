@@ -1126,11 +1126,16 @@ with tab_feedback:
             placeholder="Tell us what's working, what's not, or what you'd love to see next...",
             height=140,
         )
-        fb_submit = st.form_submit_button("📤 Send Feedback", use_container_width=True)
+        
+        agree_tc = st.checkbox("I agree to the Terms & Conditions (No abuse, profanity, pornography, or hate speech).")
+        
+        fb_submit = st.form_submit_button("Send Feedback", use_container_width=True)
 
         if fb_submit:
             if not fb_message or len(fb_message.strip()) < 3:
                 st.error("Please write a bit more detail before submitting.")
+            elif not agree_tc:
+                st.error("You must agree to the Terms & Conditions before submitting.")
             else:
                 result = submit_feedback(
                     fb_name, fb_email, fb_category, fb_message.strip(), fb_rating, "Feedback Tab"
