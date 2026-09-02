@@ -98,6 +98,11 @@ app.include_router(projects.router, prefix="/api/v1")
 app.include_router(account.router, prefix="/api/v1")       # <-- added payments
 
 # Allow cross-origin requests (so Streamlit Cloud can call Render-hosted API)
+
+# Required by Authlib for OAuth flows (saves state between redirect and callback)
+import os
+app.add_middleware(SessionMiddleware, secret_key=os.environ.get("OAUTH_SESSION_SECRET", "super-secret-oauth-key-change-me"))
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],    # Tighten this to your Streamlit URL in production

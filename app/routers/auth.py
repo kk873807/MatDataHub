@@ -109,7 +109,7 @@ oauth.register(
 async def login_google(request: Request):
     if not oauth.google.client_id:
         return {"ok": False, "error": "Google Client ID is missing. Please configure backend environment variables."}
-    redirect_uri = request.url_for('auth_google_callback')
+    redirect_uri = str(request.url).split('?')[0].rstrip('/') + '/callback'
     redirect_uri = str(redirect_uri).replace("http://", "https://") if "onrender" in str(redirect_uri) else str(redirect_uri)
     return await oauth.google.authorize_redirect(request, redirect_uri)
 
