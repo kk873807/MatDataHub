@@ -1225,6 +1225,11 @@ with tab_projects:
             if st.button("🚀 Upgrade to Pro (Rs. 499/mo)", key="proj_upgrade"):
                 upgrade_tier("pro")
         else:
+            if tier == "pro":
+                st.warning("⚡ **Pro Tier**: You can create up to 3 active projects. Upgrade to **Advanced** for unlimited workspaces and CSV data exports.")
+            else:
+                st.success("💎 **Advanced Tier**: You have unlimited workspaces and full export capabilities.")
+                
             pcol1, pcol2 = st.columns([1, 3])
             
             # Fetch Projects
@@ -1245,17 +1250,24 @@ with tab_projects:
                     
                 st.divider()
                 st.markdown("##### Create New")
-                with st.form("new_proj"):
-                    new_name = st.text_input("Project Name")
-                    new_desc = st.text_area("Description (optional)", height=60)
-                    if st.form_submit_button("Create Project"):
-                        if new_name:
-                            res = api_post("/projects/", {"name": new_name, "description": new_desc})
-                            if res["ok"]:
-                                st.success("Created!")
-                                st.rerun()
-                            else:
-                                st.error(res["error"])
+                at_limit = (tier == "pro" and len(projects) >= 3)
+                
+                if at_limit:
+                    st.error("Pro limit reached (3/3). Delete a project or upgrade.")
+                    if st.button("🚀 Upgrade to Advanced"):
+                        upgrade_tier("advanced")
+                else:
+                    with st.form("new_proj"):
+                        new_name = st.text_input("Project Name")
+                        new_desc = st.text_area("Description (optional)", height=60)
+                        if st.form_submit_button("Create Project"):
+                            if new_name:
+                                res = api_post("/projects/", {"name": new_name, "description": new_desc})
+                                if res["ok"]:
+                                    st.success("Created!")
+                                    st.rerun()
+                                else:
+                                    st.error(res["error"])
                                 
             with pcol2:
                 if selected_proj_id:
@@ -1317,6 +1329,18 @@ with tab_projects:
                             
                             df = pd.DataFrame(table_data)
                             st.dataframe(df.drop(columns=["Remove"]), width="stretch", hide_index=True)
+                            
+                            # Advanced Tier: CSV Export
+                            if tier == "advanced":
+                                csv_data = df.drop(columns=["Remove"]).to_csv(index=False).encode('utf-8')
+                                st.download_button(
+                                    label="📥 Export BOM to CSV",
+                                    data=csv_data,
+                                    file_name=f"{curr_proj['name'].replace(' ', '_')}_BOM.csv",
+                                    mime="text/csv"
+                                )
+                            elif tier == "pro":
+                                st.caption("🔒 *Upgrade to Advanced to export this BOM to CSV.*")
                             
                             # Simple remove selector
                             rem_id = st.selectbox("Remove a part", options=[0] + [i["Remove"] for i in table_data], format_func=lambda x: "Select to remove..." if x == 0 else next(i["Part Name"] for i in table_data if i["Remove"] == x))
