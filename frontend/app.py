@@ -1207,6 +1207,154 @@ with tab_compare:
 # ══════════════════════════════════════════════
 #  TAB: AI ADVISOR
 # ══════════════════════════════════════════════
+
+# ══════════════════════════════════════════════
+#  TAB: MY PROJECTS (BOM)
+# ══════════════════════════════════════════════
+with tab_projects:
+    st.markdown("### 📁 Engineering Workspaces & BOM Optimizer")
+    
+    if not st.session_state.get("user"):
+        st.info("You must be logged in to create and manage engineering projects.")
+    else:
+        tier = st.session_state.user.get("tier", "free")
+        if tier == "free":
+            st.info("✨ **Premium Feature Locked**")
+            st.markdown("Engineering Workspaces allow you to build custom Bill of Materials (BOM) for your products, instantly calculating **Total Mass** and **Total Estimated Cost** based on real-time material data.")
+            st.markdown("Upgrade to **Pro** or **Advanced** to unlock this active workspace feature.")
+            if st.button("🚀 Upgrade to Pro (Rs. 499/mo)", key="proj_upgrade"):
+                upgrade_tier("pro")
+        else:
+            pcol1, pcol2 = st.columns([1, 3])
+            
+            # Fetch Projects
+            projects = []
+            proj_resp = requests.get(f"{API_BASE}/projects/", headers=get_auth_headers())
+            if proj_resp.status_code == 200:
+                projects = proj_resp.json()
+                
+            with pcol1:
+                st.markdown("#### Your Projects")
+                if not projects:
+                    st.caption("No projects yet.")
+                
+                selected_proj_id = None
+                if projects:
+                    proj_names = {p['id']: p['name'] for p in projects}
+                    selected_proj_id = st.selectbox("Select Project", options=list(proj_names.keys()), format_func=lambda x: proj_names[x], label_visibility="collapsed")
+                    
+                st.divider()
+                st.markdown("##### Create New")
+                with st.form("new_proj"):
+                    new_name = st.text_input("Project Name")
+                    new_desc = st.text_area("Description (optional)", height=60)
+                    if st.form_submit_button("Create Project"):
+                        if new_name:
+                            res = api_post("/projects/", {"name": new_name, "description": new_desc})
+                            if res["ok"]:
+                                st.success("Created!")
+                                st.rerun()
+                            else:
+                                st.error(res["error"])
+                                
+            with pcol2:
+                if selected_proj_id:
+                    curr_proj = next((p for p in projects if p["id"] == selected_proj_id), None)
+                    if curr_proj:
+                        col_title, col_del = st.columns([4, 1])
+                        with col_title:
+                            st.markdown(f"### {curr_proj['name']}")
+                            if curr_proj['description']:
+                                st.caption(curr_proj['description'])
+                        with col_del:
+                            if st.button("🗑️ Delete", key="del_proj"):
+                                requests.delete(f"{API_BASE}/projects/{selected_proj_id}", headers=get_auth_headers())
+                                st.rerun()
+                                
+                        items = curr_proj.get("items", [])
+                        
+                        # Calculate totals
+                        total_weight = 0.0
+                        total_cost_min = 0.0
+                        total_cost_max = 0.0
+                        
+                        for item in items:
+                            mat = item["material"]
+                            vol = item["volume_cm3"]
+                            den = mat.get("density") or 0.0
+                            mass_kg = (vol * den) / 1000.0  # density is g/cm3, volume is cm3 -> mass in g -> kg
+                            total_weight += mass_kg
+                            
+                            c_min = mat.get("cost_per_kg_min") or 0.0
+                            c_max = mat.get("cost_per_kg_max") or 0.0
+                            total_cost_min += (mass_kg * c_min)
+                            total_cost_max += (mass_kg * c_max)
+                        
+                        # Dashboard Metrics
+                        m1, m2 = st.columns(2)
+                        with m1:
+                            st.markdown(f'<div class="stat-card" style="padding: 15px;"><div class="stat-label">Total Assembly Mass</div><div class="stat-num">{total_weight:.2f} kg</div></div>', unsafe_allow_html=True)
+                        with m2:
+                            cost_display = f"Rs. {total_cost_min:,.0f} - {total_cost_max:,.0f}" if total_cost_min > 0 else "Rs. 0"
+                            st.markdown(f'<div class="stat-card" style="padding: 15px;"><div class="stat-label">Total Estimated Cost</div><div class="stat-num" style="font-size:1.8rem;">{cost_display}</div></div>', unsafe_allow_html=True)
+                        
+                        st.markdown("#### Bill of Materials (BOM)")
+                        
+                        if items:
+                            table_data = []
+                            for item in items:
+                                mat = item["material"]
+                                vol = item["volume_cm3"]
+                                den = mat.get("density") or 0.0
+                                mass_kg = (vol * den) / 1000.0
+                                table_data.append({
+                                    "Part Name": item["part_name"],
+                                    "Material": mat["name"],
+                                    "Volume (cm³)": vol,
+                                    "Mass (kg)": round(mass_kg, 3),
+                                    "Remove": item["id"]
+                                })
+                            
+                            df = pd.DataFrame(table_data)
+                            st.dataframe(df.drop(columns=["Remove"]), width="stretch", hide_index=True)
+                            
+                            # Simple remove selector
+                            rem_id = st.selectbox("Remove a part", options=[0] + [i["Remove"] for i in table_data], format_func=lambda x: "Select to remove..." if x == 0 else next(i["Part Name"] for i in table_data if i["Remove"] == x))
+                            if rem_id != 0:
+                                if st.button("Confirm Remove"):
+                                    requests.delete(f"{API_BASE}/projects/{selected_proj_id}/items/{rem_id}", headers=get_auth_headers())
+                                    st.rerun()
+                        else:
+                            st.info("No parts added yet. Add a material below!")
+                            
+                        st.divider()
+                        st.markdown("##### ➕ Add Part to Assembly")
+                        with st.form("add_part_form"):
+                            c1, c2, c3 = st.columns(3)
+                            
+                            # Fetch all materials for dropdown (from cache ideally, but we can do a quick fetch)
+                            with st.spinner("Loading materials..."):
+                                all_mats = fetch_all_materials()
+                            
+                            mat_options = {m["id"]: m["name"] for m in all_mats["data"].get("materials", [])} if all_mats["ok"] else {}
+                            
+                            with c1:
+                                part_name = st.text_input("Part Name", placeholder="e.g. Engine Block")
+                            with c2:
+                                sel_mat_id = st.selectbox("Select Material", options=list(mat_options.keys()), format_func=lambda x: mat_options[x])
+                            with c3:
+                                vol_cm3 = st.number_input("Volume (cm³)", min_value=0.1, value=100.0, step=10.0)
+                                
+                            if st.form_submit_button("Add to BOM"):
+                                if not part_name:
+                                    st.error("Part Name is required.")
+                                else:
+                                    res = api_post(f"/projects/{selected_proj_id}/items", {"material_id": sel_mat_id, "part_name": part_name, "volume_cm3": vol_cm3})
+                                    if res["ok"]:
+                                        st.success("Added!")
+                                        st.rerun()
+                                    else:
+                                        st.error(res["error"])
 with tab_ai:
     st.markdown("### 🤖 Engineering AI Advisor")
     

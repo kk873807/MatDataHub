@@ -9,7 +9,7 @@ Then open:
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine, Base
-from app.routers import materials, auth, admin, feedback, payments, ai
+from app.routers import materials, auth, admin, feedback, payments, ai, projects
 from sqlalchemy.orm import Session
 from app.database import get_db   # <-- added payments
 

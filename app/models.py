@@ -145,3 +145,23 @@ class Feedback(Base):
 
     def __repr__(self):
         return f"<Feedback(id={self.id}, category='{self.category}', status='{self.status}')>"
+
+
+class Project(Base):
+    __tablename__ = "projects"
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    user_id = Column(Integer, index=True, nullable=False)
+    name = Column(String(100), nullable=False)
+    description = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+class ProjectItem(Base):
+    __tablename__ = "project_items"
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    project_id = Column(Integer, index=True, nullable=False)
+    material_id = Column(Integer, ForeignKey('materials.id'), nullable=False)
+    part_name = Column(String(100), nullable=False)
+    volume_cm3 = Column(Float, nullable=False, default=1.0)
+    
+    # Relationship to easily fetch material details when querying an item
+    material = relationship("Material")

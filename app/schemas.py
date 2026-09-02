@@ -3,7 +3,7 @@ Pydantic schemas for the Materials API.
 These define what data looks like in API requests and responses.
 """
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 
 
@@ -195,3 +195,34 @@ class FeedbackResponse(BaseModel):
     """Returned after successfully submitting or resolving feedback."""
     message: str
     id: int
+
+
+# ── Project Schemas ──
+class ProjectItemCreate(BaseModel):
+    material_id: int
+    part_name: str
+    volume_cm3: float
+
+class ProjectItemOut(BaseModel):
+    id: int
+    project_id: int
+    material_id: int
+    part_name: str
+    volume_cm3: float
+    material: MaterialOut
+
+    model_config = {"from_attributes": True}
+
+class ProjectCreate(BaseModel):
+    name: str
+    description: Optional[str] = None
+
+class ProjectOut(BaseModel):
+    id: int
+    user_id: int
+    name: str
+    description: Optional[str] = None
+    created_at: Optional[datetime] = None
+    items: List[ProjectItemOut] = []
+
+    model_config = {"from_attributes": True}
