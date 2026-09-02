@@ -233,3 +233,15 @@ class ProjectOut(BaseModel):
 
 class ProjectBlueprintUpdate(BaseModel):
     blueprint_data: str
+
+class TransactionOut(BaseModel):
+    id: int
+    user_id: int
+    amount: float
+    currency: str
+    tier_purchased: str
+    status: str
+    payment_id: Optional[str] = None
+    created_at: datetime
+
+    model_config = {"from_attributes": True}

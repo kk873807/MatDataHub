@@ -44,6 +44,38 @@ with engine.connect() as conn:
     except Exception:
         conn.rollback()
 
+    try:
+        conn.execute(text("ALTER TABLE users ADD COLUMN auth_provider VARCHAR(50) DEFAULT 'email' NOT NULL;"))
+        conn.commit()
+    except Exception:
+        conn.rollback()
+
+    try:
+        conn.execute(text("ALTER TABLE users ADD COLUMN provider_id VARCHAR(255);"))
+        conn.commit()
+    except Exception:
+        conn.rollback()
+
+    try:
+        # Create transactions table manually if Base.metadata.create_all doesn't catch it
+        conn.execute(text("""
+        CREATE TABLE IF NOT EXISTS transactions (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER NOT NULL,
+            amount FLOAT NOT NULL,
+            currency VARCHAR(10) DEFAULT 'INR',
+            tier_purchased VARCHAR(50) NOT NULL,
+            status VARCHAR(20) DEFAULT 'completed',
+            payment_id VARCHAR(100),
+            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+        );
+        """))
+        conn.commit()
+    except Exception as e:
+        print(f"Transaction migration skipped/failed: {e}")
+        conn.rollback()
+
+
 
 app = FastAPI(
     title="MatDataHub API",
@@ -61,7 +93,8 @@ app.include_router(admin.router, prefix="/api/v1")
 app.include_router(feedback.router, prefix="/api/v1")
 app.include_router(payments.router, prefix="/api/v1")
 app.include_router(ai.router, prefix="/api/v1")
-app.include_router(projects.router, prefix="/api/v1")       # <-- added payments
+app.include_router(projects.router, prefix="/api/v1")
+app.include_router(account.router, prefix="/api/v1")       # <-- added payments
 
 # Allow cross-origin requests (so Streamlit Cloud can call Render-hosted API)
 app.add_middleware(

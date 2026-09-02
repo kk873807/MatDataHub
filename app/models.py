@@ -102,8 +102,12 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     email = Column(String(255), unique=True, nullable=False, index=True)
-    hashed_password = Column(String(255), nullable=False)
+    hashed_password = Column(String(255), nullable=True) # Now nullable for OAuth users
     name = Column(String(100), nullable=True)
+    
+    # ---- OAuth / Identity Providers ----
+    auth_provider = Column(String(50), default="email", nullable=False)
+    provider_id = Column(String(255), nullable=True, index=True)
 
     # Tier: "free", "pro", "advanced"
     tier = Column(String(20), default="free", nullable=False)
@@ -176,3 +180,14 @@ class ProjectItem(Base):
     
     # Relationship to easily fetch material details when querying an item
     material = relationship("Material")
+
+class Transaction(Base):
+    __tablename__ = "transactions"
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    user_id = Column(Integer, index=True, nullable=False)
+    amount = Column(Float, nullable=False)
+    currency = Column(String(10), default="INR")
+    tier_purchased = Column(String(50), nullable=False)
+    status = Column(String(20), default="completed") # completed, failed, pending
+    payment_id = Column(String(100), nullable=True)  # e.g., razorpay_payment_id or stripe_id
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
