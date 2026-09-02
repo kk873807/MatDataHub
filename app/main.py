@@ -8,6 +8,7 @@ Then open:
 """
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.sessions import SessionMiddleware
 from app.database import engine, Base
 from app.routers import materials, auth, admin, feedback, payments, ai, projects, account
 from sqlalchemy.orm import Session
