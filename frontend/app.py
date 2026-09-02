@@ -112,7 +112,8 @@ st.markdown("""
 
     .hero-sub {
         font-size: 1.25rem;
-        color: #8892b0;
+        color: var(--text-color);
+        opacity: 0.7;
         margin-bottom: 2rem;
         font-weight: 400;
         text-align: center;
@@ -121,7 +122,7 @@ st.markdown("""
         margin-right: auto;
     }
 
-    /* Glassmorphism Stat Cards */
+        /* Glassmorphism Stat Cards */
     .stat-card {
         background: rgba(255, 255, 255, 0.03);
         backdrop-filter: blur(10px);
@@ -138,30 +139,29 @@ st.markdown("""
         box-shadow: 0 15px 40px 0 rgba(31, 38, 135, 0.15);
         border-color: rgba(79, 195, 161, 0.4);
     }
-    .stat-num { font-size: 2.2rem; font-weight: 800; color: #4FC3A1; margin-bottom: 5px; }
-    .stat-label { font-size: 0.9rem; color: #a8b2d1; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; }
+    .stat-num { font-size: 2.2rem; font-weight: 800; color: var(--primary-color, #4FC3A1); margin-bottom: 5px; }
+    .stat-label { font-size: 0.9rem; color: var(--text-color); opacity: 0.7; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; }
 
     /* Feature Cards */
     .feature-card {
-        background: rgba(255, 255, 255, 0.02);
+        background: var(--secondary-background-color);
         border-radius: 16px;
         padding: 24px;
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(128, 128, 128, 0.2);
         box-shadow: 0 4px 20px rgba(0,0,0,0.05);
         height: 100%;
         transition: all 0.3s ease;
     }
     .feature-card:hover {
-        background: rgba(255, 255, 255, 0.05);
-        border-color: #2E86AB;
+        border-color: var(--primary-color);
     }
-    .feature-card h4 { margin-bottom: 10px; color: #e6f1ff; font-weight: 700; }
-    .feature-card p { color: #8892b0; font-size: 0.95rem; margin: 0; line-height: 1.6; }
+    .feature-card h4 { margin-bottom: 10px; color: var(--text-color); font-weight: 700; }
+    .feature-card p { color: var(--text-color); opacity: 0.8; font-size: 0.95rem; margin: 0; line-height: 1.6; }
 
     /* Review Cards */
     .review-card {
-        background: rgba(46, 134, 171, 0.05);
-        border-left: 4px solid #4FC3A1;
+        background: var(--secondary-background-color);
+        border-left: 4px solid var(--primary-color);
         border-radius: 8px;
         padding: 16px;
         margin-bottom: 16px;
@@ -170,9 +170,9 @@ st.markdown("""
     .review-card:hover {
         transform: translateX(5px);
     }
-    .review-name { font-weight: 700; font-size: 1.1rem; color: #e6f1ff; }
+    .review-name { font-weight: 700; font-size: 1.1rem; color: var(--text-color); }
     .review-stars { color: #FFD700; font-size: 1.1rem; letter-spacing: 2px; }
-    .review-text { color: #8892b0; font-style: italic; margin-top: 8px; }
+    .review-text { color: var(--text-color); opacity: 0.8; font-style: italic; margin-top: 8px; }
 
     /* Customizing Streamlit Tabs */
     .stTabs [data-baseweb="tab-list"] {
@@ -182,9 +182,10 @@ st.markdown("""
     .stTabs [data-baseweb="tab"] {
         height: 50px;
         white-space: pre-wrap;
-        background-color: rgba(255,255,255,0.05);
+        background-color: var(--secondary-background-color);
         border-radius: 8px;
-        color: #a8b2d1;
+        color: var(--text-color);
+        opacity: 0.8;
         padding: 0 20px;
         border: 1px solid transparent;
         transition: all 0.2s;
@@ -194,9 +195,7 @@ st.markdown("""
         color: #4FC3A1 !important;
         border: 1px solid rgba(79, 195, 161, 0.3) !important;
         font-weight: 600;
-    }
-    .stTabs [data-baseweb="tab-highlight"] {
-        display: none;
+        opacity: 1;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -625,15 +624,6 @@ with st.sidebar:
             except Exception as e:
                 st.caption(f"Error loading feedback: {e}")
                 
-# ══════════════════════════════════════════════
-#  PAGE HEADER — always visible above all tabs
-# ══════════════════════════════════════════════
-st.markdown('<p class="hero-title">🔧 MatDataHub</p>', unsafe_allow_html=True)
-st.markdown(
-    '<p class="hero-sub">The engineering material database that gets you to the right material, faster — '
-    'search, filter, and compare 500+ metals, polymers, ceramics & composites side by side.</p>',
-    unsafe_allow_html=True,
-)
 
 # ══════════════════════════════════════════════
 #  TABS: Home | Browse | Compare | Feedback
