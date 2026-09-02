@@ -139,7 +139,8 @@ class Feedback(Base):
     rating = Column(Integer, nullable=True)                  # 1-5, optional
     page_context = Column(String(100), nullable=True)        # which tab/page it came from
 
-    status = Column(String(20), default="new")               # "new" or "reviewed"
+    status = Column(String(20), default="new")
+    helpful_votes = Column(Integer, default=0)               # "new" or "reviewed"
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     def __repr__(self):
