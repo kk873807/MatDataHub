@@ -37,6 +37,12 @@ with engine.connect() as conn:
         conn.commit()
     except Exception:
         conn.rollback()
+        
+    try:
+        conn.execute(text("ALTER TABLE feedback ADD COLUMN parent_id INTEGER REFERENCES feedback(id);"))
+        conn.commit()
+    except Exception:
+        conn.rollback()
 
 
 app = FastAPI(

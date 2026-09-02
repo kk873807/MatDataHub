@@ -109,6 +109,7 @@ def submit_feedback(
         message=payload.message,
         rating=payload.rating,
         page_context=payload.page_context,
+        parent_id=getattr(payload, 'parent_id', None),
     )
     db.add(fb)
     db.commit()
@@ -136,8 +137,8 @@ def mark_resolved(feedback_id: int, _: bool = Depends(verify_admin), db: Session
 @router.get("/public", response_model=list[FeedbackOut])
 def list_public_feedback(db: Session = Depends(get_db)):
     """Public: list all feedback to display as reviews."""
-    # We can filter out unhelpful or bad ones if needed, but for MVP show all with ratings
-    fb = db.query(Feedback).filter(Feedback.rating != None).order_by(Feedback.helpful_votes.desc(), Feedback.created_at.desc()).all()
+    # Fetch all visible feedback/replies
+    fb = db.query(Feedback).filter(Feedback.status != "hidden").order_by(Feedback.helpful_votes.desc(), Feedback.created_at.desc()).all()
     # Mask emails for privacy
     for f in fb:
         f.email = None
@@ -162,3 +163,12 @@ def mark_helpful(feedback_id: int, db: Session = Depends(get_db)):
     fb.helpful_votes = (fb.helpful_votes or 0) + 1
     db.commit()
     return FeedbackResponse(message="Marked as helpful.", id=fb.id)
+
+@router.patch("/{feedback_id}/visibility", response_model=FeedbackResponse)
+def toggle_visibility(feedback_id: int, _: bool = Depends(verify_admin), db: Session = Depends(get_db)):
+    fb = db.query(Feedback).filter(Feedback.id == feedback_id).first()
+    if not fb:
+        raise HTTPException(404, "Not found")
+    fb.status = "hidden" if fb.status != "hidden" else "new"
+    db.commit()
+    return FeedbackResponse(message=f"Visibility toggled", id=fb.id)

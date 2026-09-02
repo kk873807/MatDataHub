@@ -750,8 +750,8 @@ with tab_home:
     # COMMUNITY REVIEWS SECTION
     # ══════════════════════════════════════════════
     st.divider()
-    st.markdown("## 💬 Community Reviews")
-    st.markdown("See what other engineers are saying about MatDataHub. Your feedback shapes the future of this tool!")
+    st.markdown("## 💬 Community Reviews & Discussion")
+    st.markdown("See what other engineers are saying about MatDataHub, reply to their feedback, and join the discussion!")
 
     try:
         rev_resp = api_get("/feedback/public")
@@ -764,28 +764,92 @@ with tab_home:
             c1, c2 = st.columns([1, 3])
             with c1:
                 st.metric("Average Rating", f"{avg_rating:.1f} ⭐")
-                st.caption(f"Based on {len(rated_reviews)} reviews")
+                st.caption(f"Based on {len(rated_reviews)} rated reviews")
             
             with c2:
-                for item in reviews[:10]:
-                    stars = "⭐" * (item.get("rating") or 0)
-                    name = item.get("name") or "Anonymous Engineer"
-                    st.markdown(f"**{name}** {stars}")
-                    st.write(item["message"])
-                    
-                    votes = item.get("helpful_votes") or 0
-                    if st.button(f"👍 Helpful ({votes})", key=f"helpful_{item['id']}"):
-                        requests.post(f"{API_BASE}/feedback/{item['id']}/helpful")
-                        st.rerun()
-                    st.divider()
+                # Build tree
+                fb_map = {item["id"]: {**item, "children": []} for item in reviews}
+                tree = []
+                for item in reviews:
+                    pid = item.get("parent_id")
+                    if pid and pid in fb_map:
+                        fb_map[pid]["children"].append(fb_map[item["id"]])
+                    else:
+                        tree.append(fb_map[item["id"]])
+                
+                # Recursive render function
+                def render_comments(comments, depth=0):
+                    for c in comments:
+                        with st.container():
+                            if depth > 0:
+                                col_spacer, col_content = st.columns([0.05 * depth, 1 - (0.05 * depth)])
+                            else:
+                                col_spacer = None
+                                col_content = st.container()
+                                
+                            with col_content:
+                                stars = "⭐" * (c.get("rating") or 0)
+                                name = c.get("name") or "Anonymous Engineer"
+                                st.markdown(f"**{name}** {stars}")
+                                st.write(c["message"])
+                                
+                                # Buttons
+                                btn_cols = st.columns([1.5, 1.5, 2, 4])
+                                with btn_cols[0]:
+                                    votes = c.get("helpful_votes") or 0
+                                    if st.button(f"👍 Helpful ({votes})", key=f"help_{c['id']}"):
+                                        requests.post(f"{API_BASE}/feedback/{c['id']}/helpful")
+                                        st.rerun()
+                                with btn_cols[1]:
+                                    if st.button("💬 Reply", key=f"reply_btn_{c['id']}"):
+                                        st.session_state[f"show_reply_{c['id']}"] = not st.session_state.get(f"show_reply_{c['id']}", False)
+                                        
+                                # Admin
+                                if st.session_state.get("user") and st.session_state.user.get("role") == "admin":
+                                    with btn_cols[2]:
+                                        with st.popover("🛡️ Admin"):
+                                            if st.button("Hide", key=f"hide_{c['id']}"):
+                                                h_headers = {"X-Admin-Secret": os.getenv("ADMIN_SECRET", "sk_test_admin_key")}
+                                                requests.patch(f"{API_BASE}/feedback/{c['id']}/visibility", headers=h_headers)
+                                                st.rerun()
+                                            if st.button("Delete", key=f"del_fb_{c['id']}"):
+                                                h_headers = {"X-Admin-Secret": os.getenv("ADMIN_SECRET", "sk_test_admin_key")}
+                                                requests.delete(f"{API_BASE}/feedback/{c['id']}", headers=h_headers)
+                                                st.rerun()
+                                                
+                                if st.session_state.get(f"show_reply_{c['id']}", False):
+                                    with st.form(f"form_reply_{c['id']}", clear_on_submit=True):
+                                        reply_msg = st.text_area("Your reply...")
+                                        if st.form_submit_button("Submit Reply"):
+                                            if reply_msg and len(reply_msg.strip()) >= 3:
+                                                u = st.session_state.get("user", {})
+                                                payload = {
+                                                    "name": u.get("name", "Anonymous Reply"),
+                                                    "email": u.get("email", ""),
+                                                    "category": "Reply",
+                                                    "message": reply_msg.strip(),
+                                                    "page_context": "Community Thread",
+                                                    "parent_id": c["id"]
+                                                }
+                                                resp = requests.post(f"{API_BASE}/feedback/", json=payload)
+                                                if resp.status_code == 200:
+                                                    st.session_state[f"show_reply_{c['id']}"] = False
+                                                    st.success("Reply posted!")
+                                                    st.rerun()
+                                                else:
+                                                    st.error(resp.json().get("detail", "Error"))
+                                                    
+                        if c["children"]:
+                            render_comments(c["children"], depth + 1)
+                        if depth == 0:
+                            st.divider()
+
+                render_comments(tree[:20]) # Limit top-level to 20 for perf
         else:
             st.info("No reviews yet. Be the first to leave feedback in the Feedback tab!")
     except Exception as e:
-        pass
+        st.error(f"Failed to load community feedback: {e}")
 
-# ══════════════════════════════════════════════
-#  TAB 1: BROWSE
-# ══════════════════════════════════════════════
 with tab_browse:
 
     search_query = st.text_input(

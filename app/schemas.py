@@ -172,6 +172,7 @@ class FeedbackCreate(BaseModel):
     message: str = Field(..., min_length=3, max_length=2000, examples=["Would love a dark mode toggle!"])
     rating: Optional[int] = Field(None, ge=1, le=5)
     page_context: Optional[str] = Field(None, max_length=100, examples=["Feedback Tab"])
+    parent_id: Optional[int] = Field(None, description="ID of the parent feedback if this is a reply")
 
 
 class FeedbackOut(BaseModel):
@@ -185,6 +186,7 @@ class FeedbackOut(BaseModel):
     message: str
     rating: Optional[int] = None
     page_context: Optional[str] = None
+    parent_id: Optional[int] = None
     status: str
     created_at: Optional[datetime] = None
 

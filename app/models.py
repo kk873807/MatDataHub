@@ -144,7 +144,14 @@ class Feedback(Base):
 
     status = Column(String(20), default="new")
     helpful_votes = Column(Integer, default=0)               # "new" or "reviewed"
+    parent_id = Column(Integer, ForeignKey("feedback.id"), nullable=True) # for nested replies
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+    
+    # We use a backref to link replies to their parent
+    # Wait, we need to import relationship and backref if they aren't here
+    # Actually, relationship might not be imported, let's just use ForeignKey. We can query manually if needed, or import them.
+    # To be safe, we will just keep the Column and manually query parent_id.
+
 
     def __repr__(self):
         return f"<Feedback(id={self.id}, category='{self.category}', status='{self.status}')>"
