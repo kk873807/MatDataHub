@@ -352,13 +352,13 @@ def wake_api():
 
 
 @st.cache_data(ttl=600)
-def fetch_all_materials():
+def fetch_all_materials(token=None):
     """Fetch all materials from the API with retry. Cached for 10 minutes to improve performance."""
     return api_get("/materials/", params={"per_page": 1000})
 
 
 @st.cache_data(ttl=300)
-def fetch_material_detail(mat_id):
+def fetch_material_detail(mat_id, token=None):
     """Fetch a single material's full details."""
     result = api_get(f"/materials/{mat_id}")
     if result["ok"]:
@@ -1362,7 +1362,7 @@ if st.session_state.current_page == "main":
     
                 if selected_name:
                     mat_id = material_names[selected_name]
-                    m = fetch_material_detail(mat_id)
+                    m = fetch_material_detail(mat_id, st.session_state.get("token"))
     
                     if m is None:
                         st.warning("Could not load material details. Please refresh.")
@@ -1459,7 +1459,7 @@ if st.session_state.current_page == "main":
     
         with st.spinner("Loading material list (API may take ~30s on first load)..."):
             wake_api()
-            all_result = fetch_all_materials()
+            all_result = fetch_all_materials(st.session_state.get("token"))
     
         if not all_result["ok"]:
             show_api_error(all_result, retry_key="retry_compare")
@@ -1867,7 +1867,7 @@ if st.session_state.current_page == "main":
                                     c1, c2, c3 = st.columns(3)
                                     
                                     with st.spinner("Loading materials..."):
-                                        all_mats = fetch_all_materials()
+                                        all_mats = fetch_all_materials(st.session_state.get("token"))
                                     
                                     bom_mat_options = {m["id"]: m["name"] for m in all_mats["data"].get("materials", [])} if all_mats["ok"] else {}
                                     
@@ -1917,7 +1917,7 @@ if st.session_state.current_page == "main":
                                     st.latex(r"P_{composite} = P_{matrix} \cdot V_{matrix} + P_{reinforcement} \cdot V_{reinforcement}")
                                     
                                     with st.spinner("Loading material database..."):
-                                        all_mats = fetch_all_materials()
+                                        all_mats = fetch_all_materials(st.session_state.get("token"))
                                         synth_mat_options = {m["id"]: m for m in all_mats["data"].get("materials", [])} if all_mats["ok"] else {}
                                         
                                     c_syn1, c_syn2 = st.columns(2)
@@ -2187,7 +2187,7 @@ if st.session_state.current_page == "main":
                                     else:
                                         if st.button("Run Optimization Engine", type="primary"):
                                             with st.spinner("Scanning database for cost-effective equivalents..."):
-                                                all_mats = fetch_all_materials()
+                                                all_mats = fetch_all_materials(st.session_state.get("token"))
                                                 db_mats = all_mats["data"].get("materials", []) if all_mats["ok"] else []
                                                 
                                                 optimization_found = False
