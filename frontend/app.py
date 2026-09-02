@@ -113,6 +113,63 @@ try {
 </script>
 """)
 
+def render_pricing_page():
+    c1, c2, c3 = st.columns([1, 6, 1])
+    with c1:
+        if st.button("⬅️ Back to Main", use_container_width=True):
+            st.session_state.current_page = "main"
+            st.rerun()
+    with c3:
+        if st.button("⚙️ Account", use_container_width=True):
+            st.session_state.current_page = "account"
+            st.rerun()
+            
+    st.markdown("<h1 style='text-align: center;'>Upgrade Your Plan</h1>", unsafe_allow_html=True)
+    user = st.session_state.get("user", {})
+    st.markdown("### Choose your Plan")
+    st.caption(f"You are currently on the **{user.get('tier', 'free').upper()}** plan.")
+    
+    p1, p2, p3 = st.columns(3)
+    with p1:
+        with st.container(border=True):
+            st.markdown("### Free")
+            st.markdown("## ₹0 / mo")
+            st.markdown("- ✅ Access to all 500+ materials\n- ✅ Compare up to 2 materials\n- ❌ AI Advisor\n- ❌ Cost Optimizer\n")
+            st.button("Current Plan", disabled=True, use_container_width=True, key="btn_free")
+            
+    with p2:
+        with st.container(border=True):
+            st.markdown("### Pro")
+            st.markdown("## ₹499 / mo")
+            st.markdown("- ✅ Compare up to 5 materials\n- ✅ Structural & Thermal Analyzers\n- ✅ AI Material Advisor\n- ❌ Offline PDF Reports")
+            if user.get("tier") == "pro":
+                st.button("Current Plan", disabled=True, use_container_width=True, key="btn_pro1")
+            else:
+                if st.button("Upgrade to Pro", type="primary", use_container_width=True, key="btn_pro2"):
+                    url, err = get_upgrade_link("pro")
+                    if url:
+                        st.markdown(f"**[🔗 Click here to Pay Securely via Razorpay]({url})**")
+                    else:
+                        st.error(f"Payment failed: {err}")
+                
+    with p3:
+        with st.container(border=True):
+            st.markdown("### Advanced")
+            st.markdown("## ₹1999 / mo")
+            st.markdown("- ✅ Unlimited Comparisons\n- ✅ Cost Optimization Engine\n- ✅ Download PDF Reports\n- ✅ Priority Support")
+            if user.get("tier") == "advanced":
+                st.button("Current Plan", disabled=True, use_container_width=True, key="btn_adv1")
+            else:
+                if st.button("Upgrade to Advanced", type="primary", use_container_width=True, key="btn_adv2"):
+                    url, err = get_upgrade_link("advanced")
+                    if url:
+                        st.markdown(f"**[🔗 Click here to Pay Securely via Razorpay]({url})**")
+                    else:
+                        st.error(f"Payment failed: {err}")
+                
+
+
+
 def get_upgrade_link(tier: str):
     token = st.session_state.get("token")
     if not token: return None, "Please log in first."
@@ -846,173 +903,6 @@ if st.session_state.current_page == "pricing":
     st.stop()
 
 
-
-def render_pricing_page():
-    c1, c2, c3 = st.columns([1, 6, 1])
-    with c1:
-        if st.button("⬅️ Back to Main", use_container_width=True):
-            st.session_state.current_page = "main"
-            st.rerun()
-    with c3:
-        if st.button("⚙️ Account", use_container_width=True):
-            st.session_state.current_page = "account"
-            st.rerun()
-            
-    st.markdown("<h1 style='text-align: center;'>Upgrade Your Plan</h1>", unsafe_allow_html=True)
-    user = st.session_state.get("user", {})
-    st.markdown("### Choose your Plan")
-    st.caption(f"You are currently on the **{user.get('tier', 'free').upper()}** plan.")
-    
-    p1, p2, p3 = st.columns(3)
-    with p1:
-        with st.container(border=True):
-            st.markdown("### Free")
-            st.markdown("## ₹0 / mo")
-            st.markdown("- ✅ Access to all 500+ materials\n- ✅ Compare up to 2 materials\n- ❌ AI Advisor\n- ❌ Cost Optimizer\n")
-            st.button("Current Plan", disabled=True, use_container_width=True, key="btn_free")
-            
-    with p2:
-        with st.container(border=True):
-            st.markdown("### Pro")
-            st.markdown("## ₹499 / mo")
-            st.markdown("- ✅ Compare up to 5 materials\n- ✅ Structural & Thermal Analyzers\n- ✅ AI Material Advisor\n- ❌ Offline PDF Reports")
-            if user.get("tier") == "pro":
-                st.button("Current Plan", disabled=True, use_container_width=True, key="btn_pro1")
-            else:
-                if st.button("Upgrade to Pro", type="primary", use_container_width=True, key="btn_pro2"):
-                    url, err = get_upgrade_link("pro")
-                    if url:
-                        st.markdown(f"**[🔗 Click here to Pay Securely via Razorpay]({url})**")
-                    else:
-                        st.error(f"Payment failed: {err}")
-                
-    with p3:
-        with st.container(border=True):
-            st.markdown("### Advanced")
-            st.markdown("## ₹1999 / mo")
-            st.markdown("- ✅ Unlimited Comparisons\n- ✅ Cost Optimization Engine\n- ✅ Download PDF Reports\n- ✅ Priority Support")
-            if user.get("tier") == "advanced":
-                st.button("Current Plan", disabled=True, use_container_width=True, key="btn_adv1")
-            else:
-                if st.button("Upgrade to Advanced", type="primary", use_container_width=True, key="btn_adv2"):
-                    url, err = get_upgrade_link("advanced")
-                    if url:
-                        st.markdown(f"**[🔗 Click here to Pay Securely via Razorpay]({url})**")
-                    else:
-                        st.error(f"Payment failed: {err}")
-                
-
-
-def render_account_page():
-
-    st.markdown("## ⚙️ Account & Settings")
-    user = st.session_state.get("user")
-    
-    if not user:
-        st.markdown("### Sign In to MatDataHub")
-        st.caption("Access your projects, upgrade your tier, and manage your account.")
-        
-        c1, c2, c3 = st.columns([1, 2, 1])
-        with c2:
-            with st.container(border=True):
-                st.markdown("#### Login or Create an Account")
-                if st.button("Continue with Google 🌐", use_container_width=True):
-                    st.info("Google OAuth flow will trigger here (backend endpoint: /auth/google/login)")
-                # Phone auth removed as per user request
-                
-                st.divider()
-                
-                with st.form("account_login_form"):
-                    st.markdown("**Email & Password**")
-                    email = st.text_input("Email")
-                    password = st.text_input("Password", type="password")
-                    if st.form_submit_button("Sign In", use_container_width=True):
-                        # Call the existing login function
-                        if email and password:
-                            res = api_post("/auth/login", {"email": email, "password": password})
-                            if res["ok"]:
-                                st.session_state.token = res["data"]["access_token"]
-                                st.session_state.user = api_get("/auth/me")["data"]
-                                st.success("Logged in!")
-                                st.rerun()
-                            else:
-                                st.error(res["error"])
-    else:
-        # Logged in Account Dashboard
-        ac1, ac2 = st.columns([1, 3])
-        
-        # We can use nested tabs or a radio selector to act as a side-menu for the account tab
-        with ac1:
-            account_menu = st.radio("Settings", [
-                "👤 Profile & Security", 
-                "💳 Payment History", 
-                "📚 Help Center & Legal",
-                "⌨️ Keyboard Shortcuts"
-            ], label_visibility="collapsed")
-            
-            st.divider()
-            if st.button("🚪 Sign Out", use_container_width=True):
-                st.session_state.token = None
-                st.session_state.user = None
-                st.rerun()
-                
-        with ac2:
-            if account_menu == "👤 Profile & Security":
-                st.markdown("### Profile Details")
-                st.text_input("Full Name", value=user.get("name", ""))
-                st.text_input("Email Address", value=user.get("email", ""), disabled=True)
-                st.text_input("Authentication Provider", value=user.get("auth_provider", "email").title(), disabled=True)
-                if st.button("Save Changes"):
-                    st.success("Profile updated.")
-                
-
-                    
-            elif account_menu == "🧾 Payment History":
-                st.markdown("### Transaction History")
-                # Fetch transactions from backend
-                tx_res = api_get("/account/transactions")
-                if tx_res.get("ok"):
-                    txs = tx_res["data"]
-                    if not txs:
-                        st.info("No past transactions found.")
-                    else:
-                        import pandas as pd
-                        df = pd.DataFrame(txs)
-                        st.dataframe(df, use_container_width=True)
-                else:
-                    st.error("Could not load transaction history.")
-                    
-            elif account_menu == "📚 Help Center & Legal":
-                st.markdown("### Help Center")
-                with st.expander("How do I upgrade my plan?"):
-                    st.write("Go to the Subscriptions tab and select a plan. Payments are processed securely via Razorpay/Stripe.")
-                with st.expander("How do I cancel my subscription?"):
-                    st.write("Please contact support or use the billing portal to downgrade your plan to Free.")
-                with st.expander("Where does MatDataHub get its data?"):
-                    st.write("Our data is sourced from verified standards including ASTM, ISO, MMPDS, and ASM International.")
-                
-                st.markdown("### Legal")
-                st.markdown("[Privacy Policy](/privacy) (Coming soon)")
-                st.markdown("[Terms of Service](/tos) (Coming soon)")
-                
-                st.divider()
-                st.markdown("### Feedback & Support")
-                st.write("Found a bug or need help?")
-                if st.button("Report a Bug"):
-                    st.info("Please navigate to the Community Feedback tab to report bugs!")
-                    
-            elif account_menu == "⌨️ Keyboard Shortcuts":
-                st.markdown("### Global Keyboard Shortcuts")
-                st.markdown("""
-                | Shortcut | Action |
-                | :--- | :--- |
-                | **Up Arrow** | Scroll page up |
-                | **Down Arrow** | Scroll page down |
-                | **Tab** | Cycle between input fields |
-                | **Enter** | Submit active form |
-                
-                *Note: Arrow key scrolling is temporarily disabled while you are actively typing inside a text box or adjusting a slider.*
-                """)
 
 
 if st.session_state.current_page == "main":
