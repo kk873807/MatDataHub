@@ -177,6 +177,8 @@ class FeedbackCreate(BaseModel):
 class FeedbackOut(BaseModel):
     """One feedback row, as returned to the admin panel."""
     id: int
+    user_id: Optional[int] = None
+    helpful_votes: Optional[int] = 0
     name: Optional[str] = None
     email: Optional[str] = None
     category: str

@@ -71,3 +71,13 @@ def reject_request(user_id: int, _: bool = Depends(verify_admin), db: Session = 
     db.commit()
 
     return AdminActionResponse(message=f"Rejected {user.email}'s request for {rejected}.", user_email=user.email, tier=user.tier)
+
+@router.post("/users/{user_id}/block")
+def block_user(user_id: int, _: bool = Depends(verify_admin), db: Session = Depends(get_db)):
+    """Admin-only: block a user."""
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(404, "User not found.")
+    user.is_blocked = True
+    db.commit()
+    return {"message": f"User {user.email} blocked."}

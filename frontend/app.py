@@ -624,6 +624,45 @@ with tab_home:
 
 
 # ══════════════════════════════════════════════
+
+    # ══════════════════════════════════════════════
+    # COMMUNITY REVIEWS SECTION
+    # ══════════════════════════════════════════════
+    st.divider()
+    st.markdown("## 💬 Community Reviews")
+    st.markdown("See what other engineers are saying about MatDataHub. Your feedback shapes the future of this tool!")
+
+    try:
+        rev_resp = api_get("/feedback/public")
+        if rev_resp["ok"] and rev_resp["data"]:
+            reviews = rev_resp["data"]
+            total_stars = sum(r.get("rating") or 0 for r in reviews if r.get("rating"))
+            rated_reviews = [r for r in reviews if r.get("rating")]
+            avg_rating = total_stars / len(rated_reviews) if rated_reviews else 0
+            
+            c1, c2 = st.columns([1, 3])
+            with c1:
+                st.metric("Average Rating", f"{avg_rating:.1f} ⭐")
+                st.caption(f"Based on {len(rated_reviews)} reviews")
+            
+            with c2:
+                for item in reviews[:10]:
+                    stars = "⭐" * (item.get("rating") or 0)
+                    name = item.get("name") or "Anonymous Engineer"
+                    st.markdown(f"**{name}** {stars}")
+                    st.write(item["message"])
+                    
+                    votes = item.get("helpful_votes") or 0
+                    if st.button(f"👍 Helpful ({votes})", key=f"helpful_{item['id']}"):
+                        requests.post(f"{API_BASE}/feedback/{item['id']}/helpful")
+                        st.rerun()
+                    st.divider()
+        else:
+            st.info("No reviews yet. Be the first to leave feedback in the Feedback tab!")
+    except Exception as e:
+        pass
+
+# ══════════════════════════════════════════════
 #  TAB 1: BROWSE
 # ══════════════════════════════════════════════
 with tab_browse:

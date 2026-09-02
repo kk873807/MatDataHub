@@ -11,8 +11,25 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine, Base
 from app.routers import materials, auth, admin, feedback, payments, ai   # <-- added payments
 
+
 # Create tables on startup (safe to call multiple times)
 Base.metadata.create_all(bind=engine)
+
+# Quick and dirty auto-migration for MVP
+from sqlalchemy import text
+with engine.connect() as conn:
+    try:
+        conn.execute(text("ALTER TABLE users ADD COLUMN is_blocked BOOLEAN DEFAULT FALSE;"))
+        conn.commit()
+    except Exception:
+        pass # Probably already exists
+        
+    try:
+        conn.execute(text("ALTER TABLE feedback ADD COLUMN helpful_votes INTEGER DEFAULT 0;"))
+        conn.commit()
+    except Exception:
+        pass # Probably already exists
+
 
 app = FastAPI(
     title="MatDataHub API",

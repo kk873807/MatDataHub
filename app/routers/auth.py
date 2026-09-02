@@ -143,6 +143,11 @@ def login(req: LoginRequest, request: Request, db: Session = Depends(get_db)):
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Account is deactivated. Please contact support.",
         )
+    if user.is_blocked:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Your account has been blocked. Please contact support.",
+        )
 
     # Generate JWT token
     token = create_access_token(user.id, user.email, user.tier)

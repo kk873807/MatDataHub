@@ -120,3 +120,34 @@ def mark_resolved(feedback_id: int, _: bool = Depends(verify_admin), db: Session
     fb.status = "reviewed"
     db.commit()
     return FeedbackResponse(message="Marked as reviewed.", id=fb.id)
+
+
+@router.get("/public", response_model=list[FeedbackOut])
+def list_public_feedback(db: Session = Depends(get_db)):
+    """Public: list all feedback to display as reviews."""
+    # We can filter out unhelpful or bad ones if needed, but for MVP show all with ratings
+    fb = db.query(Feedback).filter(Feedback.rating != None).order_by(Feedback.helpful_votes.desc(), Feedback.created_at.desc()).all()
+    # Mask emails for privacy
+    for f in fb:
+        f.email = None
+    return fb
+
+@router.delete("/{feedback_id}", response_model=FeedbackResponse)
+def delete_feedback(feedback_id: int, _: bool = Depends(verify_admin), db: Session = Depends(get_db)):
+    """Admin-only: delete a feedback item."""
+    fb = db.query(Feedback).filter(Feedback.id == feedback_id).first()
+    if not fb:
+        raise HTTPException(404, "Feedback not found.")
+    db.delete(fb)
+    db.commit()
+    return FeedbackResponse(message="Feedback deleted.", id=feedback_id)
+
+@router.post("/{feedback_id}/helpful", response_model=FeedbackResponse)
+def mark_helpful(feedback_id: int, db: Session = Depends(get_db)):
+    """Public: mark a feedback item as helpful."""
+    fb = db.query(Feedback).filter(Feedback.id == feedback_id).first()
+    if not fb:
+        raise HTTPException(404, "Feedback not found.")
+    fb.helpful_votes = (fb.helpful_votes or 0) + 1
+    db.commit()
+    return FeedbackResponse(message="Marked as helpful.", id=fb.id)

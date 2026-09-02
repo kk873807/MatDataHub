@@ -114,6 +114,7 @@ class User(Base):
     requested_at = Column(DateTime(timezone=True), nullable=True)    # when the request was submitted
 
     is_active = Column(Boolean, default=True)
+    is_blocked = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     def __repr__(self):
