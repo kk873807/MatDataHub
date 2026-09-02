@@ -1468,8 +1468,8 @@ with tab_projects:
                                 st.metric("Secondary Volume %", f"{vol_m2}%")
                                 
                             if m1_id and m2_id:
-                                mat1 = mat_options[m1_id]
-                                mat2 = mat_options[m2_id]
+                                mat1 = synth_mat_options[m1_id]
+                                mat2 = synth_mat_options[m2_id]
                                 
                                 den1 = mat1.get("density") or 0.0
                                 den2 = mat2.get("density") or 0.0
