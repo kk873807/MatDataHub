@@ -209,7 +209,7 @@ class ProjectItemOut(BaseModel):
     material_id: int
     part_name: str
     volume_cm3: float
-    material: MaterialOut
+    material: MaterialResponse
 
     model_config = {"from_attributes": True}
 
