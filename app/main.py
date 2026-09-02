@@ -24,19 +24,19 @@ with engine.connect() as conn:
         conn.execute(text("ALTER TABLE users ADD COLUMN is_blocked BOOLEAN DEFAULT FALSE;"))
         conn.commit()
     except Exception:
-        pass # Probably already exists
+        conn.rollback() # Clear the aborted transaction state
         
     try:
         conn.execute(text("ALTER TABLE projects ADD COLUMN blueprint_data TEXT;"))
         conn.commit()
     except Exception:
-        pass
+        conn.rollback()
         
     try:
         conn.execute(text("ALTER TABLE feedback ADD COLUMN helpful_votes INTEGER DEFAULT 0;"))
         conn.commit()
     except Exception:
-        pass # Probably already exists
+        conn.rollback()
 
 
 app = FastAPI(
