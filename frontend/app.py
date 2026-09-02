@@ -1353,13 +1353,18 @@ with tab_projects:
                                     table_data.append({
                                         "Part Name": item["part_name"],
                                         "Material": mat["name"],
-                                        "Volume (cm3)": vol,
-                                        "Mass (kg)": round(mass_kg, 3),
+                                        "Volume (cm³)": f"{vol:,.2f}",
+                                        "Mass (kg)": f"{mass_kg:,.3f}",
                                         "Remove": item["id"]
                                     })
                                 
                                 df = pd.DataFrame(table_data)
-                                st.dataframe(df.drop(columns=["Remove"]), width="stretch", hide_index=True)
+                                # Force left-alignment by treating formatted numbers as text
+                                st.dataframe(
+                                    df.drop(columns=["Remove"]), 
+                                    width="stretch", 
+                                    hide_index=True
+                                )
                                 
                                 # Advanced Tier: CSV Export
                                 if tier == "advanced":
