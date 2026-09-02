@@ -111,7 +111,7 @@ try {
     console.error("Scroll V3 failed:", e);
 }
 </script>
-""", height=0)
+""")
 
 def get_upgrade_link(tier: str):
     token = st.session_state.get("token")
