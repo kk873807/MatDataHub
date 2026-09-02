@@ -1450,7 +1450,7 @@ with tab_projects:
                                     st.error(f"Failed to parse file: {e}")
                                     
                         with tab_tools:
-                            t_synthesizer, t_safety = st.tabs(["🧪 Material Synthesizer", "🛡️ Safety Analyzer"])
+                            t_synthesizer, t_safety, t_fatigue, t_thermal, t_cost = st.tabs(["🧪 Material Synthesizer", "🛡️ Safety Analyzer", "🔄 Fatigue Life Estimator", "🌡️ Thermal Expansion", "📉 BOM Cost Optimizer"])
                             
                             with t_synthesizer:
                                 st.markdown("#### Rule of Mixtures Synthesizer")
@@ -1497,7 +1497,7 @@ with tab_projects:
                                 if not items:
                                     st.warning("Add parts to your BOM first.")
                                 else:
-                                    safe_part_idx = st.selectbox("Select Part to Analyze", options=range(len(items)), format_func=lambda i: f"{items[i]['part_name']} ({items[i]['material']['name']})")
+                                    safe_part_idx = st.selectbox("Select Part to Analyze", options=range(len(items)), format_func=lambda i: f"{items[i]['part_name']} ({items[i]['material']['name']})", key="safety_part")
                                     p_item = items[safe_part_idx]
                                     y_str = p_item["material"].get("yield_strength_min")
                                     
@@ -1506,9 +1506,9 @@ with tab_projects:
                                     else:
                                         f_col1, f_col2 = st.columns(2)
                                         with f_col1:
-                                            load_n = st.number_input("Max Applied Force (Newtons)", min_value=1.0, value=5000.0, step=500.0)
+                                            load_n = st.number_input("Max Applied Force (Newtons)", min_value=1.0, value=5000.0, step=500.0, key="sf_load")
                                         with f_col2:
-                                            area_cm2 = st.number_input("Cross-Sectional Area (cm²)", min_value=0.1, value=10.0, step=0.5)
+                                            area_cm2 = st.number_input("Cross-Sectional Area (cm²)", min_value=0.1, value=10.0, step=0.5, key="sf_area")
                                             
                                         stress_mpa = load_n / (area_cm2 * 100.0)
                                         sf = y_str / stress_mpa if stress_mpa > 0 else 0
@@ -1522,6 +1522,123 @@ with tab_projects:
                                             st.warning(f"🟡 **Safety Factor: {sf:.2f}** (Marginal/Warning)")
                                         else:
                                             st.error(f"🔴 **Safety Factor: {sf:.2f}** (Critical Failure Expected!)")
+                                            
+                            with t_fatigue:
+                                st.markdown("#### Cyclic Fatigue Life Estimator")
+                                st.caption("Estimate if a part (like a car shaft) will survive infinite cycles under alternating stress.")
+                                if not items:
+                                    st.warning("Add parts to your BOM first.")
+                                else:
+                                    fat_part_idx = st.selectbox("Select Part to Analyze", options=range(len(items)), format_func=lambda i: f"{items[i]['part_name']} ({items[i]['material']['name']})", key="fatigue_part")
+                                    p_item = items[fat_part_idx]
+                                    mat = p_item["material"]
+                                    ts_val = mat.get("tensile_strength_max") or mat.get("tensile_strength_min")
+                                    
+                                    if not ts_val:
+                                        st.error(f"Material '{mat['name']}' lacks Tensile Strength data required for Fatigue Estimation.")
+                                    else:
+                                        # Rough Endurance Limit estimation
+                                        cat = str(mat.get("category", "")).lower()
+                                        if "metal" in cat and "aluminum" not in mat["name"].lower():
+                                            endurance_limit = ts_val * 0.50 # Steel approx
+                                            note = "Estimated Endurance Limit (Steel Approx: 0.5 × Sut)"
+                                        elif "aluminum" in mat["name"].lower() or "polymer" in cat:
+                                            endurance_limit = ts_val * 0.35 # Al/Polymer approx
+                                            note = "Estimated Fatigue Strength at 5e8 cycles (Aluminum/Polymer Approx: 0.35 × Sut)"
+                                        else:
+                                            endurance_limit = ts_val * 0.40
+                                            note = "Estimated Endurance Limit (General Approx: 0.4 × Sut)"
+                                            
+                                        st.info(f"**Material Tensile Strength (Sut):** {ts_val:.2f} MPa\n**{note}:** {endurance_limit:.2f} MPa")
+                                        
+                                        alt_stress = st.number_input("Applied Alternating Stress Amplitude (MPa)", min_value=1.0, value=endurance_limit*0.8, step=10.0, key="alt_stress")
+                                        
+                                        if alt_stress < endurance_limit:
+                                            st.success("🟢 **Infinite Life Expected** - The applied alternating stress is below the endurance limit. The part should survive continuous cyclic loading (e.g. infinite shaft rotations).")
+                                        else:
+                                            st.error("🔴 **Finite Life (Fatigue Failure Expected)** - The applied alternating stress exceeds the endurance limit. The part will eventually crack and fail under cyclic loading.")
+                                            
+                            with t_thermal:
+                                st.markdown("#### Thermal Expansion Simulator")
+                                st.caption("Calculate how much a part will physically expand or contract in extreme temperatures.")
+                                if not items:
+                                    st.warning("Add parts to your BOM first.")
+                                else:
+                                    therm_part_idx = st.selectbox("Select Part to Analyze", options=range(len(items)), format_func=lambda i: f"{items[i]['part_name']} ({items[i]['material']['name']})", key="therm_part")
+                                    p_item = items[therm_part_idx]
+                                    mat = p_item["material"]
+                                    
+                                    # Rough CTE lookup (µm/m·°C)
+                                    cat = str(mat.get("category", "")).lower()
+                                    if "polymer" in cat:
+                                        cte = 100.0
+                                    elif "ceramic" in cat:
+                                        cte = 5.0
+                                    elif "aluminum" in mat["name"].lower():
+                                        cte = 23.0
+                                    else:
+                                        cte = 12.0 # Standard Steel approx
+                                        
+                                    f1, f2, f3 = st.columns(3)
+                                    with f1:
+                                        part_length = st.number_input("Part Length (mm)", min_value=1.0, value=500.0, step=10.0)
+                                    with f2:
+                                        t_initial = st.number_input("Initial Temp (°C)", value=25.0, step=5.0)
+                                    with f3:
+                                        t_final = st.number_input("Operating Temp (°C)", value=150.0, step=5.0)
+                                        
+                                    st.caption(f"Estimated Coefficient of Thermal Expansion (CTE): {cte} µm/m·°C")
+                                    delta_t = t_final - t_initial
+                                    
+                                    # Formula: dL = L * CTE * dT (CTE is in micro-meters per meter, which is 10^-6 mm/mm)
+                                    expansion_mm = part_length * (cte * 1e-6) * delta_t
+                                    
+                                    if expansion_mm > 0:
+                                        st.warning(f"🔥 The part will **EXPAND** by **{expansion_mm:.4f} mm**")
+                                    elif expansion_mm < 0:
+                                        st.info(f"❄️ The part will **CONTRACT** by **{abs(expansion_mm):.4f} mm**")
+                                    else:
+                                        st.success("No dimensional change.")
+                                        
+                            with t_cost:
+                                st.markdown("#### 📉 BOM Cost Optimization Engine")
+                                st.caption("Scans your Bill of Materials for cheaper materials that maintain or exceed the current Yield Strength.")
+                                if not items:
+                                    st.warning("Add parts to your BOM first.")
+                                else:
+                                    if st.button("Run Optimization Engine", type="primary"):
+                                        with st.spinner("Scanning database for cost-effective equivalents..."):
+                                            all_mats = fetch_all_materials()
+                                            db_mats = all_mats["data"].get("materials", []) if all_mats["ok"] else []
+                                            
+                                            optimization_found = False
+                                            for item in items:
+                                                curr_mat = item["material"]
+                                                curr_ys = curr_mat.get("yield_strength_min")
+                                                curr_cost = curr_mat.get("cost_per_kg_min")
+                                                
+                                                if curr_ys and curr_cost:
+                                                    # Find cheaper alternatives in same category
+                                                    alts = [m for m in db_mats 
+                                                            if m["category"] == curr_mat["category"] 
+                                                            and m["id"] != curr_mat["id"]
+                                                            and (m.get("yield_strength_min") or 0) >= curr_ys 
+                                                            and (m.get("cost_per_kg_min") or float('inf')) < curr_cost]
+                                                    
+                                                    if alts:
+                                                        optimization_found = True
+                                                        # Sort by lowest cost
+                                                        alts.sort(key=lambda x: x.get("cost_per_kg_min", 0))
+                                                        best_alt = alts[0]
+                                                        savings_per_kg = curr_cost - best_alt["cost_per_kg_min"]
+                                                        
+                                                        with st.container(border=True):
+                                                            st.markdown(f"💡 **Part:** {item['part_name']}")
+                                                            st.markdown(f"**Current Material:** {curr_mat['name']} (Yield: {curr_ys} MPa, Cost: Rs. {curr_cost}/kg)")
+                                                            st.success(f"**Suggested Alternative:** {best_alt['name']} (Yield: {best_alt.get('yield_strength_min')} MPa, Cost: Rs. {best_alt.get('cost_per_kg_min')}/kg)")
+                                                            st.metric(f"Potential Savings per kg", f"Rs. {savings_per_kg:.2f}")
+                                            if not optimization_found:
+                                                st.info("Your BOM is fully optimized! No cheaper equivalents found with equal or better yield strength.")
 
 with tab_ai:
     st.markdown("### 🤖 Engineering AI Advisor")
