@@ -19,13 +19,18 @@ def get_user_projects(
     if current_user.tier == "free":
         raise HTTPException(status_code=403, detail="Engineering Workspaces require a Pro or Advanced tier subscription.")
         
-    projects = db.query(Project).filter(Project.user_id == current_user.id).order_by(Project.created_at.desc()).all()
-    
-    # Attach items manually if relationship is not back_populates yet
-    for proj in projects:
-        proj.items = db.query(ProjectItem).filter(ProjectItem.project_id == proj.id).all()
+    try:
+        projects = db.query(Project).filter(Project.user_id == current_user.id).order_by(Project.created_at.desc()).all()
         
-    return projects
+        # Attach items manually if relationship is not back_populates yet
+        for proj in projects:
+            proj.items = db.query(ProjectItem).filter(ProjectItem.project_id == proj.id).all()
+            
+        return projects
+    except Exception as e:
+        import traceback
+        trace = traceback.format_exc()
+        raise HTTPException(status_code=400, detail=f"Exception: {str(e)} | Trace: {trace}")
 
 @router.post("/", response_model=ProjectOut)
 def create_project(
@@ -33,27 +38,33 @@ def create_project(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    
-    if current_user.tier == "free":
-        raise HTTPException(status_code=403, detail="Engineering Workspaces require a Pro or Advanced tier subscription.")
+    try:
+        if current_user.tier == "free":
+            raise HTTPException(status_code=403, detail="Engineering Workspaces require a Pro or Advanced tier subscription.")
+            
+        count = db.query(Project).filter(Project.user_id == current_user.id).count()
         
-    count = db.query(Project).filter(Project.user_id == current_user.id).count()
-    
-    if current_user.tier == "pro" and count >= 3:
-        raise HTTPException(status_code=403, detail="Pro tier is limited to 3 active projects. Upgrade to Advanced for unlimited workspaces.")
-    elif count >= 100:
-        raise HTTPException(status_code=400, detail="Maximum system project limit reached.")
-        
-    new_proj = Project(
-        user_id=current_user.id,
-        name=payload.name,
-        description=payload.description
-    )
-    db.add(new_proj)
-    db.commit()
-    db.refresh(new_proj)
-    new_proj.items = []
-    return new_proj
+        if current_user.tier == "pro" and count >= 3:
+            raise HTTPException(status_code=403, detail="Pro tier is limited to 3 active projects. Upgrade to Advanced for unlimited workspaces.")
+        elif count >= 100:
+            raise HTTPException(status_code=400, detail="Maximum system project limit reached.")
+            
+        new_proj = Project(
+            user_id=current_user.id,
+            name=payload.name,
+            description=payload.description
+        )
+        db.add(new_proj)
+        db.commit()
+        db.refresh(new_proj)
+        new_proj.items = []
+        return new_proj
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback
+        trace = traceback.format_exc()
+        raise HTTPException(status_code=400, detail=f"Exception: {str(e)} | Trace: {trace}")
 
 @router.delete("/{project_id}")
 def delete_project(
