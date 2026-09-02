@@ -906,9 +906,9 @@ if st.session_state.current_page == "pricing":
 
 
 if st.session_state.current_page == "main":
-    tab_home, tab_browse, tab_compare, tab_projects, tab_ai, tab_feedback = st.tabs(
-        ["🏠 Home", "🔍 Browse", "⚖️ Compare", "📂 My Projects (BOM)", "🤖 AI Advisor (Pro)", "💬 Feedback"]
-    )
+    tab_home, tab_browse, tab_compare, tab_projects, tab_ai, tab_faq, tab_feedback = st.tabs([
+        "🏠 Home", "🔍 Browse", "⚖️ Compare", "📂 My Projects (BOM)", "🤖 AI Advisor (Pro)", "❓ FAQ", "💬 Feedback"
+    ])
     
     
     # ══════════════════════════════════════════════
@@ -2132,6 +2132,40 @@ if st.session_state.current_page == "main":
     # ══════════════════════════════════════════════
     #  TAB: FEEDBACK
     # ══════════════════════════════════════════════
+    # ==========================================
+    #  TAB: FAQ
+    # ==========================================
+    with tab_faq:
+        st.markdown("## ❓ Frequently Asked Questions")
+        st.caption("Everything you need to know about MatDataHub.")
+        
+        st.markdown("### 📊 Data & Materials")
+        with st.expander("Where does MatDataHub get its data?"):
+            st.write("Our data is meticulously sourced from globally recognized engineering standards including **ASTM International, ISO, MMPDS, ASME, and ASM International**.")
+            st.write("For specific materials, data sheets often aggregate test results from manufacturers to provide reliable statistical minimums.")
+        with st.expander("How frequently is the materials database updated?"):
+            st.write("We run quarterly synchronization passes to capture updates in standard specifications and add newly developed alloys and advanced composites.")
+        with st.expander("Can I add my own custom materials?"):
+            st.write("Currently, MatDataHub operates as a strictly verified standard-reference database to maintain engineering integrity. Custom material uploads are on the roadmap for Advanced Engineering tier users in Q3.")
+
+        st.markdown("### ⚙️ Features & Tools")
+        with st.expander("How does the AI Material Advisor work?"):
+            st.write("The AI Advisor (available on Pro and Advanced tiers) uses a Large Language Model (LLM) fine-tuned on materials science context. It has direct access to our 500+ material database to pull accurate numbers instead of hallucinating.")
+            st.write("You can ask it things like: *'Which aluminum alloy is best for a saltwater marine environment?'* or *'Suggest an alternative to Ti-6Al-4V that is cheaper but has similar yield strength.'*")
+        with st.expander("What are BOM Projects?"):
+            st.write("Bill of Materials (BOM) Projects allow you to build assemblies out of MatDataHub materials. You can track total weight, volume, and cost, and run advanced engineering tools (like Thermal Expansion or Shock Analysis) on your entire assembly at once.")
+        with st.expander("How does the Rule of Mixtures Synthesizer work?"):
+            st.write("The Synthesizer allows you to virtually mix multiple materials (e.g., a polymer matrix and carbon fiber) by volume or weight fraction. It calculates the theoretical composite properties based on the Voigt and Reuss bounds.")
+
+        st.markdown("### 💳 Subscriptions & Upgrades")
+        with st.expander("How do I upgrade my plan?"):
+            st.write("Click the **✨ Upgrade Plan** button in the sidebar or directly on any premium feature. Payments are securely processed via Razorpay.")
+        with st.expander("Can I downgrade or cancel at any time?"):
+            st.write("Yes! You can manage your subscription directly from the **💳 Subscriptions & Upgrades** section in your Account dashboard.")
+        with st.expander("Is API Access available?"):
+            st.write("API Access is currently restricted to Enterprise customers to prevent data scraping. If you require programmatic access for a commercial application, please contact support for an Enterprise contract.")
+
+
     with tab_feedback:
         st.markdown("## 💬 We'd love your feedback")
         st.caption("Found a bug? Want a new feature? Just want to say hi? Tell us below.")
