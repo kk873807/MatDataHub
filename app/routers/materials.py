@@ -22,9 +22,34 @@ from typing import List, Optional
 from app.database import get_db
 from app.models import Material, User
 from app.schemas import MaterialCreate, MaterialResponse, MaterialListResponse, BulkImportResponse
-from app.auth import get_optional_user
+from app.auth import get_optional_user, get_current_user
 from app.routers.admin import verify_admin
 from app.auth import TIER_LIMITS
+
+
+# --- Rate Limiting to prevent scraping ---
+import time
+from collections import defaultdict
+from fastapi import Request, HTTPException, status
+
+# IP -> list of timestamps
+_mat_requests = defaultdict(list)
+MAX_REQS_PER_MIN = 60
+
+def _get_ip(request: Request) -> str:
+    xff = request.headers.get("x-forwarded-for")
+    if xff: return xff.split(",")[0].strip()
+    return request.client.host if request.client else "unknown"
+
+def _check_mat_rate_limit(request: Request):
+    ip = _get_ip(request)
+    now = time.time()
+    timestamps = _mat_requests[ip]
+    timestamps[:] = [t for t in timestamps if now - t < 60]
+    
+    if len(timestamps) >= MAX_REQS_PER_MIN:
+        raise HTTPException(status.HTTP_429_TOO_MANY_REQUESTS, "Rate limit exceeded. Please wait a minute.")
+    timestamps.append(now)
 
 router = APIRouter(prefix="/materials", tags=["Materials"])
 
@@ -34,6 +59,7 @@ router = APIRouter(prefix="/materials", tags=["Materials"])
 # ──────────────────────────────────────────────
 @router.get("/", response_model=MaterialListResponse)
 def list_materials(
+    request: Request,
     # Pagination
     page: int = Query(1, ge=1, description="Page number"),
     per_page: int = Query(20, ge=1, le=2000, description="Items per page"),
@@ -47,9 +73,10 @@ def list_materials(
     # Sorting
     sort_by: Optional[str] = Query("name", description="Sort by field name"),
     db: Session = Depends(get_db),
-    current_user: Optional[User] = Depends(get_optional_user),  # public — used only if we personalize later
+    current_user: User = Depends(get_current_user),  # public — used only if we personalize later
 ):
     """
+    _check_mat_rate_limit(request)
     List materials with optional filters. Public — no login required.
 
     Example:
@@ -93,11 +120,12 @@ def list_materials(
 # ──────────────────────────────────────────────
 @router.get("/search", response_model=MaterialListResponse)
 def search_materials(
+    request: Request,
     q: str = Query(..., min_length=1, description="Search query (searches name, grade, applications, equivalent_grades)"),
     page: int = Query(1, ge=1),
     per_page: int = Query(20, ge=1, le=2000),
     db: Session = Depends(get_db),
-    current_user: Optional[User] = Depends(get_optional_user),  # public
+    current_user: User = Depends(get_current_user),  # public
 ):
     """
     Search materials by keyword across multiple fields. Public — no login required.
@@ -146,9 +174,10 @@ def search_materials(
 # ──────────────────────────────────────────────
 @router.get("/compare", response_model=List[MaterialResponse])
 def compare_materials(
+    request: Request,
     ids: List[int] = Query(..., description="Material IDs to compare, e.g. ?ids=1&ids=2&ids=3"),
     db: Session = Depends(get_db),
-    current_user: Optional[User] = Depends(get_optional_user),
+    current_user: User = Depends(get_current_user),
 ):
     """
     Fetch full details for a set of materials to compare side-by-side.
@@ -222,7 +251,7 @@ def find_similar_materials(
     material_id: int,
     limit: int = Query(5, ge=1, le=20, description="How many similar materials to return"),
     db: Session = Depends(get_db),
-    current_user: Optional[User] = Depends(get_optional_user),
+    current_user: User = Depends(get_current_user),
 ):
     """
     Find materials numerically similar to the given material, based on
@@ -301,7 +330,7 @@ def find_similar_materials(
 def get_material(
     material_id: int,
     db: Session = Depends(get_db),
-    current_user: Optional[User] = Depends(get_optional_user),  # public
+    current_user: User = Depends(get_current_user),  # public
 ):
     """
     Get a single material by its ID. Public — no login required.
