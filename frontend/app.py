@@ -117,9 +117,9 @@ st.markdown("""
         margin-bottom: 2rem;
         font-weight: 400;
         text-align: center;
-        max-width: 800px;
-        margin-left: auto;
-        margin-right: auto;
+        width: 100%;
+        
+        
     }
 
         /* Glassmorphism Stat Cards */
@@ -626,6 +626,16 @@ with st.sidebar:
                 
 
 # ══════════════════════════════════════════════
+#  PAGE HEADER
+# ══════════════════════════════════════════════
+st.markdown("""
+    <div style="text-align: center; margin-bottom: 2rem;">
+        <h1 class="hero-title">MatDataHub</h1>
+        <p class="hero-sub">The ultimate engineering material data-as-a-service platform. Discover, compare, and analyze over 500+ industrial materials instantly.</p>
+    </div>
+""", unsafe_allow_html=True)
+
+# ══════════════════════════════════════════════
 #  TABS: Home | Browse | Compare | Feedback
 # ══════════════════════════════════════════════
 tab_home, tab_browse, tab_compare, tab_ai, tab_feedback = st.tabs(
@@ -638,12 +648,6 @@ tab_home, tab_browse, tab_compare, tab_ai, tab_feedback = st.tabs(
 # ══════════════════════════════════════════════
 with tab_home:
 
-    st.markdown("""
-        <div style="text-align: center; margin-top: 2rem; margin-bottom: 2rem;">
-            <h1 class="hero-title">MatDataHub</h1>
-            <p class="hero-sub">The ultimate engineering material data-as-a-service platform. Discover, compare, and analyze over 500+ industrial materials instantly.</p>
-        </div>
-    """, unsafe_allow_html=True)
 
     if st.session_state.get("user"):
         st.markdown(f"""
