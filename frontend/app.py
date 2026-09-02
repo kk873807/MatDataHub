@@ -1498,8 +1498,12 @@ if st.session_state.current_page == "main":
                 st.rerun()
         all_materials = []
     
-        all_materials = all_result["data"].get("materials", [])
-        name_to_id = {m["name"]: m["id"] for m in all_materials}
+        try:
+            all_materials = all_result["data"].get("materials", [])
+            name_to_id = {m["name"]: m["id"] for m in all_materials}
+        except (KeyError, TypeError):
+            all_materials = []
+            name_to_id = {}
         sorted_names = sorted(name_to_id.keys())
     
         user_tier = (st.session_state.user or {}).get("tier", "free")
@@ -1538,7 +1542,7 @@ if st.session_state.current_page == "main":
                 show_api_error(compare_result, retry_key="retry_compare_fetch")
                 mat_details = []
             else:
-                mat_details = compare_result["data"]
+                mat_details = compare_result.get("data", [])
     
             st.divider()
     
