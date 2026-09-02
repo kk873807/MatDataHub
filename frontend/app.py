@@ -45,6 +45,10 @@ st.set_page_config(
     page_icon=":hammer_and_wrench:",
     layout="wide",
 )
+# --- APP STATE INITIALIZATION ---
+if "current_page" not in st.session_state:
+    st.session_state.current_page = "main"
+
 
 
 import streamlit.components.v1 as components
@@ -741,9 +745,6 @@ st.markdown("""
 #  TABS: Home | Browse | Compare | Feedback
 # ══════════════════════════════════════════════
 
-# --- PAGE ROUTER ---
-if "current_page" not in st.session_state:
-    st.session_state.current_page = "main"
 
 if st.session_state.current_page == "account":
 
@@ -906,9 +907,6 @@ if st.session_state.current_page == "account":
     st.stop() # Halt rendering of the main app tabs
 
 
-# --- PAGE ROUTER ---
-if "current_page" not in st.session_state:
-    st.session_state.current_page = "main"
 
 def render_account_page():
 
