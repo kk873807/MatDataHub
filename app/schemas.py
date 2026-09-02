@@ -42,7 +42,6 @@ class MaterialBase(BaseModel):
     equivalent_grades: Optional[str] = Field(None, examples=["SUS 304 (JIS), X5CrNi18-10 (EN)"])
     composition: Optional[str] = Field(None, examples=["Fe 66-74%, Cr 18-20%, Ni 8-10.5%"])
     description: Optional[str] = None
-    blueprint_data: Optional[str] = None
 
     # Source
     source_url: Optional[str] = Field(None, max_length=500)
