@@ -218,9 +218,10 @@ def wake_api():
         pass
 
 
+@st.cache_data(ttl=600)
 def fetch_all_materials():
-    """Fetch all materials from the API with retry."""
-    return api_get("/materials/", params={"per_page": 200})
+    """Fetch all materials from the API with retry. Cached for 10 minutes to improve performance."""
+    return api_get("/materials/", params={"per_page": 1000})
 
 
 @st.cache_data(ttl=300)

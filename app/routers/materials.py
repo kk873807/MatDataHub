@@ -34,7 +34,7 @@ router = APIRouter(prefix="/materials", tags=["Materials"])
 def list_materials(
     # Pagination
     page: int = Query(1, ge=1, description="Page number"),
-    per_page: int = Query(20, ge=1, le=500, description="Items per page"),
+    per_page: int = Query(20, ge=1, le=2000, description="Items per page"),
     # Filters
     category: Optional[str] = Query(None, description="Filter by category: Metal, Polymer, Ceramic, Composite"),
     subcategory: Optional[str] = Query(None, description="Filter by subcategory"),
@@ -93,7 +93,7 @@ def list_materials(
 def search_materials(
     q: str = Query(..., min_length=1, description="Search query (searches name, grade, applications, equivalent_grades)"),
     page: int = Query(1, ge=1),
-    per_page: int = Query(20, ge=1, le=500),
+    per_page: int = Query(20, ge=1, le=2000),
     db: Session = Depends(get_db),
     current_user: Optional[User] = Depends(get_optional_user),  # public
 ):

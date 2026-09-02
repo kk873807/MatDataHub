@@ -35,7 +35,7 @@ app.include_router(ai.router, prefix="/api/v1")       # <-- added payments
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],    # Tighten this to your Streamlit URL in production
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
