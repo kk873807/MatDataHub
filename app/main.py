@@ -48,7 +48,8 @@ app.include_router(auth.router, prefix="/api/v1")
 app.include_router(admin.router, prefix="/api/v1")
 app.include_router(feedback.router, prefix="/api/v1")
 app.include_router(payments.router, prefix="/api/v1")
-app.include_router(ai.router, prefix="/api/v1")       # <-- added payments
+app.include_router(ai.router, prefix="/api/v1")
+app.include_router(projects.router, prefix="/api/v1")       # <-- added payments
 
 # Allow cross-origin requests (so Streamlit Cloud can call Render-hosted API)
 app.add_middleware(
