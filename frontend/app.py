@@ -1532,7 +1532,7 @@ with tab_projects:
                                 st.markdown("#### Cyclic Fatigue Life Estimator")
                                 st.caption("Estimate if a part will survive infinite cycles under alternating stress.")
                                 st.latex(r"S_e \approx k_a k_b k_c k_d k_e k_f \cdot S_e'")
-                                st.info("Note: This tool computes the **uncorrected endurance limit (Se')**. For final manufacturing, standard Marin surface/size modification factors (k) must be applied.")
+                                st.info("Note: The baseline endurance limit (Se') is uncorrected. You can apply standard Marin modification factors below to calculate the true Corrected Endurance Limit (Se).")
                                 
                                 if not items:
                                     st.warning("Add parts to your BOM first.")
@@ -1559,10 +1559,28 @@ with tab_projects:
                                         st.markdown(f"**Material Tensile Strength ($S_{{ut}}$):** {ts_val:.2f} MPa")
                                         st.markdown(f"**{note}:** {endurance_limit:.2f} MPa")
                                         
-                                        alt_stress = st.number_input("Applied Alternating Stress Amplitude (MPa)", min_value=1.0, value=max(1.0, endurance_limit*0.8), step=10.0, key="alt_stress")
+                                        with st.expander("⚙️ Apply Marin Modification Factors", expanded=True):
+                                            st.caption("Adjust these empirical factors based on manufacturing and environmental conditions.")
+                                            mk1, mk2, mk3 = st.columns(3)
+                                            with mk1:
+                                                k_a = st.number_input("Surface ($k_a$)", min_value=0.1, max_value=2.0, value=1.0, step=0.05, help="Depends on surface finish (e.g. Polished = 1.0, Machined = 0.7, Forged = 0.5)")
+                                                k_d = st.number_input("Temperature ($k_d$)", min_value=0.1, max_value=2.0, value=1.0, step=0.05, help="Room temp = 1.0")
+                                            with mk2:
+                                                k_b = st.number_input("Size ($k_b$)", min_value=0.1, max_value=2.0, value=1.0, step=0.05, help="Depends on part diameter (e.g. d < 8mm = 1.0)")
+                                                k_e = st.number_input("Reliability ($k_e$)", min_value=0.1, max_value=1.0, value=1.0, step=0.01, help="e.g. 50% rel = 1.0, 99.9% = 0.753")
+                                            with mk3:
+                                                k_c = st.number_input("Load ($k_c$)", min_value=0.1, max_value=2.0, value=1.0, step=0.05, help="Bending = 1.0, Axial = 0.85, Torsion = 0.59")
+                                                k_f = st.number_input("Misc ($k_f$)", min_value=0.1, max_value=2.0, value=1.0, step=0.05, help="Corrosion, residual stress, etc.")
+                                                
+                                            k_total = k_a * k_b * k_c * k_d * k_e * k_f
+                                            corrected_se = endurance_limit * k_total
+                                            
+                                            st.info(rf"**Corrected Endurance Limit ($S_e = k_{{total}} \cdot S_e'$): {corrected_se:.2f} MPa**")
                                         
-                                        if alt_stress < endurance_limit:
-                                            st.success("🟢 **Infinite Life Expected** - Alternating stress is below the endurance limit.")
+                                        alt_stress = st.number_input("Applied Alternating Stress Amplitude (MPa)", min_value=1.0, value=max(1.0, float(corrected_se*0.8)), step=10.0, key="alt_stress")
+                                        
+                                        if alt_stress < corrected_se:
+                                            st.success("🟢 **Infinite Life Expected** - Alternating stress is below the corrected endurance limit.")
                                         else:
                                             st.error("🔴 **Finite Life (Fatigue Failure)** - The part will eventually crack under cyclic loading.")
                                             
