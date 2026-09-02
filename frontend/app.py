@@ -1406,12 +1406,12 @@ with tab_projects:
                             with st.spinner("Loading materials..."):
                                 all_mats = fetch_all_materials()
                             
-                            mat_options = {m["id"]: m["name"] for m in all_mats["data"].get("materials", [])} if all_mats["ok"] else {}
+                            bom_mat_options = {m["id"]: m["name"] for m in all_mats["data"].get("materials", [])} if all_mats["ok"] else {}
                             
                             with c1:
                                 part_name = st.text_input("Part Name", placeholder="e.g. Engine Block")
                             with c2:
-                                sel_mat_id = st.selectbox("Select Material", options=list(mat_options.keys()), format_func=lambda x: mat_options[x])
+                                sel_mat_id = st.selectbox("Select Material", options=list(bom_mat_options.keys()), format_func=lambda x: bom_mat_options[x])
                             with c3:
                                 vol_cm3 = st.number_input("Volume (cm³)", min_value=0.1, value=100.0, step=10.0)
                                 
@@ -1456,14 +1456,14 @@ with tab_projects:
                             
                             with st.spinner("Loading material database..."):
                                 all_mats = fetch_all_materials()
-                                mat_options = {m["id"]: m for m in all_mats["data"].get("materials", [])} if all_mats["ok"] else {}
+                                synth_mat_options = {m["id"]: m for m in all_mats["data"].get("materials", [])} if all_mats["ok"] else {}
                                 
                             c_syn1, c_syn2 = st.columns(2)
                             with c_syn1:
-                                m1_id = st.selectbox("Base Material (Matrix)", options=list(mat_options.keys()), format_func=lambda x: mat_options[x]["name"], key="m1")
+                                m1_id = st.selectbox("Base Material (Matrix)", options=list(synth_mat_options.keys()), format_func=lambda x: synth_mat_options[x]["name"], key="m1")
                                 vol_m1 = st.slider("Volume %", 0, 100, 70)
                             with c_syn2:
-                                m2_id = st.selectbox("Secondary Material (Reinforcement)", options=list(mat_options.keys()), format_func=lambda x: mat_options[x]["name"], key="m2")
+                                m2_id = st.selectbox("Secondary Material (Reinforcement)", options=list(synth_mat_options.keys()), format_func=lambda x: synth_mat_options[x]["name"], key="m2")
                                 vol_m2 = 100 - vol_m1
                                 st.metric("Secondary Volume %", f"{vol_m2}%")
                                 
