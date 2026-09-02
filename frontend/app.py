@@ -49,37 +49,53 @@ st.set_page_config(
 
 import streamlit.components.v1 as components
 
-# Global Keyboard Scrolling Injection (Fix for Arrow Keys)
+
+# Global Keyboard Scrolling Injection V2 (Aggressive Capture)
 components.html("""
 <script>
-const parentDoc = window.parent.document;
-if (!parentDoc.getElementById('custom-keyboard-scroll')) {
-    const marker = parentDoc.createElement('div');
-    marker.id = 'custom-keyboard-scroll';
-    parentDoc.body.appendChild(marker);
-    
-    parentDoc.addEventListener('keydown', function(e) {
-        const active = parentDoc.activeElement;
-        if (active) {
-            const tag = active.tagName.toLowerCase();
-            if (tag === 'input' || tag === 'textarea') return;
-            const role = active.getAttribute('role');
-            if (role === 'slider' || role === 'spinbutton' || role === 'combobox' || role === 'listbox' || role === 'menuitem' || role === 'switch') return;
-            if (active.isContentEditable) return;
-        }
+try {
+    const parentDoc = window.parent.document;
+    if (!parentDoc.getElementById('custom-keyboard-scroll-v2')) {
+        const marker = parentDoc.createElement('div');
+        marker.id = 'custom-keyboard-scroll-v2';
+        parentDoc.body.appendChild(marker);
         
-        // Streamlit uses .main for its scrollable container in newer versions
-        const scrollContainer = parentDoc.querySelector('.main') || parentDoc.documentElement || parentDoc.body;
-        const scrollAmount = window.parent.innerHeight * 0.15; // scroll 15% of screen height
-        
-        if (e.key === 'ArrowDown') {
-            scrollContainer.scrollBy({ top: scrollAmount, behavior: 'smooth' });
-            e.preventDefault();
-        } else if (e.key === 'ArrowUp') {
-            scrollContainer.scrollBy({ top: -scrollAmount, behavior: 'smooth' });
-            e.preventDefault();
-        }
-    });
+        parentDoc.addEventListener('keydown', function(e) {
+            const active = parentDoc.activeElement;
+            if (active) {
+                const tag = active.tagName.toLowerCase();
+                if (tag === 'input' || tag === 'textarea') return;
+                const role = active.getAttribute('role');
+                if (role === 'slider' || role === 'spinbutton' || role === 'combobox' || role === 'listbox' || role === 'menuitem' || role === 'switch' || role === 'tab') return;
+                if (active.isContentEditable) return;
+            }
+            
+            const scrollAmount = window.parent.innerHeight * 0.15;
+            
+            if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                const amt = e.key === 'ArrowDown' ? scrollAmount : -scrollAmount;
+                
+                const containers = [
+                    parentDoc.querySelector('[data-testid="stAppViewMain"]'),
+                    parentDoc.querySelector('.main'),
+                    parentDoc.documentElement,
+                    parentDoc.body,
+                    window.parent
+                ];
+                
+                for (let i = 0; i < containers.length; i++) {
+                    if (containers[i] && typeof containers[i].scrollBy === 'function') {
+                        containers[i].scrollBy({ top: amt, behavior: 'smooth' });
+                    }
+                }
+                
+                e.stopPropagation();
+                e.preventDefault();
+            }
+        }, true); // TRUE = Capture Phase (intercepts before React swallows it)
+    }
+} catch (e) {
+    console.error("Scroll inject err:", e);
 }
 </script>
 """, height=0)
