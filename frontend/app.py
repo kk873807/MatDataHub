@@ -1129,26 +1129,20 @@ if st.session_state.current_page == "main":
         </style>
         """, unsafe_allow_html=True)
 
-        # --- HERO SECTION ---
-        st.markdown("""
-        <div class="hero-section">
-            <h1 class="hero-title">MatDataHub <span style="background: -webkit-linear-gradient(45deg, #4FC3A1, #2E86AB); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">2.0</span></h1>
-            <p class="hero-subtitle">
-                Welcome to the ultimate materials science platform. Immerse yourself in an advanced, meticulously verified database covering the entire spectrum of engineering physics.
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
+
 
         if st.session_state.get("user"):
             st.markdown(f"""
-                <div style="background: rgba(79, 195, 161, 0.1); border-left: 4px solid #4FC3A1; border-radius: 4px; padding: 12px 20px; color: var(--text-color); margin-bottom: 2rem; font-weight: 500; font-size: 1.1rem;">
-                    🚀 Welcome back, <b style="color: #4FC3A1;">{st.session_state.user.get('name') or st.session_state.user['email']}</b>! The database has been massively upgraded. Explore the new advanced categories today.
+                <div style="background: rgba(79, 195, 161, 0.1); border-left: 4px solid #4FC3A1; border-radius: 4px; padding: 15px 20px; color: var(--text-color); margin-bottom: 2rem; font-weight: 500; font-size: 1.1rem; line-height: 1.5;">
+                    🚀 Welcome back, <b style="color: #4FC3A1;">{st.session_state.user.get('name') or st.session_state.user['email']}</b> to MatDataHub 2.0! <br>
+                    <span style="opacity: 0.85; font-size: 1rem; font-weight: 400;">The ultimate materials science platform. Immerse yourself in an advanced, meticulously verified database covering the entire spectrum of engineering physics.</span>
                 </div>
             """, unsafe_allow_html=True)
         else:
             st.markdown("""
-                <div style="background: rgba(46, 134, 171, 0.1); border-left: 4px solid #2E86AB; border-radius: 4px; padding: 12px 20px; color: var(--text-color); margin-bottom: 2rem; font-weight: 500; font-size: 1.1rem;">
-                    👋 <b>New here?</b> Browse materials freely — sign in from the sidebar to unlock intelligent comparisons, engineering estimators, and the AI Advisor.
+                <div style="background: rgba(46, 134, 171, 0.1); border-left: 4px solid #2E86AB; border-radius: 4px; padding: 15px 20px; color: var(--text-color); margin-bottom: 2rem; font-weight: 500; font-size: 1.1rem; line-height: 1.5;">
+                    👋 <b>Welcome to MatDataHub 2.0!</b> Browse materials freely — sign in from the sidebar to unlock intelligent comparisons and the AI Advisor.<br>
+                    <span style="opacity: 0.85; font-size: 1rem; font-weight: 400;">Immerse yourself in an advanced, meticulously verified database covering the entire spectrum of engineering physics.</span>
                 </div>
             """, unsafe_allow_html=True)
 
