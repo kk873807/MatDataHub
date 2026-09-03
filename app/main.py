@@ -123,3 +123,16 @@ def root():
     }
 
 
+
+
+@app.get("/api/v1/admin/seed-demo")
+def seed_demo_data():
+    """
+    Hidden endpoint to seed Render database without SSH access.
+    """
+    try:
+        from scripts.seed_professor_materials import run_seed
+        added = run_seed()
+        return {"ok": True, "message": f"Successfully seeded {added} materials for the demo!"}
+    except Exception as e:
+        return {"ok": False, "error": str(e)}

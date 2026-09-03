@@ -141,15 +141,20 @@ mats = [
     }
 ]
 
-db = SessionLocal()
-added = 0
-for data in mats:
-    exists = db.query(Material).filter(Material.name == data["name"]).first()
-    if not exists:
-        mat = Material(**data, source_name="Industry Standard Seed", is_verified=True)
-        db.add(mat)
-        added += 1
+def run_seed():
+    db = SessionLocal()
+    added = 0
+    for data in mats:
+        exists = db.query(Material).filter(Material.name == data["name"]).first()
+        if not exists:
+            mat = Material(**data, source_name="Industry Standard Seed", is_verified=True)
+            db.add(mat)
+            added += 1
 
-db.commit()
-db.close()
-print(f"Seeded {added} high-grade materials (Inconel & Aluminum).")
+    db.commit()
+    db.close()
+    return added
+
+if __name__ == "__main__":
+    added = run_seed()
+    print(f"Seeded {added} high-grade materials (Inconel & Aluminum).")
