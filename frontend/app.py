@@ -12,6 +12,8 @@ import time
 from urllib.parse import urlparse
 
 import pandas as pd
+from fpdf import FPDF
+from datetime import datetime
 import requests
 import streamlit as st
 import plotly.graph_objects as go
@@ -444,6 +446,84 @@ def wake_api():
 
 
 @st.cache_data(ttl=600)
+def generate_bom_pdf(project_name, df_bom, total_mass, total_cost):
+    """Generate a professional, branded PDF report for the BOM."""
+    pdf = FPDF(orientation="P", unit="mm", format="A4")
+    pdf.add_page()
+    
+    # --- Header ---
+    pdf.set_fill_color(33, 37, 41)
+    pdf.rect(0, 0, 210, 30, 'F')
+    
+    pdf.set_font("helvetica", "B", 24)
+    pdf.set_text_color(255, 255, 255)
+    pdf.set_y(10)
+    pdf.cell(0, 10, "MatDataHub", align="L")
+    
+    pdf.set_font("helvetica", "I", 12)
+    pdf.set_text_color(200, 200, 200)
+    pdf.cell(0, 10, "Engineering BOM Report", align="R")
+    
+    # --- Project Metadata ---
+    pdf.set_y(40)
+    pdf.set_text_color(0, 0, 0)
+    pdf.set_font("helvetica", "B", 16)
+    pdf.cell(0, 10, f"Project: {project_name}", ln=1)
+    
+    pdf.set_font("helvetica", "", 10)
+    pdf.set_text_color(100, 100, 100)
+    pdf.cell(0, 5, f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", ln=1)
+    pdf.cell(0, 5, "Classification: STRICTLY CONFIDENTIAL", ln=1)
+    pdf.line(10, 60, 200, 60)
+    
+    # --- BOM Table ---
+    pdf.set_y(65)
+    pdf.set_font("helvetica", "B", 12)
+    pdf.set_text_color(0, 0, 0)
+    pdf.cell(0, 10, "Bill of Materials (BOM) Breakdown", ln=1)
+    
+    # Table Header
+    pdf.set_font("helvetica", "B", 10)
+    pdf.set_fill_color(240, 240, 240)
+    col_widths = [45, 75, 35, 35]
+    headers = ["Part Name", "Material", "Volume (cm^3)", "Mass (kg)"]
+    for i in range(4):
+        pdf.cell(col_widths[i], 8, headers[i], border=1, fill=True)
+    pdf.ln()
+    
+    # Table Rows
+    pdf.set_font("helvetica", "", 10)
+    for _, row in df_bom.iterrows():
+        pdf.cell(col_widths[0], 8, str(row["Part Name"])[:25], border=1)
+        pdf.cell(col_widths[1], 8, str(row["Material"])[:40], border=1)
+        pdf.cell(col_widths[2], 8, str(row["Volume (cmA3)"]), border=1)
+        pdf.cell(col_widths[3], 8, str(row["Mass (kg)"]), border=1)
+        pdf.ln()
+        
+    # --- Summary ---
+    pdf.ln(5)
+    pdf.set_font("helvetica", "B", 12)
+    pdf.cell(0, 10, "Engineering Summary", ln=1)
+    
+    pdf.set_font("helvetica", "", 11)
+    pdf.cell(80, 8, "Total Assembly Mass:", border=0)
+    pdf.set_font("helvetica", "B", 11)
+    pdf.cell(0, 8, f"{total_mass:,.2f} kg", border=0, ln=1)
+    
+    pdf.set_font("helvetica", "", 11)
+    pdf.cell(80, 8, "Estimated Material Cost:", border=0)
+    pdf.set_font("helvetica", "B", 11)
+    pdf.cell(0, 8, f"Rs. {total_cost:,.2f}", border=0, ln=1)
+    
+    # --- Footer ---
+    pdf.set_y(-20)
+    pdf.set_font("helvetica", "I", 8)
+    pdf.set_text_color(150, 150, 150)
+    pdf.cell(0, 10, "Powered by MatDataHub Professional Edition. Data export tracked for security compliance.", align="C")
+    
+    # Output to byte string
+    return bytes(pdf.output())
+
 def fetch_all_materials(token=None):
     """Fetch all materials from the API with retry. Cached for 10 minutes to improve performance."""
     return api_get("/materials/", params={"per_page": 1000})
@@ -1731,6 +1811,30 @@ if st.session_state.current_page == "main":
                                         )
                                     elif tier == "pro":
                                         st.caption("🔒 *Upgrade to Advanced to export this BOM to CSV.*")
+                                
+                                # Pro/Advanced Tier: PDF Export
+                                if tier in ["pro", "advanced"]:
+                                    df_clean = df.drop(columns=["Remove"])
+                                    total_mass = sum((item["volume_cm3"] * (item["material"].get("density") or 0)) / 1000.0 for item in items)
+                                    total_cost = sum(((item["volume_cm3"] * (item["material"].get("density") or 0)) / 1000.0) * (item.get("material", {}).get("cost_per_kg_min") or 0) for item in items)
+                                    
+                                    st.markdown("---")
+                                    st.markdown("### 📄 Professional Reports")
+                                    st.caption("Generate presentation-ready engineering reports. Downloads are generated locally and securely.")
+                                    
+                                    try:
+                                        # Generate PDF bytes in memory
+                                        pdf_bytes = generate_bom_pdf(curr_proj['name'], df_clean, total_mass, total_cost)
+                                        
+                                        st.download_button(
+                                            label="📥 Download PDF Report (Secure)",
+                                            data=pdf_bytes,
+                                            file_name=f"{curr_proj['name'].replace(' ', '_')}_Engineering_Report.pdf",
+                                            mime="application/pdf",
+                                            type="primary"
+                                        )
+                                    except Exception as e:
+                                        st.error(f"Failed to generate PDF: {e}")
                                     
                                     st.divider()
                                     # Simple remove selector
