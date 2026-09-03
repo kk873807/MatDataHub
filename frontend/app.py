@@ -1385,7 +1385,7 @@ if st.session_state.current_page == "main":
                                             if admin_msg:
                                                 resp = requests.post(
                                                     f"{API_BASE}/feedback/{c['id']}/reply", 
-                                                    headers={"Authorization": f"Bearer {st.session_state.token}", "X-Reply-Text": admin_msg}
+                                                    headers={"X-Admin-Secret": st.session_state.get("temp_admin_pw", ""), "X-Reply-Text": admin_msg}
                                                 )
                                                 if resp.status_code == 200:
                                                     st.session_state[f"show_admin_reply_{c['id']}"] = False

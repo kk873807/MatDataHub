@@ -184,11 +184,9 @@ def reply_to_feedback(
     request: Request,
     reply_text: str = Header(..., alias="X-Reply-Text"),
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    _: bool = Depends(verify_admin)
 ):
     """Admin endpoint to reply to user feedback and send an email notification."""
-    if current_user.role != "admin":
-        raise HTTPException(status_code=403, detail="Only admins can reply to feedback.")
         
     feedback = db.query(Feedback).filter(Feedback.id == feedback_id).first()
     if not feedback:
