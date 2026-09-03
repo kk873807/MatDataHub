@@ -1281,12 +1281,14 @@ if st.session_state.current_page == "main":
 .compact-name { font-weight: bold; color: #4DA8DA; }
 .compact-message { margin-top: 2px; margin-bottom: 2px; }
 .compact-admin {
-                            background-color: #1c2a38;
-                            border: 1px solid #4DA8DA;
+                            background-color: var(--secondary-background-color);
+                            border: 1px solid var(--faded-text-20);
+                            border-left: 3px solid #00f0ff;
                             border-radius: 5px;
-                            padding: 8px;
-                            margin-top: 5px;
-                            font-size: 0.8em;
+                            padding: 10px;
+                            margin-top: 10px;
+                            font-size: 0.85em;
+                            color: var(--text-color);
                         }
 .compact-img {
                             max-width: 250px;
@@ -1324,7 +1326,7 @@ if st.session_state.current_page == "main":
                                 if c.get("admin_reply"):
                                     st.markdown(f"""
                                     <div class="compact-admin">
-                                        <strong style="color:#00ffcc">✅ Verified Admin Response:</strong><br/>
+                                        <strong style="color: #00f0ff;">✅ Verified Admin Response:</strong><br/>
                                         {c["admin_reply"]}
                                     </div>
                                     """, unsafe_allow_html=True)

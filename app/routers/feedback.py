@@ -16,7 +16,7 @@ import os
 import time
 from collections import defaultdict
 
-from fastapi import APIRouter, Depends, HTTPException, Header, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Header, Request, status, BackgroundTasks
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -182,27 +182,59 @@ from pydantic import BaseModel
 class AdminReplyPayload(BaseModel):
     reply_text: str
 
+def send_email_async(user_email: str, reply_text: str, feedback_message: str):
+    import os
+    import smtplib
+    from email.mime.text import MIMEText
+    from email.mime.multipart import MIMEMultipart
+    
+    sender_email = os.getenv("SMTP_EMAIL", "no-reply@matdatahub.com")
+    sender_password = os.getenv("SMTP_PASSWORD", "")
+    
+    if not sender_password:
+        return
+        
+    try:
+        msg = MIMEMultipart()
+        msg['From'] = f"MatDataHub Support <{sender_email}>"
+        msg['To'] = user_email
+        msg['Subject'] = "Admin Response to your Feedback on MatDataHub"
+        
+        body = f"Hi there!\n\nAn admin has reviewed and replied to your recent feedback/report:\n\nYour Feedback: \"{feedback_message}\"\n\nAdmin Reply:\n{reply_text}\n\nThanks for helping us improve MatDataHub!\n\nBest,\nThe MatDataHub Engineering Team"
+        
+        msg.attach(MIMEText(body, 'plain'))
+        
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(sender_email, sender_password)
+        server.send_message(msg)
+        server.quit()
+        print(f"Successfully sent reply email to {user_email}")
+    except Exception as e:
+        print(f"Failed to send email to {user_email}: {e}")
+
 @router.post("/{feedback_id}/reply")
 def reply_to_feedback(
     feedback_id: int,
     payload: AdminReplyPayload,
     request: Request,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     _: bool = Depends(verify_admin)
 ):
     reply_text = payload.reply_text
-    """Admin endpoint to reply to user feedback and send an email notification."""
-        
+    
     feedback = db.query(Feedback).filter(Feedback.id == feedback_id).first()
     if not feedback:
         raise HTTPException(status_code=404, detail="Feedback not found")
         
+    # Overwrite the admin_reply field with the newest reply
     feedback.admin_reply = reply_text
     feedback.status = "reviewed"
     db.commit()
     db.refresh(feedback)
     
-    # Send email notification if user email is known
+    # Resolve user email
     user_email = feedback.email
     if not user_email and feedback.user_id:
         user_record = db.query(User).filter(User.id == feedback.user_id).first()
@@ -210,46 +242,11 @@ def reply_to_feedback(
             user_email = user_record.email
             
     if user_email:
-        sender_email = os.getenv("SMTP_EMAIL", "no-reply@matdatahub.com")
         sender_password = os.getenv("SMTP_PASSWORD", "")
-        
         if sender_password:
-            try:
-                # Setup standard Gmail SMTP
-                msg = MIMEMultipart()
-                msg['From'] = f"MatDataHub Support <{sender_email}>"
-                msg['To'] = user_email
-                msg['Subject'] = "Admin Response to your Feedback on MatDataHub"
-                
-                body = f"""
-                Hi there!
-                
-                An admin has reviewed and replied to your recent feedback/report:
-                
-                Your Feedback: "{feedback.message}"
-                
-                Admin Reply:
-                {reply_text}
-                
-                Thanks for helping us improve MatDataHub!
-                
-                Best,
-                The MatDataHub Engineering Team
-                """
-                
-                msg.attach(MIMEText(body, 'plain'))
-                
-                server = smtplib.SMTP('smtp.gmail.com', 587)
-                server.starttls()
-                server.login(sender_email, sender_password)
-                server.send_message(msg)
-                server.quit()
-                return {"ok": True, "message": f"Reply saved and email successfully sent to {user_email}."}
-            except Exception as e:
-                print(f"Failed to send email to {user_email}: {e}")
-                return {"ok": True, "message": f"Reply saved, but email failed to send: {e}"}
+            background_tasks.add_task(send_email_async, user_email, reply_text, feedback.message)
+            return {"ok": True, "message": "Reply saved & Email dispatched in background!"}
         else:
-            print(f"Skipped sending email to {user_email} because SMTP_PASSWORD is not set in .env")
-            return {"ok": True, "message": "Reply saved. Email skipped (SMTP_PASSWORD missing from server environment)."}
+            return {"ok": True, "message": "Reply saved! (Email skipped: missing SMTP_PASSWORD on server)"}
             
-    return {"ok": True, "message": "Reply saved. No user email was found to notify."}
+    return {"ok": True, "message": "Reply saved! (No user email found to notify)"}
