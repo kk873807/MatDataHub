@@ -675,10 +675,7 @@ with st.sidebar:
     else:
         auth_tab = st.radio("Auth mode", ["Login", "Register"], horizontal=True, label_visibility="collapsed")
 
-        st.markdown("---")
-        st.markdown(OAUTH_HTML, unsafe_allow_html=True)
-        st.markdown("<p style='text-align: center; color: #888;'>or use email</p>", unsafe_allow_html=True)
-        st.markdown("---")
+
 
         if auth_tab == "Login":
             with st.form("login_form"):
@@ -837,9 +834,6 @@ if st.session_state.current_page == "account":
         with c2:
             with st.container(border=True):
                 st.markdown("#### Login or Create an Account")
-                st.markdown(OAUTH_HTML, unsafe_allow_html=True)
-                
-                st.divider()
                 
                 with st.form("account_login_form"):
                     st.markdown("**Email & Password**")
