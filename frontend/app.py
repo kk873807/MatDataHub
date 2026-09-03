@@ -974,7 +974,7 @@ if st.session_state.current_page == "account":
                 
 
                     
-            elif account_menu == "🧾 Payment History":
+            elif account_menu == "💳 Payment History":
                 st.markdown("### Transaction History")
                 # Fetch transactions from backend
                 tx_res = api_get("/account/transactions")
