@@ -139,18 +139,23 @@ def search_materials(
         GET /materials/search?q=stainless
         GET /materials/search?q=corrosion resistant
     """
-    search_term = f"%{q}%"
-
-    query = db.query(Material).filter(
-        or_(
-            Material.name.ilike(search_term),
-            Material.grade.ilike(search_term),
-            Material.applications.ilike(search_term),
-            Material.equivalent_grades.ilike(search_term),
-            Material.description.ilike(search_term),
-            Material.standard.ilike(search_term),
+    # Split query into words to allow non-exact multi-word matches (e.g. "Al-Li 2195")
+    words = q.split()
+    
+    query = db.query(Material)
+    for word in words:
+        search_term = f"%{word}%"
+        query = query.filter(
+            or_(
+                Material.name.ilike(search_term),
+                Material.grade.ilike(search_term),
+                Material.applications.ilike(search_term),
+                Material.equivalent_grades.ilike(search_term),
+                Material.description.ilike(search_term),
+                Material.standard.ilike(search_term),
+                Material.subcategory.ilike(search_term),
+            )
         )
-    )
 
     total = query.count()
     offset = (page - 1) * per_page
