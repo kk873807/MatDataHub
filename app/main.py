@@ -81,14 +81,21 @@ with engine.connect() as conn:
 
 
 
+
 app = FastAPI(
     title="MatDataHub API",
-    description="Engineering Material Data API - Search, filter, and compare 500+ engineering materials.",
-    version="0.2.0",
+    description="Engineering Material Data API - Search, filter, and compare 1000+ engineering materials.",
+    version="2.0.0",
     contact={
         "name": "MatDataHub",
     },
 )
+
+# --- RATE LIMITING IMPLEMENTATION ---
+limiter = Limiter(key_func=get_remote_address, default_limits=["200/minute"])
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
 
 # Register route modules
 app.include_router(materials.router, prefix="/api/v1")

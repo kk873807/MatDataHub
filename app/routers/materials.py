@@ -379,7 +379,7 @@ def create_material(material: MaterialCreate, db: Session = Depends(get_db), _: 
 # POST /materials/bulk  — Create multiple
 # ──────────────────────────────────────────────
 @router.post("/bulk", response_model=BulkImportResponse, status_code=201)
-def bulk_create_materials(materials: List[MaterialCreate], db: Session = Depends(get_db)):
+def bulk_create_materials(materials: List[MaterialCreate], db: Session = Depends(get_db), _: bool = Depends(verify_admin)):
     """
     Bulk import multiple materials. Skips existing materials based on name.
     """
