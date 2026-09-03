@@ -110,8 +110,12 @@ def extract_materials_via_ai(text: str, family_hint: str):
             if raw.endswith("```"): raw = raw[:-3]
             raw = raw.strip()
             
-        return json.loads(raw)
+        parsed = json.loads(raw)
+        if isinstance(parsed, dict) and "materials" in parsed:
+            return parsed["materials"]
+        return parsed if isinstance(parsed, list) else []
     except Exception as e:
+        print(f"Extraction failed: {e}")
         print(f"Extraction failed: {e}")
         return []
 
