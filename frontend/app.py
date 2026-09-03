@@ -1242,7 +1242,7 @@ if st.session_state.current_page == "main":
                                                 h_headers = {"X-Admin-Secret": st.session_state.get("temp_admin_pw", "")}
                                                 requests.patch(f"{API_BASE}/feedback/{c['id']}/visibility", headers=h_headers)
                                                 st.rerun()
-                                            if st.button("Delete", key=f"del_fb_{c['id']}"):
+                                            if st.button("Delete", key=f"del_fb_feed_{c['id']}"):
                                                 h_headers = {"X-Admin-Secret": st.session_state.get("temp_admin_pw", "")}
                                                 requests.delete(f"{API_BASE}/feedback/{c['id']}", headers=h_headers)
                                                 st.rerun()
