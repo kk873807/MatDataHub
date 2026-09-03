@@ -173,7 +173,7 @@ def render_pricing_page():
         with st.container(border=True):
             st.markdown("### Free")
             st.markdown("## ₹0 / mo")
-            st.markdown("- ✅ Access to all 500+ materials\n- ✅ Compare up to 2 materials\n- ❌ AI Advisor\n- ❌ Cost Optimizer\n")
+            st.markdown("- ✅ Access to all 1,000+ materials\n- ✅ Compare up to 2 materials\n- ❌ AI Advisor\n- ❌ Cost Optimizer\n")
             st.button("Current Plan", disabled=True, use_container_width=True, key="btn_free")
             
     with p2:
@@ -907,7 +907,7 @@ with st.sidebar:
 st.markdown("""
     <div style="text-align: center; margin-bottom: 2rem;">
         <h1 class="hero-title">MatDataHub</h1>
-        <p class="hero-sub">The ultimate engineering material data-as-a-service platform. Discover, compare, and analyze over 500+ industrial materials instantly.</p>
+        <p class="hero-sub">The ultimate engineering material data-as-a-service platform. Discover, compare, and analyze over 1,000+ industrial materials instantly.</p>
     </div>
 """, unsafe_allow_html=True)
 
@@ -1040,7 +1040,7 @@ if st.session_state.current_page == "pricing":
 
 if st.session_state.current_page == "main":
     tab_home, tab_browse, tab_compare, tab_projects, tab_ai, tab_faq, tab_feedback = st.tabs([
-        "Home", "Browse Database", "Compare", "Engineering BOM", "AI Advisor", "FAQ", "Feedback"
+        "🏠 Home", "🔍 Database", "⚖️ Compare", "⚙️ Engineering (BOM)", "🧠 AI Advisor", "❓ FAQ", "💬 Feedback"
     ])
     
     
@@ -1134,14 +1134,14 @@ if st.session_state.current_page == "main":
         if st.session_state.get("user"):
             st.markdown(f"""
                 <div style="background: rgba(79, 195, 161, 0.1); border-left: 4px solid #4FC3A1; border-radius: 4px; padding: 15px 20px; color: var(--text-color); margin-bottom: 2rem; font-weight: 500; font-size: 1.1rem; line-height: 1.5;">
-                    🚀 Welcome back, <b style="color: #4FC3A1;">{st.session_state.user.get('name') or st.session_state.user['email']}</b> to MatDataHub 2.0! <br>
+                    🚀 Welcome back, <b style="color: #4FC3A1;">{st.session_state.user.get('name') or st.session_state.user['email']}</b> to MatDataHub! <br>
                     <span style="opacity: 0.85; font-size: 1rem; font-weight: 400;">The ultimate materials science platform. Immerse yourself in an advanced, meticulously verified database covering the entire spectrum of engineering physics.</span>
                 </div>
             """, unsafe_allow_html=True)
         else:
             st.markdown("""
                 <div style="background: rgba(46, 134, 171, 0.1); border-left: 4px solid #2E86AB; border-radius: 4px; padding: 15px 20px; color: var(--text-color); margin-bottom: 2rem; font-weight: 500; font-size: 1.1rem; line-height: 1.5;">
-                    👋 <b>Welcome to MatDataHub 2.0!</b> Browse materials freely — sign in from the sidebar to unlock intelligent comparisons and the AI Advisor.<br>
+                    👋 <b>Welcome to MatDataHub!</b> Browse materials freely — sign in from the sidebar to unlock intelligent comparisons and the AI Advisor.<br>
                     <span style="opacity: 0.85; font-size: 1rem; font-weight: 400;">Immerse yourself in an advanced, meticulously verified database covering the entire spectrum of engineering physics.</span>
                 </div>
             """, unsafe_allow_html=True)
@@ -2599,7 +2599,7 @@ if st.session_state.current_page == "main":
 
         st.markdown("### ⚙️ Features & Tools")
         with st.expander("How does the AI Material Advisor work?"):
-            st.write("The AI Advisor (available on Pro and Advanced tiers) uses a Large Language Model (LLM) fine-tuned on materials science context. It has direct access to our 500+ material database to pull accurate numbers instead of hallucinating.")
+            st.write("The AI Advisor (available on Pro and Advanced tiers) uses a Large Language Model (LLM) fine-tuned on materials science context. It has direct access to our 1,000+ material database to pull accurate numbers instead of hallucinating.")
             st.write("You can ask it things like: *'Which aluminum alloy is best for a saltwater marine environment?'* or *'Suggest an alternative to Ti-6Al-4V that is cheaper but has similar yield strength.'*")
         with st.expander("What are BOM Projects?"):
             st.write("Bill of Materials (BOM) Projects allow you to build assemblies out of MatDataHub materials. You can track total weight, volume, and cost, and run advanced engineering tools (like Thermal Expansion or Shock Analysis) on your entire assembly at once.")
@@ -2674,7 +2674,7 @@ if st.session_state.current_page == "main":
     
     # ── Footer ──
     st.divider()
-    st.caption("MatDataHub v2.0 | Engineering Material Data-as-a-Service | 1,000+ materials | Data from ASTM, ASM, MMPDS, ISO, ACI")
+    st.caption("MatDataHub | Engineering Material Data-as-a-Service | 1,000+ materials | Data from ASTM, ASM, MMPDS, ISO, ACI")
     
     
     # --------------------------------------------------------------------------------
