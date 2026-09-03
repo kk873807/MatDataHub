@@ -864,6 +864,19 @@ with st.sidebar:
             except Exception as e:
                 st.error(f"Couldn't reach server: {e}")
 
+
+            # --- NEW SMTP DEBUGGER ---
+            st.markdown("**🛠️ Server Diagnostics**")
+            if st.button("🧪 Test SMTP Email Connection"):
+                with st.spinner("Pinging Gmail SMTP..."):
+                    smtp_res = requests.get(f"{API_BASE}/admin/test-smtp", headers={"X-Admin-Secret": active_pw})
+                    if smtp_res.status_code == 200:
+                        data = smtp_res.json()
+                        if data.get("status") == "success":
+                            st.success(data["message"])
+                        else:
+                            st.error(f"SMTP Server Error: {data['message']}")
+                            st.info("HINT: If you are using Gmail, you cannot use your normal password. You MUST use a 16-letter 'App Password' generated from your Google Account Security settings.")
             # ── Recent Feedback ──
             st.markdown("**📬 Recent Feedback**")
             try:
