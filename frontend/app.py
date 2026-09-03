@@ -1047,89 +1047,198 @@ if st.session_state.current_page == "main":
     #  TAB 0: HOME
     # ══════════════════════════════════════════════
     with tab_home:
-    
-    
+        
+        # --- THEME-AWARE CSS ---
+        st.markdown("""
+        <style>
+        .hero-section {
+            background: linear-gradient(135deg, rgba(79, 195, 161, 0.12) 0%, rgba(46, 134, 171, 0.12) 100%);
+            padding: 3rem 2rem; 
+            border-radius: 12px; 
+            border: 1px solid var(--faded-text-40);
+            margin-bottom: 2.5rem; 
+            text-align: center; 
+            box-shadow: 0 8px 32px rgba(0,0,0,0.05);
+        }
+        .hero-title {
+            color: var(--text-color); 
+            font-size: 3rem; 
+            margin-bottom: 0.5rem; 
+            font-weight: 800; 
+            letter-spacing: -1px;
+        }
+        .hero-subtitle {
+            color: var(--text-color); 
+            opacity: 0.8;
+            font-size: 1.25rem; 
+            max-width: 700px; 
+            margin: 0 auto; 
+            line-height: 1.6;
+        }
+        .cyber-stat {
+            background: var(--secondary-background-color);
+            border: 1px solid var(--faded-text-20);
+            border-radius: 8px;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .cyber-stat:hover {
+            border-color: #4FC3A1;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(79, 195, 161, 0.15);
+        }
+        .cyber-num {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--text-color);
+            margin-bottom: 0.2rem;
+        }
+        .cyber-label {
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        .domain-card {
+            background: var(--secondary-background-color);
+            padding: 1.2rem;
+            border-radius: 8px;
+            border: 1px solid var(--faded-text-20);
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+        .domain-card:hover {
+            border-color: #2E86AB;
+            box-shadow: 0 4px 15px rgba(46, 134, 171, 0.1);
+        }
+        .domain-card p {
+            color: var(--text-color);
+            opacity: 0.75;
+            font-size: 0.9rem;
+            margin-bottom: 0;
+        }
+        .domain-card h4 {
+            margin-top: 0;
+            color: var(--text-color);
+            font-weight: 700;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+
+        # --- HERO SECTION ---
+        st.markdown("""
+        <div class="hero-section">
+            <h1 class="hero-title">MatDataHub <span style="background: -webkit-linear-gradient(45deg, #4FC3A1, #2E86AB); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">2.0</span></h1>
+            <p class="hero-subtitle">
+                Welcome to the ultimate materials science platform. Immerse yourself in an advanced, meticulously verified database covering the entire spectrum of engineering physics.
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+
         if st.session_state.get("user"):
             st.markdown(f"""
-                <div style="background: rgba(79, 195, 161, 0.1); border: 1px solid rgba(79, 195, 161, 0.3); border-radius: 8px; padding: 12px 20px; color: #4FC3A1; margin-bottom: 2rem; font-weight: 500; text-align: center;">
-                    ✨ Welcome back, {st.session_state.user.get('name') or st.session_state.user['email']}! Jump into Browse Materials or Compare Materials using the tabs above.
+                <div style="background: rgba(79, 195, 161, 0.1); border-left: 4px solid #4FC3A1; border-radius: 4px; padding: 12px 20px; color: var(--text-color); margin-bottom: 2rem; font-weight: 500; font-size: 1.1rem;">
+                    🚀 Welcome back, <b style="color: #4FC3A1;">{st.session_state.user.get('name') or st.session_state.user['email']}</b>! The database has been massively upgraded. Explore the new advanced categories today.
                 </div>
             """, unsafe_allow_html=True)
         else:
             st.markdown("""
-                <div style="background: rgba(46, 134, 171, 0.1); border: 1px solid rgba(46, 134, 171, 0.3); border-radius: 8px; padding: 12px 20px; color: #2E86AB; margin-bottom: 2rem; font-weight: 500; text-align: center;">
-                    👋 New here? Browse materials freely — sign in from the sidebar to unlock intelligent comparisons and the AI Advisor.
+                <div style="background: rgba(46, 134, 171, 0.1); border-left: 4px solid #2E86AB; border-radius: 4px; padding: 12px 20px; color: var(--text-color); margin-bottom: 2rem; font-weight: 500; font-size: 1.1rem;">
+                    👋 <b>New here?</b> Browse materials freely — sign in from the sidebar to unlock intelligent comparisons, engineering estimators, and the AI Advisor.
                 </div>
             """, unsafe_allow_html=True)
-    
-        st.markdown("#### At a glance")
+
+        # --- LIVE DATABASE STATS ---
+        st.markdown("### 📊 Database Intelligence")
         s1, s2, s3, s4 = st.columns(4)
         for col, num, label in [
-            (s1, "500+", "Materials"),
-            (s2, "4", "Categories"),
-            (s3, "20+", "Properties Tracked"),
+            (s1, "1,030+", "Industrial Materials"),
+            (s2, "6", "Master Categories"),
+            (s3, "25+", "Properties Tracked"),
             (s4, "ASTM / ISO", "Global Standards"),
         ]:
             with col:
-                st.markdown(
-                    f'<div class="stat-card"><div class="stat-num">{num}</div><div class="stat-label">{label}</div></div>',
-                    unsafe_allow_html=True,
-                )
-    
-        st.markdown("####  ")
-        st.markdown("#### Why MatDataHub")
-        f1, f2, f3 = st.columns(3)
-        with f1:
-            st.markdown(
-                '<div class="feature-card"><h4>🔍 Smart Search & Filters</h4>'
-                '<p>Search by name, grade, standard, or application — then narrow by strength, cost, or thermal conductivity.</p></div>',
-                unsafe_allow_html=True,
-            )
-        with f2:
-            st.markdown(
-                '<div class="feature-card"><h4>⚖️ Side-by-Side Compare</h4>'
-                '<p>Put up to 5 materials head-to-head with auto-generated insights and radar charts.</p></div>',
-                unsafe_allow_html=True,
-            )
-        with f3:
-            st.markdown(
-                '<div class="feature-card"><h4>🎯 Find Similar Materials</h4>'
-                '<p>Discover close alternatives to any material based on real property data — great for substitutions.</p></div>',
-                unsafe_allow_html=True,
-            )
-    
-        st.markdown("####  ")
-        st.markdown("#### Data Sources & Authenticity 📚")
-        st.info("""
-        **MatDataHub aggregates material property data strictly from highly trusted engineering standards and industry handbooks.** 
-        We do not rely on unverified sources. All properties are derived from:
+                st.markdown(f'<div class="cyber-stat"><div class="cyber-num">{num}</div><div class="cyber-label">{label}</div></div>', unsafe_allow_html=True)
+
+        st.markdown("---")
+
+        # --- EXPLORE THE DOMAINS ---
+        st.markdown("### 🌌 Explore Advanced Domains")
+        st.markdown("The database has been expanded far beyond standard metals. Discover the cutting edge of materials science:")
         
-        * **ASTM International** (American Society for Testing and Materials)
-        * **ASM International** (Metals Handbooks & Aerospace Materials)
-        * **BIS** (Bureau of Indian Standards codes)
-        * **MMPDS** (Metallic Materials Properties Development and Standardization)
-        * **ISO & EN** (European standards for polymers and composites)
-        
-        *Note: Mechanical properties are typical minimums. Cost data (₹/kg) represents approximate market ranges.*
-        """)
-    
-        st.markdown("####  ")
-        st.markdown("#### Get started")
+        c1, c2, c3 = st.columns(3)
+        with c1:
+            st.markdown("""
+            <div class="domain-card">
+                <h4>⚛️ Quantum & Nano</h4>
+                <p>Graphene, Magic-Angle MATBG, MoS2, Quantum Dots, and Topological Insulators.</p>
+            </div>
+            """, unsafe_allow_html=True)
+        with c2:
+            st.markdown("""
+            <div class="domain-card">
+                <h4>🚀 Extreme Aerospace</h4>
+                <p>TiAl, AerMet 100, Inconel 718, Niobium C-103, and Ablative PICA Heat Shields.</p>
+            </div>
+            """, unsafe_allow_html=True)
+        with c3:
+            st.markdown("""
+            <div class="domain-card">
+                <h4>⚡ Energy & Nuclear</h4>
+                <p>Uranium Alloys, High-Tc Superconductors, Solid-State LLZO, and TRISO Fuel.</p>
+            </div>
+            """, unsafe_allow_html=True)
+            
+        st.markdown("<br>", unsafe_allow_html=True)
+        c4, c5, c6 = st.columns(3)
+        with c4:
+            st.markdown("""
+            <div class="domain-card">
+                <h4>🔬 Semiconductors</h4>
+                <p>Silicon, GaAs, IGZO, Zinc Selenide, Indium Antimonide, and Perovskites.</p>
+            </div>
+            """, unsafe_allow_html=True)
+        with c5:
+            st.markdown("""
+            <div class="domain-card">
+                <h4>🏭 Industrial Foundation</h4>
+                <p>18+ Specialty Steels, Structural Ceramics, Engineering Plastics, and Elastomers.</p>
+            </div>
+            """, unsafe_allow_html=True)
+        with c6:
+            st.markdown("""
+            <div class="domain-card">
+                <h4>🧪 Functional Oxides</h4>
+                <p>Thermochromic Smart Windows (VO2), Piezoelectrics (PZT), and Advanced Lasers.</p>
+            </div>
+            """, unsafe_allow_html=True)
+
+        st.markdown("---")
+
+        # --- GET STARTED BUTTONS ---
+        st.markdown("### 🎮 Quick Actions")
         g1, g2 = st.columns(2)
         with g1:
-            st.markdown("**🔍 Browse Materials** — head to the *Browse Materials* tab above to search and filter the full database.")
+            st.markdown("""
+            <div style="border: 1px solid #4FC3A1; background: rgba(79, 195, 161, 0.1); border-radius: 8px; padding: 1.5rem; text-align: center;">
+                <h3 style="margin-top:0; color: #4FC3A1;">🔍 Search the Database</h3>
+                <p style="color: var(--text-color); opacity: 0.8; font-size: 0.95rem;">Jump into the <b>Browse Materials</b> tab to filter thousands of advanced entries.</p>
+            </div>
+            """, unsafe_allow_html=True)
         with g2:
-            st.markdown("**⚖️ Compare Materials** — head to the *Compare Materials* tab to pick 2+ materials and see them side by side.")
-    
-        st.markdown("####  ")
-        st.caption("Have an idea or spotted an issue? Use the **💬 Feedback** tab — we read every submission.")
-    
-    
-    # ══════════════════════════════════════════════
-    
-        # ══════════════════════════════════════════════
-        # COMMUNITY REVIEWS SECTION
-        # ══════════════════════════════════════════════
+            st.markdown("""
+            <div style="border: 1px solid #2E86AB; background: rgba(46, 134, 171, 0.1); border-radius: 8px; padding: 1.5rem; text-align: center;">
+                <h3 style="margin-top:0; color: #2E86AB;">⚖️ Engineering Tools</h3>
+                <p style="color: var(--text-color); opacity: 0.8; font-size: 0.95rem;">Use the <b>BOM Tab</b> and <b>Compare Tab</b> to run stress estimators and radar charts.</p>
+            </div>
+            """, unsafe_allow_html=True)
+
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.caption("MatDataHub aggregates properties strictly from highly trusted standards (ASTM, ASM, ISO). Use the **💬 Feedback** tab to request specific new materials.")
+        st.markdown("<br>", unsafe_allow_html=True)
         st.divider()
         st.markdown("## 💬 Community Reviews & Discussion")
         st.markdown("See what other engineers are saying about MatDataHub, reply to their feedback, and join the discussion!")
