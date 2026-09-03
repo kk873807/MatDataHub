@@ -68,12 +68,28 @@ def extract_materials_via_ai(text: str, family_hint: str):
     
     print("Extracting structured properties using AI...")
     try:
-        response = client.chat.completions.create(
-            messages=[{"role": "user", "content": prompt}],
-            model="llama-3.3-70b-versatile",
-            temperature=0.1
-        )
-        raw = response.choices[0].message.content.strip()
+        models = [
+            "llama3-8b-8192",
+            "llama-3.1-8b-instant"
+        ]
+        raw = None
+        last_error = None
+        for model in models:
+            try:
+                response = client.chat.completions.create(
+                    messages=[{"role": "user", "content": prompt}],
+                    model=model,
+                    temperature=0.1
+                )
+                raw = response.choices[0].message.content.strip()
+                print(f"  [AI] Successfully used model: {model}")
+                break
+            except Exception as e:
+                last_error = e
+                continue
+                
+        if not raw:
+            raise last_error
         if raw.startswith("```json"): raw = raw[7:]
         if raw.endswith("```"): raw = raw[:-3]
         return json.loads(raw.strip())

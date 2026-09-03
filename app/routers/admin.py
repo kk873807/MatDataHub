@@ -138,16 +138,30 @@ def run_ai_scraper(req: ScrapeRequest, _: bool = Depends(verify_admin), db: Sess
     """
     
     try:
-        response = client.chat.completions.create(
-            messages=[
-                {"role": "system", "content": "You are a machine that outputs raw JSON data without any conversational text."},
-                {"role": "user", "content": prompt}
-            ],
-            model="llama-3.3-70b-versatile",
-            temperature=0.1
-        )
-        
-        raw_text = response.choices[0].message.content.strip()
+        models = [
+            "llama3-8b-8192",
+            "llama-3.1-8b-instant"
+        ]
+        raw_text = None
+        last_error = None
+        for model in models:
+            try:
+                response = client.chat.completions.create(
+                    messages=[
+                        {"role": "system", "content": "You are a machine that outputs raw JSON data without any conversational text."},
+                        {"role": "user", "content": prompt}
+                    ],
+                    model=model,
+                    temperature=0.1
+                )
+                raw_text = response.choices[0].message.content.strip()
+                break
+            except Exception as e:
+                last_error = e
+                continue
+                
+        if not raw_text:
+            raise last_error
         if raw_text.startswith("```json"):
             raw_text = raw_text[7:]
         if raw_text.endswith("```"):
