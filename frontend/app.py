@@ -1383,14 +1383,15 @@ if st.session_state.current_page == "main":
                 for m in materials:
                     tensile = ""
                     if m.get("tensile_strength_min") is not None:
-                        if m["tensile_strength_min"] == m.get("tensile_strength_max"):
-                            tensile = f"{m['tensile_strength_min']:.0f}"
-                        else:
-                            tensile = f"{m['tensile_strength_min']:.0f}-{m['tensile_strength_max']:.0f}"
+                        tensile = f"{m['tensile_strength_min']:.0f}"
+                        if m.get("tensile_strength_max") is not None and m["tensile_strength_max"] != m["tensile_strength_min"]:
+                            tensile += f"-{m['tensile_strength_max']:.0f}"
     
                     cost = ""
                     if m.get("cost_per_kg_min") is not None:
-                        cost = f"{m['cost_per_kg_min']:.0f}-{m['cost_per_kg_max']:.0f}"
+                        cost = f"{m['cost_per_kg_min']:.0f}"
+                        if m.get("cost_per_kg_max") is not None and m["cost_per_kg_max"] != m["cost_per_kg_min"]:
+                            cost += f"-{m['cost_per_kg_max']:.0f}"
     
                     table_data.append({
                         "ID": m["id"],
