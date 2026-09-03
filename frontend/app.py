@@ -2148,6 +2148,10 @@ if st.session_state.current_page == "main":
                                             cte = 100.0
                                         elif "ceramic" in cat:
                                             cte = 5.0
+                                        elif "magnesium" in mat["name"].lower():
+                                            cte = 26.0
+                                        elif "zinc" in mat["name"].lower() or "zamak" in mat["name"].lower() or "za-" in mat["name"].lower():
+                                            cte = 27.4
                                         elif "aluminum" in mat["name"].lower():
                                             cte = 23.0
                                         else:
@@ -2193,6 +2197,10 @@ if st.session_state.current_page == "main":
                                             cat = str(mat.get("category", "")).lower()
                                             if "polymer" in cat:
                                                 E_gpa = 3.0
+                                            elif "magnesium" in mat["name"].lower():
+                                                E_gpa = 45.0
+                                            elif "zinc" in mat["name"].lower() or "zamak" in mat["name"].lower() or "za-" in mat["name"].lower():
+                                                E_gpa = 85.0
                                             elif "aluminum" in mat["name"].lower():
                                                 E_gpa = 69.0
                                             elif "titanium" in mat["name"].lower():
@@ -2257,6 +2265,8 @@ if st.session_state.current_page == "main":
                                             cte = 12.0 # Standard Steel approx
                                             if "polymer" in cat: cte = 100.0
                                             elif "ceramic" in cat: cte = 5.0
+                                            elif "magnesium" in mat["name"].lower(): cte = 26.0
+                                            elif "zinc" in mat["name"].lower() or "zamak" in mat["name"].lower() or "za-" in mat["name"].lower(): cte = 27.4
                                             elif "aluminum" in mat["name"].lower(): cte = 23.0
                                             
                                             Rs = (sigma_f * k_cond) / (E_gpa * cte)
