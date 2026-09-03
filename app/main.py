@@ -6,7 +6,10 @@ Then open:
     http://127.0.0.1:8000        -> Welcome message
     http://127.0.0.1:8000/docs   -> Interactive API documentation (Swagger UI)
 """
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from app.database import engine, Base

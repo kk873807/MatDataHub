@@ -14,7 +14,11 @@ Endpoints:
     GET  /materials/{id}     - Get one material by ID — public
     POST /materials          - Add a new material
 """
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+
+limiter = Limiter(key_func=get_remote_address)
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
 from typing import List, Optional
@@ -119,11 +123,12 @@ def list_materials(
 # GET /materials/search  — Full-text search
 # ──────────────────────────────────────────────
 @router.get("/search", response_model=MaterialListResponse)
+@limiter.limit("30/minute")
 def search_materials(
     request: Request,
     q: str = Query(..., min_length=1, description="Search query (searches name, grade, applications, equivalent_grades)"),
     page: int = Query(1, ge=1),
-    per_page: int = Query(20, ge=1, le=2000),
+    per_page: int = Query(20, ge=1, le=50),  # SECURITY: Hard cap to 50 to prevent DB dumping
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),  # public
 ):

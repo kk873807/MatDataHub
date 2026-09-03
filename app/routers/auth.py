@@ -11,6 +11,10 @@ Endpoints:
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, status, Request
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+
+limiter = Limiter(key_func=get_remote_address), Request
 
 # --- Rate Limiting for Security ---
 import time
