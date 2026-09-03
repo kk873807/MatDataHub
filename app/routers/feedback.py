@@ -178,14 +178,19 @@ def toggle_visibility(feedback_id: int, _: bool = Depends(verify_admin), db: Ses
     return FeedbackResponse(message=f"Visibility toggled", id=fb.id)
 
 
+from pydantic import BaseModel
+class AdminReplyPayload(BaseModel):
+    reply_text: str
+
 @router.post("/{feedback_id}/reply")
 def reply_to_feedback(
     feedback_id: int,
+    payload: AdminReplyPayload,
     request: Request,
-    reply_text: str = Header(..., alias="X-Reply-Text"),
     db: Session = Depends(get_db),
     _: bool = Depends(verify_admin)
 ):
+    reply_text = payload.reply_text
     """Admin endpoint to reply to user feedback and send an email notification."""
         
     feedback = db.query(Feedback).filter(Feedback.id == feedback_id).first()
