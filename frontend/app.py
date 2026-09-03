@@ -1571,7 +1571,7 @@ if st.session_state.current_page == "main":
         </div>
         """, unsafe_allow_html=True)
 
-        with tab_browse:
+    with tab_browse:
         st.markdown("""
         <div style="background: var(--secondary-background-color); padding: 1rem 1.5rem; border-radius: 6px; border: 1px solid var(--faded-text-20); border-left: 4px solid #4FC3A1; margin-bottom: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
             <h3 style="color: var(--text-color); margin-top: 0; margin-bottom: 0.3rem; font-weight: 700; letter-spacing: 0.5px;">Global Materials Database</h3>
