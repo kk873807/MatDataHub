@@ -232,10 +232,10 @@ st.markdown("""
         font-family: 'Inter', sans-serif !important;
     }
     
-    .block-container { padding-top: 3rem !important; }
+.block-container { padding-top: 3rem !important; }
 
     /* Modern Hero Title with animated gradient */
-    .hero-title {
+.hero-title {
         font-size: 4.5rem;
         font-weight: 800;
         background: linear-gradient(270deg, #1E3A5F, #2E86AB, #4FC3A1, #1E3A5F);
@@ -257,7 +257,7 @@ st.markdown("""
         100% { background-position: 0% 50%; }
     }
 
-    .hero-sub {
+.hero-sub {
         font-size: 1.25rem;
         color: var(--text-color);
         opacity: 0.7;
@@ -270,7 +270,7 @@ st.markdown("""
     }
 
         /* Glassmorphism Stat Cards */
-    .stat-card {
+.stat-card {
         background: rgba(255, 255, 255, 0.03);
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
@@ -281,16 +281,16 @@ st.markdown("""
         box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
         transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
     }
-    .stat-card:hover {
+.stat-card:hover {
         transform: translateY(-8px);
         box-shadow: 0 15px 40px 0 rgba(31, 38, 135, 0.15);
         border-color: rgba(79, 195, 161, 0.4);
     }
-    .stat-num { font-size: 2.2rem; font-weight: 800; color: var(--primary-color, #4FC3A1); margin-bottom: 5px; }
-    .stat-label { font-size: 0.9rem; color: var(--text-color); opacity: 0.7; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; }
+.stat-num { font-size: 2.2rem; font-weight: 800; color: var(--primary-color, #4FC3A1); margin-bottom: 5px; }
+.stat-label { font-size: 0.9rem; color: var(--text-color); opacity: 0.7; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; }
 
     /* Feature Cards */
-    .feature-card {
+.feature-card {
         background: var(--secondary-background-color);
         border-radius: 16px;
         padding: 24px;
@@ -299,14 +299,14 @@ st.markdown("""
         height: 100%;
         transition: all 0.3s ease;
     }
-    .feature-card:hover {
+.feature-card:hover {
         border-color: var(--primary-color);
     }
-    .feature-card h4 { margin-bottom: 10px; color: var(--text-color); font-weight: 700; }
-    .feature-card p { color: var(--text-color); opacity: 0.8; font-size: 0.95rem; margin: 0; line-height: 1.6; }
+.feature-card h4 { margin-bottom: 10px; color: var(--text-color); font-weight: 700; }
+.feature-card p { color: var(--text-color); opacity: 0.8; font-size: 0.95rem; margin: 0; line-height: 1.6; }
 
     /* Review Cards */
-    .review-card {
+.review-card {
         background: var(--secondary-background-color);
         border-left: 4px solid var(--primary-color);
         border-radius: 8px;
@@ -314,19 +314,19 @@ st.markdown("""
         margin-bottom: 16px;
         transition: transform 0.2s ease;
     }
-    .review-card:hover {
+.review-card:hover {
         transform: translateX(5px);
     }
-    .review-name { font-weight: 700; font-size: 1.1rem; color: var(--text-color); }
-    .review-stars { color: #FFD700; font-size: 1.1rem; letter-spacing: 2px; }
-    .review-text { color: var(--text-color); opacity: 0.8; font-style: italic; margin-top: 8px; }
+.review-name { font-weight: 700; font-size: 1.1rem; color: var(--text-color); }
+.review-stars { color: #FFD700; font-size: 1.1rem; letter-spacing: 2px; }
+.review-text { color: var(--text-color); opacity: 0.8; font-style: italic; margin-top: 8px; }
 
     /* Customizing Streamlit Tabs */
-    .stTabs [data-baseweb="tab-list"] {
+.stTabs [data-baseweb="tab-list"] {
         gap: 8px;
         background-color: transparent;
     }
-    .stTabs [data-baseweb="tab"] {
+.stTabs [data-baseweb="tab"] {
         height: 50px;
         white-space: pre-wrap;
         background-color: var(--secondary-background-color);
@@ -337,7 +337,7 @@ st.markdown("""
         border: 1px solid transparent;
         transition: all 0.2s;
     }
-    .stTabs [aria-selected="true"] {
+.stTabs [aria-selected="true"] {
         background-color: rgba(79, 195, 161, 0.1) !important;
         color: #4FC3A1 !important;
         border: 1px solid rgba(79, 195, 161, 0.3) !important;
@@ -905,10 +905,10 @@ with st.sidebar:
 #  PAGE HEADER
 # ══════════════════════════════════════════════
 st.markdown("""
-    <div style="text-align: center; margin-bottom: 2rem;">
-        <h1 class="hero-title">MatDataHub</h1>
-        <p class="hero-sub">The ultimate engineering material data-as-a-service platform. Discover, compare, and analyze over 1,000+ industrial materials instantly.</p>
-    </div>
+<div style="text-align: center; margin-bottom: 2rem;">
+<h1 class="hero-title">MatDataHub</h1>
+<p class="hero-sub">The ultimate engineering material data-as-a-service platform. Discover, compare, and analyze over 1,000+ industrial materials instantly.</p>
+</div>
 """, unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════
@@ -1051,8 +1051,8 @@ if st.session_state.current_page == "main":
         
         # --- THEME-AWARE CSS ---
         st.markdown("""
-        <style>
-        .hero-section {
+<style>
+.hero-section {
             background: linear-gradient(135deg, rgba(79, 195, 161, 0.12) 0%, rgba(46, 134, 171, 0.12) 100%);
             padding: 3rem 2rem; 
             border-radius: 12px; 
@@ -1061,14 +1061,14 @@ if st.session_state.current_page == "main":
             text-align: center; 
             box-shadow: 0 8px 32px rgba(0,0,0,0.05);
         }
-        .hero-title {
+.hero-title {
             color: var(--text-color); 
             font-size: 3rem; 
             margin-bottom: 0.5rem; 
             font-weight: 800; 
             letter-spacing: -1px;
         }
-        .hero-subtitle {
+.hero-subtitle {
             color: var(--text-color); 
             opacity: 0.8;
             font-size: 1.25rem; 
@@ -1076,7 +1076,7 @@ if st.session_state.current_page == "main":
             margin: 0 auto; 
             line-height: 1.6;
         }
-        .cyber-stat {
+.cyber-stat {
             background: var(--secondary-background-color);
             border: 1px solid var(--faded-text-20);
             border-radius: 8px;
@@ -1084,18 +1084,18 @@ if st.session_state.current_page == "main":
             text-align: center;
             transition: all 0.3s ease;
         }
-        .cyber-stat:hover {
+.cyber-stat:hover {
             border-color: #4FC3A1;
             transform: translateY(-2px);
             box-shadow: 0 4px 20px rgba(79, 195, 161, 0.15);
         }
-        .cyber-num {
+.cyber-num {
             font-size: 2.2rem;
             font-weight: 800;
             color: var(--text-color);
             margin-bottom: 0.2rem;
         }
-        .cyber-label {
+.cyber-label {
             font-size: 0.9rem;
             color: var(--text-color);
             opacity: 0.7;
@@ -1103,7 +1103,7 @@ if st.session_state.current_page == "main":
             letter-spacing: 1px;
             font-weight: 600;
         }
-        .domain-card {
+.domain-card {
             background: var(--secondary-background-color);
             padding: 1.2rem;
             border-radius: 8px;
@@ -1111,22 +1111,22 @@ if st.session_state.current_page == "main":
             height: 100%;
             transition: all 0.3s ease;
         }
-        .domain-card:hover {
+.domain-card:hover {
             border-color: #2E86AB;
             box-shadow: 0 4px 15px rgba(46, 134, 171, 0.1);
         }
-        .domain-card p {
+.domain-card p {
             color: var(--text-color);
             opacity: 0.75;
             font-size: 0.9rem;
             margin-bottom: 0;
         }
-        .domain-card h4 {
+.domain-card h4 {
             margin-top: 0;
             color: var(--text-color);
             font-weight: 700;
         }
-        </style>
+</style>
         """, unsafe_allow_html=True)
 
 
@@ -1140,10 +1140,10 @@ if st.session_state.current_page == "main":
             """, unsafe_allow_html=True)
         else:
             st.markdown("""
-                <div style="background: rgba(46, 134, 171, 0.1); border-left: 4px solid #2E86AB; border-radius: 4px; padding: 15px 20px; color: var(--text-color); margin-bottom: 2rem; font-weight: 500; font-size: 1.1rem; line-height: 1.5;">
+<div style="background: rgba(46, 134, 171, 0.1); border-left: 4px solid #2E86AB; border-radius: 4px; padding: 15px 20px; color: var(--text-color); margin-bottom: 2rem; font-weight: 500; font-size: 1.1rem; line-height: 1.5;">
                     👋 <b>Welcome to MatDataHub!</b> Browse materials freely — sign in from the sidebar to unlock intelligent comparisons and the AI Advisor.<br>
-                    <span style="opacity: 0.85; font-size: 1rem; font-weight: 400;">Immerse yourself in an advanced, meticulously verified database covering the entire spectrum of engineering physics.</span>
-                </div>
+<span style="opacity: 0.85; font-size: 1rem; font-weight: 400;">Immerse yourself in an advanced, meticulously verified database covering the entire spectrum of engineering physics.</span>
+</div>
             """, unsafe_allow_html=True)
 
         # --- LIVE DATABASE STATS ---
@@ -1167,48 +1167,48 @@ if st.session_state.current_page == "main":
         c1, c2, c3 = st.columns(3)
         with c1:
             st.markdown("""
-            <div class="domain-card">
-                <h4>⚛️ Quantum & Nano</h4>
-                <p>Graphene, Magic-Angle MATBG, MoS2, Quantum Dots, and Topological Insulators.</p>
-            </div>
+<div class="domain-card">
+<h4>⚛️ Quantum & Nano</h4>
+<p>Graphene, Magic-Angle MATBG, MoS2, Quantum Dots, and Topological Insulators.</p>
+</div>
             """, unsafe_allow_html=True)
         with c2:
             st.markdown("""
-            <div class="domain-card">
-                <h4>🚀 Extreme Aerospace</h4>
-                <p>TiAl, AerMet 100, Inconel 718, Niobium C-103, and Ablative PICA Heat Shields.</p>
-            </div>
+<div class="domain-card">
+<h4>🚀 Extreme Aerospace</h4>
+<p>TiAl, AerMet 100, Inconel 718, Niobium C-103, and Ablative PICA Heat Shields.</p>
+</div>
             """, unsafe_allow_html=True)
         with c3:
             st.markdown("""
-            <div class="domain-card">
-                <h4>⚡ Energy & Nuclear</h4>
-                <p>Uranium Alloys, High-Tc Superconductors, Solid-State LLZO, and TRISO Fuel.</p>
-            </div>
+<div class="domain-card">
+<h4>⚡ Energy & Nuclear</h4>
+<p>Uranium Alloys, High-Tc Superconductors, Solid-State LLZO, and TRISO Fuel.</p>
+</div>
             """, unsafe_allow_html=True)
             
         st.markdown("<br>", unsafe_allow_html=True)
         c4, c5, c6 = st.columns(3)
         with c4:
             st.markdown("""
-            <div class="domain-card">
-                <h4>🔬 Semiconductors</h4>
-                <p>Silicon, GaAs, IGZO, Zinc Selenide, Indium Antimonide, and Perovskites.</p>
-            </div>
+<div class="domain-card">
+<h4>🔬 Semiconductors</h4>
+<p>Silicon, GaAs, IGZO, Zinc Selenide, Indium Antimonide, and Perovskites.</p>
+</div>
             """, unsafe_allow_html=True)
         with c5:
             st.markdown("""
-            <div class="domain-card">
-                <h4>🏭 Industrial Foundation</h4>
-                <p>18+ Specialty Steels, Structural Ceramics, Engineering Plastics, and Elastomers.</p>
-            </div>
+<div class="domain-card">
+<h4>🏭 Industrial Foundation</h4>
+<p>18+ Specialty Steels, Structural Ceramics, Engineering Plastics, and Elastomers.</p>
+</div>
             """, unsafe_allow_html=True)
         with c6:
             st.markdown("""
-            <div class="domain-card">
-                <h4>🧪 Functional Oxides</h4>
-                <p>Thermochromic Smart Windows (VO2), Piezoelectrics (PZT), and Advanced Lasers.</p>
-            </div>
+<div class="domain-card">
+<h4>🧪 Functional Oxides</h4>
+<p>Thermochromic Smart Windows (VO2), Piezoelectrics (PZT), and Advanced Lasers.</p>
+</div>
             """, unsafe_allow_html=True)
 
         st.markdown("---")
@@ -1218,17 +1218,17 @@ if st.session_state.current_page == "main":
         g1, g2 = st.columns(2)
         with g1:
             st.markdown("""
-            <div style="border: 1px solid #4FC3A1; background: rgba(79, 195, 161, 0.1); border-radius: 8px; padding: 1.5rem; text-align: center;">
-                <h3 style="margin-top:0; color: #4FC3A1;">🔍 Search the Database</h3>
-                <p style="color: var(--text-color); opacity: 0.8; font-size: 0.95rem;">Jump into the <b>Browse Materials</b> tab to filter thousands of advanced entries.</p>
-            </div>
+<div style="border: 1px solid #4FC3A1; background: rgba(79, 195, 161, 0.1); border-radius: 8px; padding: 1.5rem; text-align: center;">
+<h3 style="margin-top:0; color: #4FC3A1;">🔍 Search the Database</h3>
+<p style="color: var(--text-color); opacity: 0.8; font-size: 0.95rem;">Jump into the <b>Browse Materials</b> tab to filter thousands of advanced entries.</p>
+</div>
             """, unsafe_allow_html=True)
         with g2:
             st.markdown("""
-            <div style="border: 1px solid #2E86AB; background: rgba(46, 134, 171, 0.1); border-radius: 8px; padding: 1.5rem; text-align: center;">
-                <h3 style="margin-top:0; color: #2E86AB;">⚖️ Engineering Tools</h3>
-                <p style="color: var(--text-color); opacity: 0.8; font-size: 0.95rem;">Use the <b>BOM Tab</b> and <b>Compare Tab</b> to run stress estimators and radar charts.</p>
-            </div>
+<div style="border: 1px solid #2E86AB; background: rgba(46, 134, 171, 0.1); border-radius: 8px; padding: 1.5rem; text-align: center;">
+<h3 style="margin-top:0; color: #2E86AB;">⚖️ Engineering Tools</h3>
+<p style="color: var(--text-color); opacity: 0.8; font-size: 0.95rem;">Use the <b>BOM Tab</b> and <b>Compare Tab</b> to run stress estimators and radar charts.</p>
+</div>
             """, unsafe_allow_html=True)
 
         st.markdown("<br>", unsafe_allow_html=True)
@@ -1264,23 +1264,23 @@ if st.session_state.current_page == "main":
                     
                     # Custom CSS for compact feedback display
                     st.markdown("""
-                        <style>
+<style>
 /* Shrink Streamlit button paddings */
                         button[data-testid="baseButton-secondary"] {
                             padding: 2px 8px !important;
                             min-height: 25px !important;
                             font-size: 0.75rem !important;
                         }
-                        .compact-comment {
+.compact-comment {
                             padding-left: 10px;
                             border-left: 2px solid #333;
                             margin-bottom: 10px;
                             font-size: 0.85em;
                             line-height: 1.4;
                         }
-                        .compact-name { font-weight: bold; color: #4DA8DA; }
-                        .compact-message { margin-top: 2px; margin-bottom: 2px; }
-                        .compact-admin {
+.compact-name { font-weight: bold; color: #4DA8DA; }
+.compact-message { margin-top: 2px; margin-bottom: 2px; }
+.compact-admin {
                             background-color: #1c2a38;
                             border: 1px solid #4DA8DA;
                             border-radius: 5px;
@@ -1288,12 +1288,12 @@ if st.session_state.current_page == "main":
                             margin-top: 5px;
                             font-size: 0.8em;
                         }
-                        .compact-img {
+.compact-img {
                             max-width: 250px;
                             border-radius: 4px;
                             margin-top: 5px;
                         }
-                        </style>
+</style>
                     """, unsafe_allow_html=True)
     
                     def render_comments(comments, depth=0):
@@ -1409,174 +1409,160 @@ if st.session_state.current_page == "main":
     # ══════════════════════════════════════════════
     with tab_guide:
         st.markdown("""
-        <div style="background: var(--secondary-background-color); padding: 1rem 1.5rem; border-radius: 6px; border: 1px solid var(--faded-text-20); border-left: 4px solid #FFC107; margin-bottom: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
-            <h3 style="color: var(--text-color); margin-top: 0; margin-bottom: 0.3rem; font-weight: 700; letter-spacing: 0.5px;">Platform Guide & Workflows</h3>
-            <p style="color: var(--text-color); opacity: 0.75; font-size: 0.95rem; margin-bottom: 0;">Learn how to leverage the full power of the engineering database and BOM simulators.</p>
-        </div>
+<div style="background: var(--secondary-background-color); padding: 1rem 1.5rem; border-radius: 6px; border: 1px solid var(--faded-text-20); border-left: 4px solid #FFC107; margin-bottom: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+<h3 style="color: var(--text-color); margin-top: 0; margin-bottom: 0.3rem; font-weight: 700; letter-spacing: 0.5px;">Platform Guide & Workflows</h3>
+<p style="color: var(--text-color); opacity: 0.75; font-size: 0.95rem; margin-bottom: 0;">Learn how to leverage the full power of the engineering database and BOM simulators.</p>
+</div>
         """, unsafe_allow_html=True)
         
-        st.markdown("### 🎬 AI Video Introduction")
-        st.info("💡 **Tip:** Embed an AI-generated introduction video or product walkthrough here to help new engineers instantly understand the platform's capabilities.")
-        
-        # Placeholder for video
-        st.markdown("""
-        <div style="width: 100%; height: 350px; background: rgba(128,128,128,0.1); border: 2px dashed var(--faded-text-40); border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 2rem;">
-            <div style="text-align: center; opacity: 0.6;">
-                <h1 style="margin: 0; font-size: 4rem;">▶️</h1>
-                <p style="margin: 0; font-size: 1.2rem; font-weight: 500;">[ AI Video Walkthrough Placeholder ]</p>
-                <p style="margin: 0; font-size: 0.9rem;">You can use st.video("your_video_link.mp4") to render this.</p>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-
         # --- IMMERSIVE VISUAL ROADMAP ---
         st.markdown("""
-        <style>
-        .roadmap-wrapper {
-            margin: 3rem 0;
-            padding: 2rem;
-            background: linear-gradient(180deg, rgba(79, 195, 161, 0.02) 0%, rgba(46, 134, 171, 0.05) 100%);
-            border-radius: 16px;
-            border: 1px solid var(--faded-text-20);
-        }
-        .roadmap-title {
-            text-align: center;
-            font-size: 2rem;
-            font-weight: 800;
-            color: var(--text-color);
-            margin-bottom: 3rem;
-            letter-spacing: -0.5px;
-        }
-        .timeline {
-            position: relative;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-        .timeline::after {
-            content: '';
-            position: absolute;
-            width: 4px;
-            background: linear-gradient(to bottom, #4FC3A1, #2E86AB, #FFC107);
-            top: 10px;
-            bottom: 10px;
-            left: 24px;
-            border-radius: 4px;
-        }
-        .t-node {
-            padding: 10px 0 30px 70px;
-            position: relative;
-        }
-        .t-node::after {
-            content: '✦';
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #111;
-            font-size: 14px;
-            position: absolute;
-            width: 32px;
-            height: 32px;
-            background-color: #4FC3A1;
-            top: 10px;
-            border-radius: 50%;
-            z-index: 1;
-            left: 10px;
-            box-shadow: 0 0 15px rgba(79, 195, 161, 0.5);
-        }
-        .t-node:nth-child(2)::after { background-color: #2E86AB; box-shadow: 0 0 15px rgba(46, 134, 171, 0.5); }
-        .t-node:nth-child(3)::after { background-color: #FFC107; box-shadow: 0 0 15px rgba(255, 193, 7, 0.5); }
-        
-        .t-card {
-            padding: 1.5rem 2rem;
-            background: var(--secondary-background-color);
-            border-radius: 12px;
-            border: 1px solid var(--faded-text-20);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        .t-card::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-            background: #4FC3A1;
-        }
-        .t-node:nth-child(2) .t-card::before { background: #2E86AB; }
-        .t-node:nth-child(3) .t-card::before { background: #FFC107; }
-        
-        .t-card:hover {
-            transform: translateX(8px);
-            border-color: var(--faded-text-40);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
-        }
-        .t-step {
-            font-size: 0.85rem;
-            font-weight: 800;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            color: #4FC3A1;
-            margin-bottom: 0.5rem;
-            display: block;
-        }
-        .t-node:nth-child(2) .t-step { color: #2E86AB; }
-        .t-node:nth-child(3) .t-step { color: #FFC107; }
-        
-        .t-card h4 {
-            margin: 0 0 10px 0;
-            font-size: 1.4rem;
-            color: var(--text-color);
-        }
-        .t-card p {
-            margin: 0;
-            color: var(--text-color);
-            opacity: 0.8;
-            line-height: 1.6;
-            font-size: 1.05rem;
-        }
-        </style>
+<style>
+.roadmap-wrapper {
+margin: 3rem 0;
+padding: 2rem;
+background: linear-gradient(180deg, rgba(79, 195, 161, 0.02) 0%, rgba(46, 134, 171, 0.05) 100%);
+border-radius: 16px;
+border: 1px solid var(--faded-text-20);
+}
+.roadmap-title {
+text-align: center;
+font-size: 2rem;
+font-weight: 800;
+color: var(--text-color);
+margin-bottom: 3rem;
+letter-spacing: -0.5px;
+}
+.timeline {
+position: relative;
+max-width: 900px;
+margin: 0 auto;
+}
+.timeline::after {
+content: '';
+position: absolute;
+width: 4px;
+background: linear-gradient(to bottom, #4FC3A1, #2E86AB, #FFC107);
+top: 10px;
+bottom: 10px;
+left: 24px;
+border-radius: 4px;
+}
+.t-node {
+padding: 10px 0 30px 70px;
+position: relative;
+}
+.t-node::after {
+content: '✦';
+display: flex;
+align-items: center;
+justify-content: center;
+color: #111;
+font-size: 14px;
+position: absolute;
+width: 32px;
+height: 32px;
+background-color: #4FC3A1;
+top: 10px;
+border-radius: 50%;
+z-index: 1;
+left: 10px;
+box-shadow: 0 0 15px rgba(79, 195, 161, 0.5);
+}
+.t-node:nth-child(2)::after { background-color: #2E86AB; box-shadow: 0 0 15px rgba(46, 134, 171, 0.5); }
+.t-node:nth-child(3)::after { background-color: #FFC107; box-shadow: 0 0 15px rgba(255, 193, 7, 0.5); }
 
-        <div class="roadmap-wrapper">
-            <h2 class="roadmap-title">Platform Mastery Roadmap</h2>
-            <div class="timeline">
-                
-                <div class="t-node">
-                    <div class="t-card">
-                        <span class="t-step">Step 1 • Discovery</span>
-                        <h4>Global Database Search</h4>
-                        <p>Navigate to the <b>Database</b> tab to query over 1,000+ materials. Search by specific alloy grades (e.g., <i>Ti-6Al-4V</i>), trade names, or master categories. Utilize precision filters to narrow down targets by ultimate tensile strength, thermal conductivity, and economics.</p>
-                    </div>
-                </div>
-                
-                <div class="t-node">
-                    <div class="t-card">
-                        <span class="t-step">Step 2 • Analysis</span>
-                        <h4>Visual Comparison Engine</h4>
-                        <p>Once you locate candidate materials, proceed to the <b>Compare</b> tab. Select up to 5 materials to instantly generate immersive radar charts and parallel data matrices. This visual breakdown is critical for isolating lightweight, high-strength substitutions.</p>
-                    </div>
-                </div>
-                
-                <div class="t-node">
-                    <div class="t-card">
-                        <span class="t-step">Step 3 • Simulation</span>
-                        <h4>Engineering Workspaces (BOM)</h4>
-                        <p>The <b>Engineering (BOM)</b> tab is where raw data becomes structural reality. Create custom workspaces, build mechanical assemblies, and link components to the database. The system automatically calculates Total Mass, tracks Economics, and executes fundamental Stress & Thermal limit checks.</p>
-                    </div>
-                </div>
-                
-            </div>
-        </div>
+.t-card {
+padding: 1.5rem 2rem;
+background: var(--secondary-background-color);
+border-radius: 12px;
+border: 1px solid var(--faded-text-20);
+box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+transition: all 0.3s ease;
+position: relative;
+overflow: hidden;
+}
+.t-card::before {
+content: '';
+position: absolute;
+left: 0;
+top: 0;
+bottom: 0;
+width: 4px;
+background: #4FC3A1;
+}
+.t-node:nth-child(2) .t-card::before { background: #2E86AB; }
+.t-node:nth-child(3) .t-card::before { background: #FFC107; }
+
+.t-card:hover {
+transform: translateX(8px);
+border-color: var(--faded-text-40);
+box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+}
+.t-step {
+font-size: 0.85rem;
+font-weight: 800;
+letter-spacing: 1.5px;
+text-transform: uppercase;
+color: #4FC3A1;
+margin-bottom: 0.5rem;
+display: block;
+}
+.t-node:nth-child(2) .t-step { color: #2E86AB; }
+.t-node:nth-child(3) .t-step { color: #FFC107; }
+
+.t-card h4 {
+margin: 0 0 10px 0;
+font-size: 1.4rem;
+color: var(--text-color);
+}
+.t-card p {
+margin: 0;
+color: var(--text-color);
+opacity: 0.8;
+line-height: 1.6;
+font-size: 1.05rem;
+}
+</style>
+
+<div class="roadmap-wrapper">
+<h2 class="roadmap-title">Platform Mastery Roadmap</h2>
+<div class="timeline">
+
+<div class="t-node">
+<div class="t-card">
+<span class="t-step">Step 1 • Discovery</span>
+<h4>Global Database Search</h4>
+<p>Navigate to the <b>Database</b> tab to query over 1,000+ materials. Search by specific alloy grades (e.g., <i>Ti-6Al-4V</i>), trade names, or master categories. Utilize precision filters to narrow down targets by ultimate tensile strength, thermal conductivity, and economics.</p>
+</div>
+</div>
+
+<div class="t-node">
+<div class="t-card">
+<span class="t-step">Step 2 • Analysis</span>
+<h4>Visual Comparison Engine</h4>
+<p>Once you locate candidate materials, proceed to the <b>Compare</b> tab. Select up to 5 materials to instantly generate immersive radar charts and parallel data matrices. This visual breakdown is critical for isolating lightweight, high-strength substitutions.</p>
+</div>
+</div>
+
+<div class="t-node">
+<div class="t-card">
+<span class="t-step">Step 3 • Simulation</span>
+<h4>Engineering Workspaces (BOM)</h4>
+<p>The <b>Engineering (BOM)</b> tab is where raw data becomes structural reality. Create custom workspaces, build mechanical assemblies, and link components to the database. The system automatically calculates Total Mass, tracks Economics, and executes fundamental Stress & Thermal limit checks.</p>
+</div>
+</div>
+
+</div>
+</div>
         """, unsafe_allow_html=True)
 
     with tab_browse:
         st.markdown("""
-        <div style="background: var(--secondary-background-color); padding: 1rem 1.5rem; border-radius: 6px; border: 1px solid var(--faded-text-20); border-left: 4px solid #4FC3A1; margin-bottom: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
-            <h3 style="color: var(--text-color); margin-top: 0; margin-bottom: 0.3rem; font-weight: 700; letter-spacing: 0.5px;">Global Materials Database</h3>
-            <p style="color: var(--text-color); opacity: 0.75; font-size: 0.95rem; margin-bottom: 0;">Search, filter, and export data across 1,000+ verified engineering materials.</p>
-        </div>
+<div style="background: var(--secondary-background-color); padding: 1rem 1.5rem; border-radius: 6px; border: 1px solid var(--faded-text-20); border-left: 4px solid #4FC3A1; margin-bottom: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+<h3 style="color: var(--text-color); margin-top: 0; margin-bottom: 0.3rem; font-weight: 700; letter-spacing: 0.5px;">Global Materials Database</h3>
+<p style="color: var(--text-color); opacity: 0.75; font-size: 0.95rem; margin-bottom: 0;">Search, filter, and export data across 1,000+ verified engineering materials.</p>
+</div>
         """, unsafe_allow_html=True)
     
         search_query = st.text_input(
@@ -2015,10 +2001,10 @@ if st.session_state.current_page == "main":
     # ══════════════════════════════════════════════
     with tab_projects:
         st.markdown("""
-        <div style="background: var(--secondary-background-color); padding: 1rem 1.5rem; border-radius: 6px; border: 1px solid var(--faded-text-20); border-left: 4px solid #00f0ff; margin-bottom: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
-            <h3 style="color: var(--text-color); margin-top: 0; margin-bottom: 0.3rem; font-weight: 700; letter-spacing: 0.5px;">Advanced Engineering Workspaces</h3>
-            <p style="color: var(--text-color); opacity: 0.75; font-size: 0.95rem; margin-bottom: 0;">Build, simulate, and optimize your assemblies. Instantly calculate Total Mass, Yield Strength limits, and BOM Economics.</p>
-        </div>
+<div style="background: var(--secondary-background-color); padding: 1rem 1.5rem; border-radius: 6px; border: 1px solid var(--faded-text-20); border-left: 4px solid #00f0ff; margin-bottom: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+<h3 style="color: var(--text-color); margin-top: 0; margin-bottom: 0.3rem; font-weight: 700; letter-spacing: 0.5px;">Advanced Engineering Workspaces</h3>
+<p style="color: var(--text-color); opacity: 0.75; font-size: 0.95rem; margin-bottom: 0;">Build, simulate, and optimize your assemblies. Instantly calculate Total Mass, Yield Strength limits, and BOM Economics.</p>
+</div>
         """, unsafe_allow_html=True)
 
         
