@@ -173,6 +173,7 @@ class FeedbackCreate(BaseModel):
     rating: Optional[int] = Field(None, ge=1, le=5)
     page_context: Optional[str] = Field(None, max_length=100, examples=["Feedback Tab"])
     parent_id: Optional[int] = Field(None, description="ID of the parent feedback if this is a reply")
+    image_data: Optional[str] = Field(None, description="Base64 encoded image string")
 
 
 class FeedbackOut(BaseModel):
@@ -188,6 +189,8 @@ class FeedbackOut(BaseModel):
     page_context: Optional[str] = None
     parent_id: Optional[int] = None
     status: str
+    admin_reply: Optional[str] = None
+    image_data: Optional[str] = None
     created_at: Optional[datetime] = None
 
     model_config = {"from_attributes": True}

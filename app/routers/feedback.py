@@ -22,7 +22,10 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models import Feedback, User
 from app.schemas import FeedbackCreate, FeedbackOut, FeedbackResponse
-from app.auth import get_optional_user
+from app.auth import get_optional_user, get_current_user
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 router = APIRouter(prefix="/feedback", tags=["Feedback"])
 
@@ -110,6 +113,7 @@ def submit_feedback(
         rating=payload.rating,
         page_context=payload.page_context,
         parent_id=getattr(payload, 'parent_id', None),
+        image_data=getattr(payload, 'image_data', None),
     )
     db.add(fb)
     db.commit()
@@ -172,3 +176,75 @@ def toggle_visibility(feedback_id: int, _: bool = Depends(verify_admin), db: Ses
     fb.status = "hidden" if fb.status != "hidden" else "new"
     db.commit()
     return FeedbackResponse(message=f"Visibility toggled", id=fb.id)
+
+
+@router.post("/{feedback_id}/reply")
+def reply_to_feedback(
+    feedback_id: int,
+    request: Request,
+    reply_text: str = Header(..., alias="X-Reply-Text"),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Admin endpoint to reply to user feedback and send an email notification."""
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Only admins can reply to feedback.")
+        
+    feedback = db.query(Feedback).filter(Feedback.id == feedback_id).first()
+    if not feedback:
+        raise HTTPException(status_code=404, detail="Feedback not found")
+        
+    feedback.admin_reply = reply_text
+    feedback.status = "reviewed"
+    db.commit()
+    db.refresh(feedback)
+    
+    # Send email notification if user email is known
+    user_email = feedback.email
+    if not user_email and feedback.user_id:
+        user_record = db.query(User).filter(User.id == feedback.user_id).first()
+        if user_record:
+            user_email = user_record.email
+            
+    if user_email:
+        sender_email = os.getenv("SMTP_EMAIL", "no-reply@matdatahub.com")
+        sender_password = os.getenv("SMTP_PASSWORD", "")
+        
+        if sender_password:
+            try:
+                # Setup standard Gmail SMTP
+                msg = MIMEMultipart()
+                msg['From'] = f"MatDataHub Support <{sender_email}>"
+                msg['To'] = user_email
+                msg['Subject'] = "Admin Response to your Feedback on MatDataHub"
+                
+                body = f"""
+                Hi there!
+                
+                An admin has reviewed and replied to your recent feedback/report:
+                
+                Your Feedback: "{feedback.message}"
+                
+                Admin Reply:
+                {reply_text}
+                
+                Thanks for helping us improve MatDataHub!
+                
+                Best,
+                The MatDataHub Engineering Team
+                """
+                
+                msg.attach(MIMEText(body, 'plain'))
+                
+                server = smtplib.SMTP('smtp.gmail.com', 587)
+                server.starttls()
+                server.login(sender_email, sender_password)
+                server.send_message(msg)
+                server.quit()
+                print(f"Successfully sent reply email to {user_email}")
+            except Exception as e:
+                print(f"Failed to send email to {user_email}: {e}")
+        else:
+            print(f"Skipped sending email to {user_email} because SMTP_PASSWORD is not set in .env")
+            
+    return {"ok": True, "message": "Reply saved and email dispatched."}

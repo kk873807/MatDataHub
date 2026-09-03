@@ -149,6 +149,8 @@ class Feedback(Base):
     status = Column(String(20), default="new")
     helpful_votes = Column(Integer, default=0)               # "new" or "reviewed"
     parent_id = Column(Integer, ForeignKey("feedback.id"), nullable=True) # for nested replies
+    admin_reply = Column(String, nullable=True)
+    image_data = Column(Text, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     
     # We use a backref to link replies to their parent

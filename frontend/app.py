@@ -1139,68 +1139,130 @@ if st.session_state.current_page == "main":
                         else:
                             tree.append(fb_map[item["id"]])
                     
-                    # Recursive render function
+                    # Custom CSS for compact feedback display
+                    st.markdown("""
+                        <style>
+                        .compact-comment {
+                            padding-left: 10px;
+                            border-left: 2px solid #333;
+                            margin-bottom: 5px;
+                            font-size: 0.85em;
+                            line-height: 1.2;
+                        }
+                        .compact-name { font-weight: bold; color: #4DA8DA; }
+                        .compact-message { margin-top: 2px; margin-bottom: 2px; }
+                        .compact-admin {
+                            background-color: #1c2a38;
+                            border: 1px solid #4DA8DA;
+                            border-radius: 5px;
+                            padding: 8px;
+                            margin-top: 5px;
+                            font-size: 0.8em;
+                        }
+                        .compact-img {
+                            max-width: 250px;
+                            border-radius: 4px;
+                            margin-top: 5px;
+                        }
+                        </style>
+                    """, unsafe_allow_html=True)
+    
                     def render_comments(comments, depth=0):
                         for c in comments:
-                            with st.container():
-                                if depth > 0:
-                                    col_spacer, col_content = st.columns([0.05 * depth, 1 - (0.05 * depth)])
-                                else:
-                                    col_spacer = None
-                                    col_content = st.container()
+                            if depth > 0:
+                                col_spacer, col_content = st.columns([0.05 * depth, 1 - (0.05 * depth)])
+                            else:
+                                col_spacer = None
+                                col_content = st.container()
+                                
+                            with col_content:
+                                stars = "⭐" * (c.get("rating") or 0)
+                                name = c.get("name") or "Anonymous"
+                                
+                                # Compact HTML rendering
+                                st.markdown(f"""
+                                <div class="compact-comment">
+                                    <span class="compact-name">{name}</span> {stars}
+                                    <div class="compact-message">{c["message"]}</div>
+                                </div>
+                                """, unsafe_allow_html=True)
+                                
+                                # Render image if present
+                                if c.get("image_data"):
+                                    st.markdown(f'<img class="compact-img" src="data:image/png;base64,{c["image_data"]}">', unsafe_allow_html=True)
+                                
+                                # Render Admin Reply if present
+                                if c.get("admin_reply"):
+                                    st.markdown(f"""
+                                    <div class="compact-admin">
+                                        <strong style="color:#00ffcc">✅ Verified Admin Response:</strong><br/>
+                                        {c["admin_reply"]}
+                                    </div>
+                                    """, unsafe_allow_html=True)
                                     
-                                with col_content:
-                                    stars = "⭐" * (c.get("rating") or 0)
-                                    name = c.get("name") or "Anonymous Engineer"
-                                    st.markdown(f"**{name}** {stars}")
-                                    st.write(c["message"])
-                                    
-                                    # Buttons
-                                    btn_cols = st.columns([1.5, 1.5, 2, 4])
-                                    with btn_cols[0]:
-                                        votes = c.get("helpful_votes") or 0
-                                        if st.button(f"👍 Helpful ({votes})", key=f"help_{c['id']}"):
-                                            requests.post(f"{API_BASE}/feedback/{c['id']}/helpful")
-                                            st.rerun()
-                                    with btn_cols[1]:
-                                        if st.button("💬 Reply", key=f"reply_btn_{c['id']}"):
-                                            st.session_state[f"show_reply_{c['id']}"] = not st.session_state.get(f"show_reply_{c['id']}", False)
-                                            
-                                    # Admin
-                                    if st.session_state.get("user") and st.session_state.user.get("role") == "admin":
-                                        with btn_cols[2]:
-                                            with st.popover("🛡️ Admin"):
-                                                if st.button("Hide", key=f"hide_{c['id']}"):
-                                                    h_headers = {"X-Admin-Secret": os.getenv("ADMIN_SECRET", "sk_test_admin_key")}
-                                                    requests.patch(f"{API_BASE}/feedback/{c['id']}/visibility", headers=h_headers)
-                                                    st.rerun()
-                                                if st.button("Delete", key=f"del_fb_{c['id']}"):
-                                                    h_headers = {"X-Admin-Secret": os.getenv("ADMIN_SECRET", "sk_test_admin_key")}
-                                                    requests.delete(f"{API_BASE}/feedback/{c['id']}", headers=h_headers)
+                                # Buttons
+                                btn_cols = st.columns([1.5, 1.5, 2, 4])
+                                with btn_cols[0]:
+                                    votes = c.get("helpful_votes") or 0
+                                    if st.button(f"👍 Helpful ({votes})", key=f"help_{c['id']}"):
+                                        requests.post(f"{API_BASE}/feedback/{c['id']}/helpful")
+                                        st.rerun()
+                                        
+                                is_admin = st.session_state.get("user") and st.session_state.user.get("role") == "admin"
+                                        
+                                with btn_cols[1]:
+                                    if st.button("💬 Reply", key=f"reply_btn_{c['id']}"):
+                                        st.session_state[f"show_reply_{c['id']}"] = not st.session_state.get(f"show_reply_{c['id']}", False)
+                                        
+                                if is_admin:
+                                    with btn_cols[2]:
+                                        with st.popover("🛠️ Admin"):
+                                            if st.button("Email Reply", key=f"admin_reply_{c['id']}"):
+                                                st.session_state[f"show_admin_reply_{c['id']}"] = True
+                                            if st.button("Hide", key=f"hide_{c['id']}"):
+                                                h_headers = {"X-Admin-Secret": os.getenv("ADMIN_SECRET", "sk_test_admin_key")}
+                                                requests.patch(f"{API_BASE}/feedback/{c['id']}/visibility", headers=h_headers)
+                                                st.rerun()
+                                            if st.button("Delete", key=f"del_fb_{c['id']}"):
+                                                h_headers = {"X-Admin-Secret": os.getenv("ADMIN_SECRET", "sk_test_admin_key")}
+                                                requests.delete(f"{API_BASE}/feedback/{c['id']}", headers=h_headers)
+                                                st.rerun()
+                                                
+                                if st.session_state.get(f"show_reply_{c['id']}", False):
+                                    with st.form(f"form_reply_{c['id']}", clear_on_submit=True):
+                                        reply_msg = st.text_area("Your reply...")
+                                        if st.form_submit_button("Submit Reply"):
+                                            if reply_msg and len(reply_msg.strip()) >= 3:
+                                                u = st.session_state.get("user", {})
+                                                payload = {
+                                                    "name": u.get("name", "Anonymous Reply"),
+                                                    "email": u.get("email", ""),
+                                                    "category": "Reply",
+                                                    "message": reply_msg.strip(),
+                                                    "page_context": "Community Thread",
+                                                    "parent_id": c["id"]
+                                                }
+                                                resp = requests.post(f"{API_BASE}/feedback/", json=payload)
+                                                if resp.status_code == 200:
+                                                    st.session_state[f"show_reply_{c['id']}"] = False
+                                                    st.success("Reply posted!")
                                                     st.rerun()
                                                     
-                                    if st.session_state.get(f"show_reply_{c['id']}", False):
-                                        with st.form(f"form_reply_{c['id']}", clear_on_submit=True):
-                                            reply_msg = st.text_area("Your reply...")
-                                            if st.form_submit_button("Submit Reply"):
-                                                if reply_msg and len(reply_msg.strip()) >= 3:
-                                                    u = st.session_state.get("user", {})
-                                                    payload = {
-                                                        "name": u.get("name", "Anonymous Reply"),
-                                                        "email": u.get("email", ""),
-                                                        "category": "Reply",
-                                                        "message": reply_msg.strip(),
-                                                        "page_context": "Community Thread",
-                                                        "parent_id": c["id"]
-                                                    }
-                                                    resp = requests.post(f"{API_BASE}/feedback/", json=payload)
-                                                    if resp.status_code == 200:
-                                                        st.session_state[f"show_reply_{c['id']}"] = False
-                                                        st.success("Reply posted!")
-                                                        st.rerun()
-                                                    else:
-                                                        st.error(resp.json().get("detail", "Error"))
-                                                        
+                                if is_admin and st.session_state.get(f"show_admin_reply_{c['id']}", False):
+                                    with st.form(f"admin_form_reply_{c['id']}", clear_on_submit=True):
+                                        st.caption("This will email the user and lock an official admin response to this thread.")
+                                        admin_msg = st.text_area("Official Admin Reply...")
+                                        if st.form_submit_button("Send Official Reply & Email"):
+                                            if admin_msg:
+                                                resp = requests.post(
+                                                    f"{API_BASE}/feedback/{c['id']}/reply", 
+                                                    headers={"Authorization": f"Bearer {st.session_state.token}", "X-Reply-Text": admin_msg}
+                                                )
+                                                if resp.status_code == 200:
+                                                    st.session_state[f"show_admin_reply_{c['id']}"] = False
+                                                    st.success("Official reply posted and email dispatched!")
+                                                    st.rerun()
+                                                    
                             if c["children"]:
                                 render_comments(c["children"], depth + 1)
                             if depth == 0:
