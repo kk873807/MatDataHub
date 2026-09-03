@@ -620,9 +620,9 @@ def render_radar_chart(selections, mat_details, all_materials, tier):
     categories = list(radar_data.keys())
     fig = go.Figure()
 
-    # Modern vibrant colors
-    hex_colors = ["#4FC3A1", "#2E86AB", "#FFCA28", "#FF6B6B"]
-    fill_colors = ["rgba(79, 195, 161, 0.3)", "rgba(46, 134, 171, 0.3)", "rgba(255, 202, 40, 0.3)", "rgba(255, 107, 107, 0.3)"]
+    # Immersive Cyber/Neon colors
+    hex_colors = ["#00f0ff", "#ff003c", "#fcee0a", "#b026ff"]
+    fill_colors = ["rgba(0, 240, 255, 0.25)", "rgba(255, 0, 60, 0.25)", "rgba(252, 238, 10, 0.25)", "rgba(176, 38, 255, 0.25)"]
 
     for i, name in enumerate(selections):
         values = [radar_data[cat][i] for cat in categories]
@@ -633,20 +633,21 @@ def render_radar_chart(selections, mat_details, all_materials, tier):
             theta=categories + [categories[0]],
             fill="toself",
             name=name,
-            line=dict(color=hex_colors[c_idx], width=3, shape='linear'),
+            line=dict(color=hex_colors[c_idx], width=4, shape='linear'),
             fillcolor=fill_colors[c_idx],
-            marker=dict(size=8, symbol='circle', color=hex_colors[c_idx], line=dict(width=1, color='white'))
+            marker=dict(size=10, symbol='diamond', color=hex_colors[c_idx], line=dict(width=2, color='rgba(255,255,255,0.8)'))
         ))
 
     fig.update_layout(
         polar=dict(
-            radialaxis=dict(visible=True, range=[0, 100], showticklabels=False, gridcolor="rgba(128,128,128,0.15)"),
-            angularaxis=dict(gridcolor="rgba(128,128,128,0.15)", tickfont=dict(size=12, color="gray"))
+            bgcolor="rgba(10, 15, 30, 0.5)",
+            radialaxis=dict(visible=True, range=[0, 100], showticklabels=False, gridcolor="rgba(0, 240, 255, 0.15)", gridwidth=1.5),
+            angularaxis=dict(gridcolor="rgba(0, 240, 255, 0.25)", linecolor="rgba(0, 240, 255, 0.4)", tickfont=dict(size=13, color="#88aaff", weight="bold"))
         ),
         showlegend=True,
-        legend=dict(orientation="h", yanchor="bottom", y=1.05, xanchor="center", x=0.5),
-        height=500,
-        margin=dict(l=40, r=40, t=60, b=40),
+        legend=dict(orientation="h", yanchor="bottom", y=1.1, xanchor="center", x=0.5, font=dict(color="#fff", size=14), bgcolor="rgba(0,0,0,0.4)", bordercolor="rgba(0, 240, 255, 0.3)", borderwidth=1),
+        height=600,
+        margin=dict(l=60, r=60, t=80, b=40),
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
         font=dict(family="Inter, sans-serif")
@@ -1039,7 +1040,7 @@ if st.session_state.current_page == "pricing":
 
 if st.session_state.current_page == "main":
     tab_home, tab_browse, tab_compare, tab_projects, tab_ai, tab_faq, tab_feedback = st.tabs([
-        "🏠 Home", "🔍 Browse", "⚖️ Compare", "📂 My Projects (BOM)", "🤖 AI Advisor (Pro)", "❓ FAQ", "💬 Feedback"
+        "Home", "Browse Database", "Compare", "Engineering BOM", "AI Advisor", "FAQ", "Feedback"
     ])
     
     
@@ -1845,7 +1846,17 @@ if st.session_state.current_page == "main":
     #  TAB: MY PROJECTS (BOM)
     # ══════════════════════════════════════════════
     with tab_projects:
-        st.markdown("### 📁 Engineering Workspaces & BOM Optimizer")
+        st.markdown("""
+        <div style="background: linear-gradient(90deg, rgba(16, 24, 43, 0.9) 0%, rgba(30, 45, 80, 0.9) 100%); padding: 2rem; border-radius: 12px; border: 1px solid rgba(0, 240, 255, 0.3); margin-bottom: 2rem; box-shadow: 0 4px 20px rgba(0, 240, 255, 0.1);">
+            <h2 style="color: #00f0ff; margin-top: 0; font-weight: 800; letter-spacing: 1px; display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 1.5em;">⛭</span> Advanced Engineering Workspaces
+            </h2>
+            <p style="color: #a0c0ff; font-size: 1.1rem; margin-bottom: 0;">
+                Build, simulate, and optimize your assemblies. Leverage the full MatDataHub 2.0 database to instantly calculate Total Mass, Yield Strength limits, and BOM Economics.
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+
         
         if not st.session_state.get("user"):
             st.info("You must be logged in to create and manage engineering projects.")
@@ -2667,7 +2678,7 @@ if st.session_state.current_page == "main":
     
     # ── Footer ──
     st.divider()
-    st.caption("MatDataHub v0.3 | Engineering Material Data-as-a-Service | 500+ materials | Data from ASTM, ASM, MMPDS, ISO, ACI")
+    st.caption("MatDataHub v2.0 | Engineering Material Data-as-a-Service | 1,000+ materials | Data from ASTM, ASM, MMPDS, ISO, ACI")
     
     
     # --------------------------------------------------------------------------------
