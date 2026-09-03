@@ -1144,15 +1144,7 @@ if st.session_state.current_page == "main":
                     # Custom CSS for compact feedback display
                     st.markdown("""
                         <style>
-                        /* Nuke Streamlit's default massive gaps for this specific section */
-                        div[data-testid="stVerticalBlock"] {
-                            gap: 0.2rem !important;
-                        }
-                        div[data-testid="stHorizontalBlock"] {
-                            gap: 0.2rem !important;
-                            align-items: center !important;
-                        }
-                        /* Shrink Streamlit button paddings */
+/* Shrink Streamlit button paddings */
                         button[data-testid="baseButton-secondary"] {
                             padding: 2px 8px !important;
                             min-height: 25px !important;
@@ -1161,9 +1153,9 @@ if st.session_state.current_page == "main":
                         .compact-comment {
                             padding-left: 10px;
                             border-left: 2px solid #333;
-                            margin-bottom: 5px;
+                            margin-bottom: 10px;
                             font-size: 0.85em;
-                            line-height: 1.2;
+                            line-height: 1.4;
                         }
                         .compact-name { font-weight: bold; color: #4DA8DA; }
                         .compact-message { margin-top: 2px; margin-bottom: 2px; }
