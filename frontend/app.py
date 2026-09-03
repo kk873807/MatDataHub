@@ -494,10 +494,10 @@ def generate_bom_pdf(project_name, df_bom, total_mass, total_cost):
     # Table Rows
     pdf.set_font("helvetica", "", 10)
     for _, row in df_bom.iterrows():
-        pdf.cell(col_widths[0], 8, str(row["Part Name"])[:25], border=1)
-        pdf.cell(col_widths[1], 8, str(row["Material"])[:40], border=1)
-        pdf.cell(col_widths[2], 8, str(row["Volume (cmA3)"]), border=1)
-        pdf.cell(col_widths[3], 8, str(row["Mass (kg)"]), border=1)
+        pdf.cell(col_widths[0], 8, str(row.iloc[0])[:25], border=1)
+        pdf.cell(col_widths[1], 8, str(row.iloc[1])[:40], border=1)
+        pdf.cell(col_widths[2], 8, str(row.iloc[2]), border=1)
+        pdf.cell(col_widths[3], 8, str(row.iloc[3]), border=1)
         pdf.ln()
         
     # --- Summary ---
