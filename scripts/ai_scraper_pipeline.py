@@ -69,13 +69,13 @@ def extract_materials_via_ai(text: str, family_hint: str):
     print("Extracting structured properties using AI...")
     try:
         models = [
-            "llama3-8b-8192",
-            "llama-3.1-8b-instant"
+            "llama3-8b-8192"
         ]
         raw = None
         last_error = None
         for model in models:
             try:
+                print(f"  [AI] Attempting extraction with model: {model}...")
                 response = client.chat.completions.create(
                     messages=[{"role": "user", "content": prompt}],
                     model=model,
@@ -85,6 +85,7 @@ def extract_materials_via_ai(text: str, family_hint: str):
                 print(f"  [AI] Successfully used model: {model}")
                 break
             except Exception as e:
+                print(f"  [!] Model {model} failed: {e}")
                 last_error = e
                 continue
                 
