@@ -2154,6 +2154,8 @@ if st.session_state.current_page == "main":
                                             cte = 27.4
                                         elif "aluminum" in mat["name"].lower():
                                             cte = 23.0
+                                        elif "titanium" in mat["name"].lower() or "nitinol" in mat["name"].lower():
+                                            cte = 8.6
                                         else:
                                             cte = 12.0
                                             
@@ -2205,6 +2207,8 @@ if st.session_state.current_page == "main":
                                                 E_gpa = 69.0
                                             elif "titanium" in mat["name"].lower():
                                                 E_gpa = 110.0
+                                            elif "nitinol" in mat["name"].lower():
+                                                E_gpa = 75.0
                                             else:
                                                 E_gpa = 200.0 # Standard Steel
                                             st.info(f"Elastic Modulus not explicitly in DB. Using estimated value for {cat}: **{E_gpa} GPa**")
@@ -2268,6 +2272,7 @@ if st.session_state.current_page == "main":
                                             elif "magnesium" in mat["name"].lower(): cte = 26.0
                                             elif "zinc" in mat["name"].lower() or "zamak" in mat["name"].lower() or "za-" in mat["name"].lower(): cte = 27.4
                                             elif "aluminum" in mat["name"].lower(): cte = 23.0
+                                            elif "titanium" in mat["name"].lower() or "nitinol" in mat["name"].lower(): cte = 8.6
                                             
                                             Rs = (sigma_f * k_cond) / (E_gpa * cte)
                                             
