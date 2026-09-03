@@ -239,10 +239,12 @@ def reply_to_feedback(
                 server.login(sender_email, sender_password)
                 server.send_message(msg)
                 server.quit()
-                print(f"Successfully sent reply email to {user_email}")
+                return {"ok": True, "message": f"Reply saved and email successfully sent to {user_email}."}
             except Exception as e:
                 print(f"Failed to send email to {user_email}: {e}")
+                return {"ok": True, "message": f"Reply saved, but email failed to send: {e}"}
         else:
             print(f"Skipped sending email to {user_email} because SMTP_PASSWORD is not set in .env")
+            return {"ok": True, "message": "Reply saved. Email skipped (SMTP_PASSWORD missing from server environment)."}
             
-    return {"ok": True, "message": "Reply saved and email dispatched."}
+    return {"ok": True, "message": "Reply saved. No user email was found to notify."}

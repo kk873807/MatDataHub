@@ -1389,7 +1389,11 @@ if st.session_state.current_page == "main":
                                                 )
                                                 if resp.status_code == 200:
                                                     st.session_state[f"show_admin_reply_{c['id']}"] = False
-                                                    st.success("Official reply posted and email dispatched!")
+                                                    data = resp.json()
+                                                    msg = data.get("message", "Official reply posted!")
+                                                    st.success(msg)
+                                                    import time
+                                                    time.sleep(2)
                                                     st.rerun()
                                                     
                             if c["children"]:
