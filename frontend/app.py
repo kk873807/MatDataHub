@@ -1039,8 +1039,8 @@ if st.session_state.current_page == "pricing":
 
 
 if st.session_state.current_page == "main":
-    tab_home, tab_browse, tab_compare, tab_projects, tab_ai, tab_faq, tab_feedback = st.tabs([
-        "🏠 Home", "🔍 Database", "⚖️ Compare", "⚙️ Engineering (BOM)", "🧠 AI Advisor", "❓ FAQ", "💬 Feedback"
+    tab_home, tab_guide, tab_browse, tab_compare, tab_projects, tab_ai, tab_faq, tab_feedback = st.tabs([
+        "🏠 Home", "📖 Platform Guide", "🔍 Database", "⚖️ Compare", "⚙️ Engineering (BOM)", "🧠 AI Advisor", "❓ FAQ", "💬 Feedback"
     ])
     
     
@@ -1403,6 +1403,52 @@ if st.session_state.current_page == "main":
         except Exception as e:
             st.error(f"Failed to load community feedback: {e}")
     
+
+    # ══════════════════════════════════════════════
+    #  TAB: PLATFORM GUIDE
+    # ══════════════════════════════════════════════
+    with tab_guide:
+        st.markdown("""
+        <div style="background: var(--secondary-background-color); padding: 1rem 1.5rem; border-radius: 6px; border: 1px solid var(--faded-text-20); border-left: 4px solid #FFC107; margin-bottom: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+            <h3 style="color: var(--text-color); margin-top: 0; margin-bottom: 0.3rem; font-weight: 700; letter-spacing: 0.5px;">Platform Guide & Workflows</h3>
+            <p style="color: var(--text-color); opacity: 0.75; font-size: 0.95rem; margin-bottom: 0;">Learn how to leverage the full power of the engineering database and BOM simulators.</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("### 🎬 AI Video Introduction")
+        st.info("💡 **Tip:** Embed an AI-generated introduction video or product walkthrough here to help new engineers instantly understand the platform's capabilities.")
+        
+        # Placeholder for video
+        st.markdown("""
+        <div style="width: 100%; height: 350px; background: rgba(128,128,128,0.1); border: 2px dashed var(--faded-text-40); border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 2rem;">
+            <div style="text-align: center; opacity: 0.6;">
+                <h1 style="margin: 0; font-size: 4rem;">▶️</h1>
+                <p style="margin: 0; font-size: 1.2rem; font-weight: 500;">[ AI Video Walkthrough Placeholder ]</p>
+                <p style="margin: 0; font-size: 0.9rem;">You can use st.video("your_video_link.mp4") to render this.</p>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown("### 🚀 Core Workflows")
+        
+        c1, c2 = st.columns(2)
+        with c1:
+            st.markdown("#### 1. Global Database Search")
+            st.markdown("Navigate to the **🔍 Database** tab to query over 1,000+ materials. You can search by specific alloy grades (e.g., *Ti-6Al-4V*), trade names (e.g., *Inconel*), or general categories. Use the sidebar filters to narrow down materials by ultimate tensile strength, thermal conductivity, or cost.")
+            
+            st.markdown("#### 2. Visual Comparison Engine")
+            st.markdown("Once you find candidate materials, head to the **⚖️ Compare** tab. Select up to 5 materials from the dropdown to instantly generate immersive radar charts and side-by-side data tables. This is critical for finding lightweight, high-strength substitutions.")
+        
+        with c2:
+            st.markdown("#### 3. Engineering Workspaces (BOM)")
+            st.markdown("The **⚙️ Engineering (BOM)** tab is where real engineering happens. Create a project, add structural components (like brackets or beams), and link them to database materials. The system will automatically calculate the **Total Mass**, **BOM Economics**, and run basic **Thermal/Stress checks**.")
+            
+            st.markdown("#### 4. The AI Advisor")
+            st.markdown("Stuck on a design problem? The **🧠 AI Advisor** is fine-tuned on materials science. Instead of hallucinating, it queries the live database to give you exact physical properties and suggests aerospace, nuclear, or industrial alternatives based on your constraints.")
+            
+        st.divider()
+        st.markdown("<div style='text-align: center; opacity: 0.8;'><p>Ready to start? Dive straight into the <b>🔍 Database</b>.</p></div>", unsafe_allow_html=True)
+
     with tab_browse:
         st.markdown("""
         <div style="background: var(--secondary-background-color); padding: 1rem 1.5rem; border-radius: 6px; border: 1px solid var(--faded-text-20); border-left: 4px solid #4FC3A1; margin-bottom: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
