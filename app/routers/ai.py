@@ -20,11 +20,9 @@ class AIRequest(BaseModel):
 
 def safe_groq_completion(messages):
     models = [
-        "llama-3.3-70b-specdec",
-        "llama3-8b-8192",
-        "gemma2-9b-it",
-        "llama-3.1-8b-instant",
-        "llama-3.3-70b-versatile"
+        "groq/compound",
+        "openai/gpt-oss-20b", 
+        "qwen/qwen3.6-27b"
     ]
     last_error = None
     for model in models:

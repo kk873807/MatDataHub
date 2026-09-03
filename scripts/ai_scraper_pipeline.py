@@ -68,14 +68,22 @@ def extract_materials_via_ai(text: str, family_hint: str):
     
     print("Extracting structured properties using AI...")
     try:
-        models = [
-            "llama3-8b-8192"
-        ]
+        # Auto-discover models from Groq to avoid deprecation errors
+        available_models = []
+        try:
+            models_data = client.models.list()
+            # In 2026, Groq uses compound and oss models for free tiers
+            valid = ["groq/compound", "openai/gpt-oss-20b", "qwen/qwen3.6-27b"]
+            available_models = [m.id for m in models_data.data if m.id in valid]
+        except Exception as e:
+            print(f"Failed to fetch model list: {e}")
+            available_models = ["groq/compound"]
+
         raw = None
         last_error = None
-        for model in models:
+        for model in available_models:
             try:
-                print(f"  [AI] Attempting extraction with model: {model}...")
+                print(f"  [AI] Attempting extraction with dynamically discovered model: {model}...")
                 response = client.chat.completions.create(
                     messages=[{"role": "user", "content": prompt}],
                     model=model,

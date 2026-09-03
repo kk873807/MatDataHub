@@ -139,8 +139,9 @@ def run_ai_scraper(req: ScrapeRequest, _: bool = Depends(verify_admin), db: Sess
     
     try:
         models = [
-            "llama3-8b-8192",
-            "llama-3.1-8b-instant"
+            "groq/compound",
+            "openai/gpt-oss-20b", 
+            "qwen/qwen3.6-27b"
         ]
         raw_text = None
         last_error = None
