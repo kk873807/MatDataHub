@@ -516,7 +516,8 @@ def generate_bom_pdf(project_name, df_bom, total_mass, total_cost):
     pdf.cell(0, 8, f"Rs. {total_cost:,.2f}", border=0, ln=1)
     
     # --- Footer ---
-    pdf.set_y(-20)
+    pdf.set_auto_page_break(auto=False)
+    pdf.set_y(280)
     pdf.set_font("helvetica", "I", 8)
     pdf.set_text_color(150, 150, 150)
     pdf.cell(0, 10, "Powered by MatDataHub Professional Edition. Data export tracked for security compliance.", align="C")
