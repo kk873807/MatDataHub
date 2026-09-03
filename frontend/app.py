@@ -2076,43 +2076,107 @@ if st.session_state.current_page == "main":
                                             st.success(f"⚡ **Thermal Shock Resistance ($R_s$): {Rs:.2f} W/m**")
     
                                 with t_cost:
-                                    st.markdown("#### 📉 BOM Cost Optimization Engine")
-                                    st.caption("Scans your Bill of Materials for cheaper materials that maintain or exceed the current Yield Strength.")
+                                    st.markdown("#### 💰 Advanced Cost & Weight Optimization Engine")
+                                    st.caption("Identify cost drivers in your assembly and discover cheaper, lighter alternatives without sacrificing performance.")
+                                    
                                     if not items:
                                         st.warning("Add parts to your BOM first.")
                                     else:
-                                        if st.button("Run Optimization Engine", type="primary"):
-                                            with st.spinner("Scanning database for cost-effective equivalents..."):
+                                        st.markdown("##### Optimization Constraints")
+                                        st.write("Select the engineering properties that replacement materials **MUST match or exceed** compared to the current material:")
+                                        
+                                        col_c1, col_c2 = st.columns(2)
+                                        with col_c1:
+                                            opt_yield = st.checkbox("Yield Strength (≥)", value=True)
+                                            opt_tensile = st.checkbox("Tensile Strength (≥)", value=False)
+                                            opt_thermal = st.checkbox("Thermal Conductivity (≥)", value=False)
+                                        with col_c2:
+                                            opt_density = st.checkbox("Density (≤) [Weight Limit]", value=True)
+                                            opt_modulus = st.checkbox("Elastic Modulus (≥)", value=False)
+                                        
+                                        if st.button("Run Advanced Optimization", type="primary"):
+                                            with st.spinner("Executing multi-constraint pareto analysis..."):
                                                 all_mats = fetch_all_materials(st.session_state.get("token"))
                                                 db_mats = all_mats["data"].get("materials", []) if all_mats["ok"] else []
                                                 
+                                                total_assembly_savings = 0.0
                                                 optimization_found = False
+                                                
                                                 for item in items:
                                                     curr_mat = item["material"]
-                                                    curr_ys = curr_mat.get("yield_strength_min")
                                                     curr_cost = curr_mat.get("cost_per_kg_min")
                                                     
-                                                    if curr_ys and curr_cost:
-                                                        # Find cheaper alternatives in same category
-                                                        alts = [m for m in db_mats 
-                                                                if m["category"] == curr_mat["category"] 
-                                                                and m["id"] != curr_mat["id"]
-                                                                and (m.get("yield_strength_min") or 0) >= curr_ys 
-                                                                and (m.get("cost_per_kg_min") or float('inf')) < curr_cost]
+                                                    if not curr_cost:
+                                                        continue
                                                         
-                                                        if alts:
+                                                    # Gather current constraints
+                                                    c_ys = curr_mat.get("yield_strength_min") or 0.0
+                                                    c_ts = curr_mat.get("tensile_strength_min") or 0.0
+                                                    c_den = curr_mat.get("density") or float('inf')
+                                                    c_tc = curr_mat.get("thermal_conductivity") or 0.0
+                                                    c_em = curr_mat.get("elastic_modulus") or 0.0
+                                                    
+                                                    alts = []
+                                                    for m in db_mats:
+                                                        if m["category"] != curr_mat["category"]: continue
+                                                        if m["id"] == curr_mat["id"]: continue
+                                                        m_cost = m.get("cost_per_kg_min")
+                                                        if not m_cost: continue
+                                                        
+                                                        # Check constraints
+                                                        valid = True
+                                                        if opt_yield and (m.get("yield_strength_min") or 0) < c_ys: valid = False
+                                                        if opt_tensile and (m.get("tensile_strength_min") or 0) < c_ts: valid = False
+                                                        if opt_density and (m.get("density") or float('inf')) > c_den: valid = False
+                                                        if opt_thermal and (m.get("thermal_conductivity") or 0) < c_tc: valid = False
+                                                        if opt_modulus and (m.get("elastic_modulus") or 0) < c_em: valid = False
+                                                        
+                                                        if valid:
+                                                            alts.append(m)
+                                                            
+                                                    if alts:
+                                                        vol_cm3 = item["volume_cm3"]
+                                                        current_mass_kg = (vol_cm3 * c_den) / 1000.0 if c_den != float('inf') else 0
+                                                        current_total_cost = current_mass_kg * curr_cost
+                                                        
+                                                        # Cost is driven by Mass * Cost_per_kg. We must filter alts that are ACTUALLY cheaper total.
+                                                        valid_cheaper_alts = []
+                                                        for alt in alts:
+                                                            alt_mass = (vol_cm3 * (alt.get("density") or 0)) / 1000.0
+                                                            alt_cost = alt_mass * alt.get("cost_per_kg_min")
+                                                            if alt_cost < current_total_cost:
+                                                                valid_cheaper_alts.append((alt, alt_mass, alt_cost))
+                                                        
+                                                        if valid_cheaper_alts:
                                                             optimization_found = True
-                                                            alts.sort(key=lambda x: x.get("cost_per_kg_min", 0))
-                                                            best_alt = alts[0]
-                                                            savings_per_kg = curr_cost - best_alt["cost_per_kg_min"]
+                                                            
+                                                            # Find the absolute cheapest total cost
+                                                            valid_cheaper_alts.sort(key=lambda x: x[2])
+                                                            best_cost_alt, bc_mass, bc_cost = valid_cheaper_alts[0]
+                                                            
+                                                            # Find the lightest valid alternative among the cheaper ones
+                                                            valid_cheaper_alts.sort(key=lambda x: x[1])
+                                                            best_weight_alt, bw_mass, bw_cost = valid_cheaper_alts[0]
+                                                            
+                                                            savings_for_part = current_total_cost - bc_cost
+                                                            total_assembly_savings += savings_for_part
                                                             
                                                             with st.container(border=True):
-                                                                st.markdown(f"💡 **Part:** {item['part_name']}")
-                                                                st.markdown(f"**Current Material:** {curr_mat['name']} (Yield: {curr_ys} MPa, Cost: Rs. {curr_cost}/kg)")
-                                                                st.success(f"**Suggested Alternative:** {best_alt['name']} (Yield: {best_alt.get('yield_strength_min')} MPa, Cost: Rs. {best_alt.get('cost_per_kg_min')}/kg)")
-                                                                st.metric(f"Potential Savings per kg", f"Rs. {savings_per_kg:.2f}")
-                                                if not optimization_found:
-                                                    st.info("Your BOM is fully optimized! No cheaper equivalents found with equal or better yield strength.")
+                                                                st.markdown(f"**Part:** {item['part_name']}")
+                                                                st.caption(f"Current Material: **{curr_mat['name']}** | Mass: {current_mass_kg:.2f} kg | Part Cost: Rs. {current_total_cost:,.0f}")
+                                                                
+                                                                st.success(f"💰 **Top Savings Pick:** {best_cost_alt['name']}")
+                                                                st.write(f"New Cost: Rs. {bc_cost:,.0f} (Save Rs. {savings_for_part:,.0f}) | New Mass: {bc_mass:.2f} kg")
+                                                                
+                                                                if best_weight_alt["id"] != best_cost_alt["id"]:
+                                                                    bw_savings = current_total_cost - bw_cost
+                                                                    st.info(f"🪶 **Lightest Viable Pick:** {best_weight_alt['name']}")
+                                                                    st.write(f"New Cost: Rs. {bw_cost:,.0f} (Save Rs. {bw_savings:,.0f}) | New Mass: {bw_mass:.2f} kg")
+                                                
+                                                if optimization_found:
+                                                    st.metric("Total Potential Assembly Savings", f"Rs. {total_assembly_savings:,.0f}")
+                                                else:
+                                                    st.info("Your BOM is fully optimized against these constraints! No valid cheaper equivalents found.")
     
     with tab_ai:
         st.markdown("### 🤖 Engineering AI Advisor")
