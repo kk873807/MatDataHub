@@ -8,6 +8,8 @@ Run with:
     streamlit run frontend/app.py
 """
 import os
+from dotenv import load_dotenv
+load_dotenv()
 import time
 from urllib.parse import urlparse
 
@@ -808,12 +810,16 @@ with st.sidebar:
 
     # ── Admin panel: approve/reject pending upgrade requests + view feedback ──
     with st.expander("🛠️ Admin"):
+        # We store the actual password typed to pass to the backend
         admin_pw = st.text_input("Admin password", type="password")
-        if admin_pw == os.getenv("ADMIN_SECRET", "sk_test_admin_key"):
-            st.session_state.is_admin_unlocked = True
+        if admin_pw:
+            st.session_state.temp_admin_pw = admin_pw
             
-        if st.session_state.get("is_admin_unlocked"):
-            admin_headers = {"X-Admin-Secret": os.getenv("ADMIN_SECRET", "sk_test_admin_key")}
+        # Use whichever password was successfully saved, or the new one typed
+        active_pw = st.session_state.get("temp_admin_pw") or os.getenv("ADMIN_SECRET", "sk_test_admin_key") if st.session_state.get("is_admin_unlocked") else admin_pw
+        
+        if active_pw:
+            admin_headers = {"X-Admin-Secret": active_pw}
             try:
                 r = requests.get(f"{API_BASE}/admin/upgrade-requests", headers=admin_headers, timeout=15)
                 if r.status_code == 403:
@@ -821,6 +827,8 @@ with st.sidebar:
                 elif r.status_code != 200:
                     st.error(f"Error: {r.status_code}")
                 else:
+                    st.session_state.is_admin_unlocked = True
+                    st.session_state.temp_admin_pw = active_pw
                     pending = r.json()
                     st.markdown("**⏳ Pending Upgrade Requests**")
                     if not pending:
@@ -1231,11 +1239,11 @@ if st.session_state.current_page == "main":
                                             if st.button("Email Reply", key=f"admin_reply_{c['id']}"):
                                                 st.session_state[f"show_admin_reply_{c['id']}"] = True
                                             if st.button("Hide", key=f"hide_{c['id']}"):
-                                                h_headers = {"X-Admin-Secret": os.getenv("ADMIN_SECRET", "sk_test_admin_key")}
+                                                h_headers = {"X-Admin-Secret": st.session_state.get("temp_admin_pw", "")}
                                                 requests.patch(f"{API_BASE}/feedback/{c['id']}/visibility", headers=h_headers)
                                                 st.rerun()
                                             if st.button("Delete", key=f"del_fb_{c['id']}"):
-                                                h_headers = {"X-Admin-Secret": os.getenv("ADMIN_SECRET", "sk_test_admin_key")}
+                                                h_headers = {"X-Admin-Secret": st.session_state.get("temp_admin_pw", "")}
                                                 requests.delete(f"{API_BASE}/feedback/{c['id']}", headers=h_headers)
                                                 st.rerun()
                                                 
