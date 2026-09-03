@@ -981,11 +981,17 @@ if st.session_state.current_page == "account":
                 if tx_res.get("ok"):
                     txs = tx_res["data"]
                     if not txs:
-                        st.info("No past transactions found.")
+                        st.info("No past transactions or payments found.")
                     else:
-                        import pandas as pd
-                        df = pd.DataFrame(txs)
-                        st.dataframe(df, use_container_width=True)
+                        for tx in txs:
+                            with st.container():
+                                col1, col2 = st.columns([3, 1])
+                                with col1:
+                                    st.markdown(f"**Amount:** {tx.get('amount', '0')} {tx.get('currency', 'USD')} | **Status:** {tx.get('status', 'Completed')}")
+                                    st.caption(f"Date: {tx.get('created_at', 'N/A')}")
+                                with col2:
+                                    st.code(tx.get('id', 'N/A'), language=None)
+                            st.divider()
                 else:
                     st.error("Could not load transaction history.")
                     
