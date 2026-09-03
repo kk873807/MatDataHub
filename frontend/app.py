@@ -1312,7 +1312,7 @@ if st.session_state.current_page == "main":
             with fcol1:
                 category = st.selectbox(
                     "Material Category",
-                    ["All", "Metal", "Polymer", "Ceramic", "Composite"],
+                    ["All", "Metal", "Polymer", "Ceramic", "Composite", "Semiconductor"],
                     index=0,
                 )
     
@@ -2148,6 +2148,8 @@ if st.session_state.current_page == "main":
                                             cte = 100.0
                                         elif "ceramic" in cat:
                                             cte = 5.0
+                                        elif "semiconductor" in cat:
+                                            cte = 4.0
                                         elif "magnesium" in mat["name"].lower():
                                             cte = 26.0
                                         elif "zinc" in mat["name"].lower() or "zamak" in mat["name"].lower() or "za-" in mat["name"].lower():
@@ -2205,6 +2207,10 @@ if st.session_state.current_page == "main":
                                             cat = str(mat.get("category", "")).lower()
                                             if "polymer" in cat:
                                                 E_gpa = 3.0
+                                            elif "ceramic" in cat:
+                                                E_gpa = 300.0
+                                            elif "semiconductor" in cat:
+                                                E_gpa = 150.0
                                             elif "magnesium" in mat["name"].lower():
                                                 E_gpa = 45.0
                                             elif "zinc" in mat["name"].lower() or "zamak" in mat["name"].lower() or "za-" in mat["name"].lower():
@@ -2283,6 +2289,7 @@ if st.session_state.current_page == "main":
                                             cte = 12.0 # Standard Steel approx
                                             if "polymer" in cat: cte = 100.0
                                             elif "ceramic" in cat: cte = 5.0
+                                            elif "semiconductor" in cat: cte = 4.0
                                             elif "magnesium" in mat["name"].lower(): cte = 26.0
                                             elif "zinc" in mat["name"].lower() or "zamak" in mat["name"].lower() or "za-" in mat["name"].lower(): cte = 27.4
                                             elif "aluminum" in mat["name"].lower(): cte = 23.0
