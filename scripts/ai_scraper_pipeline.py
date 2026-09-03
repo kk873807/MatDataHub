@@ -29,7 +29,7 @@ def scrape_url(url: str):
         
     text = soup.get_text(separator=' ', strip=True)
     # Truncate to avoid blowing up context limits
-    return text[:15000] 
+    return text[:8000]  # Hard limit to stay under Groq 30k TPM Free limit 
 
 def extract_materials_via_ai(text: str, family_hint: str):
     if not GROQ_API_KEY:
@@ -99,9 +99,18 @@ def extract_materials_via_ai(text: str, family_hint: str):
                 
         if not raw:
             raise last_error
-        if raw.startswith("```json"): raw = raw[7:]
-        if raw.endswith("```"): raw = raw[:-3]
-        return json.loads(raw.strip())
+            
+        # Try to aggressively extract JSON array if model hallucinated conversational text
+        import re
+        match = re.search(r'\[\s*\{.*\}\s*\]', raw, re.DOTALL)
+        if match:
+            raw = match.group(0)
+        else:
+            if raw.startswith("```json"): raw = raw[7:]
+            if raw.endswith("```"): raw = raw[:-3]
+            raw = raw.strip()
+            
+        return json.loads(raw)
     except Exception as e:
         print(f"Extraction failed: {e}")
         return []
@@ -115,6 +124,12 @@ def run_pipeline(urls, hint):
         
         data = extract_materials_via_ai(text, hint)
         print(f"AI found {len(data)} materials from {url}.")
+        
+        # Pause to prevent Groq Rate Limit (429) on free tiers
+        import time
+        if len(urls) > 1 and url != urls[-1]:
+            print("Sleeping for 30 seconds to respect API rate limits...")
+            time.sleep(30)
         
         for mat in data:
             name = mat.get("name")
