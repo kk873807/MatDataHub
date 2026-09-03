@@ -143,7 +143,7 @@ def run_ai_scraper(req: ScrapeRequest, _: bool = Depends(verify_admin), db: Sess
                 {"role": "system", "content": "You are a machine that outputs raw JSON data without any conversational text."},
                 {"role": "user", "content": prompt}
             ],
-            model="llama-3.3-70b-specdec",
+            model="llama-3.3-70b-versatile",
             temperature=0.1
         )
         

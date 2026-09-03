@@ -70,7 +70,7 @@ def extract_materials_via_ai(text: str, family_hint: str):
     try:
         response = client.chat.completions.create(
             messages=[{"role": "user", "content": prompt}],
-            model="llama-3.3-70b-specdec",
+            model="llama-3.3-70b-versatile",
             temperature=0.1
         )
         raw = response.choices[0].message.content.strip()
