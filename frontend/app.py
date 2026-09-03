@@ -808,9 +808,12 @@ with st.sidebar:
 
     # ── Admin panel: approve/reject pending upgrade requests + view feedback ──
     with st.expander("🛠️ Admin"):
-        admin_pw = st.text_input("Admin password", type="password", key="admin_pw")
-        if admin_pw:
-            admin_headers = {"X-Admin-Secret": admin_pw}
+        admin_pw = st.text_input("Admin password", type="password")
+        if admin_pw == os.getenv("ADMIN_SECRET", "sk_test_admin_key"):
+            st.session_state.is_admin_unlocked = True
+            
+        if st.session_state.get("is_admin_unlocked"):
+            admin_headers = {"X-Admin-Secret": os.getenv("ADMIN_SECRET", "sk_test_admin_key")}
             try:
                 r = requests.get(f"{API_BASE}/admin/upgrade-requests", headers=admin_headers, timeout=15)
                 if r.status_code == 403:
@@ -1216,7 +1219,7 @@ if st.session_state.current_page == "main":
                                         requests.post(f"{API_BASE}/feedback/{c['id']}/helpful")
                                         st.rerun()
                                         
-                                is_admin = st.session_state.get("admin_pw") == os.getenv("ADMIN_SECRET", "sk_test_admin_key")
+                                is_admin = st.session_state.get("is_admin_unlocked", False)
                                         
                                 with btn_cols[1]:
                                     if st.button("💬 Reply", key=f"reply_btn_{c['id']}"):
