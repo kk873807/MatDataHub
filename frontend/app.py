@@ -1147,7 +1147,7 @@ if st.session_state.current_page == "main":
             """, unsafe_allow_html=True)
 
         # --- LIVE DATABASE STATS ---
-        st.markdown("### 📊 Database Intelligence")
+        st.markdown("### Database Intelligence")
         s1, s2, s3, s4 = st.columns(4)
         for col, num, label in [
             (s1, "1,030+", "Industrial Materials"),
@@ -1161,7 +1161,7 @@ if st.session_state.current_page == "main":
         st.markdown("---")
 
         # --- EXPLORE THE DOMAINS ---
-        st.markdown("### 🌌 Explore Advanced Domains")
+        st.markdown("### Explore Advanced Domains")
         st.markdown("The database has been expanded far beyond standard metals. Discover the cutting edge of materials science:")
         
         c1, c2, c3 = st.columns(3)
@@ -1214,7 +1214,7 @@ if st.session_state.current_page == "main":
         st.markdown("---")
 
         # --- GET STARTED BUTTONS ---
-        st.markdown("### 🎮 Quick Actions")
+        st.markdown("### Quick Actions")
         g1, g2 = st.columns(2)
         with g1:
             st.markdown("""
@@ -1235,7 +1235,7 @@ if st.session_state.current_page == "main":
         st.caption("MatDataHub aggregates properties strictly from highly trusted standards (ASTM, ASM, ISO). Use the **💬 Feedback** tab to request specific new materials.")
         st.markdown("<br>", unsafe_allow_html=True)
         st.divider()
-        st.markdown("## 💬 Community Reviews & Discussion")
+        st.markdown("## Community Reviews & Discussion")
         st.markdown("See what other engineers are saying about MatDataHub, reply to their feedback, and join the discussion!")
     
         try:
@@ -1404,9 +1404,15 @@ if st.session_state.current_page == "main":
             st.error(f"Failed to load community feedback: {e}")
     
     with tab_browse:
+        st.markdown("""
+        <div style="background: var(--secondary-background-color); padding: 1rem 1.5rem; border-radius: 6px; border: 1px solid var(--faded-text-20); border-left: 4px solid #4FC3A1; margin-bottom: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+            <h3 style="color: var(--text-color); margin-top: 0; margin-bottom: 0.3rem; font-weight: 700; letter-spacing: 0.5px;">Global Materials Database</h3>
+            <p style="color: var(--text-color); opacity: 0.75; font-size: 0.95rem; margin-bottom: 0;">Search, filter, and export data across 1,000+ verified engineering materials.</p>
+        </div>
+        """, unsafe_allow_html=True)
     
         search_query = st.text_input(
-            "Search materials by name, grade, standard, or application...",
+            "Search by name, grade, standard, or application...",
             placeholder="e.g. stainless, 6061, aerospace, corrosion",
         )
     
@@ -1841,13 +1847,9 @@ if st.session_state.current_page == "main":
     # ══════════════════════════════════════════════
     with tab_projects:
         st.markdown("""
-        <div style="background: linear-gradient(90deg, rgba(16, 24, 43, 0.9) 0%, rgba(30, 45, 80, 0.9) 100%); padding: 2rem; border-radius: 12px; border: 1px solid rgba(0, 240, 255, 0.3); margin-bottom: 2rem; box-shadow: 0 4px 20px rgba(0, 240, 255, 0.1);">
-            <h2 style="color: #00f0ff; margin-top: 0; font-weight: 800; letter-spacing: 1px; display: flex; align-items: center; gap: 10px;">
-                <span style="font-size: 1.5em;">⛭</span> Advanced Engineering Workspaces
-            </h2>
-            <p style="color: #a0c0ff; font-size: 1.1rem; margin-bottom: 0;">
-                Build, simulate, and optimize your assemblies. Leverage the full MatDataHub 2.0 database to instantly calculate Total Mass, Yield Strength limits, and BOM Economics.
-            </p>
+        <div style="background: var(--secondary-background-color); padding: 1rem 1.5rem; border-radius: 6px; border: 1px solid var(--faded-text-20); border-left: 4px solid #00f0ff; margin-bottom: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+            <h3 style="color: var(--text-color); margin-top: 0; margin-bottom: 0.3rem; font-weight: 700; letter-spacing: 0.5px;">Advanced Engineering Workspaces</h3>
+            <p style="color: var(--text-color); opacity: 0.75; font-size: 0.95rem; margin-bottom: 0;">Build, simulate, and optimize your assemblies. Instantly calculate Total Mass, Yield Strength limits, and BOM Economics.</p>
         </div>
         """, unsafe_allow_html=True)
 
