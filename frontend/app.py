@@ -1442,7 +1442,7 @@ margin: 0 auto;
 content: '';
 position: absolute;
 width: 4px;
-background: linear-gradient(to bottom, #4FC3A1, #2E86AB, #FFC107);
+background: linear-gradient(to bottom, #4FC3A1, #2E86AB, #FFC107, #9C27B0, #E91E63);
 top: 10px;
 bottom: 10px;
 left: 24px;
@@ -1471,6 +1471,8 @@ box-shadow: 0 0 15px rgba(79, 195, 161, 0.5);
 }
 .t-node:nth-child(2)::after { background-color: #2E86AB; box-shadow: 0 0 15px rgba(46, 134, 171, 0.5); }
 .t-node:nth-child(3)::after { background-color: #FFC107; box-shadow: 0 0 15px rgba(255, 193, 7, 0.5); }
+.t-node:nth-child(4)::after { background-color: #9C27B0; box-shadow: 0 0 15px rgba(156, 39, 176, 0.5); }
+.t-node:nth-child(5)::after { background-color: #E91E63; box-shadow: 0 0 15px rgba(233, 30, 99, 0.5); }
 
 .t-card {
 padding: 1.5rem 2rem;
@@ -1493,6 +1495,8 @@ background: #4FC3A1;
 }
 .t-node:nth-child(2) .t-card::before { background: #2E86AB; }
 .t-node:nth-child(3) .t-card::before { background: #FFC107; }
+.t-node:nth-child(4) .t-card::before { background: #9C27B0; }
+.t-node:nth-child(5) .t-card::before { background: #E91E63; }
 
 .t-card:hover {
 transform: translateX(8px);
@@ -1510,6 +1514,8 @@ display: block;
 }
 .t-node:nth-child(2) .t-step { color: #2E86AB; }
 .t-node:nth-child(3) .t-step { color: #FFC107; }
+.t-node:nth-child(4) .t-step { color: #9C27B0; }
+.t-node:nth-child(5) .t-step { color: #E91E63; }
 
 .t-card h4 {
 margin: 0 0 10px 0;
@@ -1522,6 +1528,28 @@ color: var(--text-color);
 opacity: 0.8;
 line-height: 1.6;
 font-size: 1.05rem;
+}
+.tool-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+gap: 10px;
+margin-top: 15px;
+}
+.tool-item {
+background: rgba(128,128,128,0.05);
+border-left: 3px solid #FFC107;
+padding: 10px 14px;
+border-radius: 6px;
+font-size: 0.95rem;
+color: var(--text-color);
+border-top: 1px solid var(--faded-text-10);
+border-right: 1px solid var(--faded-text-10);
+border-bottom: 1px solid var(--faded-text-10);
+}
+.tool-item strong {
+color: #FFC107;
+display: block;
+margin-bottom: 2px;
 }
 </style>
 
@@ -1547,15 +1575,40 @@ font-size: 1.05rem;
 
 <div class="t-node">
 <div class="t-card">
-<span class="t-step">Step 3 • Simulation</span>
+<span class="t-step">Step 3 • Simulation & Economics</span>
 <h4>Engineering Workspaces (BOM)</h4>
-<p>The <b>Engineering (BOM)</b> tab is where raw data becomes structural reality. Create custom workspaces, build mechanical assemblies, and link components to the database. The system automatically calculates Total Mass, tracks Economics, and executes fundamental Stress & Thermal limit checks.</p>
+<p>The <b>Engineering (BOM)</b> tab is where raw data becomes structural reality. Create custom workspaces, build mechanical assemblies, and link components to the database to calculate Total Mass and Economics. Unlock the <b>Advanced Engineering Tools</b> to access powerful simulation modules:</p>
+<div class="tool-grid">
+<div class="tool-item"><strong>🧪 Synthesizer</strong>Formulate custom alloys.</div>
+<div class="tool-item"><strong>🛡️ Safety & Yield</strong>Calculate structural limits.</div>
+<div class="tool-item"><strong>🔄 Fatigue</strong>Estimate cyclic endurance.</div>
+<div class="tool-item"><strong>🌡️ Thermal</strong>Predict expansion & heat.</div>
+<div class="tool-item"><strong>📐 Deflection</strong>Model beam bending.</div>
+<div class="tool-item"><strong>⚡ Shock</strong>Analyze impact loading.</div>
+<div class="tool-item"><strong>📉 Cost</strong>Optimize BOM economics.</div>
+</div>
+</div>
+</div>
+
+<div class="t-node">
+<div class="t-card">
+<span class="t-step" style="color: #9C27B0;">Step 4 • Intelligence</span>
+<h4>AI Materials Advisor</h4>
+<p>Encounter a complex design constraint? Leverage the <b>AI Advisor</b> tab. Powered by advanced machine learning fine-tuned on materials science, it directly queries the MatDataHub database to prevent hallucinations and recommend optimal aerospace, nuclear, or industrial alternatives.</p>
+</div>
+</div>
+
+<div class="t-node">
+<div class="t-card">
+<span class="t-step" style="color: #E91E63;">Step 5 • Community Loop</span>
+<h4>System Feedback</h4>
+<p>Continuous evolution requires engineering feedback. Use the <b>Feedback</b> tab to report issues, request the injection of highly specific new materials into the database, or participate in the community review discussions.</p>
 </div>
 </div>
 
 </div>
 </div>
-        """, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
     with tab_browse:
         st.markdown("""
