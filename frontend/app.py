@@ -539,7 +539,7 @@ def fetch_material_detail(mat_id, token=None):
     return None
 
 
-def submit_feedback(name, email, category, message, rating, page_context):
+def submit_feedback(name, email, category, message, rating, page_context, image_data=None):
     """Submit user feedback to the backend. Works for anonymous or logged-in users."""
     body = {
         "name": name or None,
@@ -549,6 +549,8 @@ def submit_feedback(name, email, category, message, rating, page_context):
         "rating": rating,
         "page_context": page_context,
     }
+    if image_data:
+        body["image_data"] = image_data
     return api_post("/feedback/", body)
 
 
@@ -1142,6 +1144,20 @@ if st.session_state.current_page == "main":
                     # Custom CSS for compact feedback display
                     st.markdown("""
                         <style>
+                        /* Nuke Streamlit's default massive gaps for this specific section */
+                        div[data-testid="stVerticalBlock"] {
+                            gap: 0.2rem !important;
+                        }
+                        div[data-testid="stHorizontalBlock"] {
+                            gap: 0.2rem !important;
+                            align-items: center !important;
+                        }
+                        /* Shrink Streamlit button paddings */
+                        button[data-testid="baseButton-secondary"] {
+                            padding: 2px 8px !important;
+                            min-height: 25px !important;
+                            font-size: 0.75rem !important;
+                        }
                         .compact-comment {
                             padding-left: 10px;
                             border-left: 2px solid #333;
@@ -1208,7 +1224,7 @@ if st.session_state.current_page == "main":
                                         requests.post(f"{API_BASE}/feedback/{c['id']}/helpful")
                                         st.rerun()
                                         
-                                is_admin = st.session_state.get("user") and st.session_state.user.get("role") == "admin"
+                                is_admin = st.session_state.get("admin_pw") == os.getenv("ADMIN_SECRET", "sk_test_admin_key")
                                         
                                 with btn_cols[1]:
                                     if st.button("💬 Reply", key=f"reply_btn_{c['id']}"):
@@ -2454,6 +2470,7 @@ if st.session_state.current_page == "main":
                 placeholder="Tell us what's working, what's not, or what you'd love to see next...",
                 height=140,
             )
+            fb_image = st.file_uploader("Attach Screenshot (Optional)", type=["png", "jpg", "jpeg"])
             
             agree_tc = st.checkbox("I agree to the Terms & Conditions (No abuse, profanity, pornography, or hate speech).")
             
@@ -2465,8 +2482,18 @@ if st.session_state.current_page == "main":
                 elif not agree_tc:
                     st.error("You must agree to the Terms & Conditions before submitting.")
                 else:
+                    img_data = None
+                    if fb_image is not None:
+                        try:
+                            import base64
+                            if fb_image.size > 1024 * 1024:
+                                st.warning("Image too large. Skipped.")
+                            else:
+                                img_data = base64.b64encode(fb_image.getvalue()).decode("utf-8")
+                        except Exception:
+                            pass
                     result = submit_feedback(
-                        fb_name, fb_email, fb_category, fb_message.strip(), fb_rating, "Feedback Tab"
+                        fb_name, fb_email, fb_category, fb_message.strip(), fb_rating, "Feedback Tab", img_data
                     )
                     if result["ok"]:
                         st.success("Thanks! Your feedback has been recorded. 🙌")
