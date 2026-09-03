@@ -2156,6 +2156,12 @@ if st.session_state.current_page == "main":
                                             cte = 23.0
                                         elif "titanium" in mat["name"].lower() or "nitinol" in mat["name"].lower():
                                             cte = 8.6
+                                        elif "zirconium" in mat["name"].lower() or "zircaloy" in mat["name"].lower():
+                                            cte = 6.0
+                                        elif "beryllium copper" in mat["name"].lower():
+                                            cte = 17.0
+                                        elif "beryllium" in mat["name"].lower():
+                                            cte = 11.4
                                         else:
                                             cte = 12.0
                                             
@@ -2209,6 +2215,14 @@ if st.session_state.current_page == "main":
                                                 E_gpa = 110.0
                                             elif "nitinol" in mat["name"].lower():
                                                 E_gpa = 75.0
+                                            elif "zirconium" in mat["name"].lower() or "zircaloy" in mat["name"].lower():
+                                                E_gpa = 99.0
+                                            elif "beryllium copper" in mat["name"].lower():
+                                                E_gpa = 130.0
+                                            elif "albemet" in mat["name"].lower():
+                                                E_gpa = 193.0
+                                            elif "beryllium" in mat["name"].lower():
+                                                E_gpa = 303.0
                                             else:
                                                 E_gpa = 200.0 # Standard Steel
                                             st.info(f"Elastic Modulus not explicitly in DB. Using estimated value for {cat}: **{E_gpa} GPa**")
@@ -2273,6 +2287,9 @@ if st.session_state.current_page == "main":
                                             elif "zinc" in mat["name"].lower() or "zamak" in mat["name"].lower() or "za-" in mat["name"].lower(): cte = 27.4
                                             elif "aluminum" in mat["name"].lower(): cte = 23.0
                                             elif "titanium" in mat["name"].lower() or "nitinol" in mat["name"].lower(): cte = 8.6
+                                            elif "zirconium" in mat["name"].lower() or "zircaloy" in mat["name"].lower(): cte = 6.0
+                                            elif "beryllium copper" in mat["name"].lower(): cte = 17.0
+                                            elif "beryllium" in mat["name"].lower(): cte = 11.4
                                             
                                             Rs = (sigma_f * k_cond) / (E_gpa * cte)
                                             
