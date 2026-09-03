@@ -1429,27 +1429,149 @@ if st.session_state.current_page == "main":
         </div>
         """, unsafe_allow_html=True)
 
-        st.markdown("### 🚀 Core Workflows")
+        # --- IMMERSIVE VISUAL ROADMAP ---
+        st.markdown("""
+        <style>
+        .roadmap-wrapper {
+            margin: 3rem 0;
+            padding: 2rem;
+            background: linear-gradient(180deg, rgba(79, 195, 161, 0.02) 0%, rgba(46, 134, 171, 0.05) 100%);
+            border-radius: 16px;
+            border: 1px solid var(--faded-text-20);
+        }
+        .roadmap-title {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-color);
+            margin-bottom: 3rem;
+            letter-spacing: -0.5px;
+        }
+        .timeline {
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            background: linear-gradient(to bottom, #4FC3A1, #2E86AB, #FFC107);
+            top: 10px;
+            bottom: 10px;
+            left: 24px;
+            border-radius: 4px;
+        }
+        .t-node {
+            padding: 10px 0 30px 70px;
+            position: relative;
+        }
+        .t-node::after {
+            content: '✦';
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #111;
+            font-size: 14px;
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            background-color: #4FC3A1;
+            top: 10px;
+            border-radius: 50%;
+            z-index: 1;
+            left: 10px;
+            box-shadow: 0 0 15px rgba(79, 195, 161, 0.5);
+        }
+        .t-node:nth-child(2)::after { background-color: #2E86AB; box-shadow: 0 0 15px rgba(46, 134, 171, 0.5); }
+        .t-node:nth-child(3)::after { background-color: #FFC107; box-shadow: 0 0 15px rgba(255, 193, 7, 0.5); }
         
-        c1, c2 = st.columns(2)
-        with c1:
-            st.markdown("#### 1. Global Database Search")
-            st.markdown("Navigate to the **🔍 Database** tab to query over 1,000+ materials. You can search by specific alloy grades (e.g., *Ti-6Al-4V*), trade names (e.g., *Inconel*), or general categories. Use the sidebar filters to narrow down materials by ultimate tensile strength, thermal conductivity, or cost.")
-            
-            st.markdown("#### 2. Visual Comparison Engine")
-            st.markdown("Once you find candidate materials, head to the **⚖️ Compare** tab. Select up to 5 materials from the dropdown to instantly generate immersive radar charts and side-by-side data tables. This is critical for finding lightweight, high-strength substitutions.")
+        .t-card {
+            padding: 1.5rem 2rem;
+            background: var(--secondary-background-color);
+            border-radius: 12px;
+            border: 1px solid var(--faded-text-20);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .t-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: #4FC3A1;
+        }
+        .t-node:nth-child(2) .t-card::before { background: #2E86AB; }
+        .t-node:nth-child(3) .t-card::before { background: #FFC107; }
         
-        with c2:
-            st.markdown("#### 3. Engineering Workspaces (BOM)")
-            st.markdown("The **⚙️ Engineering (BOM)** tab is where real engineering happens. Create a project, add structural components (like brackets or beams), and link them to database materials. The system will automatically calculate the **Total Mass**, **BOM Economics**, and run basic **Thermal/Stress checks**.")
-            
-            st.markdown("#### 4. The AI Advisor")
-            st.markdown("Stuck on a design problem? The **🧠 AI Advisor** is fine-tuned on materials science. Instead of hallucinating, it queries the live database to give you exact physical properties and suggests aerospace, nuclear, or industrial alternatives based on your constraints.")
-            
-        st.divider()
-        st.markdown("<div style='text-align: center; opacity: 0.8;'><p>Ready to start? Dive straight into the <b>🔍 Database</b>.</p></div>", unsafe_allow_html=True)
+        .t-card:hover {
+            transform: translateX(8px);
+            border-color: var(--faded-text-40);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+        }
+        .t-step {
+            font-size: 0.85rem;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #4FC3A1;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        .t-node:nth-child(2) .t-step { color: #2E86AB; }
+        .t-node:nth-child(3) .t-step { color: #FFC107; }
+        
+        .t-card h4 {
+            margin: 0 0 10px 0;
+            font-size: 1.4rem;
+            color: var(--text-color);
+        }
+        .t-card p {
+            margin: 0;
+            color: var(--text-color);
+            opacity: 0.8;
+            line-height: 1.6;
+            font-size: 1.05rem;
+        }
+        </style>
 
-    with tab_browse:
+        <div class="roadmap-wrapper">
+            <h2 class="roadmap-title">Platform Mastery Roadmap</h2>
+            <div class="timeline">
+                
+                <div class="t-node">
+                    <div class="t-card">
+                        <span class="t-step">Step 1 • Discovery</span>
+                        <h4>Global Database Search</h4>
+                        <p>Navigate to the <b>Database</b> tab to query over 1,000+ materials. Search by specific alloy grades (e.g., <i>Ti-6Al-4V</i>), trade names, or master categories. Utilize precision filters to narrow down targets by ultimate tensile strength, thermal conductivity, and economics.</p>
+                    </div>
+                </div>
+                
+                <div class="t-node">
+                    <div class="t-card">
+                        <span class="t-step">Step 2 • Analysis</span>
+                        <h4>Visual Comparison Engine</h4>
+                        <p>Once you locate candidate materials, proceed to the <b>Compare</b> tab. Select up to 5 materials to instantly generate immersive radar charts and parallel data matrices. This visual breakdown is critical for isolating lightweight, high-strength substitutions.</p>
+                    </div>
+                </div>
+                
+                <div class="t-node">
+                    <div class="t-card">
+                        <span class="t-step">Step 3 • Simulation</span>
+                        <h4>Engineering Workspaces (BOM)</h4>
+                        <p>The <b>Engineering (BOM)</b> tab is where raw data becomes structural reality. Create custom workspaces, build mechanical assemblies, and link components to the database. The system automatically calculates Total Mass, tracks Economics, and executes fundamental Stress & Thermal limit checks.</p>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        with tab_browse:
         st.markdown("""
         <div style="background: var(--secondary-background-color); padding: 1rem 1.5rem; border-radius: 6px; border: 1px solid var(--faded-text-20); border-left: 4px solid #4FC3A1; margin-bottom: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
             <h3 style="color: var(--text-color); margin-top: 0; margin-bottom: 0.3rem; font-weight: 700; letter-spacing: 0.5px;">Global Materials Database</h3>
