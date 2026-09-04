@@ -735,15 +735,15 @@ with st.sidebar:
                     st.error(profile.get("error", "Could not refresh status."))
         elif current_tier == "free":
             st.caption("Upgrades are reviewed manually — you'll see a pending badge after requesting.")
-            if st.button("⭐ Request Upgrade to Pro — ₹499/mo"):
+            if st.button("🚀 Request Upgrade to Pro — ₹499/mo"):
                 st.session_state.current_page = "pricing"
                 st.rerun()
-            if st.button("🚀 Request Upgrade to Advanced — ₹1499/mo"):
+            if st.button("💎 Request Upgrade to Advanced — ₹49,999/mo"):
                 st.session_state.current_page = "pricing"
                 st.rerun()
         elif current_tier == "pro":
             st.caption("Upgrades are reviewed manually — you'll see a pending badge after requesting.")
-            if st.button("🚀 Request Upgrade to Advanced — ₹1499/mo"):
+            if st.button("💎 Request Upgrade to Advanced — ₹49,999/mo"):
                 st.session_state.current_page = "pricing"
                 st.rerun()
         else:
