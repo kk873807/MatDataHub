@@ -21,8 +21,8 @@ def generate_api_key(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    if current_user.tier not in ["pro", "advanced"]:
-        raise HTTPException(status_code=403, detail="API Keys are only available for Pro and Advanced tiers.")
+    if current_user.tier != "advanced":
+        raise HTTPException(status_code=403, detail="API Keys are strictly reserved for the Advanced (Enterprise) tier.")
         
     new_key = "mdh_" + secrets.token_hex(24)
     current_user.api_key = new_key

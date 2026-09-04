@@ -31,7 +31,7 @@ def create_payment_link(req: CreateLinkRequest, current_user: User = Depends(get
     if tier not in ["pro", "advanced"]:
         raise HTTPException(status_code=400, detail="Invalid tier.")
         
-    amount = 49900 if tier == "pro" else 149900  # Amount in paise (multiply INR by 100)
+    amount = 49900 if tier == "pro" else 1499900  # Amount in paise (multiply INR by 100)
     
     # Generate payment link
     try:

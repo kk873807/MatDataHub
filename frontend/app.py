@@ -194,8 +194,8 @@ def render_pricing_page():
     with p3:
         with st.container(border=True):
             st.markdown("### Advanced")
-            st.markdown("## ₹1999 / mo")
-            st.markdown("- ✅ Unlimited Comparisons\n- ✅ Cost Optimization Engine\n- ✅ Download PDF Reports\n- ✅ Priority Support")
+            st.markdown("## ₹14,999 / mo")
+            st.markdown("- ✅ Unlimited Comparisons\n- ✅ Cost Optimization Engine\n- ✅ Download PDF Reports\n- ✅ Programmatic API Access")
             if user.get("tier") == "advanced":
                 st.button("Current Plan", disabled=True, use_container_width=True, key="btn_adv1")
             else:
@@ -976,7 +976,7 @@ if st.session_state.current_page == "account":
                     st.success("Profile updated.")
                 st.divider()
                 st.markdown("### 🔑 API Access")
-                if user.get("tier") in ["pro", "advanced"]:
+                if user.get("tier") == "advanced":
                     current_key = user.get("api_key")
                     if current_key:
                         st.code(current_key, language="text")
@@ -996,7 +996,7 @@ if st.session_state.current_page == "account":
                         else:
                             st.error("Failed to generate API Key.")
                 else:
-                    st.warning("API Access is only available on the Pro and Advanced tiers.")
+                    st.warning("API Access is strictly reserved for the Advanced (Enterprise) tier.")
 
                 
 
@@ -2854,7 +2854,7 @@ margin-bottom: 2px;
         with st.expander("Can I downgrade or cancel at any time?"):
             st.write("Yes! You can manage your subscription directly from the **💳 Subscriptions & Upgrades** section in your Account dashboard.")
         with st.expander("Is API Access available?"):
-            st.write("API Access is available on the Pro and Advanced tiers! You can generate your secure `X-API-Key` directly from this Account Dashboard once you upgrade.")
+            st.write("API Access is available exclusively on the Advanced (Enterprise) tier! This allows full programmatic access to pipe material data directly into your ERP systems and simulations.")
 
 
     with tab_feedback:

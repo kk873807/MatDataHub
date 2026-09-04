@@ -83,7 +83,7 @@ def generate_api_key() -> str:
 # ── Tier constants ──
 TIER_LIMITS = {
     "free":     {"compare_max": 2,  "api_daily": 0,     "export": False, "find_similar": False},
-    "pro":      {"compare_max": 5,  "api_daily": 1000,  "export": True,  "find_similar": True},
+    "pro":      {"compare_max": 5,  "api_daily": 0,     "export": True,  "find_similar": True},
     "advanced": {"compare_max": 99, "api_daily": 10000, "export": True,  "find_similar": True},
 }
 
