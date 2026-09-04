@@ -194,7 +194,7 @@ def render_pricing_page():
     with p3:
         with st.container(border=True):
             st.markdown("### Advanced")
-            st.markdown("## ₹99,999 / mo")
+            st.markdown("## ₹49,999 / mo")
             st.markdown("- ✅ Unlimited Comparisons\n- ✅ Cost Optimization Engine\n- ✅ Download PDF Reports\n- ✅ Programmatic API Access")
             if user.get("tier") == "advanced":
                 st.button("Current Plan", disabled=True, use_container_width=True, key="btn_adv1")
