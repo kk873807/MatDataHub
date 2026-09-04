@@ -98,9 +98,11 @@ def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
     db: Session = Depends(get_db),
 ) -> User:
+    import hashlib
     api_key = request.headers.get("X-API-Key")
     if api_key:
-        user = db.query(User).filter(User.api_key == api_key, User.is_active == True).first()
+        hashed_key = hashlib.sha256(api_key.encode('utf-8')).hexdigest()
+        user = db.query(User).filter(User.api_key == hashed_key, User.is_active == True).first()
         if not user:
             raise HTTPException(status_code=401, detail="Invalid API Key")
         if getattr(user, "is_blocked", False):
