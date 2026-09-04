@@ -84,6 +84,136 @@ st.set_page_config(
     page_icon=":hammer_and_wrench:",
     layout="wide",
 )
+
+# --- THEME-AWARE CSS ---
+st.markdown("""
+<style>
+/* Futuristic Glassmorphism Theme */
+:root {
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --neon-green: #00F0FF; /* Cyberpunk cyan/green */
+    --neon-purple: #8A2BE2;
+}
+
+[data-testid="stAppViewContainer"] {
+    background-color: transparent;
+}
+
+.hero-section {
+    background: linear-gradient(135deg, rgba(0, 240, 255, 0.05) 0%, rgba(138, 43, 226, 0.05) 100%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 3rem 2rem; 
+    border-radius: 16px; 
+    border: 1px solid var(--glass-border);
+    margin-bottom: 2.5rem; 
+    text-align: center; 
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    animation: glow 4s infinite alternate;
+}
+
+@keyframes glow {
+    from { box-shadow: 0 0 10px rgba(0, 240, 255, 0.05); }
+    to { box-shadow: 0 0 20px rgba(138, 43, 226, 0.1); }
+}
+
+.hero-title {
+    color: var(--text-color); 
+    font-size: 3.5rem; 
+    margin-bottom: 0.5rem; 
+    font-weight: 900; 
+    letter-spacing: -1.5px;
+    background: -webkit-linear-gradient(45deg, #00F0FF, #8A2BE2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-subtitle {
+    color: var(--text-color); 
+    opacity: 0.85;
+    font-size: 1.25rem; 
+    max-width: 750px; 
+    margin: 0 auto; 
+    line-height: 1.6;
+    font-weight: 300;
+}
+
+.cyber-stat {
+    background: var(--glass-bg);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.cyber-stat:hover {
+    border-color: var(--neon-green);
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 10px 25px rgba(0, 240, 255, 0.15);
+}
+
+.cyber-num {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: var(--text-color);
+    margin-bottom: 0.2rem;
+    background: -webkit-linear-gradient(45deg, #00F0FF, #8A2BE2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.cyber-label {
+    font-size: 0.85rem;
+    color: var(--text-color);
+    opacity: 0.7;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 700;
+}
+
+.domain-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--glass-border);
+    height: 100%;
+    transition: all 0.3s ease;
+}
+
+.domain-card:hover {
+    border-color: var(--neon-purple);
+    box-shadow: 0 8px 20px rgba(138, 43, 226, 0.15);
+    transform: translateY(-3px);
+}
+
+.domain-card p {
+    color: var(--text-color);
+    opacity: 0.8;
+    font-size: 0.95rem;
+    margin-bottom: 0;
+    line-height: 1.5;
+}
+
+.domain-card h4 {
+    margin-top: 0;
+    color: var(--text-color);
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+/* Customizing Streamlit Tabs to look modern */
+div[data-testid="stTabs"] button {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
 # --- APP STATE INITIALIZATION ---
 if "current_page" not in st.session_state:
     st.session_state.current_page = "main"
@@ -735,85 +865,6 @@ with st.sidebar:
 
     if st.session_state.token and st.session_state.user:
         if st.session_state.current_page == "main":
-    # --- THEME-AWARE CSS ---
-    st.markdown("""
-<style>
-.hero-section {
-        background: linear-gradient(135deg, rgba(79, 195, 161, 0.12) 0%, rgba(46, 134, 171, 0.12) 100%);
-        padding: 3rem 2rem; 
-        border-radius: 12px; 
-        border: 1px solid var(--faded-text-40);
-        margin-bottom: 2.5rem; 
-        text-align: center; 
-        box-shadow: 0 8px 32px rgba(0,0,0,0.05);
-    }
-.hero-title {
-        color: var(--text-color); 
-        font-size: 3rem; 
-        margin-bottom: 0.5rem; 
-        font-weight: 800; 
-        letter-spacing: -1px;
-    }
-.hero-subtitle {
-        color: var(--text-color); 
-        opacity: 0.8;
-        font-size: 1.25rem; 
-        max-width: 700px; 
-        margin: 0 auto; 
-        line-height: 1.6;
-    }
-.cyber-stat {
-        background: var(--secondary-background-color);
-        border: 1px solid var(--faded-text-20);
-        border-radius: 8px;
-        padding: 1.5rem 1rem;
-        text-align: center;
-        transition: all 0.3s ease;
-    }
-.cyber-stat:hover {
-        border-color: #4FC3A1;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 20px rgba(79, 195, 161, 0.15);
-    }
-.cyber-num {
-        font-size: 2.2rem;
-        font-weight: 800;
-        color: var(--text-color);
-        margin-bottom: 0.2rem;
-    }
-.cyber-label {
-        font-size: 0.9rem;
-        color: var(--text-color);
-        opacity: 0.7;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        font-weight: 600;
-    }
-.domain-card {
-        background: var(--secondary-background-color);
-        padding: 1.2rem;
-        border-radius: 8px;
-        border: 1px solid var(--faded-text-20);
-        height: 100%;
-        transition: all 0.3s ease;
-    }
-.domain-card:hover {
-        border-color: #2E86AB;
-        box-shadow: 0 4px 15px rgba(46, 134, 171, 0.1);
-    }
-.domain-card p {
-        color: var(--text-color);
-        opacity: 0.75;
-        font-size: 0.9rem;
-        margin-bottom: 0;
-    }
-.domain-card h4 {
-        margin-top: 0;
-        color: var(--text-color);
-        font-weight: 700;
-    }
-</style>
-    """, unsafe_allow_html=True)
             if st.button("⚙️ Manage Account", use_container_width=True):
                 st.session_state.current_page = "account"
                 st.rerun()
@@ -1301,6 +1352,16 @@ if st.session_state.current_page == "main":
             with col:
                 st.markdown(f'<div class="cyber-stat"><div class="cyber-num">{num}</div><div class="cyber-label">{label}</div></div>', unsafe_allow_html=True)
 
+        # --- QUICK ACTIONS ---
+        st.markdown("### ⚡ Quick Actions")
+        qa1, qa2, qa3 = st.columns(3)
+        with qa1:
+            st.info("🔄 **Smart Substitution**\n\nMathematically find alternative supply chain materials based on cost, weight, and carbon footprint.")
+        with qa2:
+            st.success("📊 **Enterprise BOM Analyzer**\n\nUpload a CSV assembly to instantly verify ESG compliance and obsolete global standards.")
+        with qa3:
+            st.warning("🤖 **AI Metallurgist**\n\nDescribe your engineering constraints in natural language and get instantaneous material recommendations.")
+        
         st.markdown("---")
 
         # --- EXPLORE THE DOMAINS ---
