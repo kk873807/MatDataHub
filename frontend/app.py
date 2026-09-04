@@ -1526,7 +1526,7 @@ if st.session_state.current_page == "main":
                                 if c.get("admin_reply"):
                                     st.markdown(f"""
                                     <div class="compact-admin">
-                                        <strong style="color: #00f0ff;">Γ£à Verified Admin Response:</strong><br/>
+                                        <strong style="color: #00f0ff;">✅ Verified Admin Response:</strong><br/>
                                         {c["admin_reply"]}
                                     </div>
                                     """, unsafe_allow_html=True)
