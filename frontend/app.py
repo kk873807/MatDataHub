@@ -194,7 +194,7 @@ def render_pricing_page():
     with p3:
         with st.container(border=True):
             st.markdown("### Advanced")
-            st.markdown("## ₹14,999 / mo")
+            st.markdown("## ₹99,999 / mo")
             st.markdown("- ✅ Unlimited Comparisons\n- ✅ Cost Optimization Engine\n- ✅ Download PDF Reports\n- ✅ Programmatic API Access")
             if user.get("tier") == "advanced":
                 st.button("Current Plan", disabled=True, use_container_width=True, key="btn_adv1")
@@ -981,28 +981,38 @@ if st.session_state.current_page == "account":
                     
                     if current_key_exists:
                         st.success("✅ Your Enterprise API Key is active (Hidden for security).")
-                        st.caption("Pass your API key in the `X-API-Key` HTTP header to authenticate.")
+                        st.caption("Pass your **API Secret** in the `X-API-Key` HTTP header to authenticate.")
                     else:
                         st.info("You haven't generated an API Key yet.")
-                        
-                    if st.session_state.get("new_api_key"):
-                        st.warning("⚠️ CRITICAL: Copy your API Key now. It will NEVER be shown again!")
-                        st.code(st.session_state["new_api_key"], language="text")
                     
-                    if st.button("Generate New API Key"):
+                    # We define a function for the modal popup
+                    @st.dialog("🔑 Generate API Key", width="large")
+                    def show_api_key_modal():
+                        st.warning("⚠️ CRITICAL: Copy your API Secret now. For security reasons, it will NEVER be shown again once you close this window!")
                         import requests
-                        r = requests.post(
-                            f"{API_BASE}/account/generate-api-key",
-                            headers={"Authorization": f"Bearer {st.session_state.token}"}
-                        )
+                        with st.spinner("Provisioning enterprise credentials..."):
+                            r = requests.post(
+                                f"{API_BASE}/account/generate-api-key",
+                                headers={"Authorization": f"Bearer {st.session_state.token}"}
+                            )
                         if r.status_code == 200:
-                            st.session_state["new_api_key"] = r.json()["api_key"]
-                            # Refresh user state to show the success badge
-                            me_res = api_get("/auth/me")
-                            if me_res["ok"]: st.session_state.user = me_res["data"]
-                            st.rerun()
+                            data = r.json()
+                            st.text_input("API Key ID (Public)", value=data.get("api_key_id", ""), disabled=True)
+                            
+                            st.markdown("### API Secret")
+                            st.code(data.get("api_secret", ""), language="text")
+                            
+                            st.info("Please store this securely in your environment variables or secret manager (e.g., AWS Secrets Manager, GCP Secret Manager).")
+                            if st.button("I have copied my API Secret"):
+                                # Refresh user state to show the success badge
+                                me_res = api_get("/auth/me")
+                                if me_res["ok"]: st.session_state.user = me_res["data"]
+                                st.rerun()
                         else:
                             st.error("Failed to generate API Key.")
+                            
+                    if st.button("Generate New API Key", type="primary"):
+                        show_api_key_modal()
                 else:
                     st.warning("API Access is strictly reserved for the Advanced (Enterprise) tier.")
 
