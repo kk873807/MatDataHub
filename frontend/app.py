@@ -1667,12 +1667,6 @@ if st.session_state.current_page == "main":
         st.markdown("---")
 
     with tab_browse:
-        st.markdown("""
-<div style="background: var(--secondary-background-color); padding: 1rem 1.5rem; border-radius: 6px; border: 1px solid var(--faded-text-20); border-left: 4px solid #4FC3A1; margin-bottom: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
-<h3 style="color: var(--text-color); margin-top: 0; margin-bottom: 0.3rem; font-weight: 700; letter-spacing: 0.5px;">Global Materials Database</h3>
-<p style="color: var(--text-color); opacity: 0.75; font-size: 0.95rem; margin-bottom: 0;">Search, filter, and export data across 1,000+ verified engineering materials.</p>
-</div>
-        """, unsafe_allow_html=True)
     
         search_query = st.text_input(
             "Search by name, grade, standard, or application...",
@@ -1911,7 +1905,6 @@ if st.session_state.current_page == "main":
     # ══════════════════════════════════════════════
     with tab_compare:
     
-        st.subheader("Side-by-Side Material Comparison")
         st.caption("Select 2 or 3 materials to compare their properties head-to-head.")
     
         with st.spinner("Loading material list (API may take ~30s on first load)..."):
@@ -2151,12 +2144,6 @@ if st.session_state.current_page == "main":
     #  TAB: MY PROJECTS (BOM)
     # ══════════════════════════════════════════════
     with tab_projects:
-        st.markdown("""
-<div style="background: var(--secondary-background-color); padding: 1rem 1.5rem; border-radius: 6px; border: 1px solid var(--faded-text-20); border-left: 4px solid #00f0ff; margin-bottom: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
-<h3 style="color: var(--text-color); margin-top: 0; margin-bottom: 0.3rem; font-weight: 700; letter-spacing: 0.5px;">Advanced Engineering Workspaces</h3>
-<p style="color: var(--text-color); opacity: 0.75; font-size: 0.95rem; margin-bottom: 0;">Build, simulate, and optimize your assemblies. Instantly calculate Total Mass, Yield Strength limits, and BOM Economics.</p>
-</div>
-        """, unsafe_allow_html=True)
 
         
         if not st.session_state.get("user"):
@@ -2847,7 +2834,6 @@ if st.session_state.current_page == "main":
                                                     st.info("Your BOM is fully optimized against these constraints! No valid cheaper equivalents found.")
     
     with tab_ai:
-        st.markdown("### 🤖 Engineering AI Advisor")
         
         if not st.session_state.get("user"):
             st.warning("You must be logged in to access the AI Advisor.")
@@ -2900,8 +2886,6 @@ if st.session_state.current_page == "main":
     #  TAB: FAQ
     # ==========================================
     with tab_faq_main:
-        st.markdown("## ❓ Frequently Asked Questions")
-        st.caption("Everything you need to know about MatDataHub.")
         
         st.markdown("### 📊 Data & Materials")
         with st.expander("Where does MatDataHub get its data?"):
@@ -2933,8 +2917,6 @@ if st.session_state.current_page == "main":
 
 
     with tab_support_main:
-        st.markdown("## 💬 Help Center & Contact Support")
-        st.caption("Need help with a payment? Found a bug? Or just want to request a feature? Contact our support team below.")
     
         user = st.session_state.get("user")
         default_name = user.get("name", "") if user else ""
@@ -3000,8 +2982,6 @@ if st.session_state.current_page == "main":
     #  PRO FEATURE: SMART SUBSTITUTE
     # ==========================================
     with tab_substitute:
-        st.header("🔄 Smart Substitution Engine")
-        st.caption("Pro & Advanced Tiers only. Find the optimal alternative material based on mathematical trade-offs.")
         
         # Check tier
         user = st.session_state.get("user")
@@ -3102,8 +3082,6 @@ if st.session_state.current_page == "main":
     #  ENTERPRISE FEATURE: BOM ANALYZER
     # ==========================================
     with tab_enterprise:
-        st.header("📊 Enterprise BOM Analyzer & ESG Scorer")
-        st.caption("Advanced Tier only. Upload a Bill of Materials to automatically verify standards and calculate total carbon footprint.")
         
         token = st.session_state.get("token")
         user = st.session_state.get("user", {})
