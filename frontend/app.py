@@ -974,6 +974,30 @@ if st.session_state.current_page == "account":
                 st.text_input("Authentication Provider", value=user.get("auth_provider", "email").title(), disabled=True)
                 if st.button("Save Changes"):
                     st.success("Profile updated.")
+                st.divider()
+                st.markdown("### 🔑 API Access")
+                if user.get("tier") in ["pro", "advanced"]:
+                    current_key = user.get("api_key")
+                    if current_key:
+                        st.code(current_key, language="text")
+                        st.caption("Use this key in the `X-API-Key` header to authenticate programmatic requests.")
+                    else:
+                        st.info("You haven't generated an API Key yet.")
+                    
+                    if st.button("Generate New API Key"):
+                        import requests
+                        r = requests.post(
+                            f"{API_BASE}/account/generate-api-key",
+                            headers={"Authorization": f"Bearer {st.session_state.token}"}
+                        )
+                        if r.status_code == 200:
+                            # Actually we can just rely on the user re-fetching on next run or forcing a sign-in refresh
+                            st.success("API Key generated! Please refresh the page.")
+                        else:
+                            st.error("Failed to generate API Key.")
+                else:
+                    st.warning("API Access is only available on the Pro and Advanced tiers.")
+
                 
 
                     
@@ -2823,26 +2847,6 @@ margin-bottom: 2px;
             st.write("The Synthesizer allows you to virtually mix multiple materials (e.g., a polymer matrix and carbon fiber) by volume or weight fraction. It calculates the theoretical composite properties based on the Voigt and Reuss bounds.")
 
         
-        # --- API KEY SECTION ---
-        if curr_user.get("tier") in ["pro", "advanced"]:
-            st.markdown("### 🔑 API Access")
-            current_key = curr_user.get("api_key")
-            if current_key:
-                st.code(current_key, language="text")
-                st.caption("Use this key in the `X-API-Key` header to authenticate programmatic requests.")
-            else:
-                st.info("You haven't generated an API Key yet.")
-            
-            if st.button("Generate New API Key"):
-                r = requests.post(
-                    f"{API_BASE}/account/generate-api-key",
-                    headers={"Authorization": f"Bearer {st.session_state.token}"}
-                )
-                if r.status_code == 200:
-                    st.success("API Key generated!")
-                    st.rerun()
-                else:
-                    st.error("Failed to generate API Key.")
 
         st.markdown("### 💳 Subscriptions & Upgrades")
         with st.expander("How do I upgrade my plan?"):
