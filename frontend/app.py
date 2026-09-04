@@ -3000,10 +3000,11 @@ if st.session_state.current_page == "main":
                 # Fetch materials for dropdown
                 import requests
                 try:
-                    res = requests.get(f"{API_BASE}/materials?skip=0&limit=500")
-                    if res.status_code == 200:
-                        mats = res.json()
-                        mat_options = {m["name"]: m["id"] for m in mats}
+                    res = fetch_all_materials()
+                    if res.get("ok") and res.get("data"):
+                        data = res["data"]
+                        mats = data.get("materials", []) if isinstance(data, dict) else data
+                        mat_options = {m["name"]: m["id"] for m in mats if isinstance(m, dict) and "name" in m}
                         selected_name = st.selectbox("Base Material", options=list(mat_options.keys()))
                         selected_id = mat_options[selected_name]
                         
@@ -3032,7 +3033,7 @@ if st.session_state.current_page == "main":
                                 else:
                                     st.error(f"Engine failed: {sub_res.text}")
                 except Exception as e:
-                    st.error("Failed to connect to API.")
+                    st.error(f"API Error: {e}")
 
             with col2:
                 if "sub_results" in st.session_state:
