@@ -997,7 +997,8 @@ if st.session_state.current_page == "account":
                             )
                         if r.status_code == 200:
                             data = r.json()
-                            st.text_input("API Key ID (Public)", value=data.get("api_key_id", ""), disabled=True)
+                            st.markdown("### API Key ID (Public)")
+                            st.code(data.get("api_key_id", ""), language="text")
                             
                             st.markdown("### API Secret")
                             st.code(data.get("api_secret", ""), language="text")
