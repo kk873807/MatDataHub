@@ -1701,6 +1701,22 @@ margin-bottom: 2px;
 </div>
 </div>
 
+
+<div class="t-node">
+<div class="t-card">
+<span class="t-step" style="color: #FF9800;">Step 6 — Enterprise Scale</span>
+<h4>Private Custom Materials Engine</h4>
+<p>For engineering firms handling proprietary alloys, navigate to your <b>Account Dashboard</b> to access the <b>Custom Materials</b> engine. Upload secret material properties into an isolated database. These private materials automatically synchronize with your visual Comparison Engine and BOM Synthesizer (marked with a 🔒), allowing you safely compare proprietary alloys against public standards.</p>
+</div>
+</div>
+
+<div class="t-node">
+<div class="t-card">
+<span class="t-step" style="color: #00BCD4;">Step 7 — Market Analytics</span>
+<h4>Historical Commodity Price Tracking</h4>
+<p>Supply chain economics are just as critical as yield strength. In the <b>Browse Materials</b> tab, scroll to the bottom of any standard material to access the 12-month <b>Historical Price Tracker</b>. Visualize market volatility and accurately project manufacturing costs.</p>
+</div>
+</div>
 </div>
 </div>
 """, unsafe_allow_html=True)
@@ -1967,6 +1983,14 @@ margin-bottom: 2px;
         else:
             all_materials = all_result["data"].get("materials", [])
             name_to_id = {m["name"]: m["id"] for m in all_materials}
+
+        user_tier = (st.session_state.user or {}).get("tier", "free")
+        if user_tier == "advanced":
+            cust_mats = api_get("/materials/custom/mine")
+            if cust_mats["ok"] and cust_mats["data"]:
+                for cm in cust_mats["data"]:
+                    all_materials.append(cm)
+                    name_to_id[f"🔒 {cm['name']}"] = -cm["id"]
         sorted_names = sorted(name_to_id.keys())
     
         user_tier = (st.session_state.user or {}).get("tier", "free")
@@ -2004,8 +2028,23 @@ margin-bottom: 2px;
             st.info("Select at least 2 materials above to start comparing.")
         else:
             ids = [name_to_id[name] for name in selections]
+
+            standard_ids = [i for i in ids if i > 0]
+            custom_ids = [-i for i in ids if i < 0]
+            
             with st.spinner("Loading comparison..."):
-                compare_result = api_get("/materials/compare", params={"ids": ids})
+                compare_result = api_get("/materials/compare", params={"ids": standard_ids}) if standard_ids else {"ok": True, "data": []}
+                
+                # Wow Feature: Merge private materials perfectly into the public API response!
+                if custom_ids and compare_result["ok"]:
+                    cust_mats = api_get("/materials/custom/mine")
+                    if cust_mats["ok"] and cust_mats["data"]:
+                        for cm in cust_mats["data"]:
+                            if cm["id"] in custom_ids:
+                                cm["name"] = f"🔒 {cm['name']}"
+                                compare_result["data"].append(cm)
+            with st.spinner("Loading comparison..."):
+                pass # Replaced by custom merge logic below
     
             if not compare_result["ok"]:
                 show_api_error(compare_result, retry_key="retry_compare_fetch")
