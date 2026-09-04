@@ -735,6 +735,85 @@ with st.sidebar:
 
     if st.session_state.token and st.session_state.user:
         if st.session_state.current_page == "main":
+    # --- THEME-AWARE CSS ---
+    st.markdown("""
+<style>
+.hero-section {
+        background: linear-gradient(135deg, rgba(79, 195, 161, 0.12) 0%, rgba(46, 134, 171, 0.12) 100%);
+        padding: 3rem 2rem; 
+        border-radius: 12px; 
+        border: 1px solid var(--faded-text-40);
+        margin-bottom: 2.5rem; 
+        text-align: center; 
+        box-shadow: 0 8px 32px rgba(0,0,0,0.05);
+    }
+.hero-title {
+        color: var(--text-color); 
+        font-size: 3rem; 
+        margin-bottom: 0.5rem; 
+        font-weight: 800; 
+        letter-spacing: -1px;
+    }
+.hero-subtitle {
+        color: var(--text-color); 
+        opacity: 0.8;
+        font-size: 1.25rem; 
+        max-width: 700px; 
+        margin: 0 auto; 
+        line-height: 1.6;
+    }
+.cyber-stat {
+        background: var(--secondary-background-color);
+        border: 1px solid var(--faded-text-20);
+        border-radius: 8px;
+        padding: 1.5rem 1rem;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+.cyber-stat:hover {
+        border-color: #4FC3A1;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 20px rgba(79, 195, 161, 0.15);
+    }
+.cyber-num {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: var(--text-color);
+        margin-bottom: 0.2rem;
+    }
+.cyber-label {
+        font-size: 0.9rem;
+        color: var(--text-color);
+        opacity: 0.7;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 600;
+    }
+.domain-card {
+        background: var(--secondary-background-color);
+        padding: 1.2rem;
+        border-radius: 8px;
+        border: 1px solid var(--faded-text-20);
+        height: 100%;
+        transition: all 0.3s ease;
+    }
+.domain-card:hover {
+        border-color: #2E86AB;
+        box-shadow: 0 4px 15px rgba(46, 134, 171, 0.1);
+    }
+.domain-card p {
+        color: var(--text-color);
+        opacity: 0.75;
+        font-size: 0.9rem;
+        margin-bottom: 0;
+    }
+.domain-card h4 {
+        margin-top: 0;
+        color: var(--text-color);
+        font-weight: 700;
+    }
+</style>
+    """, unsafe_allow_html=True)
             if st.button("⚙️ Manage Account", use_container_width=True):
                 st.session_state.current_page = "account"
                 st.rerun()
@@ -1156,9 +1235,34 @@ if st.session_state.current_page == "pricing":
 
 
 if st.session_state.current_page == "main":
-    tab_home, tab_guide, tab_browse, tab_compare, tab_projects, tab_ai, tab_faq, tab_feedback, tab_substitute, tab_enterprise = st.tabs([
-        "🏠 Home", "📖 Platform Guide", "🔍 Browse Materials", "⚖️ Compare", "⚙️ Engineering (BOM)", "🤖 AI Advisor", "❓ FAQ", "🎫 Help & Contact", "🔄 Smart Substitute (PRO)", "📊 Enterprise BOM (ADV)"
+    # Massive UI/UX IA Refactor: Grouping 10 tabs into 5 logical Workspaces
+    tab_home_main, tab_browse, tab_analytics, tab_workflows, tab_support = st.tabs([
+        "🏠 Dashboard", "🔍 Explorer", "⚖️ Analytics", "⚙️ Workflows", "💬 Support Center"
     ])
+    
+    with tab_home_main:
+        st.markdown("## 🏠 Command Center")
+        st.caption("Welcome to your MatDataHub operations dashboard. Access materials, engineering insights, and enterprise tools from one unified platform.")
+        st.divider()
+        tab_home, tab_guide = st.tabs(["🏠 Overview", "📖 Quick Start Guide"])
+        
+    with tab_analytics:
+        st.markdown("## ⚖️ Advanced Analytics & AI Substitution")
+        st.caption("Compare materials side-by-side or use our proprietary AI to mathematically calculate the perfect supply chain substitute.")
+        st.divider()
+        tab_compare, tab_substitute = st.tabs(["⚖️ Side-by-Side Compare", "🔄 Smart AI Substitution (PRO)"])
+        
+    with tab_workflows:
+        st.markdown("## ⚙️ Engineering & Enterprise Workflows")
+        st.caption("Build custom project assemblies, calculate weights, and utilize our AI-powered ESG (Environmental, Social, & Governance) compliance engine.")
+        st.divider()
+        tab_projects, tab_enterprise = st.tabs(["⚙️ Standard BOM Builder", "📊 Enterprise ESG Analyzer (ADV)"])
+        
+    with tab_support:
+        st.markdown("## 💬 Support & Intelligence Center")
+        st.caption("Get instantaneous AI-driven metallurgical advice or reach out to our dedicated enterprise support team.")
+        st.divider()
+        tab_ai, tab_faq, tab_feedback = st.tabs(["🤖 AI Advisor", "❓ FAQ", "🎫 Submit Support Ticket"])
     
     
     # ══════════════════════════════════════════════
@@ -1166,85 +1270,7 @@ if st.session_state.current_page == "main":
     # ══════════════════════════════════════════════
     with tab_home:
         
-        # --- THEME-AWARE CSS ---
-        st.markdown("""
-<style>
-.hero-section {
-            background: linear-gradient(135deg, rgba(79, 195, 161, 0.12) 0%, rgba(46, 134, 171, 0.12) 100%);
-            padding: 3rem 2rem; 
-            border-radius: 12px; 
-            border: 1px solid var(--faded-text-40);
-            margin-bottom: 2.5rem; 
-            text-align: center; 
-            box-shadow: 0 8px 32px rgba(0,0,0,0.05);
-        }
-.hero-title {
-            color: var(--text-color); 
-            font-size: 3rem; 
-            margin-bottom: 0.5rem; 
-            font-weight: 800; 
-            letter-spacing: -1px;
-        }
-.hero-subtitle {
-            color: var(--text-color); 
-            opacity: 0.8;
-            font-size: 1.25rem; 
-            max-width: 700px; 
-            margin: 0 auto; 
-            line-height: 1.6;
-        }
-.cyber-stat {
-            background: var(--secondary-background-color);
-            border: 1px solid var(--faded-text-20);
-            border-radius: 8px;
-            padding: 1.5rem 1rem;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-.cyber-stat:hover {
-            border-color: #4FC3A1;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 20px rgba(79, 195, 161, 0.15);
-        }
-.cyber-num {
-            font-size: 2.2rem;
-            font-weight: 800;
-            color: var(--text-color);
-            margin-bottom: 0.2rem;
-        }
-.cyber-label {
-            font-size: 0.9rem;
-            color: var(--text-color);
-            opacity: 0.7;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
-        }
-.domain-card {
-            background: var(--secondary-background-color);
-            padding: 1.2rem;
-            border-radius: 8px;
-            border: 1px solid var(--faded-text-20);
-            height: 100%;
-            transition: all 0.3s ease;
-        }
-.domain-card:hover {
-            border-color: #2E86AB;
-            box-shadow: 0 4px 15px rgba(46, 134, 171, 0.1);
-        }
-.domain-card p {
-            color: var(--text-color);
-            opacity: 0.75;
-            font-size: 0.9rem;
-            margin-bottom: 0;
-        }
-.domain-card h4 {
-            margin-top: 0;
-            color: var(--text-color);
-            font-weight: 700;
-        }
-</style>
-        """, unsafe_allow_html=True)
+        
 
 
 
@@ -3143,7 +3169,11 @@ margin-bottom: 2px;
                     st.subheader("Top Alternatives")
                     for res in st.session_state["sub_results"]:
                         with st.expander(f"{res['name']} (Match: {res['match_score']}%)", expanded=True):
-                            st.write(f"**Estimated Cost:** ${res['cost']}/kg | **Density:** {res['density']} g/cm³ | **Strength:** {res['tensile']} MPa | **Carbon:** {res['carbon']} kgCO2e")
+                            m1, m2, m3, m4 = st.columns(4)
+                            m1.metric("Estimated Cost", f"${res['cost']}/kg")
+                            m2.metric("Density", f"{res['density']} g/cm³")
+                            m3.metric("Strength", f"{res['tensile']} MPa")
+                            m4.metric("Carbon", f"{res['carbon']} kgCO2e")
                             # We will generate radar charts via API, but for now we display text
                             import plotly.graph_objects as go
                             fig = go.Figure()
