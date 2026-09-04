@@ -1344,9 +1344,9 @@ if st.session_state.current_page == "pricing":
 
 
 if st.session_state.current_page == "main":
-    # Massive UI/UX IA Refactor: Grouping 10 tabs into 5 logical Workspaces
-    tab_home_main, tab_browse, tab_analytics, tab_workflows, tab_support = st.tabs([
-        "🏠 Dashboard", "🔍 Explorer", "⚖️ Analytics", "⚙️ Workflows", "💬 Support Center"
+    # Massive UI/UX IA Refactor: Grouping into Logical Workspaces
+    tab_home_main, tab_browse_main, tab_analytics, tab_workflows, tab_support_main, tab_faq_main = st.tabs([
+        "🏠 Dashboard", "🔍 Explorer", "⚖️ Analytics", "⚙️ Workflows", "💬 Support Center", "❓ FAQ"
     ])
     
     with tab_home_main:
@@ -1354,6 +1354,12 @@ if st.session_state.current_page == "main":
         st.caption("Welcome to your MatDataHub operations dashboard. Access materials, engineering insights, and enterprise tools from one unified platform.")
         st.divider()
         tab_home, tab_guide = st.tabs(["🏠 Overview", "📖 Quick Start Guide"])
+
+    with tab_browse_main:
+        st.markdown("## 🔍 Explorer & AI Advisor")
+        st.caption("Search the global database or consult the AI Metallurgist for intelligent recommendations.")
+        st.divider()
+        tab_browse, tab_ai = st.tabs(["🔍 Browse Database", "🤖 Ask AI Advisor"])
         
     with tab_analytics:
         st.markdown("## ⚖️ Advanced Analytics & AI Substitution")
@@ -1367,11 +1373,16 @@ if st.session_state.current_page == "main":
         st.divider()
         tab_projects, tab_enterprise = st.tabs(["⚙️ Standard BOM Builder", "📊 Enterprise ESG Analyzer (ADV)"])
         
-    with tab_support:
-        st.markdown("## 💬 Support & Intelligence Center")
-        st.caption("Get instantaneous AI-driven metallurgical advice or reach out to our dedicated enterprise support team.")
+    with tab_faq_main:
+        st.markdown("## ❓ Frequently Asked Questions")
         st.divider()
-        tab_ai, tab_faq, tab_feedback = st.tabs(["🤖 AI Advisor", "❓ FAQ", "🎫 Submit Support Ticket"])
+        tab_faq, = st.tabs(["❓ FAQ"])
+
+    with tab_support_main:
+        st.markdown("## 💬 Support Center")
+        st.caption("Reach out to our dedicated enterprise support team for billing or technical issues.")
+        st.divider()
+        tab_feedback, = st.tabs(["🎫 Submit Support Ticket"])
     
     
     # ══════════════════════════════════════════════
