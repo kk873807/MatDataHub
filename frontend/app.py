@@ -1930,8 +1930,11 @@ margin-bottom: 2px;
                                     if not df_hist.empty:
                                         df_hist["recorded_date"] = pd.to_datetime(df_hist["recorded_date"])
                                         df_hist = df_hist.set_index("recorded_date")
+
+                                        # Format the date index to explicitly include the Year and Month (e.g., '2025-08')
+                                        df_hist.index = df_hist.index.strftime('%Y %b')
                                         st.line_chart(df_hist["cost_per_kg"], height=250, use_container_width=True)
-                                        st.caption("Price fluctuations (INR per kg) over the last 12 months.")
+                                        st.caption("Price fluctuations (INR per kg) from 2025 to 2026.")
                                     else:
                                         st.info("No historical price data available yet.")
                                 else:
