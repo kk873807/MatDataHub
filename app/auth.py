@@ -13,7 +13,7 @@ from datetime import datetime, timedelta, timezone
 
 import bcrypt
 import jwt
-from fastapi import Depends, HTTPException, status
+from fastapi import Request, Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 
@@ -94,14 +94,19 @@ bearer_scheme = HTTPBearer(auto_error=False)
 
 
 def get_current_user(
+    request: Request,
     credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
     db: Session = Depends(get_db),
 ) -> User:
-    """
-    FastAPI dependency: REQUIRES a valid JWT token.
-    Use this for endpoints that need authentication.
-    Raises 401 if no token or invalid token.
-    """
+    api_key = request.headers.get("X-API-Key")
+    if api_key:
+        user = db.query(User).filter(User.api_key == api_key, User.is_active == True).first()
+        if not user:
+            raise HTTPException(status_code=401, detail="Invalid API Key")
+        if getattr(user, "is_blocked", False):
+            raise HTTPException(status_code=403, detail="Account blocked.")
+        return user
+
     if credentials is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
