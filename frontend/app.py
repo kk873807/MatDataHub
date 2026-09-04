@@ -209,6 +209,35 @@ def render_pricing_page():
 
 
 
+    st.divider()
+    
+    st.markdown("### 💬 Payment & Billing Support")
+    st.info("Did your transaction fail? Or was your account debited but not upgraded? Contact us immediately below, and our support team will manually upgrade your account.")
+    
+    with st.form("billing_support_form", clear_on_submit=True):
+        fcol1, fcol2 = st.columns(2)
+        with fcol1:
+            s_name = st.text_input("Name", value=user.get("name", ""))
+        with fcol2:
+            s_email = st.text_input("Email", value=user.get("email", ""))
+        
+        s_issue = st.selectbox("Issue Type", ["Account debited but not upgraded", "Transaction Failed / Razorpay Error", "Invoice Request", "Other Payment Issue"])
+        s_message = st.text_area("Message / Payment Reference ID", placeholder="Please provide your transaction ID or exact issue...")
+        
+        if st.form_submit_button("Submit Support Ticket", type="primary", use_container_width=True):
+            if len(s_message) < 5:
+                st.error("Please provide more details or a transaction ID.")
+            else:
+                result = submit_feedback(
+                    s_name, s_email, f"Billing: {s_issue}", 
+                    s_message, 1, "Billing Support UI", None
+                )
+                if result.get("ok"):
+                    st.success("✅ Your ticket has been submitted successfully! Our billing team will resolve this within 12 hours.")
+                else:
+                    st.error("Could not submit ticket. Please email support@matdatahub.com directly.")
+
+
 def get_upgrade_link(tier: str):
     token = st.session_state.get("token")
     if not token: return None, "Please log in first."
@@ -1128,7 +1157,7 @@ if st.session_state.current_page == "pricing":
 
 if st.session_state.current_page == "main":
     tab_home, tab_guide, tab_browse, tab_compare, tab_projects, tab_ai, tab_faq, tab_feedback = st.tabs([
-        "🏠 Home", "📖 Platform Guide", "🔍 Database", "⚖️ Compare", "⚙️ Engineering (BOM)", "🧠 AI Advisor", "❓ FAQ", "💬 Feedback"
+        "🏠 Home", "📖 Platform Guide", "🔍 Database", "⚖️ Compare", "⚙️ Engineering (BOM)", "🧠 AI Advisor", "❓ FAQ", "💬 Help & Contact"
     ])
     
     
@@ -2988,8 +3017,8 @@ margin-bottom: 2px;
 
 
     with tab_feedback:
-        st.markdown("## 💬 We'd love your feedback")
-        st.caption("Found a bug? Want a new feature? Just want to say hi? Tell us below.")
+        st.markdown("## 💬 Help Center & Contact Support")
+        st.caption("Need help with a payment? Found a bug? Or just want to request a feature? Contact our support team below.")
     
         user = st.session_state.get("user")
         default_name = user.get("name", "") if user else ""
@@ -3004,7 +3033,7 @@ margin-bottom: 2px;
     
             fb_category = st.selectbox(
                 "What's this about?",
-                ["General Feedback", "Bug Report", "Feature Request", "Data Correction", "Other"],
+                ["Payment / Billing Issue", "Bug Report", "Technical Support", "Feature Request", "Data Correction", "General Feedback"],
             )
             fb_rating = st.slider("How's your experience so far?", 1, 5, 4, help="1 = Poor, 5 = Excellent")
             fb_message = st.text_area(
@@ -3016,7 +3045,7 @@ margin-bottom: 2px;
             
             agree_tc = st.checkbox("I agree to the Terms & Conditions (No abuse, profanity, pornography, or hate speech).")
             
-            fb_submit = st.form_submit_button("Send Feedback", use_container_width=True)
+            fb_submit = st.form_submit_button("Submit Support Ticket", use_container_width=True)
     
             if fb_submit:
                 if not fb_message or len(fb_message.strip()) < 3:
