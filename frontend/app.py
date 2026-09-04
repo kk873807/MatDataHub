@@ -205,6 +205,64 @@ st.markdown("""
     letter-spacing: -0.5px;
 }
 
+
+/* Ultra-modern Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02);
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 240, 255, 0.3);
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(138, 43, 226, 0.6);
+}
+
+/* Glassmorphism Buttons */
+div[data-testid="stButton"] > button {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
+    border-radius: 8px;
+}
+div[data-testid="stButton"] > button:hover {
+    border-color: #00F0FF;
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+    transform: translateY(-2px);
+}
+div[data-testid="stButton"] > button:active {
+    transform: translateY(0);
+}
+
+/* Primary Button Glow */
+div[data-testid="stButton"] > button[kind="primary"] {
+    background: linear-gradient(90deg, rgba(0, 240, 255, 0.2), rgba(138, 43, 226, 0.2));
+    border: 1px solid #00F0FF;
+    font-weight: bold;
+}
+div[data-testid="stButton"] > button[kind="primary"]:hover {
+    box-shadow: 0 0 20px rgba(138, 43, 226, 0.4);
+}
+
+/* Inputs & Selectboxes Glass */
+div[data-baseweb="select"] > div, 
+div[data-baseweb="input"] > div {
+    background: rgba(255, 255, 255, 0.02) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 6px;
+    backdrop-filter: blur(4px);
+    transition: border-color 0.3s ease;
+}
+div[data-baseweb="select"]:hover > div, 
+div[data-baseweb="input"]:hover > div {
+    border-color: #00F0FF !important;
+}
+
 /* Customizing Streamlit Tabs to look modern */
 div[data-testid="stTabs"] button {
     font-weight: 600;
@@ -3238,19 +3296,34 @@ margin-bottom: 2px;
                             # We will generate radar charts via API, but for now we display text
                             import plotly.graph_objects as go
                             fig = go.Figure()
+                            # Ultra-modern cyberpunk radar chart
                             fig.add_trace(go.Scatterpolar(
                                   r=[5, 2.7, 310, 8.1],
                                   theta=['Cost','Density','Strength', 'Carbon'],
                                   fill='toself',
-                                  name='Base Material'
+                                  name='Base Material',
+                                  line_color='#8A2BE2',
+                                  fillcolor='rgba(138, 43, 226, 0.2)'
                             ))
                             fig.add_trace(go.Scatterpolar(
                                   r=[res['cost'], res['density'], res['tensile'], res['carbon']],
                                   theta=['Cost','Density','Strength', 'Carbon'],
                                   fill='toself',
-                                  name=res['name']
+                                  name=res['name'],
+                                  line_color='#00F0FF',
+                                  fillcolor='rgba(0, 240, 255, 0.4)'
                             ))
-                            fig.update_layout(polar=dict(radialaxis=dict(visible=True)), showlegend=True)
+                            fig.update_layout(
+                                polar=dict(
+                                    radialaxis=dict(visible=True, color='rgba(255,255,255,0.3)', gridcolor='rgba(255,255,255,0.1)'),
+                                    angularaxis=dict(color='var(--text-color)', gridcolor='rgba(255,255,255,0.1)')
+                                ),
+                                showlegend=True,
+                                paper_bgcolor='rgba(0,0,0,0)',
+                                plot_bgcolor='rgba(0,0,0,0)',
+                                font=dict(family="sans-serif", size=14, color="var(--text-color)"),
+                                margin=dict(l=20, r=20, t=20, b=20)
+                            )
                             st.plotly_chart(fig, use_container_width=True)
 
 
