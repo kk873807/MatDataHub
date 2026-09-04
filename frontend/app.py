@@ -1902,8 +1902,6 @@ margin-bottom: 2px;
     
                         st.divider()
                         user_tier = (st.session_state.user or {}).get("tier", "free")
-    
-                        if user_tier in ("pro", "advanced"):
 
                         if user_tier in ("pro", "advanced"):
                             st.markdown("### 📈 Historical Price Tracking")
@@ -1922,10 +1920,8 @@ margin-bottom: 2px;
                                         st.info("No historical price data available yet.")
                                 else:
                                     st.info("Historical tracking is currently gathering data for this material.")
-                        else:
-                            st.info("📈 **Upgrade to Pro or Advanced** to unlock 12-month historical commodity price tracking.")
-
-                            if st.button(f"🔍 Find Materials Similar to {m['name']}", key=f"similar_{mat_id}"):
+                                    
+                            if st.button(f"🔎 Find Materials Similar to {m['name']}", key=f"similar_{mat_id}"):
                                 with st.spinner("Finding similar materials..."):
                                     sim_result = api_get(f"/materials/{mat_id}/similar", params={"limit": 5})
                                 if sim_result["ok"]:
@@ -1944,9 +1940,8 @@ margin-bottom: 2px;
                                 else:
                                     show_api_error(sim_result, retry_key=f"retry_similar_{mat_id}")
                         else:
-                            st.info("🔍 **Find Similar Materials** — Discover alternatives you never knew about! ⭐ Upgrade to Pro to unlock.")
-    
-    
+                            st.info("📈 **Upgrade to Pro or Advanced** to unlock 12-month historical commodity price tracking and alternative material discovery.")
+
     # ══════════════════════════════════════════════
     #  TAB 2: COMPARE MATERIALS
     # ══════════════════════════════════════════════
