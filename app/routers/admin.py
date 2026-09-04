@@ -214,37 +214,3 @@ def run_ai_scraper(req: ScrapeRequest, _: bool = Depends(verify_admin), db: Sess
     except Exception as e:
         print(e)
         raise HTTPException(500, f"AI Scraper Error: {str(e)}")
-
-@router.get("/test-smtp")
-def test_smtp_connection(_: bool = Depends(verify_admin)):
-    import smtplib
-    import os
-    sender_email = os.getenv("SMTP_EMAIL", "")
-    sender_password = os.getenv("SMTP_PASSWORD", "")
-    
-    if not sender_password:
-        return {"status": "error", "message": "SMTP_PASSWORD is empty or not loaded by the server."}
-        
-    try:
-        # Strip spaces from App Password (users often copy it with spaces)
-        sender_password = sender_password.replace(" ", "")
-        
-        import socket
-        # Monkey-patch getaddrinfo to force IPv4 (AF_INET) to prevent IPv6 [Errno 101] Unreachable errors in Render
-        orig_getaddrinfo = socket.getaddrinfo
-        def getaddrinfo_ipv4(host, port, family=0, type=0, proto=0, flags=0):
-            return orig_getaddrinfo(host, port, socket.AF_INET, type, proto, flags)
-        socket.getaddrinfo = getaddrinfo_ipv4
-        
-        try:
-            # Use SMTP_SSL on port 465 (often bypasses Render/ISP port 587 blocks)
-            server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-            server.login(sender_email, sender_password)
-        finally:
-            # Restore original getaddrinfo
-            socket.getaddrinfo = orig_getaddrinfo
-        server.login(sender_email, sender_password)
-        server.quit()
-        return {"status": "success", "message": f"Successfully authenticated as {sender_email}!"}
-    except Exception as e:
-        return {"status": "error", "message": str(e)}

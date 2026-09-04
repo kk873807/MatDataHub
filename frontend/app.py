@@ -865,18 +865,7 @@ with st.sidebar:
                 st.error(f"Couldn't reach server: {e}")
 
 
-            # --- NEW SMTP DEBUGGER ---
-            st.markdown("**🛠️ Server Diagnostics**")
-            if st.button("🧪 Test SMTP Email Connection"):
-                with st.spinner("Pinging Gmail SMTP..."):
-                    smtp_res = requests.get(f"{API_BASE}/admin/test-smtp", headers={"X-Admin-Secret": active_pw})
-                    if smtp_res.status_code == 200:
-                        data = smtp_res.json()
-                        if data.get("status") == "success":
-                            st.success(data["message"])
-                        else:
-                            st.error(f"SMTP Server Error: {data['message']}")
-                            st.info("HINT: If you are using Gmail, you cannot use your normal password. You MUST use a 16-letter 'App Password' generated from your Google Account Security settings.")
+            
             # ── Recent Feedback ──
             st.markdown("**📬 Recent Feedback**")
             try:
@@ -1394,9 +1383,9 @@ if st.session_state.current_page == "main":
                                                     
                                 if is_admin and st.session_state.get(f"show_admin_reply_{c['id']}", False):
                                     with st.form(f"admin_form_reply_{c['id']}", clear_on_submit=True):
-                                        st.caption("This will email the user and lock an official admin response to this thread.")
+                                        st.caption("This will lock a verified official admin response to this thread.")
                                         admin_msg = st.text_area("Official Admin Reply...")
-                                        if st.form_submit_button("Send Official Reply & Email"):
+                                        if st.form_submit_button("Post Official Admin Reply"):
                                             if admin_msg:
                                                 resp = requests.post(
                                                     f"{API_BASE}/feedback/{c['id']}/reply", 

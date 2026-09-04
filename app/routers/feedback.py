@@ -182,55 +182,11 @@ from pydantic import BaseModel
 class AdminReplyPayload(BaseModel):
     reply_text: str
 
-def send_email_async(user_email: str, reply_text: str, feedback_message: str):
-    import os
-    import smtplib
-    from email.mime.text import MIMEText
-    from email.mime.multipart import MIMEMultipart
-    
-    sender_email = os.getenv("SMTP_EMAIL", "no-reply@matdatahub.com")
-    sender_password = os.getenv("SMTP_PASSWORD", "")
-    
-    if not sender_password:
-        return
-        
-    try:
-        msg = MIMEMultipart()
-        msg['From'] = f"MatDataHub Support <{sender_email}>"
-        msg['To'] = user_email
-        msg['Subject'] = "Admin Response to your Feedback on MatDataHub"
-        
-        body = f"Hi there!\n\nAn admin has reviewed and replied to your recent feedback/report:\n\nYour Feedback: \"{feedback_message}\"\n\nAdmin Reply:\n{reply_text}\n\nThanks for helping us improve MatDataHub!\n\nBest,\nThe MatDataHub Engineering Team"
-        
-        msg.attach(MIMEText(body, 'plain'))
-        
-        # Strip spaces from App Password (users often copy it with spaces)
-        sender_password = sender_password.replace(" ", "")
-        
-        import socket
-        orig_getaddrinfo = socket.getaddrinfo
-        def getaddrinfo_ipv4(host, port, family=0, type=0, proto=0, flags=0):
-            return orig_getaddrinfo(host, port, socket.AF_INET, type, proto, flags)
-        socket.getaddrinfo = getaddrinfo_ipv4
-        
-        try:
-            # Use SMTP_SSL on port 465 to bypass firewall/port blocks
-            server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-            server.login(sender_email, sender_password)
-            server.send_message(msg)
-            server.quit()
-        finally:
-            socket.getaddrinfo = orig_getaddrinfo
-        print(f"Successfully sent reply email to {user_email}")
-    except Exception as e:
-        print(f"Failed to send email to {user_email}: {e}")
-
 @router.post("/{feedback_id}/reply")
 def reply_to_feedback(
     feedback_id: int,
     payload: AdminReplyPayload,
     request: Request,
-    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     _: bool = Depends(verify_admin)
 ):
@@ -245,20 +201,5 @@ def reply_to_feedback(
     feedback.status = "reviewed"
     db.commit()
     db.refresh(feedback)
-    
-    # Resolve user email
-    user_email = feedback.email
-    if not user_email and feedback.user_id:
-        user_record = db.query(User).filter(User.id == feedback.user_id).first()
-        if user_record:
-            user_email = user_record.email
             
-    if user_email:
-        sender_password = os.getenv("SMTP_PASSWORD", "")
-        if sender_password:
-            background_tasks.add_task(send_email_async, user_email, reply_text, feedback.message)
-            return {"ok": True, "message": "Reply saved & Email dispatched in background!"}
-        else:
-            return {"ok": True, "message": "Reply saved! (Email skipped: missing SMTP_PASSWORD on server)"}
-            
-    return {"ok": True, "message": "Reply saved! (No user email found to notify)"}
+    return {"ok": True, "message": "Official Reply pinned to thread successfully!"}
