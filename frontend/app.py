@@ -224,8 +224,8 @@ st.markdown("""
 
 /* Glassmorphism Buttons */
 div[data-testid="stButton"] > button {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(128, 128, 128, 0.1);
+    border: 1px solid rgba(128, 128, 128, 0.2);
     backdrop-filter: blur(5px);
     transition: all 0.3s ease;
     border-radius: 8px;
@@ -244,6 +244,7 @@ div[data-testid="stButton"] > button[kind="primary"] {
     background: linear-gradient(90deg, rgba(0, 240, 255, 0.2), rgba(138, 43, 226, 0.2));
     border: 1px solid #00F0FF;
     font-weight: bold;
+    color: var(--text-color) !important;
 }
 div[data-testid="stButton"] > button[kind="primary"]:hover {
     box-shadow: 0 0 20px rgba(138, 43, 226, 0.4);
@@ -252,8 +253,8 @@ div[data-testid="stButton"] > button[kind="primary"]:hover {
 /* Inputs & Selectboxes Glass */
 div[data-baseweb="select"] > div, 
 div[data-baseweb="input"] > div {
-    background: rgba(255, 255, 255, 0.02) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    background: rgba(128, 128, 128, 0.05) !important;
+    border: 1px solid rgba(128, 128, 128, 0.2) !important;
     border-radius: 6px;
     backdrop-filter: blur(4px);
     transition: border-color 0.3s ease;
@@ -494,7 +495,7 @@ st.markdown("""
         border-radius: 16px;
         padding: 24px 15px;
         text-align: center;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(128, 128, 128, 0.2);
         box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
         transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
     }
@@ -3060,8 +3061,8 @@ if st.session_state.current_page == "main":
                                   theta=['Cost','Density','Strength', 'Carbon'],
                                   fill='toself',
                                   name='Base Material',
-                                  line_color='rgba(255, 255, 255, 0.4)',
-                                  fillcolor='rgba(255, 255, 255, 0.05)'
+                                  line_color='rgba(128, 128, 128, 0.6)',
+                                  fillcolor='rgba(128, 128, 128, 0.1)'
                             ))
                             
                             fig.add_trace(go.Scatterpolar(
@@ -3075,14 +3076,14 @@ if st.session_state.current_page == "main":
                             
                             fig.update_layout(
                                 polar=dict(
-                                    radialaxis=dict(visible=True, color='rgba(255,255,255,0.2)', gridcolor='rgba(255,255,255,0.1)'),
-                                    angularaxis=dict(color='var(--text-color)', gridcolor='rgba(255,255,255,0.1)')
+                                    radialaxis=dict(visible=True, color='rgba(128,128,128,0.4)', gridcolor='rgba(128,128,128,0.2)', tickfont=dict(size=9)),
+                                    angularaxis=dict(color='var(--text-color)', gridcolor='rgba(128,128,128,0.2)', tickfont=dict(size=10))
                                 ),
                                 showlegend=True,
-                                legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+                                legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1, font=dict(size=10)),
                                 paper_bgcolor='rgba(0,0,0,0)',
                                 plot_bgcolor='rgba(0,0,0,0)',
-                                font=dict(family="sans-serif", size=12, color="var(--text-color)"),
+                                font=dict(family="sans-serif", size=10, color="var(--text-color)"),
                                 margin=dict(l=20, r=20, t=20, b=20),
                                 height=300
                             )
