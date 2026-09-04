@@ -55,6 +55,31 @@ def _check_mat_rate_limit(request: Request):
         raise HTTPException(status.HTTP_429_TOO_MANY_REQUESTS, "Rate limit exceeded. Please wait a minute.")
     timestamps.append(now)
 
+
+# --- Daily Lookup Limits (Monetization Strategy) ---
+_daily_lookups = defaultdict(list)
+FREE_DAILY_LIMIT = 50
+
+def _check_daily_limit(request: Request, current_user: Optional[User]):
+    # Pro and Advanced get unlimited lookups
+    if current_user and current_user.tier in ["pro", "advanced"]:
+        return
+
+    # Track by user_id if logged in, otherwise by IP
+    key = f"user_{current_user.id}" if current_user else f"ip_{_get_ip(request)}"
+    now = time.time()
+    
+    timestamps = _daily_lookups[key]
+    # Remove timestamps older than 24 hours (86400 seconds)
+    timestamps[:] = [t for t in timestamps if now - t < 86400]
+    
+    if len(timestamps) >= FREE_DAILY_LIMIT:
+        raise HTTPException(
+            status.HTTP_429_TOO_MANY_REQUESTS, 
+            "You have reached your free limit of 50 material lookups for today. Upgrade to Pro for unlimited access!"
+        )
+    timestamps.append(now)
+
 router = APIRouter(prefix="/materials", tags=["Materials"])
 
 
@@ -77,10 +102,11 @@ def list_materials(
     # Sorting
     sort_by: Optional[str] = Query("name", description="Sort by field name"),
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),  # public — used only if we personalize later
+    current_user: Optional[User] = Depends(get_optional_user),  # public — used only if we personalize later
 ):
-    """
     _check_mat_rate_limit(request)
+    _check_daily_limit(request, current_user)
+    """
     List materials with optional filters. Public — no login required.
 
     Example:
@@ -130,8 +156,9 @@ def search_materials(
     page: int = Query(1, ge=1),
     per_page: int = Query(20, ge=1, le=50),  # SECURITY: Hard cap to 50 to prevent DB dumping
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),  # public
+    current_user: Optional[User] = Depends(get_optional_user),  # public
 ):
+    _check_daily_limit(request, current_user)
     """
     Search materials by keyword across multiple fields. Public — no login required.
 
@@ -187,7 +214,7 @@ def compare_materials(
     request: Request,
     ids: List[int] = Query(..., description="Material IDs to compare, e.g. ?ids=1&ids=2&ids=3"),
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: Optional[User] = Depends(get_optional_user),
 ):
     """
     Fetch full details for a set of materials to compare side-by-side.
@@ -261,7 +288,7 @@ def find_similar_materials(
     material_id: int,
     limit: int = Query(5, ge=1, le=20, description="How many similar materials to return"),
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: Optional[User] = Depends(get_optional_user),
 ):
     """
     Find materials numerically similar to the given material, based on
@@ -339,15 +366,11 @@ def find_similar_materials(
 @router.get("/{material_id}", response_model=MaterialResponse)
 def get_material(
     material_id: int,
+    request: Request,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),  # public
+    current_user: Optional[User] = Depends(get_optional_user),  # public
 ):
-    """
-    Get a single material by its ID. Public — no login required.
-
-    Example:
-        GET /materials/42
-    """
+    _check_daily_limit(request, current_user)
     material = db.query(Material).filter(Material.id == material_id).first()
     if not material:
         raise HTTPException(status_code=404, detail=f"Material with id {material_id} not found")
