@@ -1932,7 +1932,7 @@ margin-bottom: 2px;
                                         df_hist = df_hist.set_index("recorded_date")
 
                                         # Format the date index to explicitly include the Year and Month (e.g., '2025-08')
-                                        df_hist.index = df_hist.index.strftime('%Y %b')
+                                        df_hist.index = df_hist.index.strftime('%Y-%m (%b)')
                                         st.line_chart(df_hist["cost_per_kg"], height=250, use_container_width=True)
                                         st.caption("Price fluctuations (INR per kg) from 2025 to 2026.")
                                     else:
