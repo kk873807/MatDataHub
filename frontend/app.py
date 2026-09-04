@@ -1389,522 +1389,99 @@ if st.session_state.current_page == "main":
     #  TAB 0: HOME
     # ══════════════════════════════════════════════
     with tab_home:
-        
-        
-
-
-
         if st.session_state.get("user"):
             st.markdown(f"""
                 <div style="background: rgba(79, 195, 161, 0.1); border-left: 4px solid #4FC3A1; border-radius: 4px; padding: 15px 20px; color: var(--text-color); margin-bottom: 2rem; font-weight: 500; font-size: 1.1rem; line-height: 1.5;">
-                    🚀 Welcome back, <b style="color: #4FC3A1;">{st.session_state.user.get('name') or st.session_state.user['email']}</b> to MatDataHub! <br>
-                    <span style="opacity: 0.85; font-size: 1rem; font-weight: 400;">The ultimate materials science platform. Immerse yourself in an advanced, meticulously verified database covering the entire spectrum of engineering physics.</span>
+                     Welcome back, <b style="color: #4FC3A1;">{st.session_state.user.get('name') or st.session_state.user['email']}</b> to MatDataHub! <br>
+                    <span style="opacity: 0.85; font-size: 1rem; font-weight: 400;">Your enterprise command center for metallurgical analytics, ESG compliance, and supply chain optimization.</span>
                 </div>
             """, unsafe_allow_html=True)
         else:
             st.markdown("""
 <div style="background: rgba(46, 134, 171, 0.1); border-left: 4px solid #2E86AB; border-radius: 4px; padding: 15px 20px; color: var(--text-color); margin-bottom: 2rem; font-weight: 500; font-size: 1.1rem; line-height: 1.5;">
-                    👋 <b>Welcome to MatDataHub!</b> Browse materials freely — sign in from the sidebar to unlock intelligent comparisons and the AI Advisor.<br>
-<span style="opacity: 0.85; font-size: 1rem; font-weight: 400;">Immerse yourself in an advanced, meticulously verified database covering the entire spectrum of engineering physics.</span>
+                     <b>Welcome to MatDataHub!</b> Browse materials freely — sign in to unlock intelligent ESG tracking, bulk BOM analysis, and the AI Advisor.<br>
+<span style="opacity: 0.85; font-size: 1rem; font-weight: 400;">The ultimate operating system for modern materials engineering.</span>
 </div>
             """, unsafe_allow_html=True)
 
         # --- LIVE DATABASE STATS ---
-        st.markdown("### Database Intelligence")
+        st.markdown("### 🌐 Platform Capabilities")
         s1, s2, s3, s4 = st.columns(4)
         for col, num, label in [
-            (s1, "1,030+", "Industrial Materials"),
-            (s2, "6", "Master Categories"),
-            (s3, "25+", "Properties Tracked"),
-            (s4, "ASTM / ISO", "Global Standards"),
+            (s1, "1,030+", "Verified Materials"),
+            (s2, "AI", "Substitution Engine"),
+            (s3, "ESG", "Carbon Footprint Tracking"),
+            (s4, "Bulk", "BOM Parsing & Analysis"),
         ]:
             with col:
                 st.markdown(f'<div class="cyber-stat"><div class="cyber-num">{num}</div><div class="cyber-label">{label}</div></div>', unsafe_allow_html=True)
 
+        st.markdown("---")
+
         # --- QUICK ACTIONS ---
-        st.markdown("### ⚡ Quick Actions")
+        st.markdown("### ⚡ Quick Actions & Tools")
         qa1, qa2, qa3 = st.columns(3)
         with qa1:
-            st.info("🔄 **Smart Substitution**\n\nMathematically find alternative supply chain materials based on cost, weight, and carbon footprint.")
+            st.info("🔄 **Smart Substitution**\n\nMathematically find alternative supply chain materials based on cost, weight, and carbon footprint. Available in Analytics.")
         with qa2:
-            st.success("📊 **Enterprise BOM Analyzer**\n\nUpload a CSV assembly to instantly verify ESG compliance and obsolete global standards.")
+            st.success("📊 **Enterprise BOM Analyzer**\n\nUpload a CSV assembly to instantly verify ESG compliance and obsolete global standards. Available in Workflows.")
         with qa3:
-            st.warning("🤖 **AI Metallurgist**\n\nDescribe your engineering constraints in natural language and get instantaneous material recommendations.")
+            st.warning("🤖 **AI Metallurgist**\n\nDescribe your engineering constraints in natural language and get instantaneous material recommendations. Available in Explorer.")
         
         st.markdown("---")
 
-        # --- EXPLORE THE DOMAINS ---
-        st.markdown("### Explore Advanced Domains")
-        st.markdown("The database has been expanded far beyond standard metals. Discover the cutting edge of materials science:")
-        
-        c1, c2, c3 = st.columns(3)
-        with c1:
-            st.markdown("""
-<div class="domain-card">
-<h4>⚛️ Quantum & Nano</h4>
-<p>Graphene, Magic-Angle MATBG, MoS2, Quantum Dots, and Topological Insulators.</p>
-</div>
-            """, unsafe_allow_html=True)
-        with c2:
-            st.markdown("""
-<div class="domain-card">
-<h4>🚀 Extreme Aerospace</h4>
-<p>TiAl, AerMet 100, Inconel 718, Niobium C-103, and Ablative PICA Heat Shields.</p>
-</div>
-            """, unsafe_allow_html=True)
-        with c3:
-            st.markdown("""
-<div class="domain-card">
-<h4>⚡ Energy & Nuclear</h4>
-<p>Uranium Alloys, High-Tc Superconductors, Solid-State LLZO, and TRISO Fuel.</p>
-</div>
-            """, unsafe_allow_html=True)
-            
-        st.markdown("<br>", unsafe_allow_html=True)
-        c4, c5, c6 = st.columns(3)
-        with c4:
-            st.markdown("""
-<div class="domain-card">
-<h4>🔬 Semiconductors</h4>
-<p>Silicon, GaAs, IGZO, Zinc Selenide, Indium Antimonide, and Perovskites.</p>
-</div>
-            """, unsafe_allow_html=True)
-        with c5:
-            st.markdown("""
-<div class="domain-card">
-<h4>🏭 Industrial Foundation</h4>
-<p>18+ Specialty Steels, Structural Ceramics, Engineering Plastics, and Elastomers.</p>
-</div>
-            """, unsafe_allow_html=True)
-        with c6:
-            st.markdown("""
-<div class="domain-card">
-<h4>🧪 Functional Oxides</h4>
-<p>Thermochromic Smart Windows (VO2), Piezoelectrics (PZT), and Advanced Lasers.</p>
-</div>
-            """, unsafe_allow_html=True)
-
-        st.markdown("---")
-
-        # --- GET STARTED BUTTONS ---
-        st.markdown("### Quick Actions")
-        g1, g2 = st.columns(2)
-        with g1:
-            st.markdown("""
-<div style="border: 1px solid #4FC3A1; background: rgba(79, 195, 161, 0.1); border-radius: 8px; padding: 1.5rem; text-align: center;">
-<h3 style="margin-top:0; color: #4FC3A1;">🔍 Search the Database</h3>
-<p style="color: var(--text-color); opacity: 0.8; font-size: 0.95rem;">Jump into the <b>Browse Materials</b> tab to filter thousands of advanced entries.</p>
-</div>
-            """, unsafe_allow_html=True)
-        with g2:
-            st.markdown("""
-<div style="border: 1px solid #2E86AB; background: rgba(46, 134, 171, 0.1); border-radius: 8px; padding: 1.5rem; text-align: center;">
-<h3 style="margin-top:0; color: #2E86AB;">⚖️ Engineering Tools</h3>
-<p style="color: var(--text-color); opacity: 0.8; font-size: 0.95rem;">Use the <b>BOM Tab</b> and <b>Compare Tab</b> to run stress estimators and radar charts.</p>
-</div>
-            """, unsafe_allow_html=True)
-
-        st.markdown("<br>", unsafe_allow_html=True)
-        st.caption("MatDataHub aggregates properties strictly from highly trusted standards (ASTM, ASM, ISO). Use the **💬 Feedback** tab to request specific new materials.")
-        st.markdown("<br>", unsafe_allow_html=True)
-        st.divider()
-        st.markdown("## Community Reviews & Discussion")
-        st.markdown("See what other engineers are saying about MatDataHub, reply to their feedback, and join the discussion!")
-    
-        try:
-            rev_resp = fetch_public_feedback()
-            if rev_resp["ok"] and rev_resp["data"]:
-                reviews = rev_resp["data"]
-                total_stars = sum(r.get("rating") or 0 for r in reviews if r.get("rating"))
-                rated_reviews = [r for r in reviews if r.get("rating")]
-                avg_rating = total_stars / len(rated_reviews) if rated_reviews else 0
-                
-                c1, c2 = st.columns([1, 3])
-                with c1:
-                    st.metric("Average Rating", f"{avg_rating:.1f} ⭐")
-                    st.caption(f"Based on {len(rated_reviews)} rated reviews")
-                
-                with c2:
-                    # Build tree
-                    fb_map = {item["id"]: {**item, "children": []} for item in reviews}
-                    tree = []
-                    for item in reviews:
-                        pid = item.get("parent_id")
-                        if pid and pid in fb_map:
-                            fb_map[pid]["children"].append(fb_map[item["id"]])
-                        else:
-                            tree.append(fb_map[item["id"]])
-                    
-                    # Custom CSS for compact feedback display
-                    st.markdown("""
-<style>
-/* Shrink Streamlit button paddings */
-                        button[data-testid="baseButton-secondary"] {
-                            padding: 2px 8px !important;
-                            min-height: 25px !important;
-                            font-size: 0.75rem !important;
-                        }
-.compact-comment {
-                            padding-left: 10px;
-                            border-left: 2px solid #333;
-                            margin-bottom: 10px;
-                            font-size: 0.85em;
-                            line-height: 1.4;
-                        }
-.compact-name { font-weight: bold; color: #4DA8DA; }
-.compact-message { margin-top: 2px; margin-bottom: 2px; }
-.compact-admin {
-                            background-color: var(--secondary-background-color);
-                            border: 1px solid var(--faded-text-20);
-                            border-left: 3px solid #00f0ff;
-                            border-radius: 5px;
-                            padding: 10px;
-                            margin-top: 10px;
-                            font-size: 0.85em;
-                            color: var(--text-color);
-                        }
-.compact-img {
-                            max-width: 250px;
-                            border-radius: 4px;
-                            margin-top: 5px;
-                        }
-</style>
-                    """, unsafe_allow_html=True)
-    
-                    def render_comments(comments, depth=0):
-                        for c in comments:
-                            if depth > 0:
-                                col_spacer, col_content = st.columns([0.05 * depth, 1 - (0.05 * depth)])
-                            else:
-                                col_spacer = None
-                                col_content = st.container()
-                                
-                            with col_content:
-                                stars = "⭐" * (c.get("rating") or 0)
-                                name = c.get("name") or "Anonymous"
-                                
-                                # Compact HTML rendering
-                                st.markdown(f"""
-                                <div class="compact-comment">
-                                    <span class="compact-name">{name}</span> {stars}
-                                    <div class="compact-message">{c["message"]}</div>
-                                </div>
-                                """, unsafe_allow_html=True)
-                                
-                                # Render image if present
-                                if c.get("image_data"):
-                                    st.markdown(f'<img class="compact-img" src="data:image/png;base64,{c["image_data"]}">', unsafe_allow_html=True)
-                                
-                                # Render Admin Reply if present
-                                if c.get("admin_reply"):
-                                    st.markdown(f"""
-                                    <div class="compact-admin">
-                                        <strong style="color: #00f0ff;">✅ Verified Admin Response:</strong><br/>
-                                        {c["admin_reply"]}
-                                    </div>
-                                    """, unsafe_allow_html=True)
-                                    
-                                # Buttons
-                                btn_cols = st.columns([1.5, 1.5, 2, 4])
-                                with btn_cols[0]:
-                                    votes = c.get("helpful_votes") or 0
-                                    if st.button(f"👍 Helpful ({votes})", key=f"help_{c['id']}"):
-                                        requests.post(f"{API_BASE}/feedback/{c['id']}/helpful")
-                                        st.rerun()
-                                        
-                                is_admin = st.session_state.get("is_admin_unlocked", False)
-                                        
-                                with btn_cols[1]:
-                                    if st.button("💬 Reply", key=f"reply_btn_{c['id']}"):
-                                        st.session_state[f"show_reply_{c['id']}"] = not st.session_state.get(f"show_reply_{c['id']}", False)
-                                        
-                                if is_admin:
-                                    with btn_cols[2]:
-                                        with st.popover("🛠️ Admin"):
-                                            if st.button("Email Reply", key=f"admin_reply_{c['id']}"):
-                                                st.session_state[f"show_admin_reply_{c['id']}"] = True
-                                            if st.button("Hide", key=f"hide_{c['id']}"):
-                                                h_headers = {"X-Admin-Secret": st.session_state.get("temp_admin_pw", "")}
-                                                requests.patch(f"{API_BASE}/feedback/{c['id']}/visibility", headers=h_headers)
-                                                st.rerun()
-                                            if st.button("Delete", key=f"del_fb_feed_{c['id']}"):
-                                                h_headers = {"X-Admin-Secret": st.session_state.get("temp_admin_pw", "")}
-                                                requests.delete(f"{API_BASE}/feedback/{c['id']}", headers=h_headers)
-                                                st.rerun()
-                                                
-                                if st.session_state.get(f"show_reply_{c['id']}", False):
-                                    with st.form(f"form_reply_{c['id']}", clear_on_submit=True):
-                                        reply_msg = st.text_area("Your reply...")
-                                        if st.form_submit_button("Submit Reply"):
-                                            if reply_msg and len(reply_msg.strip()) >= 3:
-                                                u = st.session_state.get("user", {})
-                                                payload = {
-                                                    "name": u.get("name", "Anonymous Reply"),
-                                                    "email": u.get("email", ""),
-                                                    "category": "Reply",
-                                                    "message": reply_msg.strip(),
-                                                    "page_context": "Community Thread",
-                                                    "parent_id": c["id"]
-                                                }
-                                                resp = requests.post(f"{API_BASE}/feedback/", json=payload)
-                                                if resp.status_code == 200:
-                                                    st.session_state[f"show_reply_{c['id']}"] = False
-                                                    st.success("Reply posted!")
-                                                    st.rerun()
-                                                    
-                                if is_admin and st.session_state.get(f"show_admin_reply_{c['id']}", False):
-                                    with st.form(f"admin_form_reply_{c['id']}", clear_on_submit=True):
-                                        st.caption("This will lock a verified official admin response to this thread.")
-                                        admin_msg = st.text_area("Official Admin Reply...")
-                                        if st.form_submit_button("Post Official Admin Reply"):
-                                            if admin_msg:
-                                                resp = requests.post(
-                                                    f"{API_BASE}/feedback/{c['id']}/reply", 
-                                                    headers={"X-Admin-Secret": st.session_state.get("temp_admin_pw", "")},
-                                                    json={"reply_text": admin_msg}
-                                                )
-                                                if resp.status_code == 200:
-                                                    st.session_state[f"show_admin_reply_{c['id']}"] = False
-                                                    data = resp.json()
-                                                    msg = data.get("message", "Official reply posted!")
-                                                    st.success(msg)
-                                                    import time
-                                                    time.sleep(2)
-                                                    st.rerun()
-                                                    
-                            if c["children"]:
-                                render_comments(c["children"], depth + 1)
-                            if depth == 0:
-                                st.divider()
-    
-                    render_comments(tree[:20]) # Limit top-level to 20 for perf
-            else:
-                st.info("No reviews yet. Be the first to leave feedback in the Feedback tab!")
-        except Exception as e:
-            st.error(f"Failed to load community feedback: {e}")
-    
-
-    # ══════════════════════════════════════════════
-    #  TAB: PLATFORM GUIDE
-    # ══════════════════════════════════════════════
     with tab_guide:
-        st.markdown("""
-<div style="background: var(--secondary-background-color); padding: 1rem 1.5rem; border-radius: 6px; border: 1px solid var(--faded-text-20); border-left: 4px solid #FFC107; margin-bottom: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
-<h3 style="color: var(--text-color); margin-top: 0; margin-bottom: 0.3rem; font-weight: 700; letter-spacing: 0.5px;">Platform Guide & Workflows</h3>
-<p style="color: var(--text-color); opacity: 0.75; font-size: 0.95rem; margin-bottom: 0;">Learn how to leverage the full power of the engineering database and BOM simulators.</p>
-</div>
-        """, unsafe_allow_html=True)
+        st.markdown("### 📖 Interactive Platform Guide")
+        st.caption("Select a workflow below to learn how to maximize your MatDataHub experience.")
         
-        # --- IMMERSIVE VISUAL ROADMAP ---
-        st.markdown("""
-<style>
-.roadmap-wrapper {
-margin: 3rem 0;
-padding: 2rem;
-background: linear-gradient(180deg, rgba(79, 195, 161, 0.02) 0%, rgba(46, 134, 171, 0.05) 100%);
-border-radius: 16px;
-border: 1px solid var(--faded-text-20);
-}
-.roadmap-title {
-text-align: center;
-font-size: 2rem;
-font-weight: 800;
-color: var(--text-color);
-margin-bottom: 3rem;
-letter-spacing: -0.5px;
-}
-.timeline {
-position: relative;
-max-width: 900px;
-margin: 0 auto;
-}
-.timeline::after {
-content: '';
-position: absolute;
-width: 4px;
-background: linear-gradient(to bottom, #4FC3A1, #2E86AB, #FFC107, #9C27B0, #E91E63);
-top: 10px;
-bottom: 10px;
-left: 24px;
-border-radius: 4px;
-}
-.t-node {
-padding: 10px 0 30px 70px;
-position: relative;
-}
-.t-node::after {
-content: '✦';
-display: flex;
-align-items: center;
-justify-content: center;
-color: #111;
-font-size: 14px;
-position: absolute;
-width: 32px;
-height: 32px;
-background-color: #4FC3A1;
-top: 10px;
-border-radius: 50%;
-z-index: 1;
-left: 10px;
-box-shadow: 0 0 15px rgba(79, 195, 161, 0.5);
-}
-.t-node:nth-child(2)::after { background-color: #2E86AB; box-shadow: 0 0 15px rgba(46, 134, 171, 0.5); }
-.t-node:nth-child(3)::after { background-color: #FFC107; box-shadow: 0 0 15px rgba(255, 193, 7, 0.5); }
-.t-node:nth-child(4)::after { background-color: #9C27B0; box-shadow: 0 0 15px rgba(156, 39, 176, 0.5); }
-.t-node:nth-child(5)::after { background-color: #E91E63; box-shadow: 0 0 15px rgba(233, 30, 99, 0.5); }
+        # Interactive Navigation
+        guide_step = st.radio("Select Workflow:", [
+            "🔍 Discover & Browse", 
+            "⚖️ Analyze & Substitute", 
+            "📊 Enterprise ESG & BOM", 
+            "🤖 AI Metallurgist"
+        ], horizontal=True, label_visibility="collapsed")
+        
+        st.markdown("<br>", unsafe_allow_html=True)
+        
+        if guide_step == "🔍 Discover & Browse":
+            col1, col2 = st.columns([1, 1.5])
+            with col1:
+                st.markdown("#### 1. Navigate to Explorer")
+                st.write("Use the **Explorer** tab to access the full global database of over 1,000+ verified engineering materials.")
+                st.write("Filter by Category (Metals, Polymers, Ceramics) or search specific ASTM/ISO standards.")
+            with col2:
+                st.info("💡 **Pro Tip:** Free users can view basic mechanical and thermal properties. Upgrade to Pro to view pricing histories and advanced ESG data.")
+                
+        elif guide_step == "⚖️ Analyze & Substitute":
+            col1, col2 = st.columns([1, 1.5])
+            with col1:
+                st.markdown("#### 2. The Smart Substitution Engine")
+                st.write("Supply chain disruptions? Cost-cutting mandates? Use the **Analytics -> Smart Substitution** engine.")
+                st.write("Select your base material (e.g., AISI 304) and use the sliders to prioritize Cost, Weight, Strength, and Carbon Footprint.")
+            with col2:
+                st.success("✅ **Mathematical Optimization:** The AI normalizes the database and generates interactive Radar Charts proving exactly why an alternative material is superior.")
+                
+        elif guide_step == "📊 Enterprise ESG & BOM":
+            col1, col2 = st.columns([1, 1.5])
+            with col1:
+                st.markdown("#### 3. Automated BOM Enrichment")
+                st.write("Procurement teams can upload messy Excel/CSV Bills of Materials directly into the **Workflows** tab.")
+                st.write("Our fuzzy-matching AI cleans the data, finds the exact materials, and flags obsolete global standards.")
+            with col2:
+                st.warning("🌍 **ESG Compliance:** The system automatically calculates the Total Embodied Carbon (kg CO2e) for your entire project, generating instant sustainability reports.")
+                
+        elif guide_step == "🤖 AI Metallurgist":
+            col1, col2 = st.columns([1, 1.5])
+            with col1:
+                st.markdown("#### 4. Natural Language Engineering")
+                st.write("Skip the manual filters. Chat directly with our **AI Advisor** located in the Explorer tab.")
+                st.write("Example: *'I need a lightweight alloy for an aerospace drone bracket that operates at 150°C and costs less than $15/kg.'*")
+            with col2:
+                st.error("🤖 **Context-Aware:** The AI is natively hooked into our verified database, meaning it doesn't hallucinate—it strictly recommends actual, purchasable materials.")
 
-.t-card {
-padding: 1.5rem 2rem;
-background: var(--secondary-background-color);
-border-radius: 12px;
-border: 1px solid var(--faded-text-20);
-box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-transition: all 0.3s ease;
-position: relative;
-overflow: hidden;
-}
-.t-card::before {
-content: '';
-position: absolute;
-left: 0;
-top: 0;
-bottom: 0;
-width: 4px;
-background: #4FC3A1;
-}
-.t-node:nth-child(2) .t-card::before { background: #2E86AB; }
-.t-node:nth-child(3) .t-card::before { background: #FFC107; }
-.t-node:nth-child(4) .t-card::before { background: #9C27B0; }
-.t-node:nth-child(5) .t-card::before { background: #E91E63; }
-
-.t-card:hover {
-transform: translateX(8px);
-border-color: var(--faded-text-40);
-box-shadow: 0 8px 30px rgba(0,0,0,0.1);
-}
-.t-step {
-font-size: 0.85rem;
-font-weight: 800;
-letter-spacing: 1.5px;
-text-transform: uppercase;
-color: #4FC3A1;
-margin-bottom: 0.5rem;
-display: block;
-}
-.t-node:nth-child(2) .t-step { color: #2E86AB; }
-.t-node:nth-child(3) .t-step { color: #FFC107; }
-.t-node:nth-child(4) .t-step { color: #9C27B0; }
-.t-node:nth-child(5) .t-step { color: #E91E63; }
-
-.t-card h4 {
-margin: 0 0 10px 0;
-font-size: 1.4rem;
-color: var(--text-color);
-}
-.t-card p {
-margin: 0;
-color: var(--text-color);
-opacity: 0.8;
-line-height: 1.6;
-font-size: 1.05rem;
-}
-.tool-grid {
-display: grid;
-grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-gap: 10px;
-margin-top: 15px;
-}
-.tool-item {
-background: rgba(128,128,128,0.05);
-border-left: 3px solid #FFC107;
-padding: 10px 14px;
-border-radius: 6px;
-font-size: 0.95rem;
-color: var(--text-color);
-border-top: 1px solid var(--faded-text-10);
-border-right: 1px solid var(--faded-text-10);
-border-bottom: 1px solid var(--faded-text-10);
-}
-.tool-item strong {
-color: #FFC107;
-display: block;
-margin-bottom: 2px;
-}
-</style>
-
-<div class="roadmap-wrapper">
-<h2 class="roadmap-title">Platform Mastery Roadmap</h2>
-<div class="timeline">
-
-<div class="t-node">
-<div class="t-card">
-<span class="t-step">Step 1 • Discovery</span>
-<h4>Global Database Search</h4>
-<p>Navigate to the <b>Database</b> tab to query over 1,000+ materials. Search by specific alloy grades (e.g., <i>Ti-6Al-4V</i>), trade names, or master categories. Utilize precision filters to narrow down targets by ultimate tensile strength, thermal conductivity, and economics.</p>
-</div>
-</div>
-
-<div class="t-node">
-<div class="t-card">
-<span class="t-step">Step 2 • Analysis</span>
-<h4>Visual Comparison Engine</h4>
-<p>Once you locate candidate materials, proceed to the <b>Compare</b> tab. Select up to 5 materials to instantly generate immersive radar charts and parallel data matrices. This visual breakdown is critical for isolating lightweight, high-strength substitutions.</p>
-</div>
-</div>
-
-<div class="t-node">
-<div class="t-card">
-<span class="t-step">Step 3 • Simulation & Economics</span>
-<h4>Engineering Workspaces (BOM)</h4>
-<p>The <b>Engineering (BOM)</b> tab is where raw data becomes structural reality. Create custom workspaces, build mechanical assemblies, and link components to the database to calculate Total Mass and Economics. Unlock the <b>Advanced Engineering Tools</b> to access powerful simulation modules:</p>
-<div class="tool-grid">
-<div class="tool-item"><strong>🧪 Synthesizer</strong>Formulate custom alloys.</div>
-<div class="tool-item"><strong>🛡️ Safety & Yield</strong>Calculate structural limits.</div>
-<div class="tool-item"><strong>🔄 Fatigue</strong>Estimate cyclic endurance.</div>
-<div class="tool-item"><strong>🌡️ Thermal</strong>Predict expansion & heat.</div>
-<div class="tool-item"><strong>📐 Deflection</strong>Model beam bending.</div>
-<div class="tool-item"><strong>⚡ Shock</strong>Analyze impact loading.</div>
-<div class="tool-item"><strong>📉 Cost</strong>Optimize BOM economics.</div>
-</div>
-</div>
-</div>
-
-<div class="t-node">
-<div class="t-card">
-<span class="t-step" style="color: #9C27B0;">Step 4 • Intelligence</span>
-<h4>AI Materials Advisor</h4>
-<p>Encounter a complex design constraint? Leverage the <b>AI Advisor</b> tab. Powered by advanced machine learning fine-tuned on materials science, it directly queries the MatDataHub database to prevent hallucinations and recommend optimal aerospace, nuclear, or industrial alternatives.</p>
-</div>
-</div>
-
-<div class="t-node">
-<div class="t-card">
-<span class="t-step" style="color: #E91E63;">Step 5 • Community Loop</span>
-<h4>System Feedback</h4>
-<p>Continuous evolution requires engineering feedback. Use the <b>Feedback</b> tab to report issues, request the injection of highly specific new materials into the database, or participate in the community review discussions.</p>
-</div>
-</div>
-
-
-<div class="t-node">
-<div class="t-card">
-<span class="t-step" style="color: #FF9800;">Step 6 — Enterprise Scale</span>
-<h4>Private Custom Materials Engine</h4>
-<p>For engineering firms handling proprietary alloys, navigate to your <b>Account Dashboard</b> to access the <b>Custom Materials</b> engine. Upload secret material properties into an isolated database. These private materials automatically synchronize with your visual Comparison Engine and BOM Synthesizer (marked with a 🔒), allowing you safely compare proprietary alloys against public standards.</p>
-</div>
-</div>
-
-<div class="t-node">
-<div class="t-card">
-<span class="t-step" style="color: #00BCD4;">Step 7 — Market Analytics</span>
-<h4>Historical Commodity Price Tracking</h4>
-<p>Supply chain economics are just as critical as yield strength. In the <b>Browse Materials</b> tab, scroll to the bottom of any standard material to access the 12-month <b>Historical Price Tracker</b>. Visualize market volatility and accurately project manufacturing costs.</p>
-</div>
-</div>
-</div>
-</div>
-""", unsafe_allow_html=True)
+        st.markdown("<br><br>", unsafe_allow_html=True)
+        st.markdown("---")
 
     with tab_browse:
         st.markdown("""
