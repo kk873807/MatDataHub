@@ -1379,13 +1379,11 @@ if st.session_state.current_page == "main":
     with tab_faq_main:
         st.markdown("## ❓ Frequently Asked Questions")
         st.divider()
-        tab_faq, = st.tabs(["❓ FAQ"])
 
     with tab_support_main:
         st.markdown("## 💬 Support Center")
         st.caption("Reach out to our dedicated enterprise support team for billing or technical issues.")
         st.divider()
-        tab_feedback, = st.tabs(["🎫 Submit Support Ticket"])
     
     
     # ══════════════════════════════════════════════
@@ -2901,7 +2899,7 @@ if st.session_state.current_page == "main":
     # ==========================================
     #  TAB: FAQ
     # ==========================================
-    with tab_faq:
+    with tab_faq_main:
         st.markdown("## ❓ Frequently Asked Questions")
         st.caption("Everything you need to know about MatDataHub.")
         
@@ -2934,7 +2932,7 @@ if st.session_state.current_page == "main":
             st.write("API Access is available exclusively on the Advanced (Enterprise) tier! This allows full programmatic access to pipe material data directly into your ERP systems and simulations.")
 
 
-    with tab_feedback:
+    with tab_support_main:
         st.markdown("## 💬 Help Center & Contact Support")
         st.caption("Need help with a payment? Found a bug? Or just want to request a feature? Contact our support team below.")
     
