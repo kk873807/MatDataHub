@@ -961,6 +961,7 @@ if st.session_state.current_page == "account":
         with ac1:
             account_menu = st.radio("Settings", [
                 "👤 Profile & Security", 
+                "🛠️ Custom Materials (Enterprise)",
                 "💳 Payment History", 
                 "📚 Help Center & Legal",
                 "⌨️ Keyboard Shortcuts"
@@ -1903,6 +1904,27 @@ margin-bottom: 2px;
                         user_tier = (st.session_state.user or {}).get("tier", "free")
     
                         if user_tier in ("pro", "advanced"):
+
+                        if user_tier in ("pro", "advanced"):
+                            st.markdown("### 📈 Historical Price Tracking")
+                            with st.spinner("Loading commodity price history..."):
+                                price_resp = api_get(f"/materials/{mat_id}/price-history")
+                                if price_resp["ok"] and price_resp["data"]:
+                                    import pandas as pd
+                                    hist_data = price_resp["data"]
+                                    df_hist = pd.DataFrame(hist_data)
+                                    if not df_hist.empty:
+                                        df_hist["recorded_date"] = pd.to_datetime(df_hist["recorded_date"])
+                                        df_hist = df_hist.set_index("recorded_date")
+                                        st.line_chart(df_hist["cost_per_kg"], height=250, use_container_width=True)
+                                        st.caption("Price fluctuations (INR per kg) over the last 12 months.")
+                                    else:
+                                        st.info("No historical price data available yet.")
+                                else:
+                                    st.info("Historical tracking is currently gathering data for this material.")
+                        else:
+                            st.info("📈 **Upgrade to Pro or Advanced** to unlock 12-month historical commodity price tracking.")
+
                             if st.button(f"🔍 Find Materials Similar to {m['name']}", key=f"similar_{mat_id}"):
                                 with st.spinner("Finding similar materials..."):
                                     sim_result = api_get(f"/materials/{mat_id}/similar", params={"limit": 5})
