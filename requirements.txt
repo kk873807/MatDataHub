@@ -36,3 +36,8 @@ slowapi>=0.1.9
 
 fpdf2>=2.7.9
 
+
+# Data processing for Pro/Enterprise features
+pandas>=2.2.0
+thefuzz>=0.22.0
+

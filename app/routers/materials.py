@@ -523,3 +523,61 @@ def get_price_history(
                     )
                 )
     return history
+
+from pydantic import BaseModel
+class SubstitutionRequest(BaseModel):
+    base_material_id: int
+    weights: dict
+
+@router.post("/substitute", tags=["Pro Features"])
+def find_substitutes(req: SubstitutionRequest, db: Session = Depends(get_db)):
+    """
+    Pro feature: Find alternative materials based on weighted parameters.
+    """
+    from app.workflows import SubstitutionEngine
+    engine = SubstitutionEngine(db)
+    results = engine.find_alternatives(req.base_material_id, req.weights)
+    
+    # Format for JSON response
+    formatted = []
+    for r in results:
+        mat = r["material"]
+        formatted.append({
+            "id": mat.id,
+            "name": mat.name,
+            "match_score": r["match_score"],
+            "cost": mat.cost_per_kg_min if mat.cost_per_kg_min else 0.0,
+            "density": mat.density if mat.density else 0.0,
+            "tensile": mat.tensile_strength_min if mat.tensile_strength_min else 0.0,
+            "carbon": mat.embodied_carbon if mat.embodied_carbon else 0.0
+        })
+    return formatted
+
+from fastapi import UploadFile, File, Form
+import pandas as pd
+import io
+from fastapi.responses import StreamingResponse
+
+@router.post("/bom_analyze", tags=["Enterprise Features"])
+def analyze_bom(
+    file: UploadFile = File(...),
+    material_col: str = Form(...),
+    weight_col: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    """
+    Enterprise feature: Analyze a BOM CSV for ESG and Obsolescence.
+    """
+    from app.workflows import BOMProcessor
+    contents = file.file.read()
+    df = pd.read_csv(io.BytesIO(contents))
+    
+    processor = BOMProcessor(db)
+    enriched_df = processor.process_bom(df, material_col, weight_col)
+    
+    # Return as CSV
+    stream = io.StringIO()
+    enriched_df.to_csv(stream, index=False)
+    response = StreamingResponse(iter([stream.getvalue()]), media_type="text/csv")
+    response.headers["Content-Disposition"] = "attachment; filename=enriched_bom.csv"
+    return response

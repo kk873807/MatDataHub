@@ -64,6 +64,12 @@ class Material(Base):
     composition = Column(Text, nullable=True)                        # "Fe 66-74%, Cr 18-20%, Ni 8-10.5%"
     description = Column(Text, nullable=True)
 
+    # ---- ESG & Supply Chain (Enterprise/Pro) ----
+    embodied_carbon = Column(Float, nullable=True)                   # kg CO2e / kg of material
+    recyclability_index = Column(Float, nullable=True)               # 0.0 to 1.0 score
+    is_obsolete = Column(Boolean, default=False)                     # Flag for deprecated standards
+    replacement_standard = Column(String(200), nullable=True)        # If obsolete, what is the new standard?
+
     # ---- Data Source ----
     source_url = Column(String(500), nullable=True)                  # Where we scraped this from
     source_name = Column(String(100), nullable=True)                 # "MatWeb", "MakeItFrom", "ASTM"
