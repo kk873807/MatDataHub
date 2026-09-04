@@ -1026,6 +1026,42 @@ if st.session_state.current_page == "account":
                 
 
                     
+            
+            elif account_menu == "🛠️ Custom Materials (Enterprise)":
+                st.markdown("### 🛠️ Private Custom Materials")
+                if user.get("tier") == "advanced":
+                    st.write("Upload your proprietary materials here. These will be strictly isolated to your enterprise account and available in the BOM Synthesizer.")
+                    
+                    with st.expander("➕ Add New Proprietary Material"):
+                        with st.form("custom_mat_form", clear_on_submit=True):
+                            c_name = st.text_input("Material Name (e.g. Stark Titanium X-1)")
+                            c_cat = st.selectbox("Category", ["Metal", "Polymer", "Composite", "Ceramic", "Other"])
+                            c_dens = st.number_input("Density (g/cm3)", min_value=0.01, value=1.0)
+                            c_tens = st.number_input("Tensile Strength (MPa)", min_value=0.0)
+                            c_cost = st.number_input("Internal Cost Estimate (INR/kg)", min_value=0.0)
+                            
+                            if st.form_submit_button("Save to Private Database"):
+                                payload = {
+                                    "name": c_name, "category": c_cat, "density": c_dens, 
+                                    "tensile_strength_min": c_tens, "cost_per_kg_min": c_cost
+                                }
+                                res = api_post("/materials/custom", payload)
+                                if res["ok"]:
+                                    st.success(f"{c_name} added securely!")
+                                    st.rerun()
+                                else:
+                                    st.error("Failed to add material.")
+                                    
+                    st.markdown("#### Your Library")
+                    my_mats = api_get("/materials/custom/mine")
+                    if my_mats["ok"] and my_mats["data"]:
+                        for mm in my_mats["data"]:
+                            st.markdown(f"**{mm['name']}** ({mm['category']}) - {mm['tensile_strength_min']} MPa | ₹{mm['cost_per_kg_min']}/kg")
+                    else:
+                        st.caption("No proprietary materials uploaded yet.")
+                else:
+                    st.warning("Custom Private Materials are exclusively available on the Advanced (Enterprise) tier.")
+
             elif account_menu == "💳 Payment History":
                 st.markdown("### Transaction History")
                 # Fetch transactions from backend
@@ -2339,7 +2375,17 @@ margin-bottom: 2px;
                                     with st.spinner("Loading materials..."):
                                         all_mats = fetch_all_materials(st.session_state.get("token"))
                                     
+                                    
                                     bom_mat_options = {m["id"]: m["name"] for m in all_mats["data"].get("materials", [])} if all_mats["ok"] else {}
+                                    
+                                    # Fetch custom materials if advanced
+                                    if user_tier == "advanced":
+                                        cust_mats = api_get("/materials/custom/mine")
+                                        if cust_mats["ok"] and cust_mats["data"]:
+                                            for cm in cust_mats["data"]:
+                                                # Use negative IDs to distinguish custom materials in the UI
+                                                bom_mat_options[-cm["id"]] = f"🔒 {cm['name']}"
+
                                     
                                     with c1:
                                         part_name = st.text_input("Part Name", placeholder="e.g. Engine Block")

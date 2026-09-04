@@ -248,3 +248,26 @@ class TransactionOut(BaseModel):
     created_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+class CustomMaterialCreate(BaseModel):
+    name: str
+    category: str
+    density: Optional[float] = None
+    tensile_strength_min: Optional[float] = None
+    cost_per_kg_min: Optional[float] = None
+
+class CustomMaterialResponse(CustomMaterialCreate):
+    id: int
+    user_id: int
+    created_at: datetime
+    class Config:
+        from_attributes = True
+
+class PriceHistoryResponse(BaseModel):
+    id: int
+    material_id: int
+    cost_per_kg: float
+    recorded_date: datetime
+    class Config:
+        from_attributes = True

@@ -193,3 +193,49 @@ class Transaction(Base):
     status = Column(String(20), default="completed") # completed, failed, pending
     payment_id = Column(String(100), nullable=True)  # e.g., razorpay_payment_id or stripe_id
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class CustomMaterial(Base):
+    __tablename__ = "custom_materials"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    name = Column(String(255), index=True)
+    category = Column(String(100), index=True)
+    subcategory = Column(String(100), nullable=True)
+    
+    density = Column(Float, nullable=True)
+    tensile_strength_min = Column(Float, nullable=True)
+    tensile_strength_max = Column(Float, nullable=True)
+    yield_strength_min = Column(Float, nullable=True)
+    yield_strength_max = Column(Float, nullable=True)
+    elongation_min = Column(Float, nullable=True)
+    elongation_max = Column(Float, nullable=True)
+    hardness_min = Column(Float, nullable=True)
+    hardness_max = Column(Float, nullable=True)
+    hardness_scale = Column(String(50), nullable=True)
+    
+    thermal_conductivity = Column(Float, nullable=True)
+    specific_heat = Column(Float, nullable=True)
+    melting_point = Column(Float, nullable=True)
+    max_service_temp = Column(Float, nullable=True)
+    
+    electrical_resistivity = Column(Float, nullable=True)
+    
+    cost_per_kg_min = Column(Float, nullable=True)
+    cost_per_kg_max = Column(Float, nullable=True)
+    
+    applications = Column(Text, nullable=True)
+    equivalent_grades = Column(Text, nullable=True)
+    
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    
+    user = relationship("User")
+
+class PriceHistory(Base):
+    __tablename__ = "price_history"
+    id = Column(Integer, primary_key=True, index=True)
+    material_id = Column(Integer, ForeignKey("materials.id", ondelete="CASCADE"), index=True)
+    cost_per_kg = Column(Float, nullable=False)
+    recorded_date = Column(DateTime(timezone=True), server_default=func.now())
+    
+    material = relationship("Material")
