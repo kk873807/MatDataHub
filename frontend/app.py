@@ -527,6 +527,12 @@ def generate_bom_pdf(project_name, df_bom, total_mass, total_cost):
     # Output to byte string
     return bytes(pdf.output())
 
+
+@st.cache_data(ttl=60, show_spinner=False)
+def fetch_public_feedback():
+    return api_get("/feedback/public")
+
+@st.cache_data(ttl=600, show_spinner=False)
 def fetch_all_materials(token=None):
     """Fetch all materials from the API with retry. Cached for 10 minutes to improve performance."""
     return api_get("/materials/", params={"per_page": 1000})
@@ -1284,7 +1290,7 @@ if st.session_state.current_page == "main":
         st.markdown("See what other engineers are saying about MatDataHub, reply to their feedback, and join the discussion!")
     
         try:
-            rev_resp = api_get("/feedback/public")
+            rev_resp = fetch_public_feedback()
             if rev_resp["ok"] and rev_resp["data"]:
                 reviews = rev_resp["data"]
                 total_stars = sum(r.get("rating") or 0 for r in reviews if r.get("rating"))

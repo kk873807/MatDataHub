@@ -146,6 +146,7 @@ def list_public_feedback(db: Session = Depends(get_db)):
     # Mask emails for privacy
     for f in fb:
         f.email = None
+        f.image_data = None  # CRITICAL: Prevent giant base64 images from crashing the public feed
     return fb
 
 @router.delete("/{feedback_id}", response_model=FeedbackResponse)
