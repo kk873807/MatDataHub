@@ -22,7 +22,7 @@ export default function MaterialsPage() {
     const fetchMaterials = async () => {
       setLoading(true);
       try {
-        let url = `http://127.0.0.1:8000/api/v1/materials?per_page=${perPage}`;
+        let url = `http://127.0.0.1:8000/api/v1/materials/?per_page=${perPage}`;
         
         if (search) {
           url = `http://127.0.0.1:8000/api/v1/materials/search?q=${encodeURIComponent(search)}&per_page=${perPage}`;

@@ -162,7 +162,7 @@ def list_materials(
 # GET /materials/search  — Full-text search
 # ──────────────────────────────────────────────
 @router.get("/search", response_model=MaterialListResponse)
-@limiter.limit("30/minute")
+@limiter.limit("300/minute")
 def search_materials(
     request: Request,
     q: str = Query(..., min_length=1, description="Search query (searches name, grade, applications, equivalent_grades)"),
