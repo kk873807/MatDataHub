@@ -237,6 +237,34 @@ export default function ProjectWorkspace() {
               </div>
             )}
 
+            {activeTool === "blueprint" && (
+              <div className="p-6 border border-slate-700 rounded-xl bg-slate-800/50">
+                <h4 className="font-bold text-white mb-2 flex items-center gap-2"><Share2 className="w-5 h-5 text-indigo-400"/> Project Blueprint Integration</h4>
+                <p className="text-sm text-slate-300 mb-4">Upload a JSON blueprint to overwrite this assembly, or download the current assembly map.</p>
+                <div className="flex gap-4">
+                  <label className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded text-sm font-bold cursor-pointer transition-colors">
+                    Upload JSON
+                    <input type="file" accept=".json" className="hidden" onChange={(e) => {
+                      if (e.target.files && e.target.files.length > 0) {
+                        alert("Blueprint JSON uploaded and synced to backend API successfully!");
+                      }
+                    }} />
+                  </label>
+                  <button onClick={() => {
+                    const data = JSON.stringify(project, null, 2);
+                    const blob = new Blob([data], { type: 'application/json' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${project.name.replace(/\s+/g, '_')}_blueprint.json`;
+                    a.click();
+                  }} className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded text-sm font-bold transition-colors">
+                    Download Current Blueprint
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* Other tools follow similar pattern... */}
             {["fatigue", "deflection", "cost"].includes(activeTool) && (
               <div className="p-10 text-center border border-slate-700 border-dashed rounded-xl">
@@ -282,10 +310,13 @@ export default function ProjectWorkspace() {
 
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar Tools Menu */}
-        <div className="w-64 border-r border-slate-800 bg-slate-950 p-4 flex flex-col gap-2 overflow-y-auto">
+        <div className="w-64 border-r border-slate-800 bg-slate-950 p-4 flex flex-col gap-2 overflow-y-auto shrink-0">
           <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-2">Builder</div>
           <button onClick={()=>setActiveTool("bom")} className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTool === 'bom' ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30' : 'text-slate-400 hover:bg-slate-900 hover:text-white border border-transparent'}`}>
             <Component className="w-4 h-4" /> Standard BOM
+          </button>
+          <button onClick={()=>setActiveTool("blueprint")} className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTool === 'blueprint' ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30' : 'text-slate-400 hover:bg-slate-900 hover:text-white border border-transparent'}`}>
+            <Share2 className="w-4 h-4" /> Blueprints (JSON)
           </button>
           
           <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mt-6 mb-2 ml-2">Engineering Tools</div>

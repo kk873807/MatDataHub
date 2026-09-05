@@ -1,15 +1,22 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeft, Scale, Loader2, Info } from "lucide-react";
+import { ArrowLeft, Scale, Loader2, Info, Plus, X } from "lucide-react";
 
 export default function CompareMaterials() {
   const [allMaterials, setAllMaterials] = useState<any[]>([]);
-  const [matA, setMatA] = useState("");
-  const [matB, setMatB] = useState("");
-  
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [comparison, setComparison] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+
+  // Colors for up to 5 materials
+  const colors = [
+    { hex: "#3b82f6", bg: "rgba(59, 130, 246, 0.3)" }, // blue
+    { hex: "#10b981", bg: "rgba(16, 185, 129, 0.3)" }, // emerald
+    { hex: "#f59e0b", bg: "rgba(245, 158, 11, 0.3)" }, // amber
+    { hex: "#8b5cf6", bg: "rgba(139, 92, 246, 0.3)" }, // purple
+    { hex: "#ec4899", bg: "rgba(236, 72, 153, 0.3)" }  // pink
+  ];
 
   // Fetch list of materials for dropdowns
   useEffect(() => {
@@ -18,20 +25,17 @@ export default function CompareMaterials() {
       .then(data => setAllMaterials(data.materials || []));
   }, []);
 
-  // Fetch comparison when both selected
+  // Fetch comparison
   useEffect(() => {
-    if (matA && matB) {
+    if (selectedIds.length > 0) {
       setLoading(true);
-      fetch(`http://127.0.0.1:8000/api/v1/materials/compare?ids=${matA}&ids=${matB}`)
+      const queryParams = selectedIds.map(id => `ids=${id}`).join("&");
+      fetch(`http://127.0.0.1:8000/api/v1/materials/compare?${queryParams}`)
         .then(res => res.json())
         .then(data => {
           if (Array.isArray(data)) {
-            // Sort to ensure A is first, B is second
-            const sorted = [];
-            const objA = data.find(m => m.id.toString() === matA);
-            const objB = data.find(m => m.id.toString() === matB);
-            if (objA) sorted.push(objA);
-            if (objB) sorted.push(objB);
+            // Sort to match selection order
+            const sorted = selectedIds.map(id => data.find(m => m.id.toString() === id)).filter(Boolean);
             setComparison(sorted);
           }
         })
@@ -39,7 +43,7 @@ export default function CompareMaterials() {
     } else {
       setComparison([]);
     }
-  }, [matA, matB]);
+  }, [selectedIds]);
 
   const propsToCompare = [
     { key: "yield_strength_min", label: "Yield Strength (MPa)", max: 2000 },
@@ -50,9 +54,23 @@ export default function CompareMaterials() {
     { key: "cost_per_kg_min", label: "Cost (₹/kg)", max: 100000 }
   ];
 
+  const handleAddMaterial = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const val = e.target.value;
+    if (val && !selectedIds.includes(val) && selectedIds.length < 5) { // Capped at 5 for UI clarity
+      setSelectedIds([...selectedIds, val]);
+    }
+    e.target.value = "";
+  };
+
+  const handleRemove = (index: number) => {
+    const newIds = [...selectedIds];
+    newIds.splice(index, 1);
+    setSelectedIds(newIds);
+  };
+
   // SVG Radar Chart Logic
   const renderRadar = () => {
-    if (comparison.length < 2) return null;
+    if (comparison.length === 0) return null;
     const center = 150;
     const radius = 100;
     const angleStep = (Math.PI * 2) / propsToCompare.length;
@@ -61,11 +79,10 @@ export default function CompareMaterials() {
       const mat = comparison[matIndex];
       return propsToCompare.map((prop, i) => {
         const rawVal = mat[prop.key] || 0;
-        // Normalize 0 to 1
         let norm = rawVal / prop.max;
         if (norm > 1) norm = 1;
         
-        const angle = i * angleStep - Math.PI / 2; // Start at top
+        const angle = i * angleStep - Math.PI / 2;
         const x = center + radius * norm * Math.cos(angle);
         const y = center + radius * norm * Math.sin(angle);
         return `${x},${y}`;
@@ -102,30 +119,16 @@ export default function CompareMaterials() {
           );
         })}
         {/* Polygons */}
-        <polygon points={getCoordinates(0)} fill="rgba(59, 130, 246, 0.3)" stroke="#3b82f6" strokeWidth="2" />
-        <polygon points={getCoordinates(1)} fill="rgba(16, 185, 129, 0.3)" stroke="#10b981" strokeWidth="2" />
+        {comparison.map((_, idx) => (
+          <polygon 
+            key={idx}
+            points={getCoordinates(idx)} 
+            fill={colors[idx % colors.length].bg} 
+            stroke={colors[idx % colors.length].hex} 
+            strokeWidth="2" 
+          />
+        ))}
       </svg>
-    );
-  };
-
-  const generateTakeaways = () => {
-    if (comparison.length < 2) return null;
-    const [a, b] = comparison;
-    const takeaways = [];
-    
-    if (a.yield_strength_min > b.yield_strength_min) takeaways.push(`${a.name} is stronger in yield stress.`);
-    else if (b.yield_strength_min > a.yield_strength_min) takeaways.push(`${b.name} is stronger in yield stress.`);
-
-    if (a.cost_per_kg_min < b.cost_per_kg_min) takeaways.push(`${a.name} is more cost-effective.`);
-    else if (b.cost_per_kg_min < a.cost_per_kg_min) takeaways.push(`${b.name} is more cost-effective.`);
-
-    if (a.density < b.density) takeaways.push(`${a.name} is lighter, better for aerospace/automotive.`);
-    else if (b.density < a.density) takeaways.push(`${b.name} is lighter, better for aerospace/automotive.`);
-
-    return (
-      <ul className="list-disc pl-5 space-y-2 text-slate-300 text-sm">
-        {takeaways.map((t, i) => <li key={i}>{t}</li>)}
-      </ul>
     );
   };
 
@@ -140,33 +143,35 @@ export default function CompareMaterials() {
         <div>
           <h1 className="text-3xl font-bold text-white flex items-center gap-3">
             <Scale className="w-8 h-8 text-blue-400" />
-            Side-by-Side Comparison
+            Multi-Material Compare
           </h1>
-          <p className="text-slate-300 mt-2">Evaluate properties visually and extract key takeaways between materials.</p>
+          <p className="text-slate-300 mt-2">Evaluate properties visually across multiple materials (Pro: up to 5, Advanced: unlimited APIs).</p>
         </div>
 
-        {/* Selectors */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-900 p-6 rounded-2xl border border-slate-800">
-          <div>
-            <label className="block text-sm font-semibold text-blue-400 mb-2">Material A</label>
-            <select
-              value={matA}
-              onChange={(e) => setMatA(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white appearance-none outline-none focus:border-blue-500"
-            >
-              <option className="bg-slate-900" value="">Select Material...</option>
-              {allMaterials.map(m => <option className="bg-slate-900" key={m.id} value={m.id}>{m.name}</option>)}
-            </select>
+        {/* Dynamic Selectors */}
+        <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-4">
+          <div className="flex flex-wrap gap-3 mb-2">
+            {selectedIds.map((id, idx) => {
+              const mat = allMaterials.find(m => m.id.toString() === id);
+              return (
+                <div key={idx} className="flex items-center gap-2 bg-slate-950 border border-slate-700 rounded-full px-4 py-1.5 shadow-sm" style={{ borderLeft: `4px solid ${colors[idx % colors.length].hex}` }}>
+                  <span className="text-sm font-bold text-white">{mat?.name || id}</span>
+                  <button onClick={() => handleRemove(idx)} className="text-slate-500 hover:text-red-400"><X className="w-3 h-3" /></button>
+                </div>
+              );
+            })}
           </div>
-          <div>
-            <label className="block text-sm font-semibold text-emerald-400 mb-2">Material B</label>
+
+          <div className="flex items-center gap-4">
             <select
-              value={matB}
-              onChange={(e) => setMatB(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white appearance-none outline-none focus:border-emerald-500"
+              onChange={handleAddMaterial}
+              className="w-full max-w-sm bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white appearance-none outline-none focus:border-blue-500"
+              disabled={selectedIds.length >= 5}
             >
-              <option className="bg-slate-900" value="">Select Material...</option>
-              {allMaterials.map(m => <option className="bg-slate-900" key={m.id} value={m.id}>{m.name}</option>)}
+              <option className="bg-slate-900" value="">{selectedIds.length >= 5 ? "Maximum reached (Pro limit)" : "Add material to compare..."}</option>
+              {allMaterials.filter(m => !selectedIds.includes(m.id.toString())).map(m => (
+                <option className="bg-slate-900" key={m.id} value={m.id}>{m.name}</option>
+              ))}
             </select>
           </div>
         </div>
@@ -175,7 +180,7 @@ export default function CompareMaterials() {
           <div className="flex justify-center py-20">
             <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
           </div>
-        ) : comparison.length === 2 ? (
+        ) : comparison.length > 0 ? (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
             {/* Radar Fingerprint */}
@@ -184,64 +189,42 @@ export default function CompareMaterials() {
               <div className="flex-1 flex items-center justify-center py-6">
                 {renderRadar()}
               </div>
-              <div className="flex justify-center gap-6 mt-4">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-blue-500/50 border border-blue-500"></div>
-                  <span className="text-xs text-slate-300">Material A</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-emerald-500/50 border border-emerald-500"></div>
-                  <span className="text-xs text-slate-300">Material B</span>
-                </div>
-              </div>
             </div>
 
             {/* Properties Table */}
             <div className="lg:col-span-2 space-y-6">
               <div className="p-6 bg-slate-900 border border-slate-800 rounded-2xl overflow-x-auto">
-                <h3 className="font-bold text-white mb-4">Direct Comparison</h3>
+                <h3 className="font-bold text-white mb-4">Direct Comparison Matrix</h3>
                 <table className="w-full text-left text-sm">
                   <thead>
                     <tr className="border-b border-slate-800">
-                      <th className="pb-3 text-slate-400 font-medium">Property</th>
-                      <th className="pb-3 text-blue-400 font-bold">{comparison[0].name}</th>
-                      <th className="pb-3 text-emerald-400 font-bold">{comparison[1].name}</th>
+                      <th className="pb-3 text-slate-400 font-medium whitespace-nowrap">Property</th>
+                      {comparison.map((m, idx) => (
+                        <th key={idx} className="pb-3 font-bold px-2 whitespace-nowrap" style={{ color: colors[idx % colors.length].hex }}>
+                          {m.name}
+                        </th>
+                      ))}
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-800">
-                    {propsToCompare.map(prop => {
-                      const valA = comparison[0][prop.key] || 0;
-                      const valB = comparison[1][prop.key] || 0;
-                      return (
-                        <tr key={prop.key}>
-                          <td className="py-3 text-slate-300">{prop.label}</td>
-                          <td className={`py-3 ${valA > valB ? 'text-white font-semibold' : 'text-slate-400'}`}>
-                            {valA || '-'}
+                    {propsToCompare.map(prop => (
+                      <tr key={prop.key}>
+                        <td className="py-3 text-slate-300 whitespace-nowrap">{prop.label}</td>
+                        {comparison.map((m, idx) => (
+                          <td key={idx} className="py-3 px-2 text-slate-200">
+                            {m[prop.key] || '-'}
                           </td>
-                          <td className={`py-3 ${valB > valA ? 'text-white font-semibold' : 'text-slate-400'}`}>
-                            {valB || '-'}
-                          </td>
-                        </tr>
-                      );
-                    })}
+                        ))}
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
-
-              {/* Key Takeaways */}
-              <div className="p-6 bg-slate-900 border border-slate-800 rounded-2xl">
-                <h3 className="font-bold text-white mb-4 flex items-center gap-2">
-                  <Info className="w-4 h-4 text-purple-400" />
-                  Key Takeaways
-                </h3>
-                {generateTakeaways()}
-              </div>
             </div>
-            
           </div>
         ) : (
           <div className="text-center py-20 text-slate-500 bg-slate-900/30 rounded-2xl border border-slate-800 border-dashed">
-            Select two materials above to generate the comparison matrix and radar fingerprint.
+            Select materials above to generate the comparison matrix and radar fingerprint.
           </div>
         )}
       </div>
