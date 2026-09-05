@@ -106,22 +106,28 @@ export default function MaterialDetail() {
             <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800">
               <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2"><TrendingUp className="w-5 h-5 text-emerald-400"/> Historical Price Tracking (12M)</h3>
               {priceHistory.length > 0 ? (
-                <div className="flex items-end gap-2 h-48 mt-4 pt-4 border-t border-slate-800">
+                <div className="flex gap-2 h-48 mt-4 pt-4 border-t border-slate-800">
                   {priceHistory.map((ph, idx) => {
                     const height = (ph.cost_per_kg / maxPrice) * 100;
                     return (
-                      <div key={idx} className="flex-1 flex flex-col items-center gap-2 group relative">
-                        <div 
-                          className="w-full bg-emerald-500/20 hover:bg-emerald-500/50 border border-emerald-500/50 rounded-t-sm transition-all"
-                          style={{ height: `${height}%` }}
-                        ></div>
-                        <span className="text-[10px] text-slate-300 whitespace-nowrap overflow-hidden text-ellipsis w-full text-center">
-                          {new Date(ph.recorded_date).toLocaleString('default', { month: 'short' })}
-                        </span>
+                      <div key={idx} className="flex-1 flex flex-col justify-end items-center group relative h-full">
                         {/* Tooltip */}
-                        <div className="absolute -top-10 opacity-0 group-hover:opacity-100 bg-slate-800 text-white text-xs py-1 px-2 rounded pointer-events-none transition-opacity z-10 whitespace-nowrap">
+                        <div className="absolute -top-8 opacity-0 group-hover:opacity-100 bg-slate-800 text-white text-xs py-1 px-2 rounded pointer-events-none transition-opacity z-10 whitespace-nowrap">
                           ₹{ph.cost_per_kg.toFixed(2)}
                         </div>
+                        
+                        {/* Bar Container */}
+                        <div className="w-full flex-1 flex items-end">
+                          <div 
+                            className="w-full bg-emerald-500/20 hover:bg-emerald-500/50 border border-emerald-500/50 rounded-t-sm transition-all"
+                            style={{ height: `${height}%` }}
+                          ></div>
+                        </div>
+                        
+                        {/* Label */}
+                        <span className="text-[10px] text-slate-300 mt-2 whitespace-nowrap overflow-hidden text-ellipsis w-full text-center">
+                          {new Date(ph.recorded_date).toLocaleString('default', { month: 'short' })}
+                        </span>
                       </div>
                     );
                   })}
