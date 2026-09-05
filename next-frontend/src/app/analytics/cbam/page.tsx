@@ -8,7 +8,7 @@ export default function CBAMAnalytics() {
   const [materialCol, setMaterialCol] = useState("Material");
   const [weightCol, setWeightCol] = useState("Weight_kg");
   const [loading, setLoading] = useState(false);
-  const [isLocked, setIsLocked] = useState(true); // Default to locked for Enterprise
+  const [isLocked, setIsLocked] = useState(false); // Unlocked for local testing
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {

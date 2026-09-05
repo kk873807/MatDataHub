@@ -47,10 +47,11 @@ export function FatigueLife() {
       {result && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-4 p-4 rounded-xl bg-cyan-900/20 border border-cyan-900/50">
           <p className="text-xs text-slate-200 mb-2">{result.note}</p>
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center mb-2">
             <span className="text-xs text-slate-200">Endurance Limit</span>
             <span className="font-bold text-cyan-400">{result.endurance_limit.toFixed(1)} MPa</span>
           </div>
+          <p className="text-[10px] text-cyan-300">This value indicates the maximum stress level below which the material can endure an infinite number of load cycles without failing.</p>
         </motion.div>
       )}
     </motion.div>

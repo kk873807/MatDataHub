@@ -7,6 +7,8 @@ import { SafetyFactor } from "@/components/SafetyFactor";
 import { ThermalExpansion } from "@/components/ThermalExpansion";
 import { FatigueLife } from "@/components/FatigueLife";
 import { BeamDeflection } from "@/components/BeamDeflection";
+import { CostOptimizer } from "@/components/CostOptimizer";
+import { ThermalShock } from "@/components/ThermalShock";
 
 export default function ProjectWorkspace() {
   const { id } = useParams();
@@ -168,64 +170,80 @@ export default function ProjectWorkspace() {
               </div>
               <div>
                 <label className="block text-xs text-slate-400 mb-1">Volume (cm³)</label>
-                <input type="number" step="0.1" value={volume} onChange={e=>setVolume(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-white text-sm outline-none" required />
+                <input type="number" step="0.1" value={volume} onChange={e=>setVolume(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-white text-sm outline-none focus:border-blue-500 transition-colors" required />
               </div>
-              <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-sm transition-colors h-[38px] flex justify-center items-center">
-                <Plus className="w-4 h-4 mr-1" /> Add
+              <button type="submit" className="bg-blue-600 hover:bg-blue-500 active:scale-95 text-white font-bold py-2 px-4 rounded-lg text-sm transition-all h-[38px] flex justify-center items-center shadow-lg shadow-blue-900/20">
+                <Plus className="w-4 h-4 mr-1" /> Add Part
               </button>
             </form>
           </div>
 
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
-            <div className="flex justify-between items-center p-4 border-b border-slate-800">
-              <h3 className="text-lg font-bold text-white">Bill of Materials</h3>
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+            <div className="flex justify-between items-center p-4 border-b border-slate-800 bg-slate-900/50">
+              <h3 className="text-lg font-bold text-white flex items-center gap-2"><Component className="w-5 h-5 text-indigo-400" /> Bill of Materials</h3>
               <div className="flex gap-2">
-                <label className="flex items-center gap-2 text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 py-1.5 px-3 rounded transition-colors cursor-pointer">
-                  <Download className="w-3 h-3 rotate-180" /> Smart Import
+                <label className="flex items-center gap-2 text-xs font-semibold bg-indigo-900/30 hover:bg-indigo-900/50 text-indigo-300 py-1.5 px-3 rounded-lg transition-colors cursor-pointer border border-indigo-700/50">
+                  <FileText className="w-3 h-3" /> Smart Import
                   <input type="file" accept=".csv" className="hidden" onChange={(e) => {
                     if (e.target.files && e.target.files.length > 0) {
-                      alert("CSV BOM imported and fuzzy-matched to database materials successfully!");
+                      alert("CSV Parsing Engine initialized. Found 0 rows (demo mode).");
                     }
                   }} />
                 </label>
-                <button onClick={exportCSV} className="flex items-center gap-2 text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 py-1.5 px-3 rounded transition-colors">
+                <button onClick={exportCSV} className="flex items-center gap-2 text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 py-1.5 px-3 rounded-lg transition-colors border border-slate-700">
                   <Download className="w-3 h-3" /> Export CSV
                 </button>
               </div>
             </div>
-            <table className="w-full text-left text-sm">
-              <thead className="bg-slate-950 text-slate-400 text-xs uppercase tracking-wider">
-                <tr>
-                  <th className="px-4 py-3">Part Name</th>
-                  <th className="px-4 py-3">Material</th>
-                  <th className="px-4 py-3">Vol (cm³)</th>
-                  <th className="px-4 py-3">Mass (kg)</th>
-                  <th className="px-4 py-3">Est. Cost</th>
-                  <th className="px-4 py-3 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-800">
-                {enrichedItems.map((item: any) => (
-                  <tr key={item.id} className="hover:bg-slate-800/30 transition-colors">
-                    <td className="px-4 py-3 text-white font-medium">{item.part_name}</td>
-                    <td className="px-4 py-3 text-blue-400">
-                      <Link href={`/materials/${item.material_id}`} className="hover:underline">{item.mat?.name}</Link>
-                    </td>
-                    <td className="px-4 py-3 text-slate-300">{item.volume_cm3}</td>
-                    <td className="px-4 py-3 text-slate-300">{item.mass_kg.toFixed(3)}</td>
-                    <td className="px-4 py-3 text-emerald-400 font-medium">₹{item.cost.toFixed(2)}</td>
-                    <td className="px-4 py-3 text-right">
-                      <button onClick={() => handleRemovePart(item.id)} className="text-red-400 hover:text-red-300 p-1">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm whitespace-nowrap">
+                <thead className="bg-slate-950/50 text-slate-400 text-xs uppercase tracking-wider">
+                  <tr>
+                    <th className="px-5 py-4 font-semibold">Part Name</th>
+                    <th className="px-5 py-4 font-semibold">Material</th>
+                    <th className="px-5 py-4 font-semibold text-right">Vol (cm³)</th>
+                    <th className="px-5 py-4 font-semibold text-right">Mass (kg)</th>
+                    <th className="px-5 py-4 font-semibold text-right">Est. Cost</th>
+                    <th className="px-5 py-4 font-semibold text-center">Actions</th>
                   </tr>
-                ))}
-                {enrichedItems.length === 0 && (
-                  <tr><td colSpan={6} className="px-4 py-8 text-center text-slate-500">No parts in assembly. Add one above.</td></tr>
-                )}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-slate-800/50">
+                  {enrichedItems.map((item: any) => (
+                    <tr key={item.id} className="hover:bg-slate-800/40 transition-colors group">
+                      <td className="px-5 py-3 text-white font-medium">{item.part_name}</td>
+                      <td className="px-5 py-3 text-blue-400">
+                        <Link href={`/materials/${item.material_id}`} className="hover:text-blue-300 hover:underline transition-colors">{item.mat?.name}</Link>
+                      </td>
+                      <td className="px-5 py-3 text-slate-300 text-right">{item.volume_cm3}</td>
+                      <td className="px-5 py-3 text-slate-300 text-right">{item.mass_kg.toFixed(3)}</td>
+                      <td className="px-5 py-3 text-emerald-400 font-medium text-right">₹{item.cost.toFixed(2)}</td>
+                      <td className="px-5 py-3 text-center">
+                        <button 
+                          onClick={() => handleRemovePart(item.id)} 
+                          className="text-slate-500 hover:text-red-400 hover:bg-red-950/30 p-1.5 rounded-md transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"
+                          title="Delete Part"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  {enrichedItems.length === 0 && (
+                    <tr>
+                      <td colSpan={6} className="px-5 py-12 text-center text-slate-500 bg-slate-950/30">
+                        No parts added to this assembly yet.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+            {enrichedItems.length > 0 && (
+              <div className="bg-slate-950 p-4 border-t border-slate-800 flex justify-between items-center">
+                <span className="text-sm font-bold text-slate-300 uppercase tracking-wider">Total Assembly Cost</span>
+                <span className="text-xl font-bold text-emerald-400">₹{totalCost.toFixed(2)}</span>
+              </div>
+            )}
           </div>
         </div>
       );
@@ -311,10 +329,15 @@ export default function ProjectWorkspace() {
               </div>
             )}
 
-            {["cost", "shock"].includes(activeTool) && (
-              <div className="p-10 text-center border border-slate-700 border-dashed rounded-xl">
-                <Wrench className="w-10 h-10 text-slate-600 mx-auto mb-3" />
-                <p className="text-slate-400">The {activeTool} engine is initialized for {selectedItem.part_name}. Coming soon.</p>
+            {activeTool === "cost" && (
+              <div className="p-6 border border-slate-700 rounded-xl bg-slate-800/50">
+                <CostOptimizer />
+              </div>
+            )}
+
+            {activeTool === "shock" && (
+              <div className="p-6 border border-slate-700 rounded-xl bg-slate-800/50">
+                <ThermalShock />
               </div>
             )}
           </div>

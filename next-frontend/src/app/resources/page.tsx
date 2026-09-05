@@ -1,12 +1,12 @@
 "use client";
 import { useState } from "react";
-import { BookOpen, HelpCircle, LifeBuoy, Send, Loader2, CheckCircle2, Search, ChevronDown, Clock, ArrowRight } from "lucide-react";
+import { BookOpen, HelpCircle, LifeBuoy, Send, Loader2, CheckCircle2, Search, ChevronDown, Clock, ArrowRight, Image as ImageIcon } from "lucide-react";
 
 export default function ResourcesPage() {
   const [activeTab, setActiveTab] = useState<"faqs" | "blogs" | "support">("faqs");
 
   // Support State
-  const [ticket, setTicket] = useState({ name: "", email: "", category: "Technical Support", message: "" });
+  const [ticket, setTicket] = useState({ name: "", email: "", category: "Technical Support", message: "", image_data: null as string | null });
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
@@ -28,18 +28,35 @@ export default function ResourcesPage() {
     { title: "Rule of Mixtures vs Halpin-Tsai for Composites", date: "Aug 15, 2026", author: "Prof. H. Chen", readTime: "12 min", tag: "Mathematics", excerpt: "Comparing mathematical models for predicting the transverse elastic modulus of continuous fiber composites." }
   ];
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => setTicket({ ...ticket, image_data: reader.result as string });
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSupportSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
     try {
+      const payload = {
+        name: ticket.name,
+        email: ticket.email,
+        category: ticket.category,
+        message: ticket.message,
+        image_data: ticket.image_data,
+        page_context: "Support Ticket"
+      };
       const res = await fetch("http://127.0.0.1:8000/api/v1/feedback/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(ticket)
+        body: JSON.stringify(payload)
       });
       if (res.ok) {
         setSubmitted(true);
-        setTicket({ name: "", email: "", category: "Technical Support", message: "" });
+        setTicket({ name: "", email: "", category: "Technical Support", message: "", image_data: null });
       }
     } catch (err) {
       console.error("Failed to submit ticket:", err);
@@ -201,6 +218,16 @@ export default function ResourcesPage() {
                       placeholder="Describe your issue or question in detail..."
                       className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white outline-none focus:border-indigo-500 min-h-[120px]"
                     />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-300 mb-2">Screenshot Attachment (Optional)</label>
+                    <div className="flex items-center gap-3">
+                      <label className="flex items-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-slate-200 text-sm font-medium rounded-lg cursor-pointer transition-colors border border-slate-800">
+                        <ImageIcon className="w-4 h-4" /> Upload Image
+                        <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+                      </label>
+                      {ticket.image_data && <span className="text-sm text-emerald-400 flex items-center gap-1"><CheckCircle2 className="w-4 h-4"/> Attached</span>}
+                    </div>
                   </div>
                   <button 
                     type="submit" disabled={submitting}

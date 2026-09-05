@@ -53,8 +53,13 @@ export default function WorkflowsPage() {
   };
 
   const handleDelete = async (e: React.MouseEvent, projectId: number) => {
-    e.preventDefault(); // Prevent navigating to the project link
-    if (!confirm("Are you sure you want to delete this workspace?")) return;
+    e.preventDefault();
+    const confirmed = window.confirm(
+      "⚠ WARNING: Are you sure you want to delete this workspace?\n\n" +
+      "This will permanently delete the Bill of Materials, all component configurations, and saved calculations. " +
+      "This action CANNOT be undone or restored."
+    );
+    if (!confirmed) return;
     try {
       const res = await fetch(`http://127.0.0.1:8000/api/v1/projects/${projectId}`, {
         method: "DELETE"

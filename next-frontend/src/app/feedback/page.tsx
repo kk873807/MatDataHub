@@ -6,7 +6,7 @@ export default function FeedbackCommunityPage() {
   const [feedbacks, setFeedbacks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   
-  const [form, setForm] = useState({ name: "", category: "Feature Request", message: "" });
+  const [form, setForm] = useState({ name: "", email: "", category: "Feature Request", message: "" });
   const [image, setImage] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -35,6 +35,7 @@ export default function FeedbackCommunityPage() {
     try {
       const payload = {
         name: form.name || "Anonymous Engineer",
+        email: form.email,
         category: form.category,
         message: form.message,
         image_data: image,
@@ -52,7 +53,7 @@ export default function FeedbackCommunityPage() {
       const data = await res.json();
       setFeedbacks(Array.isArray(data) ? data : []);
       
-      setForm({ name: "", category: "Feature Request", message: "" });
+      setForm({ name: "", email: "", category: "Feature Request", message: "" });
       setImage(null);
     } catch (err) {
       console.error(err);
@@ -121,6 +122,11 @@ export default function FeedbackCommunityPage() {
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1 uppercase tracking-wider">Your Name (Optional)</label>
               <input type="text" value={form.name} onChange={e=>setForm({...form, name: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-white outline-none focus:border-indigo-500 text-sm" />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-300 mb-1 uppercase tracking-wider">Email (Required for spam prevention)</label>
+              <input type="email" required value={form.email} onChange={e=>setForm({...form, email: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-white outline-none focus:border-indigo-500 text-sm" />
             </div>
             
             <div>
