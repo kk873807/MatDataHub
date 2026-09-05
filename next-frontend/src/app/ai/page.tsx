@@ -32,30 +32,30 @@ export default function AskAIPage() {
 
   return (
     <main className="flex flex-col h-[calc(100vh-2rem)] p-6 lg:p-10 w-full">
-      <div className="w-full max-w-4xl mx-auto flex flex-col h-full bg-neutral-900 border border-neutral-800 rounded-3xl overflow-hidden shadow-2xl relative">
+      <div className="w-full max-w-4xl mx-auto flex flex-col h-full bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl relative">
         
         {/* Header */}
-        <div className="p-6 border-b border-neutral-800 bg-neutral-950/50 flex items-center gap-4">
+        <div className="p-6 border-b border-slate-800 bg-slate-950/50 flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-blue-600/20 flex items-center justify-center border border-blue-500/30">
             <Bot className="w-6 h-6 text-blue-400" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-white">Ask AI Adviser</h1>
-            <p className="text-sm text-neutral-400">Engineering constraint extractor & material recommender</p>
+            <p className="text-sm text-slate-200">Engineering constraint extractor & material recommender</p>
           </div>
         </div>
 
         {/* Chat Area */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-neutral-900">
+        <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-900">
           {/* Welcome Message */}
           <div className="flex gap-4">
             <div className="w-8 h-8 rounded-full bg-blue-600/20 flex items-center justify-center border border-blue-500/30 shrink-0 mt-1">
               <Bot className="w-4 h-4 text-blue-400" />
             </div>
-            <div className="bg-neutral-800 p-4 rounded-2xl rounded-tl-none text-neutral-200 text-sm max-w-[85%]">
+            <div className="bg-slate-800 p-4 rounded-2xl rounded-tl-none text-slate-200 text-sm max-w-[85%]">
               Hello! I am your AI Materials Adviser. Describe your engineering constraints, and I will scan the database to recommend the perfect material.
               <br/><br/>
-              <span className="text-neutral-400 italic">Example: "I need a metal under Rs. 1000/kg that can withstand 500 degrees Celsius and has a tensile strength of at least 800 MPa."</span>
+              <span className="text-slate-200 italic">Example: "I need a metal under Rs. 1000/kg that can withstand 500 degrees Celsius and has a tensile strength of at least 800 MPa."</span>
             </div>
           </div>
 
@@ -75,20 +75,20 @@ export default function AskAIPage() {
                 <div className="w-8 h-8 rounded-full bg-blue-600/20 flex items-center justify-center border border-blue-500/30 shrink-0 mt-1">
                   <Bot className="w-4 h-4 text-blue-400" />
                 </div>
-                <div className="bg-neutral-800 p-5 rounded-2xl rounded-tl-none text-neutral-200 text-sm max-w-[85%] space-y-4">
+                <div className="bg-slate-800 p-5 rounded-2xl rounded-tl-none text-slate-200 text-sm max-w-[85%] space-y-4">
                   <div className="whitespace-pre-wrap">{response.response || response.detail}</div>
                   
                   {response.materials && response.materials.length > 0 && (
-                    <div className="mt-4 pt-4 border-t border-neutral-700">
+                    <div className="mt-4 pt-4 border-t border-slate-700">
                       <h4 className="font-bold flex items-center gap-2 mb-3 text-blue-300">
                         <Sparkles className="w-4 h-4" /> Top Database Matches
                       </h4>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         {response.materials.map((m: any, i: number) => (
-                          <div key={i} className="p-3 bg-neutral-900 border border-neutral-700 rounded-lg">
+                          <div key={i} className="p-3 bg-slate-900 border border-slate-700 rounded-lg">
                             <p className="font-bold text-white text-sm">{m.name}</p>
-                            <p className="text-xs text-neutral-400 mt-1">{m.category} • {m.cost}</p>
-                            <p className="text-xs text-neutral-400">Strength: {m.tensile_strength}</p>
+                            <p className="text-xs text-slate-200 mt-1">{m.category} • {m.cost}</p>
+                            <p className="text-xs text-slate-200">Strength: {m.tensile_strength}</p>
                           </div>
                         ))}
                       </div>
@@ -104,16 +104,16 @@ export default function AskAIPage() {
                <div className="w-8 h-8 rounded-full bg-blue-600/20 flex items-center justify-center border border-blue-500/30 shrink-0 mt-1">
                  <Bot className="w-4 h-4 text-blue-400" />
                </div>
-               <div className="bg-neutral-800 p-4 rounded-2xl rounded-tl-none flex items-center gap-3">
+               <div className="bg-slate-800 p-4 rounded-2xl rounded-tl-none flex items-center gap-3">
                  <Loader2 className="w-4 h-4 animate-spin text-blue-400" />
-                 <span className="text-neutral-400 text-sm">Analyzing constraints & querying database...</span>
+                 <span className="text-slate-200 text-sm">Analyzing constraints & querying database...</span>
                </div>
              </div>
           )}
         </div>
 
         {/* Input Form */}
-        <div className="p-4 border-t border-neutral-800 bg-neutral-950">
+        <div className="p-4 border-t border-slate-800 bg-slate-950">
           <form onSubmit={handleSubmit} className="relative flex items-center">
             <input
               type="text"
@@ -121,7 +121,7 @@ export default function AskAIPage() {
               onChange={(e) => setPrompt(e.target.value)}
               placeholder="Describe your material requirements..."
               disabled={loading}
-              className="w-full bg-neutral-900 border border-neutral-800 rounded-xl pl-4 pr-12 py-4 text-white focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full bg-slate-900 border border-slate-800 rounded-xl pl-4 pr-12 py-4 text-white focus:ring-2 focus:ring-blue-500 outline-none"
             />
             <button
               type="submit"

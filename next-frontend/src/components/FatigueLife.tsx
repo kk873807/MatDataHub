@@ -25,20 +25,20 @@ export function FatigueLife() {
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="p-6 rounded-2xl bg-neutral-900 border border-neutral-800 shadow-xl w-full h-full flex flex-col">
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl w-full h-full flex flex-col">
       <h2 className="text-xl font-bold mb-4 text-white">Fatigue Life Estimation</h2>
       <div className="space-y-4 flex-grow">
         <div>
-          <label className="block text-xs text-neutral-500 mb-1">Material Name</label>
-          <input type="text" name="material_name" value={formData.material_name} onChange={handleChange} className="w-full bg-neutral-800 rounded px-3 py-2 text-sm text-white focus:ring-2 focus:ring-cyan-500 outline-none" />
+          <label className="block text-xs text-slate-300 mb-1">Material Name</label>
+          <input type="text" name="material_name" value={formData.material_name} onChange={handleChange} className="w-full bg-slate-800 rounded px-3 py-2 text-sm text-white focus:ring-2 focus:ring-cyan-500 outline-none" />
         </div>
         <div>
-          <label className="block text-xs text-neutral-500 mb-1">Category</label>
-          <input type="text" name="category" value={formData.category} onChange={handleChange} className="w-full bg-neutral-800 rounded px-3 py-2 text-sm text-white focus:ring-2 focus:ring-cyan-500 outline-none" />
+          <label className="block text-xs text-slate-300 mb-1">Category</label>
+          <input type="text" name="category" value={formData.category} onChange={handleChange} className="w-full bg-slate-800 rounded px-3 py-2 text-sm text-white focus:ring-2 focus:ring-cyan-500 outline-none" />
         </div>
         <div>
-          <label className="block text-xs text-neutral-500 mb-1">Ultimate Tensile Strength (MPa)</label>
-          <input type="number" name="tensile_strength" value={formData.tensile_strength} onChange={handleChange} className="w-full bg-neutral-800 rounded px-3 py-2 text-sm text-white outline-none" />
+          <label className="block text-xs text-slate-300 mb-1">Ultimate Tensile Strength (MPa)</label>
+          <input type="number" name="tensile_strength" value={formData.tensile_strength} onChange={handleChange} className="w-full bg-slate-800 rounded px-3 py-2 text-sm text-white outline-none" />
         </div>
       </div>
       <button onClick={handleCalculate} disabled={loading} className="mt-6 w-full py-2.5 rounded-lg bg-cyan-600 hover:bg-cyan-700 text-white font-medium flex justify-center items-center">
@@ -46,9 +46,9 @@ export function FatigueLife() {
       </button>
       {result && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-4 p-4 rounded-xl bg-cyan-900/20 border border-cyan-900/50">
-          <p className="text-xs text-neutral-400 mb-2">{result.note}</p>
+          <p className="text-xs text-slate-200 mb-2">{result.note}</p>
           <div className="flex justify-between items-center">
-            <span className="text-xs text-neutral-400">Endurance Limit</span>
+            <span className="text-xs text-slate-200">Endurance Limit</span>
             <span className="font-bold text-cyan-400">{result.endurance_limit.toFixed(1)} MPa</span>
           </div>
         </motion.div>

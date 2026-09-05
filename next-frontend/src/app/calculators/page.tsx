@@ -11,7 +11,7 @@ export default function CalculatorsPage() {
       <div className="w-full max-w-7xl flex flex-col gap-12">
         <div className="space-y-2">
           <h1 className="text-4xl font-bold text-white">Engineering Calculators</h1>
-          <p className="text-neutral-400">Run physics, mathematics, and financial simulations.</p>
+          <p className="text-slate-200">Run physics, mathematics, and financial simulations.</p>
         </div>
         
         {/* Risk Auditor (Full Width) */}
