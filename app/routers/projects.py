@@ -42,16 +42,8 @@ def get_single_project(
     if not proj:
         raise HTTPException(status_code=404, detail="Project not found")
     
-    items = db.query(ProjectItem).filter(ProjectItem.project_id == proj.id).all()
-    proj_dict = {
-        "id": proj.id,
-        "name": proj.name,
-        "description": proj.description,
-        "created_at": proj.created_at,
-        "items": items,
-        "blueprint_data": proj.blueprint_data
-    }
-    return proj_dict
+    proj.items = db.query(ProjectItem).filter(ProjectItem.project_id == proj.id).all()
+    return proj
 
 @router.post("/", response_model=ProjectOut)
 def create_project(
