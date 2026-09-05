@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Workflow, Plus, FolderKanban, HardDrive, Play, Loader2, X } from "lucide-react";
+import { Workflow, Plus, FolderKanban, HardDrive, Play, Loader2, X, Trash2 } from "lucide-react";
 
 export default function WorkflowsPage() {
   const [projects, setProjects] = useState<any[]>([]);
@@ -52,6 +52,21 @@ export default function WorkflowsPage() {
     }
   };
 
+  const handleDelete = async (e: React.MouseEvent, projectId: number) => {
+    e.preventDefault(); // Prevent navigating to the project link
+    if (!confirm("Are you sure you want to delete this workspace?")) return;
+    try {
+      const res = await fetch(`http://127.0.0.1:8000/api/v1/projects/${projectId}`, {
+        method: "DELETE"
+      });
+      if (res.ok) {
+        fetchProjects();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <main className="flex flex-col p-6 lg:p-10 w-full h-full overflow-y-auto relative">
       <div className="w-full max-w-6xl mx-auto space-y-8">
@@ -85,10 +100,19 @@ export default function WorkflowsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {projects.map((proj: any) => (
               <Link key={proj.id} href={`/projects/${proj.id}`} className="block">
-                <div className="p-6 h-full rounded-2xl bg-slate-900 border border-slate-800 hover:border-blue-500/50 transition-colors group flex flex-col cursor-pointer">
-                  <div className="flex justify-between items-start mb-4">
+                <div className="p-6 h-full rounded-2xl bg-slate-900 border border-slate-800 hover:border-blue-500/50 transition-colors group flex flex-col cursor-pointer relative">
+                  
+                  {/* Delete Button */}
+                  <button 
+                    onClick={(e) => handleDelete(e, proj.id)}
+                    className="absolute top-4 right-4 p-2 text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity bg-slate-950 rounded-lg border border-slate-800"
+                    title="Delete Project"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+
+                  <div className="flex justify-between items-start mb-4 pr-10">
                     <h3 className="font-bold text-white text-lg group-hover:text-blue-400 transition-colors">{proj.name}</h3>
-                    <HardDrive className="w-5 h-5 text-slate-600 group-hover:text-blue-400 transition-colors" />
                   </div>
                   <p className="text-sm text-slate-400 mb-6 flex-1 line-clamp-2">{proj.description}</p>
                   <div className="flex justify-between items-center text-xs text-slate-500 mt-auto pt-4 border-t border-slate-800">

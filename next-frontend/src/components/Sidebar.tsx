@@ -7,7 +7,6 @@ const navItems = [
   { name: "Dashboard", href: "/", icon: Home },
   { name: "Browse Materials", href: "/materials", icon: Database },
   { name: "Analytics", href: "/analytics", icon: BarChart3 },
-  { name: "Calculators", href: "/calculators", icon: Calculator },
   { name: "Ask AI Adviser", href: "/ai", icon: Bot },
   { name: "Workflows", href: "/projects", icon: Workflow },
   { name: "Account", href: "/account", icon: User },

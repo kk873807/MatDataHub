@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { BarChart3, Scale, Replace, Factory } from "lucide-react";
+import { BarChart3, Scale, Replace, Factory, Layers } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function AnalyticsDashboard() {
@@ -34,6 +34,16 @@ export default function AnalyticsDashboard() {
       border: "hover:border-amber-500/50",
       href: "/analytics/cbam",
       badge: "Enterprise"
+    },
+    {
+      title: "Composite Synthesizer",
+      description: "Blend two materials using the Rule of Mixtures to predict hybrid mechanical properties.",
+      icon: Layers,
+      color: "text-cyan-400",
+      bg: "bg-cyan-900/20",
+      border: "hover:border-cyan-500/50",
+      href: "/analytics/synthesizer",
+      badge: "Pro"
     }
   ];
 
