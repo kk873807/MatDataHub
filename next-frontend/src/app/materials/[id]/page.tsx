@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, TrendingUp, SearchCode, Beaker, ShieldAlert, Loader2 } from "lucide-react";
+import { ArrowLeft, TrendingUp, SearchCode, Beaker, ShieldAlert, Loader2, Lock } from "lucide-react";
 
 export default function MaterialDetail() {
   const { id } = useParams();
@@ -10,6 +10,7 @@ export default function MaterialDetail() {
   const [priceHistory, setPriceHistory] = useState<any[]>([]);
   const [similar, setSimilar] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isSimilarLocked, setIsSimilarLocked] = useState(false);
 
   useEffect(() => {
     const fetchAllData = async () => {
@@ -23,9 +24,12 @@ export default function MaterialDetail() {
         if (priceRes.ok) setPriceHistory(await priceRes.json());
 
         // Fetch Similar
-        // Requires Pro+ token normally, but let's try assuming open or mock if 403
         const simRes = await fetch(`http://127.0.0.1:8000/api/v1/materials/${id}/similar?limit=3`);
-        if (simRes.ok) setSimilar(await simRes.json());
+        if (simRes.ok) {
+          setSimilar(await simRes.json());
+        } else if (simRes.status === 403) {
+          setIsSimilarLocked(true);
+        }
       } catch (err) {
         console.error(err);
       } finally {
@@ -123,7 +127,11 @@ export default function MaterialDetail() {
                   })}
                 </div>
               ) : (
-                <p className="text-slate-300 text-sm">No historical pricing data available.</p>
+                <div className="h-48 mt-4 pt-4 border-t border-slate-800 flex flex-col items-center justify-center text-center">
+                  <TrendingUp className="w-8 h-8 text-slate-700 mb-2" />
+                  <p className="text-slate-400 text-sm">No historical pricing data available.</p>
+                  <p className="text-slate-500 text-xs mt-1">This material lacks baseline cost data in our database.</p>
+                </div>
               )}
             </div>
           </div>
@@ -133,7 +141,17 @@ export default function MaterialDetail() {
             {/* Find Similar AI */}
             <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800">
               <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2"><SearchCode className="w-5 h-5 text-purple-400"/> Find Similar Materials</h3>
-              {similar.length > 0 ? (
+              {isSimilarLocked ? (
+                <div className="p-5 rounded-xl bg-slate-950 border border-purple-500/30 text-center relative overflow-hidden group">
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 to-transparent"></div>
+                  <Lock className="w-8 h-8 text-purple-400 mx-auto mb-3 relative z-10" />
+                  <h4 className="font-bold text-white text-sm mb-1 relative z-10">Pro Feature Locked</h4>
+                  <p className="text-xs text-slate-400 relative z-10 mb-4">Upgrade to automatically discover physically similar materials.</p>
+                  <button className="relative z-10 w-full py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-bold transition-colors">
+                    Upgrade to Pro
+                  </button>
+                </div>
+              ) : similar.length > 0 ? (
                 <div className="space-y-3">
                   {similar.map(sim => (
                     <Link href={`/materials/${sim.id}`} key={sim.id} className="block p-3 rounded-lg bg-slate-950 border border-slate-800 hover:border-purple-500/50 transition-colors">
@@ -146,9 +164,9 @@ export default function MaterialDetail() {
                   ))}
                 </div>
               ) : (
-                <div className="p-4 rounded-lg bg-slate-950 border border-slate-800 text-sm text-slate-200 text-center">
-                  <ShieldAlert className="w-8 h-8 text-slate-600 mx-auto mb-2" />
-                  No similar materials found or Pro+ authorization required.
+                <div className="p-4 rounded-lg bg-slate-950 border border-slate-800 text-sm text-slate-400 text-center">
+                  <ShieldAlert className="w-6 h-6 text-slate-600 mx-auto mb-2" />
+                  No similar materials found in database.
                 </div>
               )}
             </div>

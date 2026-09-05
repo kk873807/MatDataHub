@@ -1,24 +1,36 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Search, Filter, Loader2, Database } from "lucide-react";
-import { motion } from "framer-motion";
+import { Search, Filter, Loader2, Database, SlidersHorizontal } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function MaterialsPage() {
   const [materials, setMaterials] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  
+  // Filters
   const [category, setCategory] = useState("");
+  const [minTensile, setMinTensile] = useState<number | "">("");
+  const [maxCost, setMaxCost] = useState<number | "">("");
+  const [minThermal, setMinThermal] = useState<number | "">("");
+  const [perPage, setPerPage] = useState(20);
+  
+  const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
     const fetchMaterials = async () => {
       setLoading(true);
       try {
-        let url = "http://127.0.0.1:8000/api/v1/materials?per_page=20";
+        let url = `http://127.0.0.1:8000/api/v1/materials?per_page=${perPage}`;
+        
         if (search) {
-          url = `http://127.0.0.1:8000/api/v1/materials/search?q=${encodeURIComponent(search)}`;
-        } else if (category) {
-          url += `&category=${encodeURIComponent(category)}`;
+          url = `http://127.0.0.1:8000/api/v1/materials/search?q=${encodeURIComponent(search)}&per_page=${perPage}`;
+        } else {
+          if (category) url += `&category=${encodeURIComponent(category)}`;
+          if (minTensile !== "") url += `&min_tensile=${minTensile}`;
+          if (maxCost !== "") url += `&max_cost=${maxCost}`;
+          if (minThermal !== "") url += `&min_thermal_conductivity=${minThermal}`;
         }
 
         const res = await fetch(url);
@@ -33,7 +45,7 @@ export default function MaterialsPage() {
 
     const debounce = setTimeout(fetchMaterials, 300);
     return () => clearTimeout(debounce);
-  }, [search, category]);
+  }, [search, category, minTensile, maxCost, minThermal, perPage]);
 
   return (
     <main className="flex flex-col p-6 lg:p-10 w-full">
@@ -47,32 +59,109 @@ export default function MaterialsPage() {
           </div>
         </div>
 
-        {/* Search & Filters */}
-        <div className="flex flex-col md:flex-row gap-4 bg-slate-900 p-4 rounded-xl border border-slate-800">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-3 w-5 h-5 text-slate-300" />
-            <input
-              type="text"
-              placeholder="Search by name, grade, standard, application..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-10 pr-4 py-2.5 text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
-            />
-          </div>
-          <div className="relative w-full md:w-64">
-            <Filter className="absolute left-3 top-3 w-5 h-5 text-slate-300" />
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-10 pr-4 py-2.5 text-white appearance-none focus:ring-2 focus:ring-emerald-500 outline-none"
+        {/* Search & Top Filters */}
+        <div className="flex flex-col bg-slate-900 rounded-xl border border-slate-800 p-4 gap-4">
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-3 w-5 h-5 text-slate-300" />
+              <input
+                type="text"
+                placeholder="Search by name, grade, standard, application..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-10 pr-4 py-2.5 text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
+              />
+            </div>
+            
+            <button 
+              onClick={() => setShowFilters(!showFilters)}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border transition-colors ${showFilters ? 'bg-emerald-900/30 border-emerald-500/50 text-emerald-400' : 'bg-slate-950 border-slate-800 text-slate-300 hover:bg-slate-800'}`}
             >
-              <option className="bg-slate-900 text-white" value="">All Categories</option>
-              <option className="bg-slate-900 text-white" value="Metal">Metals</option>
-              <option className="bg-slate-900 text-white" value="Polymer">Polymers</option>
-              <option className="bg-slate-900 text-white" value="Ceramic">Ceramics</option>
-              <option className="bg-slate-900 text-white" value="Composite">Composites</option>
-            </select>
+              <SlidersHorizontal className="w-5 h-5" />
+              Advanced Filters
+            </button>
           </div>
+
+          {/* Advanced Filters Panel */}
+          <AnimatePresence>
+            {showFilters && (
+              <motion.div 
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="overflow-hidden border-t border-slate-800 pt-4 mt-2"
+              >
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                  {/* Category */}
+                  <div>
+                    <label className="block text-xs text-slate-300 mb-1">Material Category</label>
+                    <select
+                      value={category}
+                      onChange={(e) => setCategory(e.target.value)}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white appearance-none outline-none focus:border-emerald-500"
+                    >
+                      <option className="bg-slate-900" value="">All Categories</option>
+                      <option className="bg-slate-900" value="Metal">Metals</option>
+                      <option className="bg-slate-900" value="Polymer">Polymers</option>
+                      <option className="bg-slate-900" value="Ceramic">Ceramics</option>
+                      <option className="bg-slate-900" value="Composite">Composites</option>
+                    </select>
+                  </div>
+                  
+                  {/* Min Tensile */}
+                  <div>
+                    <label className="block text-xs text-slate-300 mb-1">Min Tensile (MPa)</label>
+                    <input
+                      type="number"
+                      placeholder="0"
+                      value={minTensile}
+                      onChange={(e) => setMinTensile(e.target.value ? Number(e.target.value) : "")}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-emerald-500"
+                    />
+                  </div>
+
+                  {/* Max Cost */}
+                  <div>
+                    <label className="block text-xs text-slate-300 mb-1">Max Cost (Rs./kg)</label>
+                    <input
+                      type="number"
+                      placeholder="0"
+                      value={maxCost}
+                      onChange={(e) => setMaxCost(e.target.value ? Number(e.target.value) : "")}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-emerald-500"
+                    />
+                  </div>
+
+                  {/* Min Thermal */}
+                  <div>
+                    <label className="block text-xs text-slate-300 mb-1">Min Thermal (W/m·K)</label>
+                    <input
+                      type="number"
+                      placeholder="0.00"
+                      step="0.1"
+                      value={minThermal}
+                      onChange={(e) => setMinThermal(e.target.value ? Number(e.target.value) : "")}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-emerald-500"
+                    />
+                  </div>
+
+                  {/* Per Page */}
+                  <div>
+                    <label className="block text-xs text-slate-300 mb-1">Results per page</label>
+                    <select
+                      value={perPage}
+                      onChange={(e) => setPerPage(Number(e.target.value))}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white appearance-none outline-none focus:border-emerald-500"
+                    >
+                      <option className="bg-slate-900" value={20}>20</option>
+                      <option className="bg-slate-900" value={50}>50</option>
+                      <option className="bg-slate-900" value={100}>100</option>
+                    </select>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Results */}
