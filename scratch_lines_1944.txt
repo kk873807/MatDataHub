@@ -1,0 +1,20 @@
+1936:                                             "Grade": s.get("grade", "-"),
+1937:                                             "Density": s.get("density", "-"),
+1938:                                             "Tensile Max (MPa)": s.get("tensile_strength_max", "-"),
+1939:                                             "Cost Max (₹/kg)": s.get("cost_per_kg_max", "-"),
+1940:                                         })
+1941:                                     st.dataframe(pd.DataFrame(sim_data), width="stretch", hide_index=True)
+1942:                                 else:
+1943:                                     show_api_error(sim_result, retry_key=f"retry_similar_{mat_id}")
+1944:                         else:
+1945:                             st.info("🔍 **Find Similar Materials** — Discover alternatives you never knew about! ⭐ Upgrade to Pro to unlock.")
+1946:     
+1947:     
+1948:     # ══════════════════════════════════════════════
+1949:     #  TAB 2: COMPARE MATERIALS
+1950:     # ══════════════════════════════════════════════
+1951:     with tab_compare:
+1952:     
+1953:         st.subheader("Side-by-Side Material Comparison")
+1954:         st.caption("Select 2 or 3 materials to compare their properties head-to-head.")
+1955:     

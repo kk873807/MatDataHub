@@ -11,9 +11,9 @@ export default function FeedbackCommunityPage() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/v1/feedback/")
+    fetch("http://127.0.0.1:8000/api/v1/feedback/public")
       .then(res => res.json())
-      .then(data => setFeedbacks(data))
+      .then(data => setFeedbacks(Array.isArray(data) ? data : []))
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
@@ -48,9 +48,9 @@ export default function FeedbackCommunityPage() {
       });
       
       // Refresh list
-      const res = await fetch("http://127.0.0.1:8000/api/v1/feedback/");
+      const res = await fetch("http://127.0.0.1:8000/api/v1/feedback/public");
       const data = await res.json();
-      setFeedbacks(data);
+      setFeedbacks(Array.isArray(data) ? data : []);
       
       setForm({ name: "", category: "Feature Request", message: "" });
       setImage(null);

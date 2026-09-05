@@ -243,9 +243,9 @@ def compare_materials(
     tier_config = TIER_LIMITS.get(tier, TIER_LIMITS["free"])
     limit = tier_config["compare_max"]
 
-    if len(ids) < 2:
-        raise HTTPException(status_code=400, detail="Select at least 2 materials to compare.")
-
+    if len(ids) == 0:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, "Must provide at least 1 material ID.")
+        
     if len(ids) > limit:
         raise HTTPException(
             status_code=403,

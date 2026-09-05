@@ -1,0 +1,30 @@
+1916:                                         df_hist = df_hist.set_index("recorded_date")
+1917:                                         st.line_chart(df_hist["cost_per_kg"], height=250, use_container_width=True)
+1918:                                         st.caption("Price fluctuations (INR per kg) over the last 12 months.")
+1919:                                     else:
+1920:                                         st.info("No historical price data available yet.")
+1921:                                 else:
+1922:                                     st.info("Historical tracking is currently gathering data for this material.")
+1923:                         else:
+1924:                             st.info("📈 **Upgrade to Pro or Advanced** to unlock 12-month historical commodity price tracking.")
+1925: 
+1926:                             if st.button(f"🔍 Find Materials Similar to {m['name']}", key=f"similar_{mat_id}"):
+1927:                                 with st.spinner("Finding similar materials..."):
+1928:                                     sim_result = api_get(f"/materials/{mat_id}/similar", params={"limit": 5})
+1929:                                 if sim_result["ok"]:
+1930:                                     st.markdown(f"#### Top 5 Materials Similar to **{m['name']}**")
+1931:                                     sim_data = []
+1932:                                     for s in sim_result["data"]:
+1933:                                         sim_data.append({
+1934:                                             "Name": s["name"],
+1935:                                             "Category": s["category"],
+1936:                                             "Grade": s.get("grade", "-"),
+1937:                                             "Density": s.get("density", "-"),
+1938:                                             "Tensile Max (MPa)": s.get("tensile_strength_max", "-"),
+1939:                                             "Cost Max (₹/kg)": s.get("cost_per_kg_max", "-"),
+1940:                                         })
+1941:                                     st.dataframe(pd.DataFrame(sim_data), width="stretch", hide_index=True)
+1942:                                 else:
+1943:                                     show_api_error(sim_result, retry_key=f"retry_similar_{mat_id}")
+1944:                         else:
+1945:                             st.info("🔍 **Find Similar Materials** — Discover alternatives you never knew about! ⭐ Upgrade to Pro to unlock.")

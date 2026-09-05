@@ -1,0 +1,120 @@
+def render_pricing_page():
+    c1, c2, c3 = st.columns([1, 6, 1])
+    with c1:
+        if st.button("⬅️ Back to Main", use_container_width=True):
+            st.session_state.current_page = "main"
+            st.rerun()
+    with c3:
+        if st.button("⚙️ Account", use_container_width=True):
+            st.session_state.current_page = "account"
+            st.rerun()
+            
+    st.markdown("<h1 style='text-align: center;'>Upgrade Your Plan</h1>", unsafe_allow_html=True)
+    user = st.session_state.get("user", {})
+    st.markdown("### Choose your Plan")
+    st.caption(f"You are currently on the **{user.get('tier', 'free').upper()}** plan.")
+    
+    p1, p2, p3 = st.columns(3)
+    with p1:
+        with st.container(border=True):
+            st.markdown("### Free")
+            st.markdown("## ₹0 / mo")
+            st.markdown("- ✅ Access to all 1,000+ materials\n- ✅ Compare up to 2 materials\n- ❌ AI Advisor\n- ❌ Cost Optimizer\n")
+            st.button("Current Plan", disabled=True, use_container_width=True, key="btn_free")
+            
+    with p2:
+        with st.container(border=True):
+            st.markdown("### Pro")
+            st.markdown("## ₹499 / mo")
+            st.markdown("- ✅ Compare up to 5 materials\n- ✅ Structural & Thermal Analyzers\n- ✅ AI Material Advisor\n- ❌ Offline PDF Reports")
+            if user.get("tier") == "pro":
+                st.button("Current Plan", disabled=True, use_container_width=True, key="btn_pro1")
+            else:
+                if st.button("Upgrade to Pro", type="primary", use_container_width=True, key="btn_pro2"):
+                    url, err = get_upgrade_link("pro")
+                    if url:
+                        st.markdown(f"**[🔗 Click here to Pay Securely via Razorpay]({url})**")
+                    else:
+                        st.error(f"Payment failed: {err}")
+                
+    with p3:
+        with st.container(border=True):
+            st.markdown("### Advanced")
+            st.markdown("## ₹49,999 / mo")
+            st.markdown("- ✅ Unlimited Comparisons\n- ✅ Cost Optimization Engine\n- ✅ Download PDF Reports\n- ✅ Programmatic API Access")
+            if user.get("tier") == "advanced":
+                st.button("Current Plan", disabled=True, use_container_width=True, key="btn_adv1")
+            else:
+                if st.button("Upgrade to Advanced", type="primary", use_container_width=True, key="btn_adv2"):
+                    url, err = get_upgrade_link("advanced")
+                    if url:
+                        st.markdown(f"**[🔗 Click here to Pay Securely via Razorpay]({url})**")
+                    else:
+                        st.error(f"Payment failed: {err}")
+                
+
+
+
+def get_upgrade_link(tier: str):
+    token = st.session_state.get("token")
+    if not token: return None, "Please log in first."
+    try:
+        resp = requests.post(f"{API_BASE}/payments/create-link", json={"tier": tier}, headers={"Authorization": f"Bearer {token}"}, timeout=30)
+        if resp.status_code == 200:
+            return resp.json().get("payment_url"), None
+        return None, resp.json().get("detail", "Unknown error")
+    except Exception as e:
+        return None, str(e)
+
+
+
+# ── Custom CSS ──
+st.markdown("""
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    
+    /* Global Typography & Background */
+    html, body, [class*="css"] {
+        font-family: 'Inter', sans-serif !important;
+    }
+    
+.block-container { padding-top: 3rem !important; }
+
+    /* Modern Hero Title with animated gradient */
+.hero-title {
+        font-size: 4.5rem;
+        font-weight: 800;
+        background: linear-gradient(270deg, #1E3A5F, #2E86AB, #4FC3A1, #1E3A5F);
+        background-size: 300% 300%;
+        animation: gradient-shift 8s ease infinite;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+        margin-top: 0;
+        letter-spacing: -2px;
+        line-height: 1.1;
+        text-align: center;
+    }
+    
+    @keyframes gradient-shift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+.hero-sub {
+        font-size: 1.25rem;
+        color: var(--text-color);
+        opacity: 0.7;
+        margin-bottom: 2rem;
+        font-weight: 400;
+        text-align: center;
+        width: 100%;
+        
+        
+    }
+
+        /* Glassmorphism Stat Cards */
+.stat-card {
+        background: rgba(255, 255, 255, 0.03);

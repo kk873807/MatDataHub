@@ -1,0 +1,4 @@
+961:             account_menu = st.radio("Settings", [
+963:                 "💳 Payment History", 
+1064:             elif account_menu == "💳 Payment History":
+1905:                             if st.button(f"🔍 Find Materials Similar to {m['name']}", key=f"similar_{mat_id}"):

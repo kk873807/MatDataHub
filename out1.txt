@@ -1,0 +1,30 @@
+                                st.session_state.user = api_get("/auth/me")["data"]
+                                st.success("Logged in!")
+                                st.rerun()
+                            else:
+                                st.error(res["error"])
+    else:
+        # Logged in Account Dashboard
+        ac1, ac2 = st.columns([1, 3])
+        
+        # We can use nested tabs or a radio selector to act as a side-menu for the account tab
+        with ac1:
+            account_menu = st.radio("Settings", [
+                "👤 Profile & Security", 
+                "🛠️ Custom Materials (Enterprise)",
+                "💳 Payment History", 
+                "📚 Help Center & Legal",
+                "⌨️ Keyboard Shortcuts"
+            ], label_visibility="collapsed")
+            
+            st.divider()
+            if st.button("🚪 Sign Out", use_container_width=True):
+                st.session_state.token = None
+                st.session_state.user = None
+                st.rerun()
+                
+        with ac2:
+            if account_menu == "👤 Profile & Security":
+                st.markdown("### Profile Details")
+                st.text_input("Full Name", value=user.get("name", ""))
+                st.text_input("Email Address", value=user.get("email", ""), disabled=True)

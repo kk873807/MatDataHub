@@ -1,0 +1,60 @@
+                                therm_data["Thermal Conductivity W/(m*K)"] = str(m["thermal_conductivity"])
+                            if m.get("specific_heat") is not None:
+                                therm_data["Specific Heat J/(kg*K)"] = str(m["specific_heat"])
+                            if m.get("melting_point_min") is not None:
+                                therm_data["Melting Point (C)"] = f"{m['melting_point_min']} - {m['melting_point_max']}"
+                            if m.get("max_service_temp") is not None:
+                                therm_data["Max Service Temp (C)"] = str(m["max_service_temp"])
+                            if therm_data:
+                                st.table(pd.DataFrame(therm_data.items(), columns=["Property", "Value"]))
+    
+                            st.markdown("#### Cost & Sourcing")
+                            if m.get("cost_per_kg_min") is not None:
+                                st.write(f"**Price Range:** Rs. {m['cost_per_kg_min']} - {m['cost_per_kg_max']} /kg")
+                            if m.get("source_name"):
+                                st.write(f"**Data Source:** {m['source_name']}")
+                            verified = "Yes" if m.get("is_verified") else "No"
+                            st.write(f"**Verified:** {verified}")
+    
+                            if m.get("applications"):
+                                st.markdown("#### Applications")
+                                st.write(m["applications"])
+    
+                        st.divider()
+                        user_tier = (st.session_state.user or {}).get("tier", "free")
+    
+                        if user_tier in ("pro", "advanced"):
+
+                        if user_tier in ("pro", "advanced"):
+                            st.markdown("### 📈 Historical Price Tracking")
+                            with st.spinner("Loading commodity price history..."):
+                                price_resp = api_get(f"/materials/{mat_id}/price-history")
+                                if price_resp["ok"] and price_resp["data"]:
+                                    import pandas as pd
+                                    hist_data = price_resp["data"]
+                                    df_hist = pd.DataFrame(hist_data)
+                                    if not df_hist.empty:
+                                        df_hist["recorded_date"] = pd.to_datetime(df_hist["recorded_date"])
+                                        df_hist = df_hist.set_index("recorded_date")
+                                        st.line_chart(df_hist["cost_per_kg"], height=250, use_container_width=True)
+                                        st.caption("Price fluctuations (INR per kg) over the last 12 months.")
+                                    else:
+                                        st.info("No historical price data available yet.")
+                                else:
+                                    st.info("Historical tracking is currently gathering data for this material.")
+                        else:
+                            st.info("📈 **Upgrade to Pro or Advanced** to unlock 12-month historical commodity price tracking.")
+
+                            if st.button(f"🔍 Find Materials Similar to {m['name']}", key=f"similar_{mat_id}"):
+                                with st.spinner("Finding similar materials..."):
+                                    sim_result = api_get(f"/materials/{mat_id}/similar", params={"limit": 5})
+                                if sim_result["ok"]:
+                                    st.markdown(f"#### Top 5 Materials Similar to **{m['name']}**")
+                                    sim_data = []
+                                    for s in sim_result["data"]:
+                                        sim_data.append({
+                                            "Name": s["name"],
+                                            "Category": s["category"],
+                                            "Grade": s.get("grade", "-"),
+                                            "Density": s.get("density", "-"),
+                                            "Tensile Max (MPa)": s.get("tensile_strength_max", "-"),

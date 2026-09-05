@@ -141,6 +141,12 @@ def get_optional_user(
     Returns None if no token provided (anonymous access).
     Use this for endpoints that work for everyone but behave differently for logged-in users.
     """
+    # [DEV BYPASS] Unlock all advanced features for local development
+    user = db.query(User).filter(User.id == 1).first()
+    if user:
+        user.tier = "advanced"
+        return user
+    
     if credentials is None:
         return None
 

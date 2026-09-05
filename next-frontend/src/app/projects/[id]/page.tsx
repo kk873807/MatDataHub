@@ -17,6 +17,8 @@ export default function ProjectWorkspace() {
   // Add Part Form
   const [partName, setPartName] = useState("");
   const [matId, setMatId] = useState("");
+  const [searchMatQuery, setSearchMatQuery] = useState("");
+  const [searchMatOpen, setSearchMatOpen] = useState(false);
   const [volume, setVolume] = useState("");
 
   // Tools State
@@ -128,12 +130,41 @@ export default function ProjectWorkspace() {
                 <label className="block text-xs text-slate-400 mb-1">Part Name</label>
                 <input type="text" value={partName} onChange={e=>setPartName(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-white text-sm outline-none" required />
               </div>
-              <div>
+              <div className="relative">
                 <label className="block text-xs text-slate-400 mb-1">Material</label>
-                <select value={matId} onChange={e=>setMatId(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-white text-sm outline-none" required>
-                  <option value="">Select...</option>
-                  {materials.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
-                </select>
+                <div className="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-white text-sm outline-none cursor-text flex items-center justify-between">
+                  <input 
+                    type="text" 
+                    placeholder="Search..." 
+                    className="bg-transparent border-none outline-none w-full text-white placeholder:text-slate-500"
+                    value={searchMatQuery}
+                    onChange={(e) => {
+                      setSearchMatQuery(e.target.value);
+                      setSearchMatOpen(true);
+                    }}
+                    onFocus={() => setSearchMatOpen(true)}
+                  />
+                </div>
+                {searchMatOpen && (
+                  <div className="absolute z-50 w-full mt-1 bg-slate-950 border border-slate-700 rounded-lg shadow-xl max-h-60 overflow-y-auto">
+                    {materials.filter(m => m.name.toLowerCase().includes(searchMatQuery.toLowerCase())).slice(0, 50).map(m => (
+                      <div 
+                        key={m.id} 
+                        className={`px-3 py-2 text-sm hover:bg-slate-800 cursor-pointer ${matId === m.id.toString() ? 'bg-slate-800 text-blue-400' : 'text-slate-300'}`}
+                        onClick={() => {
+                          setMatId(m.id.toString());
+                          setSearchMatQuery(m.name);
+                          setSearchMatOpen(false);
+                        }}
+                      >
+                        {m.name}
+                      </div>
+                    ))}
+                    {materials.filter(m => m.name.toLowerCase().includes(searchMatQuery.toLowerCase())).length === 0 && (
+                      <div className="px-3 py-2 text-slate-500 text-sm">No materials found.</div>
+                    )}
+                  </div>
+                )}
               </div>
               <div>
                 <label className="block text-xs text-slate-400 mb-1">Volume (cm³)</label>

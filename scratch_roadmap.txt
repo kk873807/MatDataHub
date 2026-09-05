@@ -1,0 +1,1361 @@
+<div class="roadmap-wrapper">
+<h2 class="roadmap-title">Platform Mastery Roadmap</h2>
+<div class="timeline">
+
+<div class="t-node">
+<div class="t-card">
+<span class="t-step">Step 1 • Discovery</span>
+<h4>Global Database Search</h4>
+<p>Navigate to the <b>Database</b> tab to query over 1,000+ materials. Search by specific alloy grades (e.g., <i>Ti-6Al-4V</i>), trade names, or master categories. Utilize precision filters to narrow down targets by ultimate tensile strength, thermal conductivity, and economics.</p>
+</div>
+</div>
+
+<div class="t-node">
+<div class="t-card">
+<span class="t-step">Step 2 • Analysis</span>
+<h4>Visual Comparison Engine</h4>
+<p>Once you locate candidate materials, proceed to the <b>Compare</b> tab. Select up to 5 materials to instantly generate immersive radar charts and parallel data matrices. This visual breakdown is critical for isolating lightweight, high-strength substitutions.</p>
+</div>
+</div>
+
+<div class="t-node">
+<div class="t-card">
+<span class="t-step">Step 3 • Simulation & Economics</span>
+<h4>Engineering Workspaces (BOM)</h4>
+<p>The <b>Engineering (BOM)</b> tab is where raw data becomes structural reality. Create custom workspaces, build mechanical assemblies, and link components to the database to calculate Total Mass and Economics. Unlock the <b>Advanced Engineering Tools</b> to access powerful simulation modules:</p>
+<div class="tool-grid">
+<div class="tool-item"><strong>🧪 Synthesizer</strong>Formulate custom alloys.</div>
+<div class="tool-item"><strong>🛡️ Safety & Yield</strong>Calculate structural limits.</div>
+<div class="tool-item"><strong>🔄 Fatigue</strong>Estimate cyclic endurance.</div>
+<div class="tool-item"><strong>🌡️ Thermal</strong>Predict expansion & heat.</div>
+<div class="tool-item"><strong>📐 Deflection</strong>Model beam bending.</div>
+<div class="tool-item"><strong>⚡ Shock</strong>Analyze impact loading.</div>
+<div class="tool-item"><strong>📉 Cost</strong>Optimize BOM economics.</div>
+</div>
+</div>
+</div>
+
+<div class="t-node">
+<div class="t-card">
+<span class="t-step" style="color: #9C27B0;">Step 4 • Intelligence</span>
+<h4>AI Materials Advisor</h4>
+<p>Encounter a complex design constraint? Leverage the <b>AI Advisor</b> tab. Powered by advanced machine learning fine-tuned on materials science, it directly queries the MatDataHub database to prevent hallucinations and recommend optimal aerospace, nuclear, or industrial alternatives.</p>
+</div>
+</div>
+
+<div class="t-node">
+<div class="t-card">
+<span class="t-step" style="color: #E91E63;">Step 5 • Community Loop</span>
+<h4>System Feedback</h4>
+<p>Continuous evolution requires engineering feedback. Use the <b>Feedback</b> tab to report issues, request the injection of highly specific new materials into the database, or participate in the community review discussions.</p>
+</div>
+</div>
+
+</div>
+</div>
+""", unsafe_allow_html=True)
+
+    with tab_browse:
+        st.markdown("""
+<div style="background: var(--secondary-background-color); padding: 1rem 1.5rem; border-radius: 6px; border: 1px solid var(--faded-text-20); border-left: 4px solid #4FC3A1; margin-bottom: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+<h3 style="color: var(--text-color); margin-top: 0; margin-bottom: 0.3rem; font-weight: 700; letter-spacing: 0.5px;">Global Materials Database</h3>
+<p style="color: var(--text-color); opacity: 0.75; font-size: 0.95rem; margin-bottom: 0;">Search, filter, and export data across 1,000+ verified engineering materials.</p>
+</div>
+        """, unsafe_allow_html=True)
+    
+        search_query = st.text_input(
+            "Search by name, grade, standard, or application...",
+            placeholder="e.g. stainless, 6061, aerospace, corrosion",
+        )
+    
+        with st.expander("🔍 Filters", expanded=True):
+            fcol1, fcol2, fcol3, fcol4, fcol5 = st.columns(5)
+    
+            with fcol1:
+                category = st.selectbox(
+                    "Material Category",
+                    ["All", "Metal", "Polymer", "Ceramic", "Composite", "Semiconductor", "Nanomaterial"],
+                    index=0,
+                )
+    
+            with fcol2:
+                min_tensile = st.number_input(
+                    "Min Tensile Strength (MPa)", min_value=0, max_value=5000, value=0, step=50,
+                )
+    
+            with fcol3:
+                max_cost = st.number_input(
+                    "Max Cost (Rs./kg)", min_value=0, max_value=10000, value=0, step=50,
+                    help="Set to 0 for no limit",
+                )
+    
+            with fcol4:
+                min_thermal = st.number_input(
+                    "Min Thermal Conductivity W/(m*K)", min_value=0.0, max_value=500.0, value=0.0, step=5.0,
+                    help="Set to 0 for no limit",
+                )
+    
+            with fcol5:
+                per_page = st.selectbox("Results per page", [10, 20, 50], index=1)
+    
+        with st.spinner("Loading materials (API may take ~30s on first load)..."):
+            wake_api()
+            if search_query:
+                params = {"q": search_query, "per_page": per_page}
+                result = api_get("/materials/search", params=params)
+            else:
+                params = {"per_page": per_page}
+                if category != "All":
+                    params["category"] = category
+                if min_tensile > 0:
+                    params["min_tensile"] = min_tensile
+                if max_cost > 0:
+                    params["max_cost"] = max_cost
+                if min_thermal > 0:
+                    params["min_thermal_conductivity"] = min_thermal
+                result = api_get("/materials/", params=params)
+    
+        if not result["ok"]:
+            show_api_error(result, retry_key="retry_browse")
+        elif "total" not in result["data"]:
+            st.warning("⏳ API returned unexpected data. Please refresh.")
+        else:
+            data = result["data"]
+            total = data["total"]
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric("Materials Found", total)
+            with col2:
+                active_filters = sum([
+                    category != "All", min_tensile > 0, max_cost > 0,
+                    min_thermal > 0, bool(search_query),
+                ])
+                st.metric("Active Filters", active_filters)
+            with col3:
+                st.metric("Page", f"{data['page']} of {max(1, (total + per_page - 1) // per_page)}")
+    
+            st.divider()
+    
+            if total == 0:
+                st.info("No materials match your search/filter criteria. Try adjusting your filters.")
+            else:
+                materials = data["materials"]
+    
+                table_data = []
+                for m in materials:
+                    tensile = ""
+                    if m.get("tensile_strength_min") is not None:
+                        tensile = f"{m['tensile_strength_min']:.0f}"
+                        if m.get("tensile_strength_max") is not None and m["tensile_strength_max"] != m["tensile_strength_min"]:
+                            tensile += f"-{m['tensile_strength_max']:.0f}"
+    
+                    cost = ""
+                    if m.get("cost_per_kg_min") is not None:
+                        cost = f"{m['cost_per_kg_min']:.0f}"
+                        if m.get("cost_per_kg_max") is not None and m["cost_per_kg_max"] != m["cost_per_kg_min"]:
+                            cost += f"-{m['cost_per_kg_max']:.0f}"
+    
+                    table_data.append({
+                        "ID": m["id"],
+                        "Name": m["name"],
+                        "Category": m["category"],
+                        "Grade": m.get("grade", ""),
+                        "Standard": m.get("standard", ""),
+                        "Density (g/cm3)": m.get("density", ""),
+                        "Tensile (MPa)": tensile,
+                        "Cost (Rs./kg)": cost,
+                        "Applications": (m.get("applications", "") or "")[:80],
+                    })
+    
+                df = pd.DataFrame(table_data)
+                st.dataframe(
+                    df, 
+                    width='stretch', 
+                    hide_index=True,
+                    column_config={
+                        "Name": st.column_config.TextColumn("Material Name", width="medium"),
+                        "Category": st.column_config.TextColumn("Category", width="small"),
+                        "Tensile (MPa)": st.column_config.TextColumn("Tensile Strength (MPa)", width="medium"),
+                        "Cost (Rs./kg)": st.column_config.TextColumn("Cost (Rs./kg)", width="medium"),
+                        "Applications": st.column_config.TextColumn("Applications", width="large"),
+                    }
+                )
+    
+                st.divider()
+                st.subheader("Material Detail View")
+    
+                material_names = {m["name"]: m["id"] for m in materials}
+                selected_name = st.selectbox("Select a material to view full details:", list(material_names.keys()))
+    
+                if selected_name:
+                    mat_id = material_names[selected_name]
+                    m = fetch_material_detail(mat_id, st.session_state.get("token"))
+    
+                    if m is None:
+                        st.warning("Could not load material details. Please refresh.")
+                    else:
+                        left, right = st.columns(2)
+    
+                        with left:
+                            st.markdown("#### Identity")
+                            st.write(f"**Name:** {m['name']}")
+                            st.write(f"**Category:** {m['category']} / {m.get('subcategory', 'N/A')}")
+                            st.write(f"**Grade:** {m.get('grade', 'N/A')}")
+                            st.write(f"**Standard:** {m.get('standard', 'N/A')}")
+                            if m.get("equivalent_grades"):
+                                st.write(f"**Equivalent Grades:** {m['equivalent_grades']}")
+                            if m.get("composition"):
+                                st.write(f"**Composition:** {m['composition']}")
+    
+                            st.markdown("#### Mechanical Properties")
+                            mech_data = {}
+                            if m.get("density") is not None:
+                                mech_data["Density (g/cm3)"] = str(m["density"])
+                            if m.get("tensile_strength_min") is not None:
+                                mech_data["Tensile Strength (MPa)"] = f"{m['tensile_strength_min']} - {m['tensile_strength_max']}"
+                            if m.get("yield_strength_min") is not None:
+                                mech_data["Yield Strength (MPa)"] = f"{m['yield_strength_min']} - {m['yield_strength_max']}"
+                            if m.get("elongation") is not None:
+                                mech_data["Elongation (%)"] = str(m["elongation"])
+                            if m.get("hardness"):
+                                mech_data["Hardness"] = m["hardness"]
+                            if m.get("elastic_modulus") is not None:
+                                mech_data["Elastic Modulus (GPa)"] = str(m["elastic_modulus"])
+                            if mech_data:
+                                st.table(pd.DataFrame(mech_data.items(), columns=["Property", "Value"]))
+    
+                        with right:
+                            st.markdown("#### Thermal Properties")
+                            therm_data = {}
+                            if m.get("thermal_conductivity") is not None:
+                                therm_data["Thermal Conductivity W/(m*K)"] = str(m["thermal_conductivity"])
+                            if m.get("specific_heat") is not None:
+                                therm_data["Specific Heat J/(kg*K)"] = str(m["specific_heat"])
+                            if m.get("melting_point_min") is not None:
+                                therm_data["Melting Point (C)"] = f"{m['melting_point_min']} - {m['melting_point_max']}"
+                            if m.get("max_service_temp") is not None:
+                                therm_data["Max Service Temp (C)"] = str(m["max_service_temp"])
+                            if therm_data:
+                                st.table(pd.DataFrame(therm_data.items(), columns=["Property", "Value"]))
+    
+                            st.markdown("#### Cost & Sourcing")
+                            if m.get("cost_per_kg_min") is not None:
+                                st.write(f"**Price Range:** Rs. {m['cost_per_kg_min']} - {m['cost_per_kg_max']} /kg")
+                            if m.get("source_name"):
+                                st.write(f"**Data Source:** {m['source_name']}")
+                            verified = "Yes" if m.get("is_verified") else "No"
+                            st.write(f"**Verified:** {verified}")
+    
+                            if m.get("applications"):
+                                st.markdown("#### Applications")
+                                st.write(m["applications"])
+    
+                        st.divider()
+                        user_tier = (st.session_state.user or {}).get("tier", "free")
+
+                        if user_tier in ("pro", "advanced"):
+                            st.markdown("### 📈 Historical Price Tracking")
+                            with st.spinner("Loading commodity price history..."):
+                                price_resp = api_get(f"/materials/{mat_id}/price-history")
+                                if price_resp["ok"] and price_resp["data"]:
+                                    import pandas as pd
+                                    hist_data = price_resp["data"]
+                                    df_hist = pd.DataFrame(hist_data)
+                                    if not df_hist.empty:
+                                        df_hist["recorded_date"] = pd.to_datetime(df_hist["recorded_date"])
+                                        df_hist = df_hist.set_index("recorded_date")
+                                        st.line_chart(df_hist["cost_per_kg"], height=250, use_container_width=True)
+                                        st.caption("Price fluctuations (INR per kg) over the last 12 months.")
+                                    else:
+                                        st.info("No historical price data available yet.")
+                                else:
+                                    st.info("Historical tracking is currently gathering data for this material.")
+                                    
+                            if st.button(f"🔎 Find Materials Similar to {m['name']}", key=f"similar_{mat_id}"):
+                                with st.spinner("Finding similar materials..."):
+                                    sim_result = api_get(f"/materials/{mat_id}/similar", params={"limit": 5})
+                                if sim_result["ok"]:
+                                    st.markdown(f"#### Top 5 Materials Similar to **{m['name']}**")
+                                    sim_data = []
+                                    for s in sim_result["data"]:
+                                        sim_data.append({
+                                            "Name": s["name"],
+                                            "Category": s["category"],
+                                            "Grade": s.get("grade", "-"),
+                                            "Density": s.get("density", "-"),
+                                            "Tensile Max (MPa)": s.get("tensile_strength_max", "-"),
+                                            "Cost Max (₹/kg)": s.get("cost_per_kg_max", "-"),
+                                        })
+                                    st.dataframe(pd.DataFrame(sim_data), width="stretch", hide_index=True)
+                                else:
+                                    show_api_error(sim_result, retry_key=f"retry_similar_{mat_id}")
+                        else:
+                            st.info("📈 **Upgrade to Pro or Advanced** to unlock 12-month historical commodity price tracking and alternative material discovery.")
+
+    # ══════════════════════════════════════════════
+    #  TAB 2: COMPARE MATERIALS
+    # ══════════════════════════════════════════════
+    with tab_compare:
+    
+        st.subheader("Side-by-Side Material Comparison")
+        st.caption("Select 2 or 3 materials to compare their properties head-to-head.")
+    
+        with st.spinner("Loading material list (API may take ~30s on first load)..."):
+            wake_api()
+            all_result = fetch_all_materials(st.session_state.get("token"))
+    
+        if not all_result["ok"]:
+            show_api_error(all_result, retry_key="retry_compare")
+            all_materials = []
+            name_to_id = {}
+        elif "data" not in all_result or "materials" not in all_result.get("data", {}):
+            st.warning("⚠️ API returned unexpected data. Please refresh.")
+            if st.button("🔄 Retry", key="retry_compare_data"):
+                st.rerun()
+            all_materials = []
+            name_to_id = {}
+        else:
+            all_materials = all_result["data"].get("materials", [])
+            name_to_id = {m["name"]: m["id"] for m in all_materials}
+        sorted_names = sorted(name_to_id.keys())
+    
+        user_tier = (st.session_state.user or {}).get("tier", "free")
+        compare_max = FRONTEND_COMPARE_MAX.get(user_tier, 2)
+    
+        UI_MAX_SELECTORS = min(compare_max, 8)
+    
+        st.caption(f"Your **{TIER_BADGES.get(user_tier, user_tier)}** tier allows comparing up to **{compare_max}** materials at once.")
+    
+        selections = []
+        SELECTORS_PER_ROW = 4
+        for row_start in range(0, UI_MAX_SELECTORS, SELECTORS_PER_ROW):
+            row_count = min(SELECTORS_PER_ROW, UI_MAX_SELECTORS - row_start)
+            row_cols = st.columns(row_count)
+            for i in range(row_count):
+                slot_num = row_start + i + 1
+                with row_cols[i]:
+                    label = f"Material {slot_num}" + (" (optional)" if slot_num > 2 else "")
+                    choice = st.selectbox(label, ["-- Select --"] + sorted_names, key=f"cmp{slot_num}")
+                    if choice != "-- Select --":
+                        selections.append(choice)
+    
+        if compare_max > UI_MAX_SELECTORS:
+            st.caption(f"Showing {UI_MAX_SELECTORS} slots. Your tier technically allows up to {compare_max} - let us know if you need more at once.")
+        elif user_tier == "free":
+            st.markdown("---")
+            c1, c2 = st.columns([3, 1])
+            c1.info("💎 Upgrade to Pro to compare up to 5 materials at once and unlock AI tools.")
+            if c2.button("✨ Upgrade Plan", use_container_width=True):
+                st.session_state.current_page = "pricing"
+                st.rerun()
+            st.markdown("---")
+    
+        if len(selections) < 2:
+            st.info("Select at least 2 materials above to start comparing.")
+        else:
+            ids = [name_to_id[name] for name in selections]
+            with st.spinner("Loading comparison..."):
+                compare_result = api_get("/materials/compare", params={"ids": ids})
+    
+            if not compare_result["ok"]:
+                show_api_error(compare_result, retry_key="retry_compare_fetch")
+                mat_details = []
+            else:
+                mat_details = compare_result.get("data", [])
+    
+            st.divider()
+    
+            COMPARE_PROPS = [
+                ("Category",               "category",              None),
+                ("Subcategory",             "subcategory",           None),
+                ("Grade",                   "grade",                 None),
+                ("Standard",               "standard",              None),
+                ("Density (g/cm3)",         "density",               "lower"),
+                ("Tensile Strength (MPa)",  "tensile_strength_max",  "higher"),
+                ("Yield Strength (MPa)",    "yield_strength_max",    "higher"),
+                ("Elongation (%)",          "elongation",            "higher"),
+                ("Hardness",                "hardness",              None),
+                ("Elastic Modulus (GPa)",   "elastic_modulus",       "higher"),
+                ("Thermal Conductivity W/(m*K)", "thermal_conductivity", "higher"),
+                ("Specific Heat J/(kg*K)",  "specific_heat",         None),
+                ("Melting Point Max (C)",   "melting_point_max",     "higher"),
+                ("Max Service Temp (C)",    "max_service_temp",      "higher"),
+                ("Cost Min (Rs./kg)",       "cost_per_kg_min",       "lower"),
+                ("Cost Max (Rs./kg)",       "cost_per_kg_max",       "lower"),
+                ("Composition",             "composition",           None),
+                ("Applications",            "applications",          None),
+                ("Equivalent Grades",       "equivalent_grades",     None),
+                ("Data Source",             "source_name",           None),
+            ]
+    
+            rows = []
+            for label, key, best_dir in COMPARE_PROPS:
+                row = {"Property": label}
+                values = []
+                for i, m in enumerate(mat_details):
+                    val = m.get(key)
+                    row[selections[i]] = val if val is not None else "-"
+                    if best_dir and val is not None and isinstance(val, (int, float)):
+                        values.append((i, val))
+                rows.append(row)
+    
+            compare_df = pd.DataFrame(rows)
+            for col in compare_df.columns:
+                compare_df[col] = compare_df[col].astype(str)
+    
+            st.markdown("#### Properties Comparison")
+            st.dataframe(compare_df, width='stretch', hide_index=True, height=735)
+    
+            st.divider()
+            st.markdown("#### 🕸️ Radar Chart — Property Fingerprint")
+            render_radar_chart(selections, mat_details, all_materials, user_tier)
+            st.markdown("#### Visual Comparison")
+    
+            CHART_PROPS = [
+                ("Tensile Strength (MPa)", "tensile_strength_max"),
+                ("Yield Strength (MPa)", "yield_strength_max"),
+                ("Density (g/cm3)", "density"),
+                ("Elastic Modulus (GPa)", "elastic_modulus"),
+                ("Thermal Conductivity W/(m*K)", "thermal_conductivity"),
+                ("Cost (Rs./kg)", "cost_per_kg_max"),
+            ]
+    
+            chart_col1, chart_col2 = st.columns(2)
+    
+            for idx, (chart_label, chart_key) in enumerate(CHART_PROPS):
+                chart_data = {}
+                for name, m in zip(selections, mat_details):
+                    val = m.get(chart_key)
+                    if val is not None and isinstance(val, (int, float)):
+                        short_name = name[:25] + "..." if len(name) > 28 else name
+                        chart_data[short_name] = val
+    
+                if len(chart_data) >= 2:
+                    target_col = chart_col1 if idx % 2 == 0 else chart_col2
+                    with target_col:
+                        st.markdown(f"**{chart_label}**")
+                        chart_df = pd.DataFrame(
+                            {"Material": list(chart_data.keys()), "Value": list(chart_data.values())}
+                        )
+                        fig_bar = px.bar(
+                            chart_df, 
+                            x="Value", 
+                            y="Material", 
+                            orientation='h',
+                            text_auto='.2s',
+                            color="Material",
+                            color_discrete_sequence=["#4FC3A1", "#2E86AB", "#FFCA28", "#FF6B6B"]
+                        )
+                        fig_bar.update_traces(
+                            textfont_size=13, 
+                            textangle=0, 
+                            textposition="outside", 
+                            cliponaxis=False,
+                            marker_line_width=0
+                        )
+                        fig_bar.update_layout(
+                            showlegend=False,
+                            height=180,
+                            margin=dict(l=0, r=60, t=10, b=10),
+                            paper_bgcolor='rgba(0,0,0,0)',
+                            plot_bgcolor='rgba(0,0,0,0)',
+                            font=dict(family="Inter, sans-serif"),
+                            xaxis=dict(visible=False, showgrid=False),
+                            yaxis=dict(title=None, showgrid=False, tickfont=dict(size=13, color="gray"))
+                        )
+                        st.plotly_chart(fig_bar, use_container_width=True, config={"displayModeBar": False})
+    
+            st.divider()
+            st.markdown("#### Key Takeaways")
+    
+            insights = []
+            m0, m1 = mat_details[0], mat_details[1]
+    
+            t0 = m0.get("tensile_strength_max")
+            t1 = m1.get("tensile_strength_max")
+            if t0 is not None and t1 is not None and min(t0, t1) > 0:
+                stronger = selections[0] if t0 > t1 else selections[1]
+                pct = abs(t0 - t1) / min(t0, t1) * 100
+                insights.append(f"**{stronger}** is **{pct:.0f}% stronger** in tensile strength")
+    
+            d0 = m0.get("density")
+            d1 = m1.get("density")
+            if d0 is not None and d1 is not None and max(d0, d1) > 0:
+                lighter = selections[0] if d0 < d1 else selections[1]
+                pct = abs(d0 - d1) / max(d0, d1) * 100
+                insights.append(f"**{lighter}** is **{pct:.0f}% lighter**")
+    
+            c0 = m0.get("cost_per_kg_min")
+            c1 = m1.get("cost_per_kg_min")
+            if c0 is not None and c1 is not None and max(c0, c1) > 0:
+                cheaper = selections[0] if c0 < c1 else selections[1]
+                pct = abs(c0 - c1) / max(c0, c1) * 100
+                insights.append(f"**{cheaper}** is **{pct:.0f}% cheaper**")
+    
+            th0 = m0.get("thermal_conductivity")
+            th1 = m1.get("thermal_conductivity")
+            if th0 is not None and th1 is not None:
+                better_cond = selections[0] if th0 > th1 else selections[1]
+                factor = max(th0, th1) / max(min(th0, th1), 0.01)
+                insights.append(f"**{better_cond}** conducts heat **{factor:.1f}x better**")
+    
+            if insights:
+                for insight in insights:
+                    st.markdown(f"- {insight}")
+            else:
+                st.write("Select materials with more numeric properties for auto-generated insights.")
+    
+    
+    # ══════════════════════════════════════════════
+    #  TAB: AI ADVISOR
+    # ══════════════════════════════════════════════
+    
+    # ══════════════════════════════════════════════
+    #  TAB: MY PROJECTS (BOM)
+    # ══════════════════════════════════════════════
+    with tab_projects:
+        st.markdown("""
+<div style="background: var(--secondary-background-color); padding: 1rem 1.5rem; border-radius: 6px; border: 1px solid var(--faded-text-20); border-left: 4px solid #00f0ff; margin-bottom: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+<h3 style="color: var(--text-color); margin-top: 0; margin-bottom: 0.3rem; font-weight: 700; letter-spacing: 0.5px;">Advanced Engineering Workspaces</h3>
+<p style="color: var(--text-color); opacity: 0.75; font-size: 0.95rem; margin-bottom: 0;">Build, simulate, and optimize your assemblies. Instantly calculate Total Mass, Yield Strength limits, and BOM Economics.</p>
+</div>
+        """, unsafe_allow_html=True)
+
+        
+        if not st.session_state.get("user"):
+            st.info("You must be logged in to create and manage engineering projects.")
+        else:
+            tier = st.session_state.user.get("tier", "free")
+            if tier == "free":
+                st.info("✨ **Premium Feature Locked**")
+                st.markdown("Engineering Workspaces allow you to build custom Bill of Materials (BOM) for your products, instantly calculating **Total Mass** and **Total Estimated Cost** based on real-time material data.")
+                st.markdown("Upgrade to **Pro** or **Advanced** to unlock this active workspace feature.")
+                if st.button("🚀 Upgrade to Pro (Rs. 499/mo)", key="proj_upgrade"):
+                    st.session_state.current_page = "pricing"
+                    st.rerun()
+            else:
+                if tier == "pro":
+                    st.warning("⚡ **Pro Tier**: You can create up to 3 active projects. Upgrade to **Advanced** for unlimited workspaces and CSV data exports.")
+                else:
+                    st.success("💎 **Advanced Tier**: You have unlimited workspaces and full export capabilities.")
+                    
+                pcol1, pcol2 = st.columns([1, 3])
+                
+                # Fetch Projects
+                projects = []
+                proj_resp = requests.get(f"{API_BASE}/projects/", headers=get_auth_headers())
+                if proj_resp.status_code == 200:
+                    projects = proj_resp.json()
+                    
+                with pcol1:
+                    # Initialize session state for selected project if not present
+                    if "selected_proj_id" not in st.session_state:
+                        st.session_state.selected_proj_id = projects[0]["id"] if projects else None
+    
+                    # Ensure the selected ID actually exists (in case it was deleted)
+                    if projects and st.session_state.selected_proj_id not in [p["id"] for p in projects]:
+                        st.session_state.selected_proj_id = projects[0]["id"]
+    
+                    selected_proj_id = st.session_state.get("selected_proj_id")
+    
+                    # --- 1. CREATE NEW SECTION ---
+                    st.markdown("##### Create New")
+                    at_limit = (tier == "pro" and len(projects) >= 3)
+                    
+                    if at_limit:
+                        st.error("Pro limit reached (3/3). Delete a project or upgrade.")
+                        if st.button("🚀 Upgrade to Advanced"):
+                            st.session_state.current_page = "pricing"
+                            st.rerun()
+                    else:
+                        with st.form("new_proj"):
+                            new_name = st.text_input("Project Name")
+                            new_desc = st.text_area("Description (optional)", height=60)
+                            if st.form_submit_button("Create Project"):
+                                if new_name:
+                                    res = api_post("/projects/", {"name": new_name, "description": new_desc})
+                                    if res["ok"]:
+                                        st.success("Created!")
+                                        st.session_state.selected_proj_id = res["data"]["id"]
+                                        st.rerun()
+                                    else:
+                                        st.error(res["error"])
+                                        
+                    st.divider()
+    
+                    # --- 2. YOUR PROJECTS SECTION ---
+                    st.markdown("#### Your Projects")
+                    if not projects:
+                        st.caption("No projects yet.")
+                    else:
+                        for p in projects:
+                            # Highlight the selected project
+                            is_selected = (p["id"] == selected_proj_id)
+                            
+                            # Use a border container for each project to look like a list of cards
+                            with st.container(border=True):
+                                if is_selected:
+                                    st.markdown(f"#### 📂 **{p['name']}**")
+                                else:
+                                    st.markdown(f"**{p['name']}**")
+                                    
+                                if not is_selected:
+                                    if st.button(f"Open Workspace", key=f"open_proj_{p['id']}", use_container_width=True):
+                                        st.session_state.selected_proj_id = p["id"]
+                                        st.rerun()
+                                    
+                with pcol2:
+                    if selected_proj_id:
+                        curr_proj = next((p for p in projects if p["id"] == selected_proj_id), None)
+                        if curr_proj:
+                            col_title, col_del = st.columns([4, 1])
+                            with col_title:
+                                st.markdown(f"### {curr_proj['name']}")
+                                if curr_proj['description']:
+                                    st.caption(curr_proj['description'])
+                            with col_del:
+                                if st.button("🗑️ Delete", key="del_proj"):
+                                    requests.delete(f"{API_BASE}/projects/{selected_proj_id}", headers=get_auth_headers())
+                                    st.rerun()
+                                    
+                            items = curr_proj.get("items", [])
+                            
+                            # Calculate totals
+                            total_weight = 0.0
+                            total_cost_min = 0.0
+                            total_cost_max = 0.0
+                            
+                            for item in items:
+                                mat = item["material"]
+                                vol = item["volume_cm3"]
+                                den = mat.get("density") or 0.0
+                                mass_kg = (vol * den) / 1000.0  # density is g/cm3, volume is cm3 -> mass in g -> kg
+                                total_weight += mass_kg
+                                
+                                c_min = mat.get("cost_per_kg_min") or 0.0
+                                c_max = mat.get("cost_per_kg_max") or 0.0
+                                total_cost_min += (mass_kg * c_min)
+                                total_cost_max += (mass_kg * c_max)
+                            
+                            # Dashboard Metrics
+                            m1, m2 = st.columns(2)
+                            with m1:
+                                st.markdown(f'<div class="stat-card" style="padding: 15px;"><div class="stat-label">Total Assembly Mass</div><div class="stat-num">{total_weight:.2f} kg</div></div>', unsafe_allow_html=True)
+                            with m2:
+                                cost_display = f"Rs. {total_cost_min:,.0f} - {total_cost_max:,.0f}" if total_cost_min > 0 else "Rs. 0"
+                                st.markdown(f'<div class="stat-card" style="padding: 15px;"><div class="stat-label">Total Estimated Cost</div><div class="stat-num" style="font-size:1.8rem;">{cost_display}</div></div>', unsafe_allow_html=True)
+                            
+                            st.write("") # spacing
+                            # Define the tabs
+                            tab_blueprint, tab_bom, tab_add, tab_import, tab_tools = st.tabs(["📐 Project Blueprint", "📋 Bill of Materials (BOM)", "➕ Add Part to Assembly", "⚡ Smart Import", "🛠️ Advanced Engineering Tools"])
+                            
+                            with tab_bom:
+                                if items:
+                                    table_data = []
+                                    for item in items:
+                                        mat = item["material"]
+                                        vol = item["volume_cm3"]
+                                        den = mat.get("density") or 0.0
+                                        mass_kg = (vol * den) / 1000.0
+                                        table_data.append({
+                                            "Part Name": item["part_name"],
+                                            "Material": mat["name"],
+                                            "Volume (cm³)": f"{vol:,.2f}",
+                                            "Mass (kg)": f"{mass_kg:,.3f}",
+                                            "Remove": item["id"]
+                                        })
+                                    
+                                    df = pd.DataFrame(table_data)
+                                    # Force left-alignment by treating formatted numbers as text
+                                    st.dataframe(
+                                        df.drop(columns=["Remove"]), 
+                                        width="stretch", 
+                                        hide_index=True
+                                    )
+                                    
+                                    # Advanced Tier: CSV Export
+                                    if tier == "advanced":
+                                        csv_data = df.drop(columns=["Remove"]).to_csv(index=False).encode('utf-8')
+                                        st.download_button(
+                                            label="📥 Export BOM to CSV",
+                                            data=csv_data,
+                                            file_name=f"{curr_proj['name'].replace(' ', '_')}_BOM.csv",
+                                            mime="text/csv"
+                                        )
+                                    elif tier == "pro":
+                                        st.caption("🔒 *Upgrade to Advanced to export this BOM to CSV.*")
+                                
+                                # Pro/Advanced Tier: PDF Export
+                                if tier in ["pro", "advanced"]:
+                                    df_clean = df.drop(columns=["Remove"])
+                                    total_mass = sum((item["volume_cm3"] * (item["material"].get("density") or 0)) / 1000.0 for item in items)
+                                    total_cost = sum(((item["volume_cm3"] * (item["material"].get("density") or 0)) / 1000.0) * (item.get("material", {}).get("cost_per_kg_min") or 0) for item in items)
+                                    
+                                    st.markdown("---")
+                                    st.markdown("### 📄 Professional Reports")
+                                    st.caption("Generate presentation-ready engineering reports. Downloads are generated locally and securely.")
+                                    
+                                    try:
+                                        # Generate PDF bytes in memory
+                                        pdf_bytes = generate_bom_pdf(curr_proj['name'], df_clean, total_mass, total_cost)
+                                        
+                                        st.download_button(
+                                            label="📥 Download PDF Report (Secure)",
+                                            data=pdf_bytes,
+                                            file_name=f"{curr_proj['name'].replace(' ', '_')}_Engineering_Report.pdf",
+                                            mime="application/pdf",
+                                            type="primary"
+                                        )
+                                    except Exception as e:
+                                        st.error(f"Failed to generate PDF: {e}")
+                                    
+                                    st.divider()
+                                    # Simple remove selector
+                                    rem_id = st.selectbox("Remove a part", options=[0] + [i["Remove"] for i in table_data], format_func=lambda x: "Select to remove..." if x == 0 else next(i["Part Name"] for i in table_data if i["Remove"] == x))
+                                    if rem_id != 0:
+                                        if st.button("Confirm Remove"):
+                                            requests.delete(f"{API_BASE}/projects/{selected_proj_id}/items/{rem_id}", headers=get_auth_headers())
+                                            st.rerun()
+                                else:
+                                    st.info("No parts added yet. Use the 'Add Part' or 'Smart Import' tabs!")
+                            
+                            with tab_blueprint:
+                                b64 = curr_proj.get("blueprint_data")
+                                if b64:
+                                    st.image(f"data:image/png;base64,{b64}", use_container_width=True)
+                                    if st.button("Remove Blueprint"):
+                                        requests.patch(f"{API_BASE}/projects/{selected_proj_id}/blueprint", json={"blueprint_data": ""}, headers=get_auth_headers())
+                                        st.rerun()
+                                else:
+                                    bp_file = st.file_uploader("Upload CAD/Sketch (.png, .jpg)", type=["png", "jpg", "jpeg"])
+                                    if bp_file:
+                                        import base64
+                                        b64_str = base64.b64encode(bp_file.read()).decode()
+                                        res = requests.patch(f"{API_BASE}/projects/{selected_proj_id}/blueprint", json={"blueprint_data": b64_str}, headers=get_auth_headers())
+                                        if res.status_code == 200:
+                                            st.rerun()
+                                            
+                            with tab_add:
+                                with st.form("add_part_form"):
+                                    c1, c2, c3 = st.columns(3)
+                                    
+                                    with st.spinner("Loading materials..."):
+                                        all_mats = fetch_all_materials(st.session_state.get("token"))
+                                    
+                                    
+                                    bom_mat_options = {m["id"]: m["name"] for m in all_mats["data"].get("materials", [])} if all_mats["ok"] else {}
+                                    
+                                    # Fetch custom materials if advanced
+                                    if user_tier == "advanced":
+                                        cust_mats = api_get("/materials/custom/mine")
+                                        if cust_mats["ok"] and cust_mats["data"]:
+                                            for cm in cust_mats["data"]:
+                                                # Use negative IDs to distinguish custom materials in the UI
+                                                bom_mat_options[-cm["id"]] = f"🔒 {cm['name']}"
+
+                                    
+                                    with c1:
+                                        part_name = st.text_input("Part Name", placeholder="e.g. Engine Block")
+                                    with c2:
+                                        sel_mat_id = st.selectbox("Select Material", options=list(bom_mat_options.keys()), format_func=lambda x: bom_mat_options[x])
+                                    with c3:
+                                        vol_cm3 = st.number_input("Volume (cm3)", min_value=0.1, value=100.0, step=10.0)
+                                        
+                                    if st.form_submit_button("Add to BOM"):
+                                        if not part_name:
+                                            st.error("Part Name is required.")
+                                        else:
+                                            res = api_post(f"/projects/{selected_proj_id}/items", {"material_id": sel_mat_id, "part_name": part_name, "volume_cm3": vol_cm3})
+                                            if res["ok"]:
+                                                st.success("Added!")
+                                                st.rerun()
+                                            else:
+                                                st.error(res["error"])
+                                                
+                            with tab_import:
+                                st.caption("Upload a file with columns: Part Name, Material ID, Volume (cm3)")
+                                bom_file = st.file_uploader("Upload BOM File", type=["csv", "xlsx"], label_visibility="collapsed")
+                                if bom_file and st.button("Auto-Build Project"):
+                                    try:
+                                        import pandas as pd
+                                        df_bom = pd.read_csv(bom_file) if bom_file.name.endswith(".csv") else pd.read_excel(bom_file)
+                                        if "Part Name" in df_bom.columns and "Material ID" in df_bom.columns and "Volume (cm3)" in df_bom.columns:
+                                            with st.spinner("Importing parts..."):
+                                                for _, row in df_bom.iterrows():
+                                                    api_post(f"/projects/{selected_proj_id}/items", {"material_id": int(row["Material ID"]), "part_name": str(row["Part Name"]), "volume_cm3": float(row["Volume (cm3)"])})
+                                            st.success("BOM Imported Successfully!")
+                                            st.rerun()
+                                        else:
+                                            st.error("Missing required columns: Part Name, Material ID, Volume (cm3)")
+                                    except Exception as e:
+                                        st.error(f"Failed to parse file: {e}")
+                                        
+                            with tab_tools:
+                                st.info("💡 **Engineer's Note:** All calculations below utilize strict mathematical formulas and dynamically pull empirical properties directly from the materials database. Approximations (such as uncorrected endurance limits) are explicitly stated.")
+                                t_synthesizer, t_safety, t_fatigue, t_thermal, t_deflect, t_shock, t_cost = st.tabs(["🧪 Synthesizer", "🛡️ Safety", "🔄 Fatigue", "🌡️ Thermal", "📐 Deflection", "⚡ Shock", "📉 Cost"])
+                                
+                                with t_synthesizer:
+                                    st.markdown("#### Rule of Mixtures Synthesizer")
+                                    st.caption("Estimate the properties of a composite or alloy by blending two materials.")
+                                    st.latex(r"P_{composite} = P_{matrix} \cdot V_{matrix} + P_{reinforcement} \cdot V_{reinforcement}")
+                                    
+                                    with st.spinner("Loading material database..."):
+                                        all_mats = fetch_all_materials(st.session_state.get("token"))
+                                        synth_mat_options = {m["id"]: m for m in all_mats["data"].get("materials", [])} if all_mats["ok"] else {}
+                                        
+                                    c_syn1, c_syn2 = st.columns(2)
+                                    with c_syn1:
+                                        m1_id = st.selectbox("Base Material (Matrix)", options=list(synth_mat_options.keys()), format_func=lambda x: synth_mat_options[x]["name"], key="m1")
+                                        vol_m1 = st.slider("Volume %", 0, 100, 70)
+                                    with c_syn2:
+                                        m2_id = st.selectbox("Secondary Material (Reinforcement)", options=list(synth_mat_options.keys()), format_func=lambda x: synth_mat_options[x]["name"], key="m2")
+                                        vol_m2 = 100 - vol_m1
+                                        st.metric("Secondary Volume %", f"{vol_m2}%")
+                                        
+                                    if m1_id and m2_id:
+                                        mat1 = synth_mat_options[m1_id]
+                                        mat2 = synth_mat_options[m2_id]
+                                        
+                                        den1 = mat1.get("density") or 0.0
+                                        den2 = mat2.get("density") or 0.0
+                                        blend_density = (den1 * (vol_m1/100.0)) + (den2 * (vol_m2/100.0))
+                                        
+                                        ts1 = mat1.get("tensile_strength_max") or mat1.get("tensile_strength_min") or 0.0
+                                        ts2 = mat2.get("tensile_strength_max") or mat2.get("tensile_strength_min") or 0.0
+                                        blend_ts = (ts1 * (vol_m1/100.0)) + (ts2 * (vol_m2/100.0))
+                                        
+                                        c_min1 = mat1.get("cost_per_kg_min") or 0.0
+                                        c_min2 = mat2.get("cost_per_kg_min") or 0.0
+                                        blend_cost = (c_min1 * (vol_m1/100.0)) + (c_min2 * (vol_m2/100.0))
+                                        
+                                        st.markdown("##### Estimated Composite Properties")
+                                        sc1, sc2, sc3 = st.columns(3)
+                                        sc1.metric("Blend Density", f"{blend_density:.2f} g/cm³")
+                                        sc2.metric("Blend Tensile Strength", f"{blend_ts:.0f} MPa")
+                                        sc3.metric("Est. Base Cost", f"Rs. {blend_cost:.0f} /kg")
+                                        
+                                with t_safety:
+                                    st.markdown("#### Structural Yield Analyzer")
+                                    st.caption("Calculate the Safety Factor for a specific part under mechanical load.")
+                                    st.latex(r"\text{Stress } (\sigma) = \frac{F}{A} \quad \Rightarrow \quad \text{Safety Factor } (SF) = \frac{S_y}{\sigma}")
+                                    
+                                    if not items:
+                                        st.warning("Add parts to your BOM first.")
+                                    else:
+                                        safe_part_idx = st.selectbox("Select Part to Analyze", options=range(len(items)), format_func=lambda i: f"{items[i]['part_name']} ({items[i]['material']['name']})", key="safety_part")
+                                        p_item = items[safe_part_idx]
+                                        y_str = p_item["material"].get("yield_strength_min")
+                                        
+                                        if not y_str:
+                                            st.error(f"Material '{p_item['material']['name']}' lacks Yield Strength data.")
+                                        else:
+                                            f_col1, f_col2 = st.columns(2)
+                                            with f_col1:
+                                                load_n = st.number_input("Max Applied Force (Newtons)", min_value=1.0, value=5000.0, step=500.0, key="sf_load")
+                                            with f_col2:
+                                                area_cm2 = st.number_input("Cross-Sectional Area (cm²)", min_value=0.1, value=10.0, step=0.5, key="sf_area")
+                                                
+                                            stress_mpa = load_n / (area_cm2 * 100.0)
+                                            sf = y_str / stress_mpa if stress_mpa > 0 else float('inf')
+                                            sf_display = f"{sf:.2f}" if sf < 100 else "100+ (Infinite)"
+                                            
+                                            st.markdown(f"**Applied Stress:** {stress_mpa:.2f} MPa")
+                                            st.markdown(f"**Material Yield Strength ($S_y$):** {y_str:.2f} MPa")
+                                            
+                                            if sf >= 2.0:
+                                                st.success(f"🟢 **Safety Factor: {sf_display}** (Highly Safe)")
+                                            elif sf >= 1.0:
+                                                st.warning(f"🟡 **Safety Factor: {sf_display}** (Marginal/Warning)")
+                                            else:
+                                                st.error(f"🔴 **Safety Factor: {sf_display}** (Critical Failure Expected!)")
+                                                
+                                with t_fatigue:
+                                    st.markdown("#### Cyclic Fatigue Life Estimator")
+                                    st.caption("Estimate if a part will survive infinite cycles under alternating stress.")
+                                    st.latex(r"S_e \approx k_a k_b k_c k_d k_e k_f \cdot S_e'")
+                                    st.info("Note: The baseline endurance limit (Se') is uncorrected. You can apply standard Marin modification factors below to calculate the true Corrected Endurance Limit (Se).")
+                                    
+                                    if not items:
+                                        st.warning("Add parts to your BOM first.")
+                                    else:
+                                        fat_part_idx = st.selectbox("Select Part to Analyze", options=range(len(items)), format_func=lambda i: f"{items[i]['part_name']} ({items[i]['material']['name']})", key="fatigue_part")
+                                        p_item = items[fat_part_idx]
+                                        mat = p_item["material"]
+                                        ts_val = mat.get("tensile_strength_max") or mat.get("tensile_strength_min")
+                                        
+                                        if not ts_val:
+                                            st.error(f"Material '{mat['name']}' lacks Tensile Strength data required for Fatigue Estimation.")
+                                        else:
+                                            cat = str(mat.get("category", "")).lower()
+                                            if "metal" in cat and "aluminum" not in mat["name"].lower():
+                                                endurance_limit = ts_val * 0.50 # Steel approx
+                                                note = r"Estimated Uncorrected Endurance Limit ($S_e' \approx 0.5 \cdot S_{ut}$)"
+                                            elif "aluminum" in mat["name"].lower() or "polymer" in cat:
+                                                endurance_limit = ts_val * 0.35 # Al/Polymer approx
+                                                note = r"Estimated Fatigue Strength at $5\cdot 10^8$ cycles ($S_f \approx 0.35 \cdot S_{ut}$)"
+                                            else:
+                                                endurance_limit = ts_val * 0.40
+                                                note = r"Estimated Endurance Limit ($S_e' \approx 0.4 \cdot S_{ut}$)"
+                                                
+                                            st.markdown(f"**Material Tensile Strength ($S_{{ut}}$):** {ts_val:.2f} MPa")
+                                            st.markdown(f"**{note}:** {endurance_limit:.2f} MPa")
+                                            
+                                            with st.expander("⚙️ Apply Marin Modification Factors", expanded=True):
+                                                st.caption("Adjust these empirical factors based on manufacturing and environmental conditions.")
+                                                mk1, mk2, mk3 = st.columns(3)
+                                                with mk1:
+                                                    k_a = st.number_input("Surface ($k_a$)", min_value=0.1, max_value=2.0, value=1.0, step=0.05, help="Depends on surface finish (e.g. Polished = 1.0, Machined = 0.7, Forged = 0.5)")
+                                                    k_d = st.number_input("Temperature ($k_d$)", min_value=0.1, max_value=2.0, value=1.0, step=0.05, help="Room temp = 1.0")
+                                                with mk2:
+                                                    k_b = st.number_input("Size ($k_b$)", min_value=0.1, max_value=2.0, value=1.0, step=0.05, help="Depends on part diameter (e.g. d < 8mm = 1.0)")
+                                                    k_e = st.number_input("Reliability ($k_e$)", min_value=0.1, max_value=1.0, value=1.0, step=0.01, help="e.g. 50% rel = 1.0, 99.9% = 0.753")
+                                                with mk3:
+                                                    k_c = st.number_input("Load ($k_c$)", min_value=0.1, max_value=2.0, value=1.0, step=0.05, help="Bending = 1.0, Axial = 0.85, Torsion = 0.59")
+                                                    k_f = st.number_input("Misc ($k_f$)", min_value=0.1, max_value=2.0, value=1.0, step=0.05, help="Corrosion, residual stress, etc.")
+                                                    
+                                                k_total = k_a * k_b * k_c * k_d * k_e * k_f
+                                                corrected_se = endurance_limit * k_total
+                                                
+                                                st.info(rf"**Corrected Endurance Limit ($S_e = k_{{total}} \cdot S_e'$): {corrected_se:.2f} MPa**")
+                                            
+                                            alt_stress = st.number_input("Applied Alternating Stress Amplitude (MPa)", min_value=1.0, value=max(1.0, float(corrected_se*0.8)), step=10.0, key="alt_stress")
+                                            
+                                            if alt_stress < corrected_se:
+                                                st.success("🟢 **Infinite Life Expected** - Alternating stress is below the corrected endurance limit.")
+                                            else:
+                                                st.error("🔴 **Finite Life (Fatigue Failure)** - The part will eventually crack under cyclic loading.")
+                                                
+                                with t_thermal:
+                                    st.markdown("#### Thermal Expansion Simulator")
+                                    st.caption("Calculate exact dimensional change based on operating temperatures.")
+                                    st.latex(r"\Delta L = L \cdot \alpha \cdot \Delta T")
+                                    
+                                    if not items:
+                                        st.warning("Add parts to your BOM first.")
+                                    else:
+                                        therm_part_idx = st.selectbox("Select Part to Analyze", options=range(len(items)), format_func=lambda i: f"{items[i]['part_name']} ({items[i]['material']['name']})", key="therm_part")
+                                        p_item = items[therm_part_idx]
+                                        mat = p_item["material"]
+                                        
+                                        cat = str(mat.get("category", "")).lower()
+                                        if "polymer" in cat:
+                                            cte = 100.0
+                                        elif "ceramic" in cat:
+                                            cte = 5.0
+                                        elif "semiconductor" in cat:
+                                            cte = 4.0
+                                        elif "nanomaterial" in cat:
+                                            cte = 1.0
+                                        elif "magnesium" in mat["name"].lower():
+                                            cte = 26.0
+                                        elif "zinc" in mat["name"].lower() or "zamak" in mat["name"].lower() or "za-" in mat["name"].lower():
+                                            cte = 27.4
+                                        elif "aluminum" in mat["name"].lower():
+                                            cte = 23.0
+                                        elif "titanium" in mat["name"].lower() or "nitinol" in mat["name"].lower():
+                                            cte = 8.6
+                                        elif "zirconium" in mat["name"].lower() or "zircaloy" in mat["name"].lower():
+                                            cte = 6.0
+                                        elif "beryllium copper" in mat["name"].lower():
+                                            cte = 17.0
+                                        elif "beryllium" in mat["name"].lower():
+                                            cte = 11.4
+                                        else:
+                                            cte = 12.0
+                                            
+                                        f1, f2, f3 = st.columns(3)
+                                        with f1:
+                                            part_length = st.number_input("Part Length (mm)", min_value=1.0, value=500.0, step=10.0)
+                                        with f2:
+                                            t_initial = st.number_input("Initial Temp (°C)", value=25.0, step=5.0)
+                                        with f3:
+                                            t_final = st.number_input("Operating Temp (°C)", value=150.0, step=5.0)
+                                            
+                                        st.caption(rf"Estimated Coefficient of Thermal Expansion ($\alpha$): {cte} µm/m·°C")
+                                        delta_t = t_final - t_initial
+                                        
+                                        expansion_mm = part_length * (cte * 1e-6) * delta_t
+                                        
+                                        if delta_t > 1500:
+                                            st.error("⚠️ **Warning:** Operating temperature is dangerously high and may exceed the melting point of standard alloys.")
+                                        elif expansion_mm > 0:
+                                            st.warning(f"🔥 The part will **EXPAND** by **{expansion_mm:.4f} mm**")
+                                        elif expansion_mm < 0:
+                                            st.info(f"❄️ The part will **CONTRACT** by **{abs(expansion_mm):.4f} mm**")
+                                        else:
+                                            st.success("No dimensional change.")
+    
+                                with t_deflect:
+                                    st.markdown("#### Beam Deflection & Stiffness (Young's Modulus)")
+                                    st.caption("Calculate how much a part will physically bend under a cantilever load.")
+                                    st.latex(r"I = \frac{\pi d^4}{64} \quad \Rightarrow \quad \delta_{max} = \frac{F L^3}{3 E I}")
+                                    
+                                    if not items:
+                                        st.warning("Add parts to your BOM first.")
+                                    else:
+                                        deflect_part_idx = st.selectbox("Select Part to Analyze", options=range(len(items)), format_func=lambda i: f"{items[i]['part_name']} ({items[i]['material']['name']})", key="deflect_part")
+                                        p_item = items[deflect_part_idx]
+                                        mat = p_item["material"]
+                                        
+                                        # Try to fetch Elastic Modulus from API (or estimate if not available)
+                                        E_gpa = mat.get("elastic_modulus")
+                                        if not E_gpa:
+                                            cat = str(mat.get("category", "")).lower()
+                                            if "polymer" in cat:
+                                                E_gpa = 3.0
+                                            elif "ceramic" in cat:
+                                                E_gpa = 300.0
+                                            elif "semiconductor" in cat:
+                                                E_gpa = 150.0
+                                            elif "nanomaterial" in cat:
+                                                E_gpa = 1000.0 # Graphene/CNT approx
+                                            elif "magnesium" in mat["name"].lower():
+                                                E_gpa = 45.0
+                                            elif "zinc" in mat["name"].lower() or "zamak" in mat["name"].lower() or "za-" in mat["name"].lower():
+                                                E_gpa = 85.0
+                                            elif "aluminum" in mat["name"].lower():
+                                                E_gpa = 69.0
+                                            elif "titanium" in mat["name"].lower():
+                                                E_gpa = 110.0
+                                            elif "nitinol" in mat["name"].lower():
+                                                E_gpa = 75.0
+                                            elif "zirconium" in mat["name"].lower() or "zircaloy" in mat["name"].lower():
+                                                E_gpa = 99.0
+                                            elif "beryllium copper" in mat["name"].lower():
+                                                E_gpa = 130.0
+                                            elif "albemet" in mat["name"].lower():
+                                                E_gpa = 193.0
+                                            elif "beryllium" in mat["name"].lower():
+                                                E_gpa = 303.0
+                                            else:
+                                                E_gpa = 200.0 # Standard Steel
+                                            st.info(f"Elastic Modulus not explicitly in DB. Using estimated value for {cat}: **{E_gpa} GPa**")
+                                        else:
+                                            st.success(f"**Elastic Modulus ($E$):** {E_gpa} GPa")
+                                            
+                                        f1, f2, f3 = st.columns(3)
+                                        with f1:
+                                            force_n = st.number_input("Point Load ($F$) in Newtons", min_value=1.0, value=1000.0, step=100.0)
+                                        with f2:
+                                            length_mm = st.number_input("Beam Length ($L$) in mm", min_value=10.0, value=300.0, step=10.0)
+                                        with f3:
+                                            diameter_mm = st.number_input("Shaft Diameter ($d$) in mm", min_value=1.0, value=25.0, step=1.0)
+                                            
+                                        # Convert to standard units (meters and Pascals)
+                                        E_pa = E_gpa * 1e9
+                                        L_m = length_mm / 1000.0
+                                        d_m = diameter_mm / 1000.0
+                                        
+                                        import math
+                                        I_m4 = (math.pi * (d_m ** 4)) / 64.0
+                                        
+                                        deflection_m = (force_n * (L_m ** 3)) / (3.0 * E_pa * I_m4)
+                                        deflection_mm = deflection_m * 1000.0
+                                        
+                                        st.markdown(f"**Area Moment of Inertia ($I$):** {I_m4:.2e} m⁴")
+                                        st.warning(rf"📐 **Maximum Tip Deflection ($\delta_{{max}}$): {deflection_mm:.4f} mm**")
+                                        
+                                        if deflection_mm > (length_mm / 100):
+                                            st.error("⚠️ **Warning:** Deflection exceeds 1% of beam length. The part lacks sufficient stiffness and may fail due to excessive bending.")
+    
+                                with t_shock:
+                                    st.markdown("#### Thermal Shock & Fracture Estimator")
+                                    st.caption("Determine a part's resistance to fracturing when quenched or rapidly cooled.")
+                                    st.latex(r"R_s = \frac{\sigma_f \cdot k}{E \cdot \alpha}")
+                                    st.info("Higher $R_s$ values indicate better resistance to thermal shock. Commonly used to evaluate machinability and quenching limits.")
+                                    
+                                    if not items:
+                                        st.warning("Add parts to your BOM first.")
+                                    else:
+                                        shock_part_idx = st.selectbox("Select Part to Analyze", options=range(len(items)), format_func=lambda i: f"{items[i]['part_name']} ({items[i]['material']['name']})", key="shock_part")
+                                        p_item = items[shock_part_idx]
+                                        mat = p_item["material"]
+                                        
+                                        sigma_f = mat.get("tensile_strength_max") or mat.get("tensile_strength_min")
+                                        E_gpa = mat.get("elastic_modulus")
+                                        if not E_gpa:
+                                            E_gpa = 200.0 # fallback
+                                            
+                                        k_cond = mat.get("thermal_conductivity")
+                                        if not k_cond:
+                                            k_cond = 45.0 # fallback steel
+                                            
+                                        if not sigma_f:
+                                            st.error("Missing Tensile Strength required for calculation.")
+                                        else:
+                                            cat = str(mat.get("category", "")).lower()
+                                            cte = 12.0 # Standard Steel approx
+                                            if "polymer" in cat: cte = 100.0
+                                            elif "ceramic" in cat: cte = 5.0
+                                            elif "semiconductor" in cat: cte = 4.0
+                                            elif "nanomaterial" in cat: cte = 1.0
+                                            elif "magnesium" in mat["name"].lower(): cte = 26.0
+                                            elif "zinc" in mat["name"].lower() or "zamak" in mat["name"].lower() or "za-" in mat["name"].lower(): cte = 27.4
+                                            elif "aluminum" in mat["name"].lower(): cte = 23.0
+                                            elif "titanium" in mat["name"].lower() or "nitinol" in mat["name"].lower(): cte = 8.6
+                                            elif "zirconium" in mat["name"].lower() or "zircaloy" in mat["name"].lower(): cte = 6.0
+                                            elif "beryllium copper" in mat["name"].lower(): cte = 17.0
+                                            elif "beryllium" in mat["name"].lower(): cte = 11.4
+                                            
+                                            Rs = (sigma_f * k_cond) / (E_gpa * cte)
+                                            
+                                            sc1, sc2, sc3 = st.columns(3)
+                                            sc1.metric(r"Strength ($\sigma_f$)", f"{sigma_f:.1f} MPa")
+                                            sc2.metric("Conductivity ($k$)", f"{k_cond:.1f} W/m·K")
+                                            sc3.metric(r"Expansion ($\alpha$)", f"{cte:.1f} µm/m·°C")
+                                            
+                                            st.success(f"⚡ **Thermal Shock Resistance ($R_s$): {Rs:.2f} W/m**")
+    
+                                with t_cost:
+                                    st.markdown("#### 💰 Advanced Cost & Weight Optimization Engine")
+                                    st.caption("Identify cost drivers in your assembly and discover cheaper, lighter alternatives without sacrificing performance.")
+                                    
+                                    if not items:
+                                        st.warning("Add parts to your BOM first.")
+                                    else:
+                                        st.markdown("##### Optimization Constraints")
+                                        st.write("Select the engineering properties that replacement materials **MUST match or exceed** compared to the current material:")
+                                        
+                                        col_c1, col_c2 = st.columns(2)
+                                        with col_c1:
+                                            opt_yield = st.checkbox("Yield Strength (≥)", value=True)
+                                            opt_tensile = st.checkbox("Tensile Strength (≥)", value=False)
+                                            opt_thermal = st.checkbox("Thermal Conductivity (≥)", value=False)
+                                        with col_c2:
+                                            opt_density = st.checkbox("Density (≤) [Weight Limit]", value=True)
+                                            opt_modulus = st.checkbox("Elastic Modulus (≥)", value=False)
+                                        
+                                        if st.button("Run Advanced Optimization", type="primary"):
+                                            with st.spinner("Executing multi-constraint pareto analysis..."):
+                                                all_mats = fetch_all_materials(st.session_state.get("token"))
+                                                db_mats = all_mats["data"].get("materials", []) if all_mats["ok"] else []
+                                                
+                                                total_assembly_savings = 0.0
+                                                optimization_found = False
+                                                
+                                                for item in items:
+                                                    curr_mat = item["material"]
+                                                    curr_cost = curr_mat.get("cost_per_kg_min")
+                                                    
+                                                    if not curr_cost:
+                                                        continue
+                                                        
+                                                    # Gather current constraints
+                                                    c_ys = curr_mat.get("yield_strength_min") or 0.0
+                                                    c_ts = curr_mat.get("tensile_strength_min") or 0.0
+                                                    c_den = curr_mat.get("density") or float('inf')
+                                                    c_tc = curr_mat.get("thermal_conductivity") or 0.0
+                                                    c_em = curr_mat.get("elastic_modulus") or 0.0
+                                                    
+                                                    alts = []
+                                                    for m in db_mats:
+                                                        if m["category"] != curr_mat["category"]: continue
+                                                        if m["id"] == curr_mat["id"]: continue
+                                                        m_cost = m.get("cost_per_kg_min")
+                                                        if not m_cost: continue
+                                                        
+                                                        # Check constraints
+                                                        valid = True
+                                                        if opt_yield and (m.get("yield_strength_min") or 0) < c_ys: valid = False
+                                                        if opt_tensile and (m.get("tensile_strength_min") or 0) < c_ts: valid = False
+                                                        if opt_density and (m.get("density") or float('inf')) > c_den: valid = False
+                                                        if opt_thermal and (m.get("thermal_conductivity") or 0) < c_tc: valid = False
+                                                        if opt_modulus and (m.get("elastic_modulus") or 0) < c_em: valid = False
+                                                        
+                                                        if valid:
+                                                            alts.append(m)
+                                                            
+                                                    if alts:
+                                                        vol_cm3 = item["volume_cm3"]
+                                                        current_mass_kg = (vol_cm3 * c_den) / 1000.0 if c_den != float('inf') else 0
+                                                        current_total_cost = current_mass_kg * curr_cost
+                                                        
+                                                        # Cost is driven by Mass * Cost_per_kg. We must filter alts that are ACTUALLY cheaper total.
+                                                        valid_cheaper_alts = []
+                                                        for alt in alts:
+                                                            alt_mass = (vol_cm3 * (alt.get("density") or 0)) / 1000.0
+                                                            alt_cost = alt_mass * alt.get("cost_per_kg_min")
+                                                            if alt_cost < current_total_cost:
+                                                                valid_cheaper_alts.append((alt, alt_mass, alt_cost))
+                                                        
+                                                        if valid_cheaper_alts:
+                                                            optimization_found = True
+                                                            
+                                                            # Find the absolute cheapest total cost
+                                                            valid_cheaper_alts.sort(key=lambda x: x[2])
+                                                            best_cost_alt, bc_mass, bc_cost = valid_cheaper_alts[0]
+                                                            
+                                                            # Find the lightest valid alternative among the cheaper ones
+                                                            valid_cheaper_alts.sort(key=lambda x: x[1])
+                                                            best_weight_alt, bw_mass, bw_cost = valid_cheaper_alts[0]
+                                                            
+                                                            savings_for_part = current_total_cost - bc_cost
+                                                            total_assembly_savings += savings_for_part
+                                                            
+                                                            with st.container(border=True):
+                                                                st.markdown(f"**Part:** {item['part_name']}")
+                                                                st.caption(f"Current Material: **{curr_mat['name']}** | Mass: {current_mass_kg:.2f} kg | Part Cost: Rs. {current_total_cost:,.0f}")
+                                                                
+                                                                st.success(f"💰 **Top Savings Pick:** {best_cost_alt['name']}")
+                                                                st.write(f"New Cost: Rs. {bc_cost:,.0f} (Save Rs. {savings_for_part:,.0f}) | New Mass: {bc_mass:.2f} kg")
+                                                                
+                                                                if best_weight_alt["id"] != best_cost_alt["id"]:
+                                                                    bw_savings = current_total_cost - bw_cost
+                                                                    st.info(f"🪶 **Lightest Viable Pick:** {best_weight_alt['name']}")
+                                                                    st.write(f"New Cost: Rs. {bw_cost:,.0f} (Save Rs. {bw_savings:,.0f}) | New Mass: {bw_mass:.2f} kg")
+                                                
+                                                if optimization_found:
+                                                    st.metric("Total Potential Assembly Savings", f"Rs. {total_assembly_savings:,.0f}")
+                                                else:
+                                                    st.info("Your BOM is fully optimized against these constraints! No valid cheaper equivalents found.")
+    
+    with tab_ai:
+        st.markdown("### 🤖 Engineering AI Advisor")
+        
+        if not st.session_state.get("user"):
+            st.warning("You must be logged in to access the AI Advisor.")
+        else:
+            tier = st.session_state.user.get("tier", "free")
+            if tier == "free":
+                st.info("🔒 **Premium Feature Locked**")
+                st.markdown("The AI Advisor analyzes your natural language requirements (e.g. *'Need a lightweight, high-strength metal for a drone under Rs. 1000/kg'*), intelligently queries the database, and provides engineering recommendations.")
+                st.markdown("Upgrade to **Pro** or **Advanced** to unlock this feature.")
+                if st.button("🚀 Upgrade to Pro (Rs. 499/mo)", key="ai_upgrade"):
+                    st.session_state.current_page = "pricing"
+                    st.rerun()
+            else:
+                st.markdown("Describe your material requirements and let the AI find the best matches from our 600+ materials.")
+                
+                # Initialize chat history
+                if "messages" not in st.session_state:
+                    st.session_state.messages = []
+    
+                # Display chat messages from history on app rerun
+                for message in st.session_state.messages:
+                    with st.chat_message(message["role"]):
+                        st.markdown(message["content"])
+    
+                # React to user input
+                if prompt := st.chat_input("E.g., I need a corrosion-resistant metal that can withstand 500°C..."):
+                    # Display user message in chat message container
+                    st.chat_message("user").markdown(prompt)
+                    # Add user message to chat history
+                    st.session_state.messages.append({"role": "user", "content": prompt})
+                    
+                    with st.chat_message("assistant"):
+                        with st.spinner("Analyzing constraints and querying database..."):
+                            resp = api_post("/ai/advise", {"prompt": prompt})
+                            if resp["ok"]:
+                                response_text = resp["data"]["response"]
+                                st.markdown(response_text)
+                                st.session_state.messages.append({"role": "assistant", "content": response_text})
+                            else:
+                                err = resp.get("error", "Unknown error")
+                                if resp.get("status_code") == 403:
+                                    st.error("Access denied. Please ensure you are on a paid tier.")
+                                else:
+                                    st.error(f"AI Error: {err}")
+    
+    # ══════════════════════════════════════════════
+    #  TAB: FEEDBACK
+    # ══════════════════════════════════════════════
+    # ==========================================
+    #  TAB: FAQ
+    # ==========================================
+    with tab_faq:
+        st.markdown("## ❓ Frequently Asked Questions")
+        st.caption("Everything you need to know about MatDataHub.")
+        
+        st.markdown("### 📊 Data & Materials")
+        with st.expander("Where does MatDataHub get its data?"):
+            st.write("Our data is meticulously sourced from globally recognized engineering standards including **ASTM International, ISO, MMPDS, ASME, and ASM International**.")
+            st.write("For specific materials, data sheets often aggregate test results from manufacturers to provide reliable statistical minimums.")
+        with st.expander("How frequently is the materials database updated?"):
+            st.write("We run quarterly synchronization passes to capture updates in standard specifications and add newly developed alloys and advanced composites.")
+        with st.expander("Can I add my own custom materials?"):
+            st.write("Currently, MatDataHub operates as a strictly verified standard-reference database to maintain engineering integrity. Custom material uploads are on the roadmap for Advanced Engineering tier users in Q3.")
+
+        st.markdown("### ⚙️ Features & Tools")
+        with st.expander("How does the AI Material Advisor work?"):
+            st.write("The AI Advisor (available on Pro and Advanced tiers) uses a Large Language Model (LLM) fine-tuned on materials science context. It has direct access to our 1,000+ material database to pull accurate numbers instead of hallucinating.")
+            st.write("You can ask it things like: *'Which aluminum alloy is best for a saltwater marine environment?'* or *'Suggest an alternative to Ti-6Al-4V that is cheaper but has similar yield strength.'*")
+        with st.expander("What are BOM Projects?"):
+            st.write("Bill of Materials (BOM) Projects allow you to build assemblies out of MatDataHub materials. You can track total weight, volume, and cost, and run advanced engineering tools (like Thermal Expansion or Shock Analysis) on your entire assembly at once.")
+        with st.expander("How does the Rule of Mixtures Synthesizer work?"):
+            st.write("The Synthesizer allows you to virtually mix multiple materials (e.g., a polymer matrix and carbon fiber) by volume or weight fraction. It calculates the theoretical composite properties based on the Voigt and Reuss bounds.")
+
+        
+
+        st.markdown("### 💳 Subscriptions & Upgrades")
+        with st.expander("How do I upgrade my plan?"):
+            st.write("Click the **✨ Upgrade Plan** button in the sidebar or directly on any premium feature. Payments are securely processed via Razorpay.")
+        with st.expander("Can I downgrade or cancel at any time?"):
+            st.write("Yes! You can manage your subscription directly from the **💳 Subscriptions & Upgrades** section in your Account dashboard.")
+        with st.expander("Is API Access available?"):
+            st.write("API Access is available exclusively on the Advanced (Enterprise) tier! This allows full programmatic access to pipe material data directly into your ERP systems and simulations.")
+
+
+    with tab_feedback:
+        st.markdown("## 💬 We'd love your feedback")
+        st.caption("Found a bug? Want a new feature? Just want to say hi? Tell us below.")
+    
+        user = st.session_state.get("user")
+        default_name = user.get("name", "") if user else ""
+        default_email = user.get("email", "") if user else ""
+    
+        with st.form("feedback_form", clear_on_submit=True):
+            fcol1, fcol2 = st.columns(2)
+            with fcol1:
+                fb_name = st.text_input("Name (optional)", value=default_name)
+            with fcol2:
+                fb_email = st.text_input("Email (optional)", value=default_email)
+    
+            fb_category = st.selectbox(
+                "What's this about?",
+                ["General Feedback", "Bug Report", "Feature Request", "Data Correction", "Other"],
+            )
+            fb_rating = st.slider("How's your experience so far?", 1, 5, 4, help="1 = Poor, 5 = Excellent")
+            fb_message = st.text_area(
+                "Your message",
+                placeholder="Tell us what's working, what's not, or what you'd love to see next...",
+                height=140,
+            )
+            fb_image = st.file_uploader("Attach Screenshot (Optional)", type=["png", "jpg", "jpeg"])
+            
+            agree_tc = st.checkbox("I agree to the Terms & Conditions (No abuse, profanity, pornography, or hate speech).")
+            
+            fb_submit = st.form_submit_button("Send Feedback", use_container_width=True)
+    
+            if fb_submit:
+                if not fb_message or len(fb_message.strip()) < 3:
+                    st.error("Please write a bit more detail before submitting.")
+                elif not agree_tc:
+                    st.error("You must agree to the Terms & Conditions before submitting.")
+                else:
+                    img_data = None
+                    if fb_image is not None:
+                        try:
+                            import base64
+                            if fb_image.size > 1024 * 1024:
+                                st.warning("Image too large. Skipped.")
+                            else:
+                                img_data = base64.b64encode(fb_image.getvalue()).decode("utf-8")
+                        except Exception:
+                            pass
+                    result = submit_feedback(
+                        fb_name, fb_email, fb_category, fb_message.strip(), fb_rating, "Feedback Tab", img_data
+                    )
+                    if result["ok"]:
+                        st.success("Thanks! Your feedback has been recorded. 🙌")
+                        st.balloons()
+                    else:
+                        st.error(result.get("error", "Couldn't submit feedback. Try again later."))
+    
+    
+    # ── Footer ──
+    st.divider()
+    st.caption("MatDataHub | Engineering Material Data-as-a-Service | 1,000+ materials | Data from ASTM, ASM, MMPDS, ISO, ACI")
+    
+    
+    # --------------------------------------------------------------------------------
+    

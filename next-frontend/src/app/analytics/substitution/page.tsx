@@ -6,6 +6,8 @@ import { ArrowLeft, Replace, Loader2, Lock, ShieldAlert } from "lucide-react";
 export default function SmartSubstitution() {
   const [allMaterials, setAllMaterials] = useState<any[]>([]);
   const [baseId, setBaseId] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchOpen, setSearchOpen] = useState(false);
   const [weights, setWeights] = useState({
     cost: 50,
     density: 50,
@@ -78,16 +80,43 @@ export default function SmartSubstitution() {
           
           {/* Controls Panel */}
           <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-6">
-            <div>
+            <div className="relative">
               <label className="block text-sm font-semibold text-slate-200 mb-2">Base Material</label>
-              <select
-                value={baseId}
-                onChange={(e) => setBaseId(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white appearance-none outline-none focus:border-purple-500"
+              <div 
+                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-slate-400 cursor-text flex items-center justify-between outline-none focus-within:border-purple-500"
               >
-                <option className="bg-slate-900" value="">Select target to replace...</option>
-                {allMaterials.map(m => <option className="bg-slate-900" key={m.id} value={m.id}>{m.name}</option>)}
-              </select>
+                <input 
+                  type="text" 
+                  placeholder="Search material to replace..." 
+                  className="bg-transparent border-none outline-none w-full text-white placeholder:text-slate-500"
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setSearchOpen(true);
+                  }}
+                  onFocus={() => setSearchOpen(true)}
+                />
+              </div>
+              {searchOpen && (
+                <div className="absolute z-10 w-full mt-1 bg-slate-950 border border-slate-700 rounded-lg shadow-xl max-h-60 overflow-y-auto">
+                  {allMaterials.filter(m => m.name.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 50).map(m => (
+                    <div 
+                      key={m.id} 
+                      className={`px-4 py-2 hover:bg-slate-800 cursor-pointer ${baseId === m.id.toString() ? 'bg-slate-800 text-purple-400' : 'text-slate-300'}`}
+                      onClick={() => {
+                        setBaseId(m.id.toString());
+                        setSearchQuery(m.name);
+                        setSearchOpen(false);
+                      }}
+                    >
+                      {m.name}
+                    </div>
+                  ))}
+                  {allMaterials.filter(m => m.name.toLowerCase().includes(searchQuery.toLowerCase())).length === 0 && (
+                    <div className="px-4 py-2 text-slate-500 text-sm">No materials found.</div>
+                  )}
+                </div>
+              )}
             </div>
 
             <div className="space-y-4 pt-2 border-t border-slate-800">

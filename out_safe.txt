@@ -1,0 +1,50 @@
+1670: <div class="t-node">
+1671: <div class="t-card">
+1672: <span class="t-step">Step 3 • Simulation & Economics</span>
+1673: <h4>Engineering Workspaces (BOM)</h4>
+1674: <p>The <b>Engineering (BOM)</b> tab is where raw data becomes structural reality. Create custom workspaces, build mechanical assemblies, and link components to the database to calculate Total Mass and Economics. Unlock the <b>Advanced Engineering Tools</b> to access powerful simulation modules:</p>
+1675: <div class="tool-grid">
+1676: <div class="tool-item"><strong>🧪 Synthesizer</strong>Formulate custom alloys.</div>
+1677: <div class="tool-item"><strong>🛡️ Safety & Yield</strong>Calculate structural limits.</div>
+1678: <div class="tool-item"><strong>🔄 Fatigue</strong>Estimate cyclic endurance.</div>
+1679: <div class="tool-item"><strong>🌡️ Thermal</strong>Predict expansion & heat.</div>
+1680: <div class="tool-item"><strong>📐 Deflection</strong>Model beam bending.</div>
+1681: <div class="tool-item"><strong>⚡ Shock</strong>Analyze impact loading.</div>
+1682: <div class="tool-item"><strong>📉 Cost</strong>Optimize BOM economics.</div>
+1683: </div>
+1684: </div>
+1685: </div>
+1686: 
+1687: <div class="t-node">
+1688: <div class="t-card">
+1689: <span class="t-step" style="color: #9C27B0;">Step 4 • Intelligence</span>
+1690: <h4>AI Materials Advisor</h4>
+1691: <p>Encounter a complex design constraint? Leverage the <b>AI Advisor</b> tab. Powered by advanced machine learning fine-tuned on materials science, it directly queries the MatDataHub database to prevent hallucinations and recommend optimal aerospace, nuclear, or industrial alternatives.</p>
+1692: </div>
+1693: </div>
+1694: 
+1695: <div class="t-node">
+1696: <div class="t-card">
+1697: <span class="t-step" style="color: #E91E63;">Step 5 • Community Loop</span>
+1698: <h4>System Feedback</h4>
+1699: <p>Continuous evolution requires engineering feedback. Use the <b>Feedback</b> tab to report issues, request the injection of highly specific new materials into the database, or participate in the community review discussions.</p>
+1700: </div>
+1701: </div>
+1702: 
+1703: </div>
+1704: </div>
+1705: """, unsafe_allow_html=True)
+1706: 
+1707:     with tab_browse:
+1708:         st.markdown("""
+1709: <div style="background: var(--secondary-background-color); padding: 1rem 1.5rem; border-radius: 6px; border: 1px solid var(--faded-text-20); border-left: 4px solid #4FC3A1; margin-bottom: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+1710: <h3 style="color: var(--text-color); margin-top: 0; margin-bottom: 0.3rem; font-weight: 700; letter-spacing: 0.5px;">Global Materials Database</h3>
+1711: <p style="color: var(--text-color); opacity: 0.75; font-size: 0.95rem; margin-bottom: 0;">Search, filter, and export data across 1,000+ verified engineering materials.</p>
+1712: </div>
+1713:         """, unsafe_allow_html=True)
+1714:     
+1715:         search_query = st.text_input(
+1716:             "Search by name, grade, standard, or application...",
+1717:             placeholder="e.g. stainless, 6061, aerospace, corrosion",
+1718:         )
+1719:     

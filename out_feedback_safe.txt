@@ -1,0 +1,80 @@
+    #  TAB: FEEDBACK
+    # ══════════════════════════════════════════════
+    # ==========================================
+    #  TAB: FAQ
+    # ==========================================
+    with tab_faq:
+        st.markdown("## ❓ Frequently Asked Questions")
+        st.caption("Everything you need to know about MatDataHub.")
+        
+        st.markdown("### 📊 Data & Materials")
+        with st.expander("Where does MatDataHub get its data?"):
+            st.write("Our data is meticulously sourced from globally recognized engineering standards including **ASTM International, ISO, MMPDS, ASME, and ASM International**.")
+            st.write("For specific materials, data sheets often aggregate test results from manufacturers to provide reliable statistical minimums.")
+        with st.expander("How frequently is the materials database updated?"):
+            st.write("We run quarterly synchronization passes to capture updates in standard specifications and add newly developed alloys and advanced composites.")
+        with st.expander("Can I add my own custom materials?"):
+            st.write("Currently, MatDataHub operates as a strictly verified standard-reference database to maintain engineering integrity. Custom material uploads are on the roadmap for Advanced Engineering tier users in Q3.")
+
+        st.markdown("### ⚙️ Features & Tools")
+        with st.expander("How does the AI Material Advisor work?"):
+            st.write("The AI Advisor (available on Pro and Advanced tiers) uses a Large Language Model (LLM) fine-tuned on materials science context. It has direct access to our 1,000+ material database to pull accurate numbers instead of hallucinating.")
+            st.write("You can ask it things like: *'Which aluminum alloy is best for a saltwater marine environment?'* or *'Suggest an alternative to Ti-6Al-4V that is cheaper but has similar yield strength.'*")
+        with st.expander("What are BOM Projects?"):
+            st.write("Bill of Materials (BOM) Projects allow you to build assemblies out of MatDataHub materials. You can track total weight, volume, and cost, and run advanced engineering tools (like Thermal Expansion or Shock Analysis) on your entire assembly at once.")
+        with st.expander("How does the Rule of Mixtures Synthesizer work?"):
+            st.write("The Synthesizer allows you to virtually mix multiple materials (e.g., a polymer matrix and carbon fiber) by volume or weight fraction. It calculates the theoretical composite properties based on the Voigt and Reuss bounds.")
+
+        
+
+        st.markdown("### 💳 Subscriptions & Upgrades")
+        with st.expander("How do I upgrade my plan?"):
+            st.write("Click the **✨ Upgrade Plan** button in the sidebar or directly on any premium feature. Payments are securely processed via Razorpay.")
+        with st.expander("Can I downgrade or cancel at any time?"):
+            st.write("Yes! You can manage your subscription directly from the **💳 Subscriptions & Upgrades** section in your Account dashboard.")
+        with st.expander("Is API Access available?"):
+            st.write("API Access is available exclusively on the Advanced (Enterprise) tier! This allows full programmatic access to pipe material data directly into your ERP systems and simulations.")
+
+
+    with tab_feedback:
+        st.markdown("## 💬 We'd love your feedback")
+        st.caption("Found a bug? Want a new feature? Just want to say hi? Tell us below.")
+    
+        user = st.session_state.get("user")
+        default_name = user.get("name", "") if user else ""
+        default_email = user.get("email", "") if user else ""
+    
+        with st.form("feedback_form", clear_on_submit=True):
+            fcol1, fcol2 = st.columns(2)
+            with fcol1:
+                fb_name = st.text_input("Name (optional)", value=default_name)
+            with fcol2:
+                fb_email = st.text_input("Email (optional)", value=default_email)
+    
+            fb_category = st.selectbox(
+                "What's this about?",
+                ["General Feedback", "Bug Report", "Feature Request", "Data Correction", "Other"],
+            )
+            fb_rating = st.slider("How's your experience so far?", 1, 5, 4, help="1 = Poor, 5 = Excellent")
+            fb_message = st.text_area(
+                "Your message",
+                placeholder="Tell us what's working, what's not, or what you'd love to see next...",
+                height=140,
+            )
+            fb_image = st.file_uploader("Attach Screenshot (Optional)", type=["png", "jpg", "jpeg"])
+            
+            agree_tc = st.checkbox("I agree to the Terms & Conditions (No abuse, profanity, pornography, or hate speech).")
+            
+            fb_submit = st.form_submit_button("Send Feedback", use_container_width=True)
+    
+            if fb_submit:
+                if not fb_message or len(fb_message.strip()) < 3:
+                    st.error("Please write a bit more detail before submitting.")
+                elif not agree_tc:
+                    st.error("You must agree to the Terms & Conditions before submitting.")
+                else:
+                    img_data = None
+                    if fb_image is not None:
+                        try:
+                            import base64
+                            if fb_image.size > 1024 * 1024:

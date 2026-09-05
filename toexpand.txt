@@ -1,0 +1,21 @@
+materials into your live database:
+
+1. To scrape all Steel & Iron grades:
+
+powershell
+
+
+python scripts/ai_scraper_pipeline.py "https://en.wikipedia.org/wiki/Steel_grades" "https://en.wikipedia.org/wiki/Carbon_steel" "https://en.wikipedia.org/wiki/Stainless_steel" --hint "Industrial Steel and Iron Alloys"
+2. To scrape Aerospace Metals (Titanium & Aluminum):
+
+powershell
+
+
+python scripts/ai_scraper_pipeline.py "https://en.wikipedia.org/wiki/Aluminium_alloy" "https://en.wikipedia.org/wiki/Titanium_alloy" --hint "Aerospace Metals"
+3. To scrape Industrial Polymers (Plastics):
+
+powershell
+
+
+python scripts/ai_scraper_pipeline.py "https://en.wikipedia.org/wiki/Thermoplastic" "https://en.wikipedia.org/wiki/List_of_synthetic_polymers" --hint "Industrial Plastics and Polymers"
+You can literally Google any material list (e.g., "Wikipedia List of Copper Alloys" or "Wikipedia Ceramics"), copy the URL, and plug it into the script! The AI will automatically clean the messy HTML, extract the engineering properties, and push them to your live server.

@@ -1,0 +1,50 @@
+    #  TAB 2: COMPARE MATERIALS
+    # ══════════════════════════════════════════════
+    with tab_compare:
+    
+        st.subheader("Side-by-Side Material Comparison")
+        st.caption("Select 2 or 3 materials to compare their properties head-to-head.")
+    
+        with st.spinner("Loading material list (API may take ~30s on first load)..."):
+            wake_api()
+            all_result = fetch_all_materials(st.session_state.get("token"))
+    
+        if not all_result["ok"]:
+            show_api_error(all_result, retry_key="retry_compare")
+            all_materials = []
+            name_to_id = {}
+        elif "data" not in all_result or "materials" not in all_result.get("data", {}):
+            st.warning("⚠️ API returned unexpected data. Please refresh.")
+            if st.button("🔄 Retry", key="retry_compare_data"):
+                st.rerun()
+            all_materials = []
+            name_to_id = {}
+        else:
+            all_materials = all_result["data"].get("materials", [])
+            name_to_id = {m["name"]: m["id"] for m in all_materials}
+        sorted_names = sorted(name_to_id.keys())
+    
+        user_tier = (st.session_state.user or {}).get("tier", "free")
+        compare_max = FRONTEND_COMPARE_MAX.get(user_tier, 2)
+    
+        UI_MAX_SELECTORS = min(compare_max, 8)
+    
+        st.caption(f"Your **{TIER_BADGES.get(user_tier, user_tier)}** tier allows comparing up to **{compare_max}** materials at once.")
+    
+        selections = []
+        SELECTORS_PER_ROW = 4
+        for row_start in range(0, UI_MAX_SELECTORS, SELECTORS_PER_ROW):
+            row_count = min(SELECTORS_PER_ROW, UI_MAX_SELECTORS - row_start)
+            row_cols = st.columns(row_count)
+            for i in range(row_count):
+                slot_num = row_start + i + 1
+                with row_cols[i]:
+                    label = f"Material {slot_num}" + (" (optional)" if slot_num > 2 else "")
+                    choice = st.selectbox(label, ["-- Select --"] + sorted_names, key=f"cmp{slot_num}")
+                    if choice != "-- Select --":
+                        selections.append(choice)
+    
+        if compare_max > UI_MAX_SELECTORS:
+            st.caption(f"Showing {UI_MAX_SELECTORS} slots. Your tier technically allows up to {compare_max} - let us know if you need more at once.")
+        elif user_tier == "free":
+            st.markdown("---")

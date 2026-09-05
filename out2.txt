@@ -1,0 +1,50 @@
+                                    st.success(f"{c_name} added securely!")
+                                    st.rerun()
+                                else:
+                                    st.error("Failed to add material.")
+                                    
+                    st.markdown("#### Your Library")
+                    my_mats = api_get("/materials/custom/mine")
+                    if my_mats["ok"] and my_mats["data"]:
+                        for mm in my_mats["data"]:
+                            st.markdown(f"**{mm['name']}** ({mm['category']}) - {mm['tensile_strength_min']} MPa | ₹{mm['cost_per_kg_min']}/kg")
+                    else:
+                        st.caption("No proprietary materials uploaded yet.")
+                else:
+                    st.warning("Custom Private Materials are exclusively available on the Advanced (Enterprise) tier.")
+
+            elif account_menu == "💳 Payment History":
+                st.markdown("### Transaction History")
+                # Fetch transactions from backend
+                tx_res = api_get("/account/transactions")
+                if tx_res.get("ok"):
+                    txs = tx_res["data"]
+                    if not txs:
+                        st.info("No past transactions or payments found.")
+                    else:
+                        for tx in txs:
+                            with st.container():
+                                col1, col2 = st.columns([3, 1])
+                                with col1:
+                                    st.markdown(f"**Amount:** {tx.get('amount', '0')} {tx.get('currency', 'USD')} | **Status:** {tx.get('status', 'Completed')}")
+                                    st.caption(f"Date: {tx.get('created_at', 'N/A')}")
+                                with col2:
+                                    st.code(tx.get('id', 'N/A'), language=None)
+                            st.divider()
+                else:
+                    st.error("Could not load transaction history.")
+                    
+            elif account_menu == "📚 Help Center & Legal":
+                st.markdown("### Help Center")
+                with st.expander("How do I upgrade my plan?"):
+                    st.write("Go to the Subscriptions tab and select a plan. Payments are processed securely via Razorpay/Stripe.")
+                with st.expander("How do I cancel my subscription?"):
+                    st.write("Please contact support or use the billing portal to downgrade your plan to Free.")
+                with st.expander("Where does MatDataHub get its data?"):
+                    st.write("Our data is sourced from verified standards including ASTM, ISO, MMPDS, and ASM International.")
+                
+                st.markdown("### Legal")
+                st.markdown("[Privacy Policy](/privacy) (Coming soon)")
+                st.markdown("[Terms of Service](/tos) (Coming soon)")
+                
+                st.divider()

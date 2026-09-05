@@ -128,7 +128,7 @@ export default function ResourcesPage() {
         {activeTab === "blogs" && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {blogs.map((blog, i) => (
-              <div key={i} className="bg-slate-900 border border-slate-800 p-6 rounded-2xl hover:border-indigo-500/50 transition-colors group cursor-pointer flex flex-col h-full">
+              <div onClick={() => alert("Full blog post coming soon in the next release!")} key={i} className="bg-slate-900 border border-slate-800 p-6 rounded-2xl hover:border-indigo-500/50 transition-colors group cursor-pointer flex flex-col h-full">
                 <div className="flex justify-between items-start mb-4">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-400 bg-indigo-900/30 px-2 py-1 rounded">{blog.tag}</span>
                   <div className="flex items-center gap-1 text-slate-500 text-xs font-medium">
