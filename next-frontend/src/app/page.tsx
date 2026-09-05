@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 import { Database, Calculator, Workflow, Bot, BookOpen } from "lucide-react";
 
