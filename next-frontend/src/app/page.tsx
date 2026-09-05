@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Database, Calculator, Workflow } from "lucide-react";
+import { Database, Calculator, Workflow, Bot } from "lucide-react";
 
 export default function Home() {
   return (
@@ -18,7 +18,7 @@ export default function Home() {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 pt-12">
           
           <Link href="/materials" className="group p-8 rounded-2xl bg-neutral-900 border border-neutral-800 hover:border-neutral-700 hover:bg-neutral-800/50 transition-all">
             <div className="w-12 h-12 rounded-lg bg-emerald-900/30 text-emerald-400 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
@@ -42,6 +42,14 @@ export default function Home() {
             </div>
             <h3 className="text-xl font-bold text-white mb-2">Project Workflows</h3>
             <p className="text-neutral-400 text-sm">Create, save, and manage complex material selection workflows.</p>
+          </Link>
+
+          <Link href="/ai" className="group p-8 rounded-2xl bg-neutral-900 border border-neutral-800 hover:border-neutral-700 hover:bg-neutral-800/50 transition-all">
+            <div className="w-12 h-12 rounded-lg bg-blue-900/30 text-blue-400 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+              <Bot className="w-6 h-6" />
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2">Ask AI Adviser</h3>
+            <p className="text-neutral-400 text-sm">Describe constraints in plain English and let AI find the perfect material.</p>
           </Link>
 
         </div>
