@@ -109,6 +109,7 @@ class UserProfile(BaseModel):
     name: Optional[str] = None
     tier: str
     api_key: Optional[str] = None
+    api_secret: Optional[str] = None
     created_at: Optional[datetime] = None
 
     # Upgrade-request state, so the frontend can show a "pending" badge

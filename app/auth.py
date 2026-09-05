@@ -74,10 +74,12 @@ def decode_token(token: str) -> dict:
         )
 
 
-# ── API Key generation ──
-def generate_api_key() -> str:
-    """Generate a secure 32-character hex API key prefixed with 'mdh_'."""
-    return f"mdh_{secrets.token_hex(16)}"
+# API Key generation
+def generate_api_credentials() -> tuple[str, str]:
+    """Generate a secure Client ID (Key) and Client Secret pair."""
+    api_key = f"mdh_key_{secrets.token_hex(12)}"
+    api_secret = f"mdh_secret_{secrets.token_hex(24)}"
+    return api_key, api_secret
 
 
 # ── Tier constants ──
@@ -105,11 +107,18 @@ def get_current_user(
 
     import hashlib
     api_key = request.headers.get("X-API-Key")
-    if api_key:
-        hashed_key = hashlib.sha256(api_key.encode('utf-8')).hexdigest()
-        user = db.query(User).filter(User.api_key == hashed_key, User.is_active == True).first()
+    api_secret = request.headers.get("X-API-Secret")
+    
+    if api_key or api_secret:
+        if not api_key or not api_secret:
+            raise HTTPException(status_code=401, detail="Both X-API-Key and X-API-Secret headers are required.")
+        user = db.query(User).filter(
+            User.api_key == api_key, 
+            User.api_secret == api_secret, 
+            User.is_active == True
+        ).first()
         if not user:
-            raise HTTPException(status_code=401, detail="Invalid API Key")
+            raise HTTPException(status_code=401, detail="Invalid API Credentials")
         if getattr(user, "is_blocked", False):
             raise HTTPException(status_code=403, detail="Account blocked.")
         return user

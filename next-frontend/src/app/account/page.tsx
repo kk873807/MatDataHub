@@ -97,7 +97,13 @@ export default function AccountDashboard() {
               <h3 className="text-white font-bold">{profile.name || "User"}</h3>
               <p className="text-xs text-slate-400">Member since {new Date(profile.created_at).getFullYear()}</p>
             </div>
-            <button className="text-xs text-red-400 hover:text-red-300 flex items-center gap-1 mt-2">
+            <button 
+              onClick={() => {
+                alert("Signed out successfully (Demo Mode).");
+                window.location.href = "/";
+              }}
+              className="text-xs text-red-400 hover:text-red-300 flex items-center gap-1 mt-2 transition-colors"
+            >
               <LogOut className="w-3 h-3" /> Sign Out
             </button>
           </div>
@@ -111,25 +117,43 @@ export default function AccountDashboard() {
               <Key className="w-5 h-5 text-emerald-400" /> Programmatic API Access
             </h2>
             <p className="text-slate-300 text-sm mb-6">
-              You have access to the MatDataHub REST API for automated queries. Keep this key completely secret. Do not expose it in client-side code.
+              You have access to the MatDataHub REST API for automated queries. You must pass both your <strong>Client ID</strong> and <strong>Client Secret</strong> in the headers of your requests (<code>X-API-Key</code> and <code>X-API-Secret</code>).
             </p>
             
-            <div className="flex gap-4 items-center">
-              <div className="flex-1 bg-slate-950 border border-slate-800 rounded-lg p-3 font-mono text-sm text-emerald-400 overflow-x-auto">
-                {showKey ? profile.api_key : "mdh_••••••••••••••••••••••••••••••••"}
+            <div className="space-y-4">
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Client ID (API Key)</label>
+                <div className="flex gap-4 items-center">
+                  <div className="flex-1 bg-slate-950 border border-slate-800 rounded-lg p-3 font-mono text-sm text-emerald-400 overflow-x-auto">
+                    {profile.api_key || "Not generated yet"}
+                  </div>
+                  <button onClick={() => navigator.clipboard.writeText(profile.api_key)} className="bg-slate-800 hover:bg-slate-700 text-white px-4 py-3 rounded-lg text-sm transition-colors whitespace-nowrap">
+                    Copy ID
+                  </button>
+                </div>
               </div>
-              <button 
-                onClick={() => setShowKey(!showKey)}
-                className="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
-              >
-                {showKey ? "Hide" : "Reveal"}
-              </button>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Client Secret (API Secret)</label>
+                <div className="flex gap-4 items-center">
+                  <div className="flex-1 bg-slate-950 border border-slate-800 rounded-lg p-3 font-mono text-sm text-red-400 overflow-x-auto">
+                    {showKey ? profile.api_secret : "mdh_secret_••••••••••••••••••••••••••••••••••••••••••••••••"}
+                  </div>
+                  <button 
+                    onClick={() => setShowKey(!showKey)}
+                    className="bg-slate-800 hover:bg-slate-700 text-white px-4 py-3 rounded-lg text-sm transition-colors whitespace-nowrap"
+                  >
+                    {showKey ? "Hide Secret" : "Reveal Secret"}
+                  </button>
+                </div>
+              </div>
             </div>
-            <div className="mt-4 p-4 bg-red-950/20 border border-red-900/30 rounded-lg flex items-start gap-3">
+
+            <div className="mt-6 p-4 bg-red-950/20 border border-red-900/30 rounded-lg flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-red-400 shrink-0" />
               <p className="text-xs text-red-300/80">
                 <strong className="text-red-400 block mb-1">Security Warning</strong>
-                This API key grants unlimited access to your account's quota. If compromised, malicious actors could drain your API limit or access sensitive comparison data.
+                Your Client Secret grants unlimited access to your account's quota. Treat it like a password. If compromised, malicious actors could drain your API limit.
               </p>
             </div>
           </div>

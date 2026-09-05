@@ -118,8 +118,9 @@ class User(Base):
     # Tier: "free", "pro", "advanced"
     tier = Column(String(20), default="free", nullable=False)
 
-    # API key for programmatic access (Advanced tier only)
+    # API key and Secret for programmatic access (Advanced tier only)
     api_key = Column(String(64), unique=True, nullable=True, index=True)
+    api_secret = Column(String(255), nullable=True)
 
     # ---- Upgrade request tracking ----
     requested_tier = Column(String(20), nullable=True)               # "pro" or "advanced" while pending

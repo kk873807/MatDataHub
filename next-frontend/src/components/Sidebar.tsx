@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Database, Calculator, Workflow, User, Bot, BarChart3, BookOpen, MessageSquare, PanelLeftClose, PanelRightClose } from "lucide-react";
+import { Home, Database, Calculator, Workflow, User, Bot, BarChart3, BookOpen, MessageSquare, PanelLeftClose, PanelRightClose, ShieldAlert } from "lucide-react";
 
 const navItems = [
   { name: "Dashboard", href: "/", icon: Home },
@@ -13,6 +13,7 @@ const navItems = [
   { name: "Resources", href: "/resources", icon: BookOpen },
   { name: "Community", href: "/feedback", icon: MessageSquare },
   { name: "Account", href: "/account", icon: User },
+  { name: "Admin Portal", href: "/admin", icon: ShieldAlert },
 ];
 
 export function Sidebar() {
