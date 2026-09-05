@@ -94,7 +94,7 @@ def delete_project(
     db.commit()
     return {"ok": True, "message": "Project deleted"}
 
-@router.post("/{project_id}/items", response_model=ProjectItemOut)
+@router.post("/{project_id}/items")
 def add_project_item(
     project_id: int,
     payload: ProjectItemCreate,
@@ -114,7 +114,13 @@ def add_project_item(
     db.add(new_item)
     db.commit()
     db.refresh(new_item)
-    return new_item
+    return {
+        "id": new_item.id,
+        "project_id": new_item.project_id,
+        "material_id": new_item.material_id,
+        "part_name": new_item.part_name,
+        "volume_cm3": new_item.volume_cm3
+    }
 
 @router.delete("/{project_id}/items/{item_id}")
 def delete_project_item(
