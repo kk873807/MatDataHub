@@ -49,14 +49,20 @@ export default function CompareMaterials() {
     { key: "yield_strength_min", label: "Yield Strength (MPa)", max: 2000 },
     { key: "tensile_strength_min", label: "Tensile Strength (MPa)", max: 2500 },
     { key: "elastic_modulus", label: "Elastic Modulus (GPa)", max: 400 },
+    { key: "hardness_value", label: "Hardness", max: 500 },
     { key: "density", label: "Density (g/cm³)", max: 20 },
+    { key: "max_service_temp", label: "Max Temp (°C)", max: 2000 },
     { key: "thermal_conductivity", label: "Thermal Conductivity (W/mK)", max: 400 },
+    { key: "specific_heat", label: "Specific Heat (J/kgK)", max: 2000 },
+    { key: "melting_point", label: "Melting Point (°C)", max: 3500 },
+    { key: "embodied_carbon", label: "Carbon (kg CO2)", max: 50 },
+    { key: "water_usage", label: "Water (L/kg)", max: 500 },
     { key: "cost_per_kg_min", label: "Cost (₹/kg)", max: 100000 }
   ];
 
   const handleAddMaterial = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const val = e.target.value;
-    if (val && !selectedIds.includes(val) && selectedIds.length < 5) { // Capped at 5 for UI clarity
+    if (val && !selectedIds.includes(val) && selectedIds.length < 5) {
       setSelectedIds([...selectedIds, val]);
     }
     e.target.value = "";
@@ -66,6 +72,33 @@ export default function CompareMaterials() {
     const newIds = [...selectedIds];
     newIds.splice(index, 1);
     setSelectedIds(newIds);
+  };
+
+  const generateTakeaways = () => {
+    if (comparison.length < 2) return null;
+    const takeaways = [];
+    
+    // Find strongest
+    const strongest = [...comparison].sort((a, b) => (b.yield_strength_min || 0) - (a.yield_strength_min || 0))[0];
+    if (strongest) takeaways.push(`${strongest.name} offers the highest structural integrity (Yield Stress).`);
+    
+    // Find cheapest
+    const cheapest = [...comparison].sort((a, b) => (a.cost_per_kg_min || Infinity) - (b.cost_per_kg_min || Infinity))[0];
+    if (cheapest) takeaways.push(`${cheapest.name} is the most cost-effective option.`);
+
+    // Find lightest
+    const lightest = [...comparison].sort((a, b) => (a.density || Infinity) - (b.density || Infinity))[0];
+    if (lightest) takeaways.push(`${lightest.name} is the lightest material, ideal for weight-sensitive applications.`);
+
+    // Find most eco-friendly
+    const eco = [...comparison].sort((a, b) => (a.embodied_carbon || Infinity) - (b.embodied_carbon || Infinity))[0];
+    if (eco && eco.embodied_carbon) takeaways.push(`${eco.name} has the lowest embodied carbon footprint.`);
+
+    return (
+      <ul className="list-disc pl-5 space-y-2 text-slate-300 text-sm mt-4">
+        {takeaways.map((t, i) => <li key={i}>{t}</li>)}
+      </ul>
+    );
   };
 
   // SVG Radar Chart Logic
@@ -111,7 +144,7 @@ export default function CompareMaterials() {
           const textY = center + (radius + 15) * Math.sin(angle);
           return (
             <g key={prop.key}>
-              <line x1={center} y1={center} x2={x} y2={y} stroke="#334155" strokeWidth="1" />
+              <line x1={center} y1={center} x2={x} y2={y} stroke="#334155" strokeWidth="1" strokeDasharray="4,4" />
               <text x={textX} y={textY} fill="#94a3b8" fontSize="8" textAnchor="middle" dominantBaseline="middle">
                 {prop.label.split("(")[0].trim()}
               </text>
@@ -125,7 +158,8 @@ export default function CompareMaterials() {
             points={getCoordinates(idx)} 
             fill={colors[idx % colors.length].bg} 
             stroke={colors[idx % colors.length].hex} 
-            strokeWidth="2" 
+            strokeWidth="3" 
+            style={{ mixBlendMode: 'screen' }}
           />
         ))}
       </svg>
@@ -220,6 +254,17 @@ export default function CompareMaterials() {
                   </tbody>
                 </table>
               </div>
+
+              {/* Key Takeaways */}
+              {comparison.length >= 2 && (
+                <div className="p-6 bg-slate-900 border border-slate-800 rounded-2xl">
+                  <h3 className="font-bold text-white flex items-center gap-2">
+                    <Info className="w-5 h-5 text-purple-400" />
+                    Automated Insights & Key Takeaways
+                  </h3>
+                  {generateTakeaways()}
+                </div>
+              )}
             </div>
           </div>
         ) : (
