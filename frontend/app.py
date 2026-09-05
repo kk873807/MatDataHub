@@ -2451,7 +2451,11 @@ if st.session_state.current_page == "main":
                                         
                                         c_min1 = mat1.get("cost_per_kg_min") or 0.0
                                         c_min2 = mat2.get("cost_per_kg_min") or 0.0
-                                        blend_cost = (c_min1 * (vol_m1/100.0)) + (c_min2 * (vol_m2/100.0))
+                                        
+                                        # DEEP DIVE FIX: Cost is per kg (Mass), so it must be weighted by Mass Fraction, NOT Volume Fraction!
+                                        mass_frac1 = (den1 * (vol_m1 / 100.0)) / blend_density if blend_density > 0 else 0
+                                        mass_frac2 = (den2 * (vol_m2 / 100.0)) / blend_density if blend_density > 0 else 0
+                                        blend_cost = (c_min1 * mass_frac1) + (c_min2 * mass_frac2)
                                         
                                         st.markdown("##### Estimated Composite Properties")
                                         sc1, sc2, sc3 = st.columns(3)
@@ -3057,7 +3061,7 @@ if st.session_state.current_page == "main":
                             fig = go.Figure()
                             
                             fig.add_trace(go.Scatterpolar(
-                                  r=[base_mat.get('cost_per_kg', 0), base_mat.get('density', 0), base_mat.get('tensile_strength', 0), base_mat.get('embodied_carbon', 0)],
+                                  r=[base_mat.get('cost_per_kg_min', 0), base_mat.get('density', 0), base_mat.get('tensile_strength_min', 0), base_mat.get('embodied_carbon', 0)],
                                   theta=['Cost','Density','Strength', 'Carbon'],
                                   fill='toself',
                                   name='Base Material',
@@ -3142,7 +3146,7 @@ if st.session_state.current_page == "main":
                                 time.sleep(0.6)
                                 
                                 raw_carbon = selected_mat.get("embodied_carbon")
-                                raw_cost = selected_mat.get("cost_per_kg")
+                                raw_cost = selected_mat.get("cost_per_kg_min")
                                 
                                 # DEEP DIVE FLAW FIX: Do not silently calculate zero if data is missing!
                                 if raw_carbon is None or raw_cost is None or float(raw_carbon) == 0.0 or float(raw_cost) == 0.0:
@@ -3154,8 +3158,10 @@ if st.session_state.current_page == "main":
                                     
                                     # Financials (Unified to USD)
                                     annual_cbam_tax_usd = total_carbon_tons * cbam_price_usd
-                                    material_cost_per_kg = float(raw_cost)
-                                    annual_material_cost_usd = material_cost_per_kg * (volume_tons * 1000)
+                                    material_cost_per_kg_inr = float(raw_cost)
+                                    # Convert INR database values to USD (Assuming 1 INR = ~0.012 USD)
+                                    material_cost_per_kg_usd = material_cost_per_kg_inr * 0.012
+                                    annual_material_cost_usd = material_cost_per_kg_usd * (volume_tons * 1000)
                                     
                                     tax_percentage = (annual_cbam_tax_usd / annual_material_cost_usd) * 100 if annual_material_cost_usd > 0 else 0
                                     
@@ -3311,10 +3317,10 @@ if st.session_state.current_page == "main":
                                 match = db_lookup.get(raw_name)
                                 if match:
                                     carbon = float(match.get("embodied_carbon") or 0.0) * weight
-                                    cost = float(match.get("cost_per_kg") or 0.0) * weight
+                                    cost_inr = float(match.get("cost_per_kg_min") or 0.0) * weight
                                     matched_count += 1
                                     total_carbon += carbon
-                                    total_cost += cost
+                                    total_cost += cost_inr
                                     
                                     results.append({
                                         "Original_Material": row[mat_col],
@@ -3322,7 +3328,7 @@ if st.session_state.current_page == "main":
                                         "Match_Status": "✅ Verified",
                                         "Matched_ID": match.get("id"),
                                         "Embodied_Carbon_kgCO2e": round(carbon, 2),
-                                        "Est_Cost_USD": round(cost, 2)
+                                        "Est_Cost_INR": round(cost_inr, 2)
                                     })
                                 else:
                                     results.append({
@@ -3331,7 +3337,7 @@ if st.session_state.current_page == "main":
                                         "Match_Status": "❌ Unmapped",
                                         "Matched_ID": None,
                                         "Embodied_Carbon_kgCO2e": 0.0,
-                                        "Est_Cost_USD": 0.0
+                                        "Est_Cost_INR": 0.0
                                     })
                             
                             res_df = pd.DataFrame(results)
@@ -3343,7 +3349,7 @@ if st.session_state.current_page == "main":
                             st.markdown("### 📈 ESG & Economics Report")
                             m1, m2, m3 = st.columns(3)
                             m1.metric("Total Embodied Carbon", f"{total_carbon:,.2f} kg CO2e")
-                            m2.metric("Total Estimated Cost", f"${total_cost:,.2f}")
+                            m2.metric("Total Estimated Cost", f"₹{total_cost:,.0f}")
                             m3.metric("Material Match Rate", f"{match_rate:.1f}%")
                             
                             # Chart: Carbon Hotspots
