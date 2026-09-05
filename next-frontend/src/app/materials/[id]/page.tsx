@@ -11,6 +11,7 @@ export default function MaterialDetail() {
   const [similar, setSimilar] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isSimilarLocked, setIsSimilarLocked] = useState(false);
+  const [isPriceLocked, setIsPriceLocked] = useState(false);
 
   useEffect(() => {
     const fetchAllData = async () => {
@@ -21,7 +22,11 @@ export default function MaterialDetail() {
 
         // Fetch Price History
         const priceRes = await fetch(`http://127.0.0.1:8000/api/v1/materials/${id}/price-history`);
-        if (priceRes.ok) setPriceHistory(await priceRes.json());
+        if (priceRes.ok) {
+          setPriceHistory(await priceRes.json());
+        } else if (priceRes.status === 403) {
+          setIsPriceLocked(true);
+        }
 
         // Fetch Similar
         const simRes = await fetch(`http://127.0.0.1:8000/api/v1/materials/${id}/similar?limit=3`);
@@ -43,6 +48,42 @@ export default function MaterialDetail() {
   if (!material) return <div className="p-10 text-center text-red-400">Material not found.</div>;
 
   const maxPrice = priceHistory.length > 0 ? Math.max(...priceHistory.map(p => p.cost_per_kg)) : 1;
+  const minPrice = priceHistory.length > 0 ? Math.min(...priceHistory.map(p => p.cost_per_kg)) : 0;
+  
+  // SVG Area Chart Calculations
+  const generatePath = () => {
+    if (priceHistory.length === 0) return "";
+    const width = 1000; // arbitrary internal SVG coordinate width
+    const height = 200; // arbitrary internal SVG coordinate height
+    
+    const range = maxPrice - minPrice || 1;
+    // Add 10% padding to top and bottom
+    const paddedMin = minPrice - range * 0.1;
+    const paddedRange = range * 1.2;
+
+    const points = priceHistory.map((ph, idx) => {
+      const x = (idx / (priceHistory.length - 1)) * width;
+      const y = height - ((ph.cost_per_kg - paddedMin) / paddedRange) * height;
+      return `${x},${y}`;
+    });
+
+    return `M0,${height} L${points.join(" L")} L${width},${height} Z`;
+  };
+  
+  const generateLine = () => {
+    if (priceHistory.length === 0) return "";
+    const width = 1000;
+    const height = 200;
+    const range = maxPrice - minPrice || 1;
+    const paddedMin = minPrice - range * 0.1;
+    const paddedRange = range * 1.2;
+
+    return "M " + priceHistory.map((ph, idx) => {
+      const x = (idx / (priceHistory.length - 1)) * width;
+      const y = height - ((ph.cost_per_kg - paddedMin) / paddedRange) * height;
+      return `${x},${y}`;
+    }).join(" L ");
+  };
 
   return (
     <main className="flex flex-col p-6 lg:p-10 w-full">
@@ -105,32 +146,60 @@ export default function MaterialDetail() {
             {/* Historical Price Tracking Graph */}
             <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800">
               <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2"><TrendingUp className="w-5 h-5 text-emerald-400"/> Historical Price Tracking (12M)</h3>
-              {priceHistory.length > 0 ? (
-                <div className="flex gap-2 h-48 mt-4 pt-4 border-t border-slate-800">
-                  {priceHistory.map((ph, idx) => {
-                    const height = (ph.cost_per_kg / maxPrice) * 100;
-                    return (
-                      <div key={idx} className="flex-1 flex flex-col justify-end items-center group relative h-full">
-                        {/* Tooltip */}
-                        <div className="absolute -top-8 opacity-0 group-hover:opacity-100 bg-slate-800 text-white text-xs py-1 px-2 rounded pointer-events-none transition-opacity z-10 whitespace-nowrap">
-                          ₹{ph.cost_per_kg.toFixed(2)}
+              
+              {isPriceLocked ? (
+                <div className="p-5 h-48 mt-4 rounded-xl bg-slate-950 border border-emerald-500/30 text-center relative overflow-hidden group flex flex-col items-center justify-center">
+                  <div className="absolute inset-0 bg-gradient-to-t from-emerald-900/20 to-transparent"></div>
+                  <Lock className="w-8 h-8 text-emerald-400 mx-auto mb-3 relative z-10" />
+                  <h4 className="font-bold text-white text-sm mb-1 relative z-10">Pro Feature Locked</h4>
+                  <p className="text-xs text-slate-400 relative z-10 mb-4 max-w-sm">Upgrade to Pro to unlock 12-month historical price trends and market forecasting.</p>
+                  <button className="relative z-10 px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-colors">
+                    Upgrade to Pro
+                  </button>
+                </div>
+              ) : priceHistory.length > 0 ? (
+                <div className="relative h-56 mt-4 pt-4 border-t border-slate-800">
+                  
+                  {/* SVG Line Chart */}
+                  <div className="absolute inset-x-0 bottom-6 top-4 left-4 right-4">
+                    <svg viewBox="0 0 1000 200" className="w-full h-full overflow-visible preserve-3d" preserveAspectRatio="none">
+                      <defs>
+                        <linearGradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
+                          <stop offset="0%" stopColor="#10b981" stopOpacity="0.4" />
+                          <stop offset="100%" stopColor="#10b981" stopOpacity="0.0" />
+                        </linearGradient>
+                      </defs>
+                      <path d={generatePath()} fill="url(#chartGradient)" />
+                      <path d={generateLine()} fill="none" stroke="#34d399" strokeWidth="4" strokeLinejoin="round" strokeLinecap="round" />
+                    </svg>
+                  </div>
+
+                  {/* Y-Axis Min/Max Labels */}
+                  <div className="absolute top-0 left-0 text-[10px] text-slate-400">₹{maxPrice.toFixed(0)}</div>
+                  <div className="absolute bottom-5 left-0 text-[10px] text-slate-400">₹{minPrice.toFixed(0)}</div>
+
+                  {/* Data Points & X-Axis */}
+                  <div className="absolute inset-x-4 bottom-0 top-4 flex justify-between items-end pb-0">
+                    {priceHistory.map((ph, idx) => {
+                      return (
+                        <div key={idx} className="flex flex-col items-center group relative h-full flex-1">
+                          
+                          {/* Invisible hover target column */}
+                          <div className="absolute inset-0 z-20 hover:bg-emerald-500/10 transition-colors cursor-crosshair"></div>
+                          
+                          {/* Tooltip */}
+                          <div className="absolute top-0 opacity-0 group-hover:opacity-100 bg-slate-800 text-white text-xs py-1 px-2 rounded pointer-events-none transition-opacity z-30 whitespace-nowrap shadow-lg border border-slate-700">
+                            ₹{ph.cost_per_kg.toFixed(2)}
+                          </div>
+                          
+                          {/* X Axis Label */}
+                          <div className="absolute -bottom-5 text-[10px] text-slate-400 w-full text-center truncate">
+                            {new Date(ph.recorded_date).toLocaleString('default', { month: 'short' })}
+                          </div>
                         </div>
-                        
-                        {/* Bar Container */}
-                        <div className="w-full flex-1 flex items-end">
-                          <div 
-                            className="w-full bg-emerald-500/20 hover:bg-emerald-500/50 border border-emerald-500/50 rounded-t-sm transition-all"
-                            style={{ height: `${height}%` }}
-                          ></div>
-                        </div>
-                        
-                        {/* Label */}
-                        <span className="text-[10px] text-slate-300 mt-2 whitespace-nowrap overflow-hidden text-ellipsis w-full text-center">
-                          {new Date(ph.recorded_date).toLocaleString('default', { month: 'short' })}
-                        </span>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
               ) : (
                 <div className="h-48 mt-4 pt-4 border-t border-slate-800 flex flex-col items-center justify-center text-center">

@@ -486,8 +486,17 @@ def get_my_custom_materials(
 @router.get("/{material_id}/price-history", response_model=List[PriceHistoryResponse])
 def get_price_history(
     material_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_optional_user)
 ):
+    # Pro check
+    tier = current_user.tier if current_user else "free"
+    if tier not in ["pro", "advanced"]:
+        raise HTTPException(
+            status_code=403,
+            detail="Historical Price Tracking is a Pro+ feature."
+        )
+
     # Public endpoint to fetch price graph data
     history = db.query(PriceHistory).filter(PriceHistory.material_id == material_id).order_by(PriceHistory.recorded_date.asc()).all()
     # If no history exists, mock some data based on the current cost for demo purposes
