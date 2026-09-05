@@ -1,4 +1,4 @@
-﻿from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from typing import List
 
@@ -31,6 +31,27 @@ def get_user_projects(
         import traceback
         trace = traceback.format_exc()
         raise HTTPException(status_code=400, detail=f"Exception: {str(e)} | Trace: {trace}")
+
+@router.get("/{project_id}", response_model=ProjectOut)
+def get_single_project(
+    project_id: int,
+    current_user_id: int = 1,
+    db: Session = Depends(get_db)
+):
+    proj = db.query(Project).filter(Project.id == project_id, Project.user_id == current_user_id).first()
+    if not proj:
+        raise HTTPException(status_code=404, detail="Project not found")
+    
+    items = db.query(ProjectItem).filter(ProjectItem.project_id == proj.id).all()
+    proj_dict = {
+        "id": proj.id,
+        "name": proj.name,
+        "description": proj.description,
+        "created_at": proj.created_at,
+        "items": items,
+        "blueprint_data": proj.blueprint_data
+    }
+    return proj_dict
 
 @router.post("/", response_model=ProjectOut)
 def create_project(

@@ -3,6 +3,10 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Plus, Trash2, Download, Component, FileText, Wrench, Shield, Thermometer, Activity, IndianRupee, Share2, Flame } from "lucide-react";
+import { SafetyFactor } from "@/components/SafetyFactor";
+import { ThermalExpansion } from "@/components/ThermalExpansion";
+import { FatigueLife } from "@/components/FatigueLife";
+import { BeamDeflection } from "@/components/BeamDeflection";
 
 export default function ProjectWorkspace() {
   const { id } = useParams();
@@ -22,14 +26,13 @@ export default function ProjectWorkspace() {
   const fetchData = async () => {
     try {
       const [projRes, matRes] = await Promise.all([
-        fetch("http://127.0.0.1:8000/api/v1/projects"),
+        fetch(`http://127.0.0.1:8000/api/v1/projects/${id}`),
         fetch("http://127.0.0.1:8000/api/v1/materials?per_page=200")
       ]);
       
-      const projs = await projRes.json();
+      const currentProj = await projRes.json();
       const mats = await matRes.json();
       
-      const currentProj = projs.find((p: any) => p.id.toString() === id);
       setProject(currentProj);
       setMaterials(mats.materials || []);
     } catch (err) {
@@ -227,23 +230,25 @@ export default function ProjectWorkspace() {
 
             {activeTool === "safety" && (
               <div className="p-6 border border-slate-700 rounded-xl bg-slate-800/50">
-                <h4 className="font-bold text-white mb-2 flex items-center gap-2"><Shield className="w-5 h-5 text-emerald-400"/> Safety Factor Simulator</h4>
-                <p className="text-sm text-slate-300 mb-4">Input maximum expected operating stress to evaluate part survival.</p>
-                <input type="number" placeholder="Applied Stress (MPa)" className="w-full max-w-xs bg-slate-900 border border-slate-700 rounded px-3 py-2 text-white text-sm mb-4" />
-                <button className="px-4 py-2 bg-emerald-600 text-white rounded text-sm font-bold">Calculate FoS</button>
+                <SafetyFactor />
               </div>
             )}
 
             {activeTool === "thermal" && (
               <div className="p-6 border border-slate-700 rounded-xl bg-slate-800/50">
-                <h4 className="font-bold text-white mb-2 flex items-center gap-2"><Thermometer className="w-5 h-5 text-red-400"/> Thermal Expansion</h4>
-                <p className="text-sm text-slate-300 mb-4">Calculate dimensional changes at operating temperatures.</p>
-                <div className="flex gap-4 mb-4">
-                  <input type="number" placeholder="Initial Temp (°C)" className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-white text-sm" />
-                  <input type="number" placeholder="Final Temp (°C)" className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-white text-sm" />
-                  <input type="number" placeholder="Length (mm)" className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-white text-sm" />
-                </div>
-                <button className="px-4 py-2 bg-red-600 text-white rounded text-sm font-bold">Calculate Delta L</button>
+                <ThermalExpansion />
+              </div>
+            )}
+
+            {activeTool === "fatigue" && (
+              <div className="p-6 border border-slate-700 rounded-xl bg-slate-800/50">
+                <FatigueLife />
+              </div>
+            )}
+
+            {activeTool === "deflection" && (
+              <div className="p-6 border border-slate-700 rounded-xl bg-slate-800/50">
+                <BeamDeflection />
               </div>
             )}
 
@@ -275,11 +280,10 @@ export default function ProjectWorkspace() {
               </div>
             )}
 
-            {/* Other tools follow similar pattern... */}
-            {["fatigue", "deflection", "cost", "shock"].includes(activeTool) && (
+            {["cost", "shock"].includes(activeTool) && (
               <div className="p-10 text-center border border-slate-700 border-dashed rounded-xl">
                 <Wrench className="w-10 h-10 text-slate-600 mx-auto mb-3" />
-                <p className="text-slate-400">The {activeTool} engine is initialized for {selectedItem.part_name}. Inputs required.</p>
+                <p className="text-slate-400">The {activeTool} engine is initialized for {selectedItem.part_name}. Coming soon.</p>
               </div>
             )}
           </div>

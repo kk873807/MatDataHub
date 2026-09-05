@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Database, Calculator, Workflow, User, Bot, BarChart3, BookOpen } from "lucide-react";
+import { Home, Database, Calculator, Workflow, User, Bot, BarChart3, BookOpen, MessageSquare } from "lucide-react";
 
 const navItems = [
   { name: "Dashboard", href: "/", icon: Home },
@@ -10,6 +10,7 @@ const navItems = [
   { name: "Ask AI Adviser", href: "/ai", icon: Bot },
   { name: "Workflows", href: "/projects", icon: Workflow },
   { name: "Resources", href: "/resources", icon: BookOpen },
+  { name: "Community", href: "/feedback", icon: MessageSquare },
   { name: "Account", href: "/account", icon: User },
 ];
 

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Database, Calculator, Workflow, Bot } from "lucide-react";
+import { Database, Calculator, Workflow, Bot, BookOpen } from "lucide-react";
 
 export default function Home() {
   return (
@@ -42,6 +42,14 @@ export default function Home() {
             </div>
             <h3 className="text-xl font-bold text-white mb-2">Ask AI Adviser</h3>
             <p className="text-slate-200 text-sm">Describe constraints in plain English and let AI find the perfect material.</p>
+          </Link>
+
+          <Link href="/resources" className="group p-8 rounded-2xl bg-slate-900 border border-slate-800 hover:border-slate-700 hover:bg-slate-800/50 transition-all">
+            <div className="w-12 h-12 rounded-lg bg-indigo-900/30 text-indigo-400 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+              <BookOpen className="w-6 h-6" />
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2">Engineering Blogs</h3>
+            <p className="text-slate-200 text-sm">Read expert articles on Physics, ESG Compliance, and Material Science.</p>
           </Link>
 
         </div>
