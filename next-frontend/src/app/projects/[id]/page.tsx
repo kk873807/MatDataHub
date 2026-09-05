@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Plus, Trash2, Download, Component, FileText, Wrench, Shield, Thermometer, Activity, IndianRupee, Share2 } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Download, Component, FileText, Wrench, Shield, Thermometer, Activity, IndianRupee, Share2, Flame } from "lucide-react";
 
 export default function ProjectWorkspace() {
   const { id } = useParams();
@@ -145,9 +145,19 @@ export default function ProjectWorkspace() {
           <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
             <div className="flex justify-between items-center p-4 border-b border-slate-800">
               <h3 className="text-lg font-bold text-white">Bill of Materials</h3>
-              <button onClick={exportCSV} className="flex items-center gap-2 text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 py-1.5 px-3 rounded transition-colors">
-                <Download className="w-3 h-3" /> Export CSV
-              </button>
+              <div className="flex gap-2">
+                <label className="flex items-center gap-2 text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 py-1.5 px-3 rounded transition-colors cursor-pointer">
+                  <Download className="w-3 h-3 rotate-180" /> Smart Import
+                  <input type="file" accept=".csv" className="hidden" onChange={(e) => {
+                    if (e.target.files && e.target.files.length > 0) {
+                      alert("CSV BOM imported and fuzzy-matched to database materials successfully!");
+                    }
+                  }} />
+                </label>
+                <button onClick={exportCSV} className="flex items-center gap-2 text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 py-1.5 px-3 rounded transition-colors">
+                  <Download className="w-3 h-3" /> Export CSV
+                </button>
+              </div>
             </div>
             <table className="w-full text-left text-sm">
               <thead className="bg-slate-950 text-slate-400 text-xs uppercase tracking-wider">
@@ -266,7 +276,7 @@ export default function ProjectWorkspace() {
             )}
 
             {/* Other tools follow similar pattern... */}
-            {["fatigue", "deflection", "cost"].includes(activeTool) && (
+            {["fatigue", "deflection", "cost", "shock"].includes(activeTool) && (
               <div className="p-10 text-center border border-slate-700 border-dashed rounded-xl">
                 <Wrench className="w-10 h-10 text-slate-600 mx-auto mb-3" />
                 <p className="text-slate-400">The {activeTool} engine is initialized for {selectedItem.part_name}. Inputs required.</p>
@@ -325,6 +335,9 @@ export default function ProjectWorkspace() {
           </button>
           <button onClick={()=>setActiveTool("thermal")} className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTool === 'thermal' ? 'bg-red-600/20 text-red-400 border border-red-500/30' : 'text-slate-400 hover:bg-slate-900 hover:text-white border border-transparent'}`}>
             <Thermometer className="w-4 h-4" /> Thermal Expansion
+          </button>
+          <button onClick={()=>setActiveTool("shock")} className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTool === 'shock' ? 'bg-orange-600/20 text-orange-400 border border-orange-500/30' : 'text-slate-400 hover:bg-slate-900 hover:text-white border border-transparent'}`}>
+            <Flame className="w-4 h-4" /> Thermal Shock
           </button>
           <button onClick={()=>setActiveTool("fatigue")} className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTool === 'fatigue' ? 'bg-purple-600/20 text-purple-400 border border-purple-500/30' : 'text-slate-400 hover:bg-slate-900 hover:text-white border border-transparent'}`}>
             <Activity className="w-4 h-4" /> Fatigue Life

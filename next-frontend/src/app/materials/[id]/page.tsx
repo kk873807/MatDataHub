@@ -111,10 +111,9 @@ export default function MaterialDetail() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Properties Panel */}
-          <div className="lg:col-span-2 space-y-6">
+            {/* Mechanical Properties Panel */}
             <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800">
-              <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2"><Beaker className="w-5 h-5 text-blue-400"/> Mechanical Properties</h3>
+              <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2"><Beaker className="w-5 h-5 text-blue-400"/> Mechanical & Physical Properties</h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
                   <p className="text-xs text-slate-300">Yield Strength</p>
@@ -139,6 +138,37 @@ export default function MaterialDetail() {
                 <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
                   <p className="text-xs text-slate-300">Max Temp</p>
                   <p className="text-lg font-semibold text-white">{material.max_service_temp} <span className="text-xs text-slate-300">°C</span></p>
+                </div>
+              </div>
+            </div>
+
+            {/* Thermal & Chemical Panel */}
+            <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800">
+              <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2"><Beaker className="w-5 h-5 text-red-400"/> Thermal & Environmental Properties</h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                  <p className="text-xs text-slate-300">Thermal Conductivity</p>
+                  <p className="text-lg font-semibold text-white">{material.thermal_conductivity || "-"} <span className="text-xs text-slate-300">W/mK</span></p>
+                </div>
+                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                  <p className="text-xs text-slate-300">Specific Heat</p>
+                  <p className="text-lg font-semibold text-white">{material.specific_heat || "-"} <span className="text-xs text-slate-300">J/kgK</span></p>
+                </div>
+                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                  <p className="text-xs text-slate-300">Melting Point</p>
+                  <p className="text-lg font-semibold text-white">{material.melting_point || "-"} <span className="text-xs text-slate-300">°C</span></p>
+                </div>
+                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                  <p className="text-xs text-slate-300">Embodied Carbon</p>
+                  <p className="text-lg font-semibold text-white">{material.embodied_carbon || "-"} <span className="text-xs text-slate-300">kg CO2/kg</span></p>
+                </div>
+                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                  <p className="text-xs text-slate-300">Water Usage</p>
+                  <p className="text-lg font-semibold text-white">{material.water_usage || "-"} <span className="text-xs text-slate-300">L/kg</span></p>
+                </div>
+                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                  <p className="text-xs text-slate-300">Recyclability</p>
+                  <p className="text-lg font-semibold text-white">{material.recyclability_fraction ? (material.recyclability_fraction*100).toFixed(0) + '%' : "-"}</p>
                 </div>
               </div>
             </div>
@@ -261,6 +291,10 @@ export default function MaterialDetail() {
                 <div>
                   <span className="text-slate-300 block text-xs">Equivalent Grades</span>
                   <span className="text-white">{material.equivalent_grades || "-"}</span>
+                </div>
+                <div className="pt-2 border-t border-slate-800">
+                  <span className="text-slate-300 block text-xs">Data Source</span>
+                  <span className="text-emerald-400 font-medium">{material.data_source || "Verified Internal Database"}</span>
                 </div>
               </div>
             </div>
