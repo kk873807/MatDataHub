@@ -28,14 +28,6 @@ export default function Home() {
             <p className="text-slate-200 text-sm">Access 1000+ verified engineering materials and their physical properties.</p>
           </Link>
 
-          <Link href="/calculators" className="group p-8 rounded-2xl bg-slate-900 border border-slate-800 hover:border-slate-700 hover:bg-slate-800/50 transition-all">
-            <div className="w-12 h-12 rounded-lg bg-purple-900/30 text-purple-400 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
-              <Calculator className="w-6 h-6" />
-            </div>
-            <h3 className="text-xl font-bold text-white mb-2">Engineering Tools</h3>
-            <p className="text-slate-200 text-sm">Run physics, thermodynamics, and ESG financial calculations instantly.</p>
-          </Link>
-
           <Link href="/projects" className="group p-8 rounded-2xl bg-slate-900 border border-slate-800 hover:border-slate-700 hover:bg-slate-800/50 transition-all">
             <div className="w-12 h-12 rounded-lg bg-orange-900/30 text-orange-400 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
               <Workflow className="w-6 h-6" />
