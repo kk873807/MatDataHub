@@ -1346,8 +1346,8 @@ if st.session_state.current_page == "pricing":
 
 if st.session_state.current_page == "main":
     # Massive UI/UX IA Refactor: Grouping into Logical Workspaces
-    tab_home_main, tab_browse_main, tab_analytics, tab_workflows, tab_support_main, tab_faq_main = st.tabs([
-        "🏠 Dashboard", "🔍 Explorer", "⚖️ Analytics", "⚙️ Workflows", "💬 Support Center", "❓ FAQ"
+    tab_home_main, tab_browse_main, tab_analytics, tab_workflows, tab_support_main, tab_faq_main, tab_blog_main = st.tabs([
+        "🏠 Dashboard", "🔍 Explorer", "⚖️ Analytics", "⚙️ Workflows", "💬 Support Center", "❓ FAQ", "📰 Engineering Blog"
     ])
     
     with tab_home_main:
@@ -3126,3 +3126,84 @@ if st.session_state.current_page == "main":
                         st.metric("Total Embodied Carbon", "45,210 kg CO2e")
                         st.warning("⚠️ 2 materials use obsolete standards.")
                         st.download_button("Download Enriched BOM (CSV)", data="mock_csv_data", file_name="enriched_bom.csv", mime="text/csv")
+
+
+    # ==========================================
+    #  BLOG & INSIGHTS TAB
+    # ==========================================
+    with tab_blog_main:
+        st.markdown("<h2 style='margin-bottom: 0;'>📰 Engineering Blog & Insights</h2>", unsafe_allow_html=True)
+        st.caption("Read the latest thoughts on materials science, ESG compliance, and data engineering.")
+        st.divider()
+        
+        import os
+        import re
+        
+        blog_dir = "frontend/blog_posts"
+        if not os.path.exists(blog_dir):
+            st.info("No blog posts found yet. Add markdown files to `frontend/blog_posts`.")
+        else:
+            posts = [f for f in os.listdir(blog_dir) if f.endswith(".md")]
+            if not posts:
+                st.info("No blog posts found yet.")
+            else:
+                # Read metadata from frontmatter
+                post_data = []
+                for p in posts:
+                    with open(os.path.join(blog_dir, p), "r", encoding="utf-8") as f:
+                        content = f.read()
+                        
+                    # Simple frontmatter parser
+                    title = p.replace(".md", "").replace("-", " ").title()
+                    date = "Unknown Date"
+                    read_time = ""
+                    
+                    if content.startswith("---"):
+                        parts = content.split("---", 2)
+                        if len(parts) == 3:
+                            fm = parts[1]
+                            content = parts[2]
+                            t_match = re.search(r'title:\s*"(.*?)"', fm)
+                            if t_match: title = t_match.group(1)
+                            
+                            d_match = re.search(r'date:\s*"(.*?)"', fm)
+                            if d_match: date = d_match.group(1)
+                            
+                            rt_match = re.search(r'read_time:\s*"(.*?)"', fm)
+                            if rt_match: read_time = rt_match.group(1)
+                            
+                    post_data.append({"filename": p, "title": title, "date": date, "read_time": read_time, "content": content})
+                
+                # Sort by date (descending)
+                post_data.sort(key=lambda x: x["date"], reverse=True)
+                
+                # UI Layout
+                if "active_post" not in st.session_state:
+                    st.session_state.active_post = None
+                    
+                if st.session_state.active_post is None:
+                    # List View
+                    for post in post_data:
+                        with st.container():
+                            st.markdown(f'''
+                            <div style="background: var(--secondary-background-color); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--faded-text-20); margin-bottom: 1rem;">
+                                <h3 style="margin-top: 0; color: var(--text-color);">{post["title"]}</h3>
+                                <p style="color: var(--faded-text); font-size: 0.9rem; margin-bottom: 1rem;">🗓️ {post["date"]} • ⏱️ {post["read_time"]}</p>
+                            </div>
+                            ''', unsafe_allow_html=True)
+                            if st.button("Read Article", key=f"btn_{post['filename']}", type="primary"):
+                                st.session_state.active_post = post
+                                st.rerun()
+                else:
+                    # Detail View
+                    if st.button("← Back to Articles"):
+                        st.session_state.active_post = None
+                        st.rerun()
+                    
+                    active = st.session_state.active_post
+                    st.markdown(f'''
+                    <div style="padding-top: 1rem;">
+                        <p style="color: var(--primary-color); font-weight: 600;">{active["date"]} • {active["read_time"]}</p>
+                    </div>
+                    ''', unsafe_allow_html=True)
+                    st.markdown(active["content"])
