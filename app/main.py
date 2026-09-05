@@ -13,7 +13,7 @@ from slowapi.errors import RateLimitExceeded
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from app.database import engine, Base
-from app.routers import materials, auth, admin, feedback, payments, ai, projects, account
+from app.routers import materials, auth, admin, feedback, payments, ai, projects, account, calculators
 from sqlalchemy.orm import Session
 from app.database import get_db   # <-- added payments
 
@@ -106,6 +106,7 @@ app.include_router(payments.router, prefix="/api/v1")
 app.include_router(ai.router, prefix="/api/v1")
 app.include_router(projects.router, prefix="/api/v1")
 app.include_router(account.router, prefix="/api/v1")       # <-- added payments
+app.include_router(calculators.router, prefix="/api/v1")
 
 # Allow cross-origin requests (so Streamlit Cloud can call Render-hosted API)
 
