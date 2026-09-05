@@ -3129,10 +3129,8 @@ if st.session_state.current_page == "main":
                         volume_tons = st.number_input("Annual Procurement Volume (Metric Tons)", min_value=1.0, value=150.0, step=10.0)
                         
                         st.markdown("##### Market Parameters")
-                        cbam_price_eur = st.slider("Forecasted EU Carbon Price (€ / Tonne)", min_value=50, max_value=200, value=85)
-                        eur_to_usd = st.number_input("EUR to USD Exchange Rate", min_value=0.8, max_value=1.5, value=1.08, step=0.01)
-                        
-                        cbam_price_usd = cbam_price_eur * eur_to_usd
+                        # Unified Currency to USD to eliminate confusion
+                        cbam_price_usd = st.slider("Forecasted Carbon Price ($ / Tonne)", min_value=50, max_value=250, value=90)
                         
                         st.markdown("<br>", unsafe_allow_html=True)
                         analyze_btn = st.button("Generate Enterprise Risk Audit", type="primary", use_container_width=True)
@@ -3160,7 +3158,7 @@ if st.session_state.current_page == "main":
                                 m2.metric("Projected Carbon Tax (100% Phase-in)", f"${annual_cbam_tax_usd:,.0f}", f"{tax_percentage:.1f}% overhead cost", delta_color="inverse")
                                 m3.metric("Annual Material Spend", f"${annual_material_cost_usd:,.0f}")
                                 
-                                st.info("ℹ️ **Compliance Note:** The EU Carbon Border Adjustment Mechanism (CBAM) requires strict emissions reporting starting Oct 2023. Financial taxation phases in from 2026 to 2034. Penalties for non-reporting during the transitional phase range from €10-€50 per tonne.")
+                                st.info("ℹ️ **Compliance Note:** The EU Carbon Border Adjustment Mechanism (CBAM) requires strict emissions reporting starting Oct 2023. Financial taxation phases in from 2026 to 2034. Penalties for non-reporting during the transitional phase range from $10-$55 per tonne.")
                                 
                                 st.markdown("#### 🛡️ Geopolitical Risk Assessment")
                                 name_lower = selected_name.lower()
@@ -3196,38 +3194,55 @@ if st.session_state.current_page == "main":
                                 </div>
                                 ''', unsafe_allow_html=True)
                                 
-                                # Accurate EU CBAM Trajectory Chart
+                                # Dynamic Area Chart (Total Procurement Cost)
                                 import plotly.graph_objects as go
                                 years = [2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032, 2033, 2034]
                                 # Verified Official EU Phase-in Schedule
                                 tax_phase_in = [0.0, 0.0, 0.025, 0.05, 0.10, 0.225, 0.485, 0.735, 0.82, 0.91, 1.0] 
-                                projected_costs = [annual_cbam_tax_usd * p for p in tax_phase_in]
+                                
+                                projected_tax = [annual_cbam_tax_usd * p for p in tax_phase_in]
+                                base_material_spend = [annual_material_cost_usd for _ in years]
                                 
                                 fig = go.Figure()
+                                
+                                # Add Base Material Spend (Flat Foundation)
                                 fig.add_trace(go.Scatter(
                                     x=years, 
-                                    y=projected_costs, 
-                                    mode='lines+markers+text', 
-                                    name='Carbon Tax Exposure ($)', 
-                                    line=dict(color='#ff4b4b', width=3),
-                                    marker=dict(size=8, color='#ff4b4b'),
-                                    text=[f"${v:,.0f}" if v > 0 else "" for v in projected_costs],
-                                    textposition="top left"
+                                    y=base_material_spend, 
+                                    mode='lines', 
+                                    name='Base Material Spend ($)', 
+                                    line=dict(color='#00F0FF', width=2),
+                                    fill='tozeroy',
+                                    fillcolor='rgba(0, 240, 255, 0.1)'
                                 ))
+                                
+                                # Add Total Cost (Base Spend + Tax)
+                                total_costs = [base + tax for base, tax in zip(base_material_spend, projected_tax)]
+                                fig.add_trace(go.Scatter(
+                                    x=years, 
+                                    y=total_costs, 
+                                    mode='lines', 
+                                    name='Total Cost w/ Carbon Tax ($)', 
+                                    line=dict(color='#ff4b4b', width=3),
+                                    fill='tonexty',
+                                    fillcolor='rgba(255, 75, 75, 0.3)'
+                                ))
+                                
                                 fig.update_layout(
-                                    title="Verified EU-CBAM Financial Impact Schedule (2024-2034)",
+                                    title="Total Projected Financial Impact (Material Spend + Carbon Tax)",
                                     paper_bgcolor='rgba(0,0,0,0)',
                                     plot_bgcolor='rgba(0,0,0,0)',
                                     font=dict(color='var(--text-color)'),
                                     margin=dict(l=0, r=20, t=40, b=0),
                                     height=350,
                                     xaxis=dict(gridcolor='rgba(128,128,128,0.2)', tickmode='linear', dtick=1),
-                                    yaxis=dict(gridcolor='rgba(128,128,128,0.2)', tickprefix="$")
+                                    yaxis=dict(gridcolor='rgba(128,128,128,0.2)', tickprefix="$"),
+                                    hovermode="x unified",
+                                    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
                                 )
                                 st.plotly_chart(fig, use_container_width=True)
             except Exception as e:
                 st.error(f"Failed to load module: {e}")
-
     # ==========================================
     #  ENTERPRISE FEATURE: BOM ANALYZER
     # ==========================================
