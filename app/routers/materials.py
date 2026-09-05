@@ -38,7 +38,7 @@ from fastapi import Request, HTTPException, status
 
 # IP -> list of timestamps
 _mat_requests = defaultdict(list)
-MAX_REQS_PER_MIN = 60
+MAX_REQS_PER_MIN = 6000
 
 def _get_ip(request: Request) -> str:
     xff = request.headers.get("x-forwarded-for")
@@ -58,7 +58,7 @@ def _check_mat_rate_limit(request: Request):
 
 # --- Daily Lookup Limits (Monetization Strategy) ---
 _daily_lookups = defaultdict(list)
-FREE_DAILY_LIMIT = 50
+FREE_DAILY_LIMIT = 50000
 
 def _check_daily_limit(request: Request, current_user: Optional[User]):
     # Assign specific daily limits based on tier
@@ -72,9 +72,9 @@ def _check_daily_limit(request: Request, current_user: Optional[User]):
             # To protect against them stealing a JWT token to write a scraping script, we cap them at a high threshold.
             daily_limit = 1000
         else:
-            daily_limit = 50
+            daily_limit = 50000
     else:
-        daily_limit = 50
+        daily_limit = 50000
 
     key = f"user_{current_user.id}" if current_user else f"ip_{_get_ip(request)}"
     now = time.time()
