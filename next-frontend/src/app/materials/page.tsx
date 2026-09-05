@@ -66,11 +66,11 @@ export default function MaterialsPage() {
               onChange={(e) => setCategory(e.target.value)}
               className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-10 pr-4 py-2.5 text-white appearance-none focus:ring-2 focus:ring-emerald-500 outline-none"
             >
-              <option value="">All Categories</option>
-              <option value="Metal">Metals</option>
-              <option value="Polymer">Polymers</option>
-              <option value="Ceramic">Ceramics</option>
-              <option value="Composite">Composites</option>
+              <option className="bg-slate-900 text-white" value="">All Categories</option>
+              <option className="bg-slate-900 text-white" value="Metal">Metals</option>
+              <option className="bg-slate-900 text-white" value="Polymer">Polymers</option>
+              <option className="bg-slate-900 text-white" value="Ceramic">Ceramics</option>
+              <option className="bg-slate-900 text-white" value="Composite">Composites</option>
             </select>
           </div>
         </div>
