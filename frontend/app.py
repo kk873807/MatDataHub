@@ -3132,6 +3132,23 @@ if st.session_state.current_page == "main":
                         
                         volume_tons = st.number_input("Annual Procurement Volume (Metric Tons)", min_value=1.0, value=150.0, step=10.0)
                         
+                        raw_c = selected_mat.get("embodied_carbon")
+                        raw_cost = selected_mat.get("cost_per_kg_min")
+                        
+                        missing_carbon = raw_c is None or float(raw_c) == 0.0
+                        missing_cost = raw_cost is None or float(raw_cost) == 0.0
+                        
+                        custom_c = None
+                        custom_cost = None
+                        
+                        if missing_carbon or missing_cost:
+                            st.markdown("##### ⚠️ Missing Data Override")
+                            st.caption("The database lacks complete records for this material. Provide custom estimates to unlock the audit.")
+                            if missing_carbon:
+                                custom_c = st.number_input("Est. Embodied Carbon (kg CO2e/kg)", min_value=0.1, value=2.0, step=0.1)
+                            if missing_cost:
+                                custom_cost = st.number_input("Est. Cost (₹/kg)", min_value=1.0, value=500.0, step=10.0)
+                        
                         st.markdown("##### Market Parameters")
                         # Unified Currency to USD to eliminate confusion
                         cbam_price_usd = st.slider("Forecasted Carbon Price ($ / Tonne)", min_value=50, max_value=250, value=90)
@@ -3145,118 +3162,117 @@ if st.session_state.current_page == "main":
                                 import time
                                 time.sleep(0.6)
                                 
-                                raw_carbon = selected_mat.get("embodied_carbon")
-                                raw_cost = selected_mat.get("cost_per_kg_min")
+                                final_carbon = custom_c if missing_carbon else float(raw_c)
+                                final_cost = custom_cost if missing_cost else float(raw_cost)
                                 
-                                # DEEP DIVE FLAW FIX: Do not silently calculate zero if data is missing!
-                                if raw_carbon is None or raw_cost is None or float(raw_carbon) == 0.0 or float(raw_cost) == 0.0:
-                                    st.error("⚠️ **Incomplete Database Record:** This material is missing verified Cost or Carbon data in the primary database. Financial risk projections cannot be generated safely.")
+                                # Calculations
+                                embodied_carbon_per_kg = final_carbon
+                                total_carbon_tons = embodied_carbon_per_kg * volume_tons
+                                
+                                # Financials (Unified to USD)
+                                annual_cbam_tax_usd = total_carbon_tons * cbam_price_usd
+                                material_cost_per_kg_inr = final_cost
+                                # Convert INR database values to USD (Assuming 1 INR = ~0.012 USD)
+                                material_cost_per_kg_usd = material_cost_per_kg_inr * 0.012
+                                annual_material_cost_usd = material_cost_per_kg_usd * (volume_tons * 1000)
+                                
+                                tax_percentage = (annual_cbam_tax_usd / annual_material_cost_usd) * 100 if annual_material_cost_usd > 0 else 0
+                                
+                                st.markdown("#### ⚖️ Financial Tax Exposure (Unified in USD)")
+                                m1, m2, m3 = st.columns(3)
+                                m1.metric("Annual Carbon (CO2e)", f"{total_carbon_tons:,.0f} Tons", delta_color="inverse")
+                                m2.metric("Projected Carbon Tax (100% Phase-in)", f"${annual_cbam_tax_usd:,.0f}", f"{tax_percentage:.1f}% overhead cost", delta_color="inverse")
+                                m3.metric("Annual Material Spend", f"${annual_material_cost_usd:,.0f}")
+                                
+                                if missing_carbon or missing_cost:
+                                    st.warning("⚠️ **Audit Note:** This projection was generated using your manually overridden estimates because the primary database is awaiting certified updates for this material.")
                                 else:
-                                    # Calculations
-                                    embodied_carbon_per_kg = float(raw_carbon)
-                                    total_carbon_tons = embodied_carbon_per_kg * volume_tons
-                                    
-                                    # Financials (Unified to USD)
-                                    annual_cbam_tax_usd = total_carbon_tons * cbam_price_usd
-                                    material_cost_per_kg_inr = float(raw_cost)
-                                    # Convert INR database values to USD (Assuming 1 INR = ~0.012 USD)
-                                    material_cost_per_kg_usd = material_cost_per_kg_inr * 0.012
-                                    annual_material_cost_usd = material_cost_per_kg_usd * (volume_tons * 1000)
-                                    
-                                    tax_percentage = (annual_cbam_tax_usd / annual_material_cost_usd) * 100 if annual_material_cost_usd > 0 else 0
-                                    
-                                    st.markdown("#### ⚖️ Financial Tax Exposure (Unified in USD)")
-                                    m1, m2, m3 = st.columns(3)
-                                    m1.metric("Annual Carbon (CO2e)", f"{total_carbon_tons:,.0f} Tons", delta_color="inverse")
-                                    m2.metric("Projected Carbon Tax (100% Phase-in)", f"${annual_cbam_tax_usd:,.0f}", f"{tax_percentage:.1f}% overhead cost", delta_color="inverse")
-                                    m3.metric("Annual Material Spend", f"${annual_material_cost_usd:,.0f}")
-                                    
                                     st.info("ℹ️ **Compliance Note:** The EU Carbon Border Adjustment Mechanism (CBAM) requires strict emissions reporting starting Oct 2023. Financial taxation phases in from 2026 to 2034. Penalties for non-reporting during the transitional phase range from $10-$55 per tonne.")
-                                    
-                                    st.markdown("#### 🛡️ Geopolitical Risk Assessment")
-                                    name_lower = selected_name.lower()
-                                    risk_level = "LOW"
-                                    risk_color = "#4CAF50" # green
-                                    risk_text = "Stable global supply chain. Low risk of tariff shocks or critical export bans under current trade laws."
-                                    
-                                    if "titanium" in name_lower or "ti-" in name_lower:
-                                        risk_level = "CRITICAL"
-                                        risk_color = "#F44336" # red
-                                        risk_text = "**US DOE Critical Material:** High dependency on CIS region (Russia) and China. Subject to severe aerospace supply chain constraints and geopolitical export quotas."
-                                    elif "cobalt" in name_lower or "nickel" in name_lower or "inconel" in name_lower:
-                                        risk_level = "HIGH"
-                                        risk_color = "#FF9800" # orange
-                                        risk_text = "**EU Critical Raw Material:** Heavy reliance on DRC (Cobalt) and Indonesian (Nickel) refining. Subject to high price volatility and stringent ESG sourcing regulations."
-                                    elif "aluminum" in name_lower or "al-" in name_lower:
-                                        risk_level = "MEDIUM"
-                                        risk_color = "#FFEB3B" # yellow
-                                        risk_text = "Energy-intensive refining process. Supply stability and production costs are highly correlated with global energy macro-economics."
-                                    elif "steel" in name_lower:
-                                        risk_level = "MEDIUM"
-                                        risk_color = "#FFEB3B"
-                                        risk_text = "Subject to heavy Section 232 tariffs, EU safeguard measures, and anti-dumping regulations. Moderate supply volatility."
-                                    elif "copper" in name_lower or "cu-" in name_lower or "brass" in name_lower or "bronze" in name_lower:
-                                        risk_level = "HIGH"
-                                        risk_color = "#FF9800"
-                                        risk_text = "**Energy Transition Risk:** Massive forecasted global deficit due to EV and grid infrastructure demand. Sourcing highly dependent on South American political stability (Chile/Peru)."
-                                    
-                                    st.markdown(f'''
-                                    <div style="background: rgba(128,128,128,0.1); padding: 1rem; border-left: 4px solid {risk_color}; border-radius: 6px; margin-bottom: 1rem;">
-                                        <h4 style="margin-top:0; color: var(--text-color);">Supply Chain Risk: <span style="color: {risk_color};">{risk_level}</span></h4>
-                                        <p style="margin-bottom:0; color: var(--text-color); opacity: 0.8;">{risk_text}</p>
-                                    </div>
-                                    ''', unsafe_allow_html=True)
-                                    
-                                    # Dynamic Area Chart (Total Procurement Cost)
-                                    import plotly.graph_objects as go
-                                    years = [2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032, 2033, 2034]
-                                    # Verified Official EU Phase-in Schedule
-                                    tax_phase_in = [0.0, 0.0, 0.025, 0.05, 0.10, 0.225, 0.485, 0.735, 0.82, 0.91, 1.0] 
-                                    
-                                    projected_tax = [annual_cbam_tax_usd * p for p in tax_phase_in]
-                                    base_material_spend = [annual_material_cost_usd for _ in years]
-                                    
-                                    fig = go.Figure()
-                                    
-                                    # Add Base Material Spend (Flat Foundation)
-                                    fig.add_trace(go.Scatter(
-                                        x=years, 
-                                        y=base_material_spend, 
-                                        mode='lines', 
-                                        name='Base Spend (Constant $)', 
-                                        line=dict(color='#00F0FF', width=2),
-                                        fill='tozeroy',
-                                        fillcolor='rgba(0, 240, 255, 0.1)',
-                                        hovertemplate='Base Spend: $%{y:,.0f}<extra></extra>'
-                                    ))
-                                    
-                                    # Add Total Cost (Base Spend + Tax)
-                                    total_costs = [base + tax for base, tax in zip(base_material_spend, projected_tax)]
-                                    fig.add_trace(go.Scatter(
-                                        x=years, 
-                                        y=total_costs, 
-                                        mode='lines', 
-                                        name='Total Cost w/ Carbon Tax ($)', 
-                                        line=dict(color='#ff4b4b', width=3),
-                                        fill='tonexty',
-                                        fillcolor='rgba(255, 75, 75, 0.3)',
-                                        customdata=projected_tax,
-                                        hovertemplate='Total Cost: $%{y:,.0f}<br>Carbon Tax Portion: $%{customdata:,.0f}<extra></extra>'
-                                    ))
-                                    
-                                    fig.update_layout(
-                                        title="Total Projected Financial Impact (Material Spend + Carbon Tax)",
-                                        paper_bgcolor='rgba(0,0,0,0)',
-                                        plot_bgcolor='rgba(0,0,0,0)',
-                                        font=dict(color='var(--text-color)'),
-                                        margin=dict(l=0, r=20, t=40, b=0),
-                                        height=350,
-                                        xaxis=dict(gridcolor='rgba(128,128,128,0.2)', tickmode='linear', dtick=1),
-                                        yaxis=dict(gridcolor='rgba(128,128,128,0.2)', tickprefix="$"),
-                                        hovermode="x unified",
-                                        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
-                                    )
-                                    st.plotly_chart(fig, use_container_width=True)
+                                
+                                st.markdown("#### 🛡️ Geopolitical Risk Assessment")
+                                name_lower = selected_name.lower()
+                                risk_level = "LOW"
+                                risk_color = "#4CAF50" # green
+                                risk_text = "Stable global supply chain. Low risk of tariff shocks or critical export bans under current trade laws."
+                                
+                                if "titanium" in name_lower or "ti-" in name_lower:
+                                    risk_level = "CRITICAL"
+                                    risk_color = "#F44336" # red
+                                    risk_text = "**US DOE Critical Material:** High dependency on CIS region (Russia) and China. Subject to severe aerospace supply chain constraints and geopolitical export quotas."
+                                elif "cobalt" in name_lower or "nickel" in name_lower or "inconel" in name_lower:
+                                    risk_level = "HIGH"
+                                    risk_color = "#FF9800" # orange
+                                    risk_text = "**EU Critical Raw Material:** Heavy reliance on DRC (Cobalt) and Indonesian (Nickel) refining. Subject to high price volatility and stringent ESG sourcing regulations."
+                                elif "aluminum" in name_lower or "al-" in name_lower:
+                                    risk_level = "MEDIUM"
+                                    risk_color = "#FFEB3B" # yellow
+                                    risk_text = "Energy-intensive refining process. Supply stability and production costs are highly correlated with global energy macro-economics."
+                                elif "steel" in name_lower:
+                                    risk_level = "MEDIUM"
+                                    risk_color = "#FFEB3B"
+                                    risk_text = "Subject to heavy Section 232 tariffs, EU safeguard measures, and anti-dumping regulations. Moderate supply volatility."
+                                elif "copper" in name_lower or "cu-" in name_lower or "brass" in name_lower or "bronze" in name_lower:
+                                    risk_level = "HIGH"
+                                    risk_color = "#FF9800"
+                                    risk_text = "**Energy Transition Risk:** Massive forecasted global deficit due to EV and grid infrastructure demand. Sourcing highly dependent on South American political stability (Chile/Peru)."
+                                
+                                st.markdown(f'''
+                                <div style="background: rgba(128,128,128,0.1); padding: 1rem; border-left: 4px solid {risk_color}; border-radius: 6px; margin-bottom: 1rem;">
+                                    <h4 style="margin-top:0; color: var(--text-color);">Supply Chain Risk: <span style="color: {risk_color};">{risk_level}</span></h4>
+                                    <p style="margin-bottom:0; color: var(--text-color); opacity: 0.8;">{risk_text}</p>
+                                </div>
+                                ''', unsafe_allow_html=True)
+                                
+                                # Dynamic Area Chart (Total Procurement Cost)
+                                import plotly.graph_objects as go
+                                years = [2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032, 2033, 2034]
+                                # Verified Official EU Phase-in Schedule
+                                tax_phase_in = [0.0, 0.0, 0.025, 0.05, 0.10, 0.225, 0.485, 0.735, 0.82, 0.91, 1.0] 
+                                
+                                projected_tax = [annual_cbam_tax_usd * p for p in tax_phase_in]
+                                base_material_spend = [annual_material_cost_usd for _ in years]
+                                
+                                fig = go.Figure()
+                                
+                                # Add Base Material Spend (Flat Foundation)
+                                fig.add_trace(go.Scatter(
+                                    x=years, 
+                                    y=base_material_spend, 
+                                    mode='lines', 
+                                    name='Base Spend (Constant $)', 
+                                    line=dict(color='#00F0FF', width=2),
+                                    fill='tozeroy',
+                                    fillcolor='rgba(0, 240, 255, 0.1)',
+                                    hovertemplate='Base Spend: $%{y:,.0f}<extra></extra>'
+                                ))
+                                
+                                # Add Total Cost (Base Spend + Tax)
+                                total_costs = [base + tax for base, tax in zip(base_material_spend, projected_tax)]
+                                fig.add_trace(go.Scatter(
+                                    x=years, 
+                                    y=total_costs, 
+                                    mode='lines', 
+                                    name='Total Cost w/ Carbon Tax ($)', 
+                                    line=dict(color='#ff4b4b', width=3),
+                                    fill='tonexty',
+                                    fillcolor='rgba(255, 75, 75, 0.3)',
+                                    customdata=projected_tax,
+                                    hovertemplate='Total Cost: $%{y:,.0f}<br>Carbon Tax Portion: $%{customdata:,.0f}<extra></extra>'
+                                ))
+                                
+                                fig.update_layout(
+                                    title="Total Projected Financial Impact (Material Spend + Carbon Tax)",
+                                    paper_bgcolor='rgba(0,0,0,0)',
+                                    plot_bgcolor='rgba(0,0,0,0)',
+                                    font=dict(color='var(--text-color)'),
+                                    margin=dict(l=0, r=20, t=40, b=0),
+                                    height=350,
+                                    xaxis=dict(gridcolor='rgba(128,128,128,0.2)', tickmode='linear', dtick=1),
+                                    yaxis=dict(gridcolor='rgba(128,128,128,0.2)', tickprefix="$"),
+                                    hovermode="x unified",
+                                    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+                                )
+                                st.plotly_chart(fig, use_container_width=True)
             except Exception as e:
                 st.error(f"Failed to load module: {e}")
     # ==========================================
