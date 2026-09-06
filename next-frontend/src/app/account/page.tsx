@@ -196,7 +196,7 @@ export default function AccountDashboard() {
             </button>
             <button 
               type="button" 
-              onClick={() => alert("Apple Sign In requires an Apple Developer account ($99/yr). Coming soon!")}
+              onClick={() => alert("Apple Sign In is not available yet. We're working on bringing it to you soon!")}
               className="flex items-center justify-center gap-2 bg-slate-950 border border-slate-800 hover:bg-slate-800 hover:border-slate-700 text-white px-4 py-3 rounded-lg transition-all opacity-50 cursor-not-allowed"
             >
               <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -206,7 +206,7 @@ export default function AccountDashboard() {
             </button>
             <button 
               type="button" 
-              onClick={() => alert("Phone OTP requires a Twilio account. Coming soon!")}
+              onClick={() => alert("Phone Sign In is coming soon! Stay tuned for updates.")}
               className="flex items-center justify-center gap-2 bg-slate-950 border border-slate-800 hover:bg-slate-800 hover:border-slate-700 text-white px-4 py-3 rounded-lg transition-all opacity-50 cursor-not-allowed"
             >
               <Smartphone className="w-5 h-5" />

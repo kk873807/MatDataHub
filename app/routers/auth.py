@@ -152,8 +152,13 @@ async def auth_google_callback(request: Request, db: Session = Depends(get_db)):
                 user.provider_id = google_id
                 db.commit()
 
-        # Use correct signature: create_access_token(user_id, email, tier)
-        access_token = create_access_token(user.id, user.email, user.tier)
+        # Generate session token for single-session enforcement
+        import secrets as _secrets
+        sid = _secrets.token_hex(32)
+        user.session_token = sid
+        db.commit()
+
+        access_token = create_access_token(user.id, user.email, user.tier, session_token=sid)
         
         # Redirect to the Next.js frontend with the token as a query param
         frontend_url = os.environ.get("FRONTEND_URL", "http://localhost:3000")
@@ -216,8 +221,14 @@ def register(req: RegisterRequest, request: Request, db: Session = Depends(get_d
     db.commit()
     db.refresh(user)
 
+    # Generate session token for single-session enforcement
+    import secrets as _secrets
+    sid = _secrets.token_hex(32)
+    user.session_token = sid
+    db.commit()
+
     # Generate JWT token
-    token = create_access_token(user.id, user.email, user.tier)
+    token = create_access_token(user.id, user.email, user.tier, session_token=sid)
 
     return TokenResponse(
         access_token=token,
@@ -260,8 +271,14 @@ def login(req: LoginRequest, request: Request, db: Session = Depends(get_db)):
             detail="Your account has been blocked. Please contact support.",
         )
 
+    # Generate new session token (invalidates all previous sessions)
+    import secrets as _secrets
+    sid = _secrets.token_hex(32)
+    user.session_token = sid
+    db.commit()
+
     # Generate JWT token
-    token = create_access_token(user.id, user.email, user.tier)
+    token = create_access_token(user.id, user.email, user.tier, session_token=sid)
 
     return TokenResponse(
         access_token=token,

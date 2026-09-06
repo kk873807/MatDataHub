@@ -61,6 +61,12 @@ with engine.connect() as conn:
         conn.rollback()
 
     try:
+        conn.execute(text("ALTER TABLE users ADD COLUMN session_token VARCHAR(64);"))
+        conn.commit()
+    except Exception:
+        conn.rollback()
+
+    try:
         # Create transactions table manually if Base.metadata.create_all doesn't catch it
         conn.execute(text("""
         CREATE TABLE IF NOT EXISTS transactions (

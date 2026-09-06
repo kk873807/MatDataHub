@@ -45,12 +45,13 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 
 # ── JWT Tokens ──
-def create_access_token(user_id: int, email: str, tier: str) -> str:
+def create_access_token(user_id: int, email: str, tier: str, session_token: str = "") -> str:
     """Create a JWT access token with user info embedded."""
     payload = {
         "sub": str(user_id),
         "email": email,
         "tier": tier,
+        "sid": session_token,  # session ID for single-session enforcement
         "exp": datetime.now(timezone.utc) + timedelta(hours=JWT_EXPIRY_HOURS),
         "iat": datetime.now(timezone.utc),
     }
@@ -137,6 +138,13 @@ def get_current_user(
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Your account has been blocked.",
+        )
+    # Single-session enforcement: check JWT session token matches DB
+    jwt_sid = payload.get("sid", "")
+    if jwt_sid and user.session_token and jwt_sid != user.session_token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Session expired. You have been logged in from another device or browser.",
         )
     return user
 

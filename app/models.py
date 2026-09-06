@@ -129,6 +129,7 @@ class User(Base):
 
     is_active = Column(Boolean, default=True)
     is_blocked = Column(Boolean, default=False)
+    session_token = Column(String(64), nullable=True)  # For single-session enforcement
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     def __repr__(self):

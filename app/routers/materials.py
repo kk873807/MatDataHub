@@ -159,6 +159,37 @@ def list_materials(
 
 
 # ──────────────────────────────────────────────
+# GET /materials/autocomplete  — Search suggestions
+# ──────────────────────────────────────────────
+@router.get("/autocomplete")
+@limiter.limit("600/minute")
+def autocomplete_materials(
+    request: Request,
+    q: str = Query(..., min_length=1, description="Partial search query"),
+    db: Session = Depends(get_db),
+):
+    """Return up to 8 material name suggestions for autocomplete. Lightweight and fast."""
+    search_term = f"%{q}%"
+    results = (
+        db.query(Material.id, Material.name, Material.category, Material.grade)
+        .filter(
+            or_(
+                Material.name.ilike(search_term),
+                Material.grade.ilike(search_term),
+                Material.subcategory.ilike(search_term),
+                Material.standard.ilike(search_term),
+            )
+        )
+        .limit(8)
+        .all()
+    )
+    return [
+        {"id": r.id, "name": r.name, "category": r.category, "grade": r.grade}
+        for r in results
+    ]
+
+
+# ──────────────────────────────────────────────
 # GET /materials/search  — Full-text search
 # ──────────────────────────────────────────────
 @router.get("/search", response_model=MaterialListResponse)

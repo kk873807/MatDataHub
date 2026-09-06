@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Search, Filter, Loader2, Database, SlidersHorizontal } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -9,6 +9,11 @@ export default function MaterialsPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   
+  // Autocomplete
+  const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
+  
   // Filters
   const [category, setCategory] = useState("");
   const [minTensile, setMinTensile] = useState<number | "">("");
@@ -17,6 +22,33 @@ export default function MaterialsPage() {
   const [perPage, setPerPage] = useState(20);
   
   const [showFilters, setShowFilters] = useState(false);
+
+  // Close suggestions when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Fetch autocomplete suggestions
+  useEffect(() => {
+    if (search.length < 2) { setSuggestions([]); return; }
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch(`http://127.0.0.1:8000/api/v1/materials/autocomplete?q=${encodeURIComponent(search)}`);
+        if (res.ok) {
+          const data = await res.json();
+          setSuggestions(data);
+          setShowSuggestions(data.length > 0);
+        }
+      } catch { /* ignore */ }
+    }, 200);
+    return () => clearTimeout(timer);
+  }, [search]);
 
   useEffect(() => {
     const fetchMaterials = async () => {
@@ -62,15 +94,38 @@ export default function MaterialsPage() {
         {/* Search & Top Filters */}
         <div className="flex flex-col bg-slate-900 rounded-xl border border-slate-800 p-4 gap-4">
           <div className="flex flex-col md:flex-row gap-4">
-            <div className="relative flex-1">
+            <div className="relative flex-1" ref={searchRef}>
               <Search className="absolute left-3 top-3 w-5 h-5 text-slate-300" />
               <input
                 type="text"
                 placeholder="Search by name, grade, standard, application..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
+                onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
                 className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-10 pr-4 py-2.5 text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
               />
+              
+              {/* Autocomplete Suggestions Dropdown */}
+              {showSuggestions && suggestions.length > 0 && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl z-50 overflow-hidden">
+                  {suggestions.map((s) => (
+                    <button
+                      key={s.id}
+                      onClick={() => {
+                        setSearch(s.name);
+                        setShowSuggestions(false);
+                      }}
+                      className="w-full text-left px-4 py-3 hover:bg-slate-800 transition-colors flex items-center gap-3 border-b border-slate-800/50 last:border-0"
+                    >
+                      <Search className="w-4 h-4 text-slate-500 shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-white text-sm font-medium truncate">{s.name}</p>
+                        <p className="text-slate-500 text-xs">{s.category}{s.grade ? ` · ${s.grade}` : ""}</p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
             
             <button 
