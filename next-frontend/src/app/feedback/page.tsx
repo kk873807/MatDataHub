@@ -11,6 +11,7 @@ export default function FeedbackCommunityPage() {
   const [submitting, setSubmitting] = useState(false);
   const [acceptedTc, setAcceptedTc] = useState(false);
   const [tcError, setTcError] = useState("");
+  const [replyToId, setReplyToId] = useState<number | null>(null);
 
   useEffect(() => {
     fetch("http://127.0.0.1:8000/api/v1/feedback/public")
@@ -46,7 +47,8 @@ export default function FeedbackCommunityPage() {
         category: form.category,
         message: form.message,
         image_data: image,
-        page_context: "Community Wall"
+        page_context: "Community Wall",
+        parent_id: replyToId
       };
       
       await fetch("http://127.0.0.1:8000/api/v1/feedback/", {
@@ -62,6 +64,8 @@ export default function FeedbackCommunityPage() {
       
       setForm({ name: "", email: "", category: "Feature Request", message: "" });
       setImage(null);
+      setReplyToId(null);
+      setAcceptedTc(false);
     } catch (err) {
       console.error(err);
     } finally {
@@ -87,10 +91,12 @@ export default function FeedbackCommunityPage() {
             {loading ? (
               <div className="flex justify-center p-10"><Loader2 className="w-8 h-8 animate-spin text-indigo-500" /></div>
             ) : feedbacks.length === 0 ? (
-              <div className="text-center p-10 text-slate-500 bg-slate-900 rounded-xl border border-slate-800">No feedback submitted yet. Be the first!</div>
+              <div className="text-center p-12 bg-slate-900 border border-slate-800 rounded-2xl">
+                <p className="text-slate-500">No feedback yet. Be the first to start the conversation!</p>
+              </div>
             ) : (
-              feedbacks.map((fb, i) => (
-                <div key={i} className="bg-slate-900 border border-slate-800 rounded-xl p-6">
+              feedbacks.filter(fb => !fb.parent_id).map((fb) => (
+                <div key={fb.id} className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl relative group">
                   <div className="flex justify-between items-start mb-3">
                     <div>
                       <h4 className="font-bold text-white">{fb.name || 'Anonymous Engineer'}</h4>
@@ -108,12 +114,30 @@ export default function FeedbackCommunityPage() {
                     <button className="flex items-center gap-1.5 text-xs font-medium text-slate-400 hover:text-emerald-400 transition-colors">
                       <ThumbsUp className="w-4 h-4" /> {fb.helpful_votes || 0} Votes
                     </button>
+                    <button 
+                      onClick={() => setReplyToId(fb.id)}
+                      className="flex items-center gap-1.5 text-xs font-medium text-slate-400 hover:text-blue-400 transition-colors"
+                    >
+                      <MessageSquare className="w-4 h-4" /> Reply
+                    </button>
                     {fb.status === 'reviewed' && (
                       <span className="flex items-center gap-1.5 text-xs font-medium text-emerald-500">
                         <CheckCircle2 className="w-4 h-4" /> Reviewed by Team
                       </span>
                     )}
                   </div>
+                  
+                  {/* Nested Replies (very basic for now, filtering the flat list) */}
+                  {feedbacks.filter(r => r.parent_id === fb.id).map(reply => (
+                    <div key={reply.id} className="mt-4 pl-4 border-l-2 border-slate-700 bg-slate-800/30 p-3 rounded-r-lg">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="font-bold text-white text-xs">{reply.name || "User"}</span>
+                        <span className="text-slate-500 text-[10px]">{new Date(reply.created_at).toLocaleDateString()}</span>
+                      </div>
+                      <p className="text-slate-300 text-xs">{reply.message}</p>
+                    </div>
+                  ))}
+                  
                 </div>
               ))
             )}
@@ -122,8 +146,17 @@ export default function FeedbackCommunityPage() {
 
         {/* Right Col: Form */}
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 h-fit sticky top-6">
-          <h2 className="text-xl font-bold text-white mb-2">Submit Feedback</h2>
-          <p className="text-slate-400 text-sm mb-6">Have an idea or found a bug? Attach a screenshot and let us know.</p>
+          <h2 className="text-xl font-bold text-white mb-2">{replyToId ? "Reply to Thread" : "Submit Feedback"}</h2>
+          <p className="text-slate-400 text-sm mb-6">
+            {replyToId ? "Join the conversation and share your thoughts." : "Have an idea or found a bug? Attach a screenshot and let us know."}
+          </p>
+          
+          {replyToId && (
+            <div className="mb-4 p-3 bg-blue-900/20 border border-blue-900/50 rounded-lg flex justify-between items-center">
+              <span className="text-blue-400 text-xs">Replying to feedback #{replyToId}</span>
+              <button onClick={() => setReplyToId(null)} className="text-slate-500 hover:text-slate-300 text-xs">Cancel</button>
+            </div>
+          )}
           
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
