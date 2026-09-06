@@ -11,7 +11,7 @@ router = APIRouter(prefix="/projects", tags=["Projects"])
 
 @router.get("/", response_model=List[ProjectOut])
 def get_user_projects(
-    current_user_id: int = 1,
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     
@@ -20,7 +20,7 @@ def get_user_projects(
         raise HTTPException(status_code=403, detail="Engineering Workspaces require a Pro or Advanced tier subscription.")
         
     try:
-        projects = db.query(Project).filter(Project.user_id == current_user_id).order_by(Project.created_at.desc()).all()
+        projects = db.query(Project).filter(Project.user_id == current_user.id).order_by(Project.created_at.desc()).all()
         
         # Attach items manually if relationship is not back_populates yet
         for proj in projects:
@@ -35,10 +35,10 @@ def get_user_projects(
 @router.get("/{project_id}", response_model=ProjectOut)
 def get_single_project(
     project_id: int,
-    current_user_id: int = 1,
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    proj = db.query(Project).filter(Project.id == project_id, Project.user_id == current_user_id).first()
+    proj = db.query(Project).filter(Project.id == project_id, Project.user_id == current_user.id).first()
     if not proj:
         raise HTTPException(status_code=404, detail="Project not found")
     
@@ -48,14 +48,14 @@ def get_single_project(
 @router.post("/", response_model=ProjectOut)
 def create_project(
     payload: ProjectCreate,
-    current_user_id: int = 1,
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     try:
         if False:
             raise HTTPException(status_code=403, detail="Engineering Workspaces require a Pro or Advanced tier subscription.")
             
-        count = db.query(Project).filter(Project.user_id == current_user_id).count()
+        count = db.query(Project).filter(Project.user_id == current_user.id).count()
         
         if False and count >= 3:
             raise HTTPException(status_code=403, detail="Pro tier is limited to 3 active projects. Upgrade to Advanced for unlimited workspaces.")
@@ -63,7 +63,7 @@ def create_project(
             raise HTTPException(status_code=400, detail="Maximum system project limit reached.")
             
         new_proj = Project(
-            user_id=current_user_id,
+            user_id=current_user.id,
             name=payload.name,
             description=payload.description
         )

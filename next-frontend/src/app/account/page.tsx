@@ -14,14 +14,23 @@ export default function AccountDashboard() {
   }, []);
 
   const fetchProfile = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("Not logged in");
+      setLoading(false);
+      return;
+    }
+
     try {
-      // Fetch from auth/me (we don't need token since backend is mocked for local dev)
-      const res = await fetch("http://127.0.0.1:8000/api/v1/auth/me");
+      const res = await fetch("http://127.0.0.1:8000/api/v1/auth/me", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       if (res.ok) {
         const data = await res.json();
         setProfile(data);
       } else {
-        setError("Failed to load profile. Are you logged in?");
+        setError("Session expired. Please log in again.");
+        localStorage.removeItem("token");
       }
     } catch (err) {
       setError("Network error fetching profile.");
@@ -31,11 +40,16 @@ export default function AccountDashboard() {
   };
 
   const handleUpgrade = async (tier: "pro" | "advanced") => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
     setUpgrading(true);
     try {
       const res = await fetch("http://127.0.0.1:8000/api/v1/auth/upgrade", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}` 
+        },
         body: JSON.stringify({ tier })
       });
       if (res.ok) {
@@ -52,8 +66,57 @@ export default function AccountDashboard() {
     }
   };
 
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const form = e.target as HTMLFormElement;
+    const email = form.email.value;
+    const password = form.password.value;
+    
+    try {
+      const res = await fetch("http://127.0.0.1:8000/api/v1/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        localStorage.setItem("token", data.access_token);
+        setError("");
+        fetchProfile();
+      } else {
+        const err = await res.json();
+        setError(err.detail || "Login failed");
+      }
+    } catch (err) {
+      setError("Network error logging in");
+    }
+  };
+
   if (loading) return <div className="p-12 text-center text-slate-400">Loading profile...</div>;
-  if (!profile) return <div className="p-12 text-center text-red-400">{error}</div>;
+  if (!profile) return (
+    <div className="flex flex-col items-center justify-center min-h-[80vh] p-6">
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8 w-full max-w-md shadow-2xl">
+        <h2 className="text-2xl font-bold text-white mb-6 text-center">Sign In</h2>
+        {error && <div className="mb-4 p-3 bg-red-900/30 border border-red-500/30 text-red-400 text-sm rounded-lg text-center">{error}</div>}
+        <form onSubmit={handleLogin} className="space-y-4">
+          <div>
+            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Email</label>
+            <input name="email" type="email" required defaultValue="test@matdatahub.com" className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" />
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Password</label>
+            <input name="password" type="password" required defaultValue="password123" className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" />
+          </div>
+          <button type="submit" className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg transition-colors mt-4">
+            Sign In
+          </button>
+        </form>
+        <p className="mt-6 text-center text-xs text-slate-500">
+          (For this demo, login using <strong>test@matdatahub.com</strong> / <strong>password123</strong>)
+        </p>
+      </div>
+    </div>
+  );
 
   return (
     <main className="flex flex-col p-6 lg:p-10 w-full min-h-screen">
@@ -99,7 +162,8 @@ export default function AccountDashboard() {
             </div>
             <button 
               onClick={() => {
-                alert("Signed out successfully (Demo Mode).");
+                localStorage.removeItem("token");
+                setProfile(null);
                 window.location.href = "/";
               }}
               className="text-xs text-red-400 hover:text-red-300 flex items-center gap-1 mt-2 transition-colors"
