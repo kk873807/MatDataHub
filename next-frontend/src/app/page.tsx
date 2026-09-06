@@ -4,7 +4,7 @@ import { Database, Calculator, Workflow, Bot, BookOpen, ArrowRight } from "lucid
 
 export default function Home() {
   return (
-    <main className="relative flex flex-col items-center justify-start min-h-screen pt-12 pb-24 px-6 lg:px-12 overflow-hidden">
+    <main className="relative flex flex-col items-center justify-start min-h-screen pt-12 pb-24 px-6 lg:px-12 overflow-x-hidden">
       
       {/* Glassmorphism Background Orbs */}
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-600/10 blur-[120px] pointer-events-none"></div>
