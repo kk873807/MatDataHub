@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeft, Scale, Loader2, Info, Plus, X } from "lucide-react";
+import { ArrowLeft, Scale, Loader2, Info, Plus, X, Download } from "lucide-react";
 
 export default function CompareMaterials() {
   const [allMaterials, setAllMaterials] = useState<any[]>([]);
@@ -166,6 +166,39 @@ export default function CompareMaterials() {
     );
   };
 
+  // CSV Export
+  const exportCSV = () => {
+    if (comparison.length === 0) return;
+    const header = ["Property", ...comparison.map(m => m.name)].join(",");
+    const rows = propsToCompare.map(prop => 
+      [prop.label, ...comparison.map(m => m[prop.key] ?? "")].join(",")
+    );
+    const csv = [header, ...rows].join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "material_comparison.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  // Winner detection (higher = better for most props, lower = better for cost/density/carbon/water)
+  const lowerIsBetter = new Set(["density", "embodied_carbon", "water_usage", "cost_per_kg_min"]);
+  const getBestIndex = (prop: { key: string }) => {
+    if (comparison.length < 2) return -1;
+    const vals = comparison.map(m => m[prop.key] ?? null);
+    if (vals.every(v => v === null)) return -1;
+    const isLower = lowerIsBetter.has(prop.key);
+    let bestIdx = 0;
+    for (let i = 1; i < vals.length; i++) {
+      if (vals[i] === null) continue;
+      if (vals[bestIdx] === null) { bestIdx = i; continue; }
+      if (isLower ? vals[i] < vals[bestIdx] : vals[i] > vals[bestIdx]) bestIdx = i;
+    }
+    return vals[bestIdx] !== null ? bestIdx : -1;
+  };
+
   return (
     <main className="flex flex-col p-6 lg:p-10 w-full h-full overflow-y-auto">
       <div className="w-full max-w-6xl mx-auto space-y-8">
@@ -228,7 +261,12 @@ export default function CompareMaterials() {
             {/* Properties Table */}
             <div className="lg:col-span-2 space-y-6">
               <div className="p-6 bg-slate-900 border border-slate-800 rounded-2xl overflow-x-auto">
-                <h3 className="font-bold text-white mb-4">Direct Comparison Matrix</h3>
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="font-bold text-white">Direct Comparison Matrix</h3>
+                  <button onClick={exportCSV} className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-lg transition-colors border border-slate-700">
+                    <Download className="w-3 h-3" /> Export CSV
+                  </button>
+                </div>
                 <table className="w-full text-left text-sm">
                   <thead>
                     <tr className="border-b border-slate-800">
@@ -241,16 +279,20 @@ export default function CompareMaterials() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-800">
-                    {propsToCompare.map(prop => (
-                      <tr key={prop.key}>
-                        <td className="py-3 text-slate-300 whitespace-nowrap">{prop.label}</td>
-                        {comparison.map((m, idx) => (
-                          <td key={idx} className="py-3 px-2 text-slate-200">
-                            {m[prop.key] || '-'}
-                          </td>
-                        ))}
-                      </tr>
-                    ))}
+                    {propsToCompare.map(prop => {
+                      const bestIdx = getBestIndex(prop);
+                      return (
+                        <tr key={prop.key}>
+                          <td className="py-3 text-slate-300 whitespace-nowrap">{prop.label}</td>
+                          {comparison.map((m, idx) => (
+                            <td key={idx} className={`py-3 px-2 font-medium ${idx === bestIdx ? 'text-emerald-400 font-bold' : 'text-slate-200'}`}>
+                              {m[prop.key] || '-'}
+                              {idx === bestIdx && m[prop.key] && <span className="ml-1 text-[10px]">★</span>}
+                            </td>
+                          ))}
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>

@@ -1,30 +1,76 @@
-"use client";
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { Bot, Send, Loader2, Sparkles } from "lucide-react";
+﻿"use client";
+import { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Bot, Send, Loader2, Sparkles, Lock, ArrowUpRight, ChevronRight } from "lucide-react";
 import Link from "next/link";
+
+type Message = {
+  role: "user" | "ai";
+  content: string;
+  materials?: any[];
+};
+
+const PROMPT_CHIPS = [
+  "Best metal for 500°C operating temperature",
+  "Cheapest corrosion-resistant polymer under Rs. 500/kg",
+  "Lightweight material with tensile strength above 700 MPa",
+  "Best ceramic for electrical insulation",
+  "Steel alternative for marine environment",
+];
 
 export default function AskAIPage() {
   const [prompt, setPrompt] = useState("");
   const [loading, setLoading] = useState(false);
-  const [response, setResponse] = useState<any>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [tier, setTier] = useState<string | null>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!prompt.trim()) return;
-    
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) { setTier("free"); return; }
+    fetch("http://127.0.0.1:8000/api/v1/auth/me", {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(r => r.json())
+      .then(d => setTier(d.tier || "free"))
+      .catch(() => setTier("free"));
+  }, []);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, loading]);
+
+  const handleSubmit = async (e: React.FormEvent | null, overridePrompt?: string) => {
+    e?.preventDefault();
+    const query = overridePrompt ?? prompt;
+    if (!query.trim() || loading) return;
+    setMessages(prev => [...prev, { role: "user", content: query }]);
+    setPrompt("");
     setLoading(true);
     try {
+      const token = localStorage.getItem("token");
       const res = await fetch("http://127.0.0.1:8000/api/v1/ai/advise", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt }),
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ prompt: query }),
       });
       const data = await res.json();
-      setResponse(data);
-    } catch (error) {
-      console.error(error);
-      setResponse({ response: "Failed to reach the AI server. Please ensure the backend is running and you have Pro access." });
+      if (res.status === 403) {
+        setMessages(prev => [...prev, { role: "ai", content: "__UPGRADE__" }]);
+      } else if (res.status === 401) {
+        setMessages(prev => [...prev, { role: "ai", content: "Please sign in to use the AI Adviser." }]);
+      } else {
+        setMessages(prev => [...prev, {
+          role: "ai",
+          content: data.response || data.detail || "Sorry, I could not process that.",
+          materials: data.materials,
+        }]);
+      }
+    } catch {
+      setMessages(prev => [...prev, { role: "ai", content: "Network error. Please check the backend is running." }]);
     } finally {
       setLoading(false);
     }
@@ -33,86 +79,102 @@ export default function AskAIPage() {
   return (
     <main className="flex flex-col h-[calc(100vh-2rem)] p-6 lg:p-10 w-full">
       <div className="w-full max-w-4xl mx-auto flex flex-col h-full bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl relative">
-        
-        {/* Header */}
+
         <div className="p-6 border-b border-slate-800 bg-slate-950/50 flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-blue-600/20 flex items-center justify-center border border-blue-500/30">
             <Bot className="w-6 h-6 text-blue-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-white">Ask AI Adviser</h1>
-            <p className="text-sm text-slate-200">Engineering constraint extractor & material recommender</p>
+            <h1 className="text-2xl font-bold text-white">AI Materials Adviser</h1>
+            <p className="text-sm text-slate-400">Describe your requirements and I will recommend the best materials.</p>
           </div>
+          {tier && tier !== "free" && (
+            <span className="ml-auto px-3 py-1 bg-emerald-900/30 border border-emerald-700/50 text-emerald-400 text-xs font-bold rounded-full uppercase tracking-wider">
+              {tier} access
+            </span>
+          )}
         </div>
 
-        {/* Chat Area */}
         <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-900">
-          {/* Welcome Message */}
           <div className="flex gap-4">
             <div className="w-8 h-8 rounded-full bg-blue-600/20 flex items-center justify-center border border-blue-500/30 shrink-0 mt-1">
               <Bot className="w-4 h-4 text-blue-400" />
             </div>
-            <div className="bg-slate-800 p-4 rounded-2xl rounded-tl-none text-slate-200 text-sm max-w-[85%]">
-              Hello! I am your AI Materials Adviser. Describe your engineering constraints, and I will scan the database to recommend the perfect material.
-              <br/><br/>
-              <span className="text-slate-200 italic">Example: "I need a metal under Rs. 1000/kg that can withstand 500 degrees Celsius and has a tensile strength of at least 800 MPa."</span>
+            <div className="bg-slate-800 p-4 rounded-2xl rounded-tl-none text-slate-200 text-sm max-w-[85%] space-y-3">
+              <p>Hello! I am your AI Materials Adviser. Describe your engineering constraints and I will recommend the best materials from our database.</p>
+              {messages.length === 0 && (
+                <div className="flex flex-wrap gap-2 pt-2">
+                  {PROMPT_CHIPS.map((chip) => (
+                    <button
+                      key={chip}
+                      onClick={() => handleSubmit(null, chip)}
+                      className="flex items-center gap-1 px-3 py-1.5 bg-slate-700 hover:bg-blue-900/50 hover:border-blue-700 border border-slate-600 text-slate-300 text-xs rounded-full transition-all"
+                    >
+                      <ChevronRight className="w-3 h-3" />
+                      {chip}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Response */}
-          {response && (
-            <>
-              <div className="flex gap-4 flex-row-reverse">
-                <div className="w-8 h-8 rounded-full bg-emerald-600/20 flex items-center justify-center border border-emerald-500/30 shrink-0 mt-1">
-                  <div className="w-4 h-4 bg-emerald-400 rounded-full" />
+          <AnimatePresence>
+            {messages.map((msg, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={`flex gap-4 ${msg.role === "user" ? "flex-row-reverse" : ""}`}
+              >
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center border shrink-0 mt-1 ${msg.role === "user" ? "bg-emerald-600/20 border-emerald-500/30" : "bg-blue-600/20 border-blue-500/30"}`}>
+                  {msg.role === "user" ? <div className="w-3 h-3 bg-emerald-400 rounded-full" /> : <Bot className="w-4 h-4 text-blue-400" />}
                 </div>
-                <div className="bg-emerald-900/40 border border-emerald-900 p-4 rounded-2xl rounded-tr-none text-white text-sm max-w-[85%]">
-                  {prompt}
-                </div>
-              </div>
-              
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex gap-4">
-                <div className="w-8 h-8 rounded-full bg-blue-600/20 flex items-center justify-center border border-blue-500/30 shrink-0 mt-1">
-                  <Bot className="w-4 h-4 text-blue-400" />
-                </div>
-                <div className="bg-slate-800 p-5 rounded-2xl rounded-tl-none text-slate-200 text-sm max-w-[85%] space-y-4">
-                  <div className="whitespace-pre-wrap">{response.response || response.detail}</div>
-                  
-                  {response.materials && response.materials.length > 0 && (
-                    <div className="mt-4 pt-4 border-t border-slate-700">
-                      <h4 className="font-bold flex items-center gap-2 mb-3 text-blue-300">
-                        <Sparkles className="w-4 h-4" /> Top Database Matches
-                      </h4>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {response.materials.map((m: any, i: number) => (
-                          <div key={i} className="p-3 bg-slate-900 border border-slate-700 rounded-lg">
-                            <p className="font-bold text-white text-sm">{m.name}</p>
-                            <p className="text-xs text-slate-200 mt-1">{m.category} • {m.cost}</p>
-                            <p className="text-xs text-slate-200">Strength: {m.tensile_strength}</p>
-                          </div>
-                        ))}
+                {msg.content === "__UPGRADE__" ? (
+                  <div className="bg-amber-900/20 border border-amber-700/50 p-5 rounded-2xl rounded-tl-none max-w-[85%] space-y-3">
+                    <div className="flex items-center gap-2 text-amber-400 font-bold"><Lock className="w-4 h-4" /> Pro Feature Required</div>
+                    <p className="text-slate-300 text-sm">The AI Adviser is available to <strong>Pro</strong> and <strong>Advanced</strong> members. Upgrade your account to unlock AI-powered recommendations.</p>
+                    <Link href="/account" className="inline-flex items-center gap-1 px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white text-sm font-bold rounded-lg transition-colors">
+                      Upgrade Now <ArrowUpRight className="w-4 h-4" />
+                    </Link>
+                  </div>
+                ) : (
+                  <div className={`p-4 rounded-2xl text-sm max-w-[85%] space-y-4 ${msg.role === "user" ? "bg-emerald-900/40 border border-emerald-900 rounded-tr-none text-white" : "bg-slate-800 rounded-tl-none text-slate-200"}`}>
+                    <div className="whitespace-pre-wrap">{msg.content}</div>
+                    {msg.materials && msg.materials.length > 0 && (
+                      <div className="mt-4 pt-4 border-t border-slate-700">
+                        <h4 className="font-bold flex items-center gap-2 mb-3 text-blue-300"><Sparkles className="w-4 h-4" /> Top Database Matches</h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          {msg.materials.map((m: any, j: number) => (
+                            <div key={j} className="p-3 bg-slate-900 border border-slate-700 rounded-lg">
+                              <p className="font-bold text-white text-sm">{m.name}</p>
+                              <p className="text-xs text-slate-400 mt-1">{m.category} · {m.cost}</p>
+                              <p className="text-xs text-slate-400">Tensile: {m.tensile_strength}</p>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </div>
+                    )}
+                  </div>
+                )}
               </motion.div>
-            </>
-          )}
-          
+            ))}
+          </AnimatePresence>
+
           {loading && (
-             <div className="flex gap-4">
-               <div className="w-8 h-8 rounded-full bg-blue-600/20 flex items-center justify-center border border-blue-500/30 shrink-0 mt-1">
-                 <Bot className="w-4 h-4 text-blue-400" />
-               </div>
-               <div className="bg-slate-800 p-4 rounded-2xl rounded-tl-none flex items-center gap-3">
-                 <Loader2 className="w-4 h-4 animate-spin text-blue-400" />
-                 <span className="text-slate-200 text-sm">Analyzing constraints & querying database...</span>
-               </div>
-             </div>
+            <div className="flex gap-4">
+              <div className="w-8 h-8 rounded-full bg-blue-600/20 flex items-center justify-center border border-blue-500/30 shrink-0 mt-1">
+                <Bot className="w-4 h-4 text-blue-400" />
+              </div>
+              <div className="bg-slate-800 p-4 rounded-2xl rounded-tl-none flex items-center gap-3">
+                <Loader2 className="w-4 h-4 animate-spin text-blue-400" />
+                <span className="text-slate-400 text-sm">Analyzing constraints and querying database...</span>
+              </div>
+            </div>
           )}
+          <div ref={bottomRef} />
         </div>
 
-        {/* Input Form */}
         <div className="p-4 border-t border-slate-800 bg-slate-950">
           <form onSubmit={handleSubmit} className="relative flex items-center">
             <input
@@ -121,18 +183,14 @@ export default function AskAIPage() {
               onChange={(e) => setPrompt(e.target.value)}
               placeholder="Describe your material requirements..."
               disabled={loading}
-              className="w-full bg-slate-900 border border-slate-800 rounded-xl pl-4 pr-12 py-4 text-white focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full bg-slate-900 border border-slate-800 rounded-xl pl-4 pr-14 py-4 text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
             />
-            <button
-              type="submit"
-              disabled={loading || !prompt.trim()}
-              className="absolute right-2 p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50"
-            >
-              <Send className="w-5 h-5" />
+            <button type="submit" disabled={loading || !prompt.trim()} className="absolute right-2 p-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-40">
+              <Send className="w-4 h-4" />
             </button>
           </form>
+          <p className="text-xs text-slate-600 mt-2 text-center">AI Adviser available for Pro and Advanced users only.</p>
         </div>
-
       </div>
     </main>
   );

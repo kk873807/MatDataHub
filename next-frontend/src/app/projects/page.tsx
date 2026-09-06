@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Workflow, Plus, FolderKanban, HardDrive, Play, Loader2, X, Trash2 } from "lucide-react";
+import { Workflow, Plus, FolderKanban, HardDrive, Play, Loader2, X, Trash2, Search, Clock } from "lucide-react";
 
 export default function WorkflowsPage() {
   const [projects, setProjects] = useState<any[]>([]);
@@ -12,6 +12,7 @@ export default function WorkflowsPage() {
   const [newProjectName, setNewProjectName] = useState("");
   const [newProjectDesc, setNewProjectDesc] = useState("");
   const [creating, setCreating] = useState(false);
+  const [projectSearch, setProjectSearch] = useState("");
 
   const fetchProjects = () => {
     const token = localStorage.getItem("token");
@@ -102,17 +103,29 @@ export default function WorkflowsPage() {
           </button>
         </div>
 
+        {/* Search Bar */}
+        <div className="relative">
+          <Search className="absolute left-3 top-3 w-5 h-5 text-slate-500" />
+          <input
+            type="text"
+            placeholder="Search your projects..."
+            value={projectSearch}
+            onChange={(e) => setProjectSearch(e.target.value)}
+            className="w-full bg-slate-900 border border-slate-800 rounded-lg pl-10 pr-4 py-2.5 text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+          />
+        </div>
+
         {loading ? (
           <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-blue-500" /></div>
-        ) : projects.length === 0 ? (
+        ) : projects.filter(p => p.name.toLowerCase().includes(projectSearch.toLowerCase())).length === 0 ? (
           <div className="text-center py-20 text-slate-500 bg-slate-900/30 rounded-2xl border border-slate-800 border-dashed flex flex-col items-center">
             <FolderKanban className="w-12 h-12 mb-4 text-slate-600" />
-            <p className="font-semibold text-slate-400">No projects found.</p>
-            <p className="text-sm">Create your first workspace to start mapping assemblies.</p>
+            <p className="font-semibold text-slate-400">{projectSearch ? "No projects match your search." : "No projects found."}</p>
+            <p className="text-sm">{projectSearch ? "Try a different keyword." : "Create your first workspace to start mapping assemblies."}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {projects.map((proj: any) => (
+            {projects.filter(p => p.name.toLowerCase().includes(projectSearch.toLowerCase())).map((proj: any) => (
               <Link key={proj.id} href={`/projects/${proj.id}`} className="block">
                 <div className="p-6 h-full rounded-2xl bg-slate-900 border border-slate-800 hover:border-blue-500/50 transition-colors group flex flex-col cursor-pointer relative">
                   
@@ -128,9 +141,16 @@ export default function WorkflowsPage() {
                   <div className="flex justify-between items-start mb-4 pr-10">
                     <h3 className="font-bold text-white text-lg group-hover:text-blue-400 transition-colors">{proj.name}</h3>
                   </div>
+                  {/* Status Badge */}
+                  <div className="mb-3">
+                    <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-emerald-900/30 text-emerald-400 border border-emerald-800/50 rounded-full">Active</span>
+                  </div>
                   <p className="text-sm text-slate-400 mb-6 flex-1 line-clamp-2">{proj.description}</p>
                   <div className="flex justify-between items-center text-xs text-slate-500 mt-auto pt-4 border-t border-slate-800">
-                    <span>{proj.items?.length || 0} Components</span>
+                    <span className="flex items-center gap-1">
+                      <Clock className="w-3 h-3" />
+                      {proj.created_at ? new Date(proj.created_at).toLocaleDateString() : "Recently"}
+                    </span>
                     <span className="flex items-center gap-1 text-blue-400 font-semibold group-hover:text-blue-300">
                       <Play className="w-3 h-3" /> Open Canvas
                     </span>

@@ -1,14 +1,26 @@
-"use client";
+﻿"use client";
 import { useState, useRef } from "react";
 import Link from "next/link";
-import { ArrowLeft, Factory, UploadCloud, Loader2, FileSpreadsheet, Lock } from "lucide-react";
+import { ArrowLeft, Factory, UploadCloud, Loader2, FileSpreadsheet, Lock, Download, FileText, Table } from "lucide-react";
 
 export default function CBAMAnalytics() {
+  const [activeTab, setActiveTab] = useState<"upload" | "manual">("upload");
   const [file, setFile] = useState<File | null>(null);
+  
+  // CSV Configuration
   const [materialCol, setMaterialCol] = useState("Material");
   const [weightCol, setWeightCol] = useState("Weight_kg");
+  
+  // Manual Entry State
+  const [manualMaterial, setManualMaterial] = useState("");
+  const [manualWeight, setManualWeight] = useState("");
+
+  // Results state
   const [loading, setLoading] = useState(false);
-  const [isLocked, setIsLocked] = useState(false); // Unlocked for local testing
+  const [isLocked, setIsLocked] = useState(false); // Can be changed based on auth/tier
+  const [resultsData, setResultsData] = useState<any[] | null>(null);
+  const [totalCO2, setTotalCO2] = useState(0);
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,31 +36,77 @@ export default function CBAMAnalytics() {
     }
   };
 
+  const downloadTemplate = () => {
+    const csvContent = "Material,Weight_kg\nSteel 304L,100\nAluminum 6061,50\n";
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "cbam_template.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const processBOM = async () => {
-    if (!file) return;
+    let payloadFile = file;
+    let payloadMatCol = materialCol;
+    let payloadWeightCol = weightCol;
+
+    if (activeTab === "manual") {
+      if (!manualMaterial || !manualWeight) {
+        alert("Please enter both material and weight.");
+        return;
+      }
+      // Generate virtual CSV
+      const csvContent = `Material,Weight_kg\n${manualMaterial},${manualWeight}\n`;
+      payloadFile = new File([csvContent], "manual_entry.csv", { type: "text/csv" });
+      payloadMatCol = "Material";
+      payloadWeightCol = "Weight_kg";
+    } else {
+      if (!file) return;
+    }
+
     setLoading(true);
+    setResultsData(null);
+    setTotalCO2(0);
 
     try {
       const formData = new FormData();
-      formData.append("file", file);
-      formData.append("material_col", materialCol);
-      formData.append("weight_col", weightCol);
+      formData.append("file", payloadFile as File);
+      formData.append("material_col", payloadMatCol);
+      formData.append("weight_col", payloadWeightCol);
+
+      // Note: Make sure the backend doesn't expect authentication, or send token if needed
+      const token = localStorage.getItem("token");
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
       const res = await fetch("http://127.0.0.1:8000/api/v1/materials/bom_analyze", {
         method: "POST",
+        headers,
         body: formData,
       });
 
       if (res.ok) {
-        // Handle CSV Download
-        const blob = await res.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "enriched_bom_cbam.csv";
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
+        const text = await res.text();
+        // Parse CSV text for live preview
+        const rows = text.trim().split("\n");
+        const headersArr = rows[0].split(",").map(h => h.trim());
+        
+        let total = 0;
+        const parsedData = rows.slice(1).map(row => {
+          const values = row.split(",");
+          const rowObj: any = {};
+          headersArr.forEach((header, index) => {
+            rowObj[header] = values[index];
+            if (header === "Total_CO2_kg") {
+              total += parseFloat(values[index] || "0");
+            }
+          });
+          return rowObj;
+        });
+
+        setResultsData(parsedData);
+        setTotalCO2(total);
       } else if (res.status === 403) {
         setIsLocked(true);
       } else {
@@ -59,6 +117,22 @@ export default function CBAMAnalytics() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const downloadResults = () => {
+    if (!resultsData) return;
+    const headers = Object.keys(resultsData[0]);
+    const csvContent = [
+      headers.join(","),
+      ...resultsData.map(row => headers.map(h => row[h]).join(","))
+    ].join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "enriched_bom_cbam.csv";
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   if (isLocked) {
@@ -90,10 +164,12 @@ export default function CBAMAnalytics() {
     );
   }
 
-  // If unlocked (which is false by default above per user request for "CBAM(ENT)"):
+  // Estimated CBAM tax (rough estimate €50 / ton CO2)
+  const estimatedTaxEUR = (totalCO2 / 1000) * 50;
+
   return (
     <main className="flex flex-col p-6 lg:p-10 w-full h-full overflow-y-auto">
-      <div className="w-full max-w-4xl mx-auto space-y-8">
+      <div className="w-full max-w-5xl mx-auto space-y-8">
         
         <Link href="/analytics" className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors">
           <ArrowLeft className="w-4 h-4" /> Back to Analytics
@@ -102,76 +178,172 @@ export default function CBAMAnalytics() {
         <div>
           <h1 className="text-3xl font-bold text-white flex items-center gap-3">
             <Factory className="w-8 h-8 text-amber-500" />
-            Supply Chain Risk & CBAM Analyzer
+            CBAM Calculator & ESG Analyzer
           </h1>
-          <p className="text-slate-300 mt-2">Upload your Bill of Materials to calculate ESG impact and flag obsolescence risks.</p>
+          <p className="text-slate-300 mt-2">Upload your Bill of Materials or enter manually to calculate ESG impact and carbon tax estimates.</p>
         </div>
 
         <div className="bg-slate-900 p-8 rounded-2xl border border-slate-800">
           
-          <div className="grid grid-cols-2 gap-6 mb-8">
-            <div>
-              <label className="block text-sm font-semibold text-slate-300 mb-2">Material Column Header</label>
-              <input
-                type="text"
-                value={materialCol}
-                onChange={e => setMaterialCol(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-white outline-none focus:border-amber-500"
-                placeholder="e.g. Material"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-slate-300 mb-2">Weight Column Header (kg)</label>
-              <input
-                type="text"
-                value={weightCol}
-                onChange={e => setWeightCol(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-white outline-none focus:border-amber-500"
-                placeholder="e.g. Weight_kg"
-              />
-            </div>
+          {/* Tabs */}
+          <div className="flex gap-4 mb-6 border-b border-slate-800 pb-4">
+            <button
+              onClick={() => setActiveTab("upload")}
+              className={`px-4 py-2 font-bold rounded-lg transition-colors ${activeTab === "upload" ? "bg-amber-900/30 text-amber-400" : "text-slate-400 hover:bg-slate-800 hover:text-white"}`}
+            >
+              Upload CSV
+            </button>
+            <button
+              onClick={() => setActiveTab("manual")}
+              className={`px-4 py-2 font-bold rounded-lg transition-colors ${activeTab === "manual" ? "bg-amber-900/30 text-amber-400" : "text-slate-400 hover:bg-slate-800 hover:text-white"}`}
+            >
+              Manual Entry
+            </button>
           </div>
 
-          <div 
-            onDragOver={e => e.preventDefault()}
-            onDrop={handleDrop}
-            onClick={() => fileInputRef.current?.click()}
-            className={`border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-colors ${file ? 'border-amber-500 bg-amber-900/10' : 'border-slate-700 hover:border-slate-500 hover:bg-slate-800/50'}`}
-          >
-            <input 
-              type="file" 
-              accept=".csv" 
-              ref={fileInputRef} 
-              className="hidden" 
-              onChange={handleFileChange} 
-            />
-            {file ? (
-              <div className="flex flex-col items-center">
-                <FileSpreadsheet className="w-12 h-12 text-amber-500 mb-3" />
-                <p className="font-bold text-white">{file.name}</p>
-                <p className="text-sm text-slate-400 mt-1">Ready to process</p>
+          {activeTab === "upload" && (
+            <div className="space-y-6">
+              <div className="flex justify-between items-end">
+                <div className="grid grid-cols-2 gap-6 flex-1 max-w-xl">
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-300 mb-2">Material Column Header</label>
+                    <input
+                      type="text"
+                      value={materialCol}
+                      onChange={e => setMaterialCol(e.target.value)}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-white outline-none focus:border-amber-500"
+                      placeholder="e.g. Material"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-300 mb-2">Weight Column Header (kg)</label>
+                    <input
+                      type="text"
+                      value={weightCol}
+                      onChange={e => setWeightCol(e.target.value)}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-white outline-none focus:border-amber-500"
+                      placeholder="e.g. Weight_kg"
+                    />
+                  </div>
+                </div>
+                <button onClick={downloadTemplate} className="text-amber-500 hover:text-amber-400 text-sm font-medium flex items-center gap-1">
+                  <Download className="w-4 h-4" /> Template
+                </button>
               </div>
-            ) : (
-              <div className="flex flex-col items-center">
-                <UploadCloud className="w-12 h-12 text-slate-500 mb-3" />
-                <p className="font-bold text-white text-lg">Click or drag BOM CSV file here</p>
-                <p className="text-sm text-slate-400 mt-1">Must contain material and weight columns</p>
+
+              <div 
+                onDragOver={e => e.preventDefault()}
+                onDrop={handleDrop}
+                onClick={() => fileInputRef.current?.click()}
+                className={`border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-colors ${file ? 'border-amber-500 bg-amber-900/10' : 'border-slate-700 hover:border-slate-500 hover:bg-slate-800/50'}`}
+              >
+                <input 
+                  type="file" 
+                  accept=".csv" 
+                  ref={fileInputRef} 
+                  className="hidden" 
+                  onChange={handleFileChange} 
+                />
+                {file ? (
+                  <div className="flex flex-col items-center">
+                    <FileSpreadsheet className="w-12 h-12 text-amber-500 mb-3" />
+                    <p className="font-bold text-white">{file.name}</p>
+                    <p className="text-sm text-slate-400 mt-1">Ready to process</p>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center">
+                    <UploadCloud className="w-12 h-12 text-slate-500 mb-3" />
+                    <p className="font-bold text-white text-lg">Click or drag BOM CSV file here</p>
+                    <p className="text-sm text-slate-400 mt-1">Must contain material and weight columns</p>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
+            </div>
+          )}
+
+          {activeTab === "manual" && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 bg-slate-950 p-6 rounded-xl border border-slate-800">
+              <div>
+                <label className="block text-sm font-semibold text-slate-300 mb-2">Material Name / Grade</label>
+                <input
+                  type="text"
+                  value={manualMaterial}
+                  onChange={e => setManualMaterial(e.target.value)}
+                  className="w-full bg-slate-900 border border-slate-800 rounded-lg px-4 py-2.5 text-white outline-none focus:border-amber-500"
+                  placeholder="e.g. Steel 304L"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-slate-300 mb-2">Total Weight (kg)</label>
+                <input
+                  type="number"
+                  value={manualWeight}
+                  onChange={e => setManualWeight(e.target.value)}
+                  className="w-full bg-slate-900 border border-slate-800 rounded-lg px-4 py-2.5 text-white outline-none focus:border-amber-500"
+                  placeholder="e.g. 1500"
+                />
+              </div>
+            </div>
+          )}
 
           <div className="mt-8 flex justify-end">
             <button
               onClick={processBOM}
-              disabled={!file || loading}
-              className="px-8 py-3 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 text-white rounded-lg font-bold transition-colors flex items-center gap-2"
+              disabled={(activeTab === "upload" && !file) || (activeTab === "manual" && (!manualMaterial || !manualWeight)) || loading}
+              className="px-8 py-3 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 text-white rounded-lg font-bold transition-colors flex items-center gap-2 shadow-lg shadow-amber-900/20"
             >
               {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Factory className="w-5 h-5" />}
-              {loading ? "Analyzing Supply Chain..." : "Run CBAM Analysis"}
+              {loading ? "Analyzing..." : "Calculate CBAM & ESG"}
             </button>
           </div>
-
         </div>
+
+        {/* Live Preview Results */}
+        {resultsData && (
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl flex flex-col justify-center">
+                <p className="text-slate-400 font-medium mb-1 flex items-center gap-2"><Factory className="w-4 h-4 text-emerald-400" /> Total Embodied Carbon</p>
+                <h3 className="text-3xl font-bold text-white">{totalCO2.toLocaleString(undefined, { maximumFractionDigits: 2 })} <span className="text-lg text-slate-500 font-normal">kg CO₂</span></h3>
+              </div>
+              <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl flex flex-col justify-center">
+                <p className="text-slate-400 font-medium mb-1 flex items-center gap-2"><FileText className="w-4 h-4 text-amber-400" /> Est. CBAM Tax Obligation</p>
+                <h3 className="text-3xl font-bold text-amber-500">€{estimatedTaxEUR.toLocaleString(undefined, { maximumFractionDigits: 2 })} <span className="text-lg text-slate-500 font-normal">(@ €50/ton)</span></h3>
+              </div>
+            </div>
+
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+              <div className="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-950/50">
+                <h3 className="font-bold text-white flex items-center gap-2"><Table className="w-5 h-5 text-amber-500" /> Results Breakdown</h3>
+                <button onClick={downloadResults} className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-lg transition-colors border border-slate-700">
+                  <Download className="w-3 h-3" /> Export to CSV
+                </button>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm">
+                  <thead className="bg-slate-900">
+                    <tr>
+                      {Object.keys(resultsData[0] || {}).map((header) => (
+                        <th key={header} className="p-4 text-slate-400 font-medium whitespace-nowrap border-b border-slate-800">{header.replace(/_/g, " ")}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/50">
+                    {resultsData.map((row, idx) => (
+                      <tr key={idx} className="hover:bg-slate-800/30 transition-colors">
+                        {Object.keys(row).map((header) => (
+                          <td key={`${idx}-${header}`} className="p-4 text-slate-300 whitespace-nowrap">
+                            {row[header] || "-"}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </main>
   );
