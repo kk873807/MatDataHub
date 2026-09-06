@@ -64,6 +64,50 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleFeedbackAction = async (fbId: number, action: "delete" | "hide" | "resolve", userId?: number) => {
+    try {
+      let url = `http://127.0.0.1:8000/api/v1/feedback/${fbId}`;
+      let method = "DELETE";
+      if (action === "hide") { url += "/visibility"; method = "PATCH"; }
+      if (action === "resolve") { url += "/resolve"; method = "POST"; }
+      
+      const res = await fetch(url, { method, headers: { "X-Admin-Secret": secret } });
+      if (res.ok) fetchAdminData(secret);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleBlockUser = async (userId: number) => {
+    if (!confirm("Are you sure you want to block this user?")) return;
+    try {
+      const res = await fetch(`http://127.0.0.1:8000/api/v1/admin/users/${userId}/block`, {
+        method: "POST", headers: { "X-Admin-Secret": secret }
+      });
+      if (res.ok) {
+        alert("User blocked successfully.");
+        fetchAdminData(secret);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleReply = async (fbId: number) => {
+    const replyText = prompt("Enter official admin reply:");
+    if (!replyText) return;
+    try {
+      const res = await fetch(`http://127.0.0.1:8000/api/v1/feedback/${fbId}/reply`, {
+        method: "POST",
+        headers: { "X-Admin-Secret": secret, "Content-Type": "application/json" },
+        body: JSON.stringify({ reply_text: replyText })
+      });
+      if (res.ok) fetchAdminData(secret);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   if (!authed) {
     return (
       <main className="flex flex-col items-center justify-center min-h-[80vh] p-6">
@@ -166,23 +210,39 @@ export default function AdminDashboard() {
                 <table className="w-full text-left text-sm">
                   <thead className="bg-slate-950/80 text-slate-400 text-xs uppercase tracking-wider">
                     <tr>
-                      <th className="px-6 py-4 font-semibold">Type</th>
+                      <th className="px-6 py-4 font-semibold">Category</th>
                       <th className="px-6 py-4 font-semibold">Content</th>
-                      <th className="px-6 py-4 font-semibold">Email</th>
-                      <th className="px-6 py-4 font-semibold">Timestamp</th>
+                      <th className="px-6 py-4 font-semibold">User</th>
+                      <th className="px-6 py-4 font-semibold">Status</th>
+                      <th className="px-6 py-4 font-semibold text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-800/50">
                     {feedback.map((fb) => (
                       <tr key={fb.id} className="hover:bg-slate-800/30 transition-colors">
-                        <td className="px-6 py-4 text-slate-300 font-medium capitalize">{fb.type}</td>
-                        <td className="px-6 py-4 text-slate-400 max-w-md truncate">{fb.content}</td>
-                        <td className="px-6 py-4 text-slate-500 text-xs">{fb.email || "Anonymous"}</td>
-                        <td className="px-6 py-4 text-slate-500 text-xs">{new Date(fb.created_at).toLocaleString()}</td>
+                        <td className="px-6 py-4 text-slate-300 font-medium capitalize">{fb.category}</td>
+                        <td className="px-6 py-4 text-slate-400 max-w-md">
+                          <p className="line-clamp-2">{fb.message}</p>
+                          {fb.admin_reply && <p className="text-xs text-blue-400 mt-1">Admin Reply: {fb.admin_reply}</p>}
+                        </td>
+                        <td className="px-6 py-4 text-slate-500 text-xs">
+                          {fb.email || fb.name || "Anonymous"}
+                          {fb.user_id && (
+                            <button onClick={() => handleBlockUser(fb.user_id)} className="block text-red-500 hover:underline mt-1">Block User</button>
+                          )}
+                        </td>
+                        <td className="px-6 py-4 text-slate-500 text-xs">
+                          {fb.status === "hidden" ? <span className="text-red-400">Hidden</span> : <span className="text-emerald-400">Visible</span>}
+                        </td>
+                        <td className="px-6 py-4 text-right space-x-2 space-y-1">
+                          <button onClick={() => handleReply(fb.id)} className="bg-blue-900/30 hover:bg-blue-900/50 text-blue-400 px-2 py-1 rounded transition-colors text-xs">Reply</button>
+                          <button onClick={() => handleFeedbackAction(fb.id, "hide")} className="bg-slate-700 hover:bg-slate-600 text-white px-2 py-1 rounded transition-colors text-xs">Toggle Hide</button>
+                          <button onClick={() => handleFeedbackAction(fb.id, "delete")} className="bg-red-900/30 hover:bg-red-900/50 text-red-400 px-2 py-1 rounded transition-colors text-xs">Delete</button>
+                        </td>
                       </tr>
                     ))}
                     {feedback.length === 0 && (
-                      <tr><td colSpan={4} className="px-6 py-12 text-center text-slate-500">No feedback entries found.</td></tr>
+                      <tr><td colSpan={5} className="px-6 py-12 text-center text-slate-500">No feedback entries found.</td></tr>
                     )}
                   </tbody>
                 </table>

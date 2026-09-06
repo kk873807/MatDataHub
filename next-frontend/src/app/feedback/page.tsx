@@ -9,6 +9,8 @@ export default function FeedbackCommunityPage() {
   const [form, setForm] = useState({ name: "", email: "", category: "Feature Request", message: "" });
   const [image, setImage] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [acceptedTc, setAcceptedTc] = useState(false);
+  const [tcError, setTcError] = useState("");
 
   useEffect(() => {
     fetch("http://127.0.0.1:8000/api/v1/feedback/public")
@@ -31,6 +33,11 @@ export default function FeedbackCommunityPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!acceptedTc) {
+      setTcError("You must accept the terms and conditions to submit feedback.");
+      return;
+    }
+    setTcError("");
     setSubmitting(true);
     try {
       const payload = {
@@ -154,6 +161,21 @@ export default function FeedbackCommunityPage() {
                 {image && <span className="text-xs text-emerald-400 flex items-center gap-1"><CheckCircle2 className="w-3 h-3"/> Attached</span>}
               </div>
             </div>
+            
+            <div className="flex items-start gap-3 mt-4 pt-4 border-t border-slate-800">
+              <input 
+                type="checkbox" 
+                id="tc" 
+                checked={acceptedTc} 
+                onChange={e => setAcceptedTc(e.target.checked)} 
+                className="mt-1"
+              />
+              <label htmlFor="tc" className="text-xs text-slate-400 leading-relaxed cursor-pointer">
+                I agree to be polite, friendly, non-violent, non-sexual, and non-vulgar in my comments. 
+                I understand that violating these Terms & Conditions will result in my account being blocked.
+              </label>
+            </div>
+            {tcError && <p className="text-red-400 text-xs font-semibold">{tcError}</p>}
             
             <button type="submit" disabled={submitting} className="w-full flex items-center justify-center gap-2 py-2.5 mt-4 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold rounded-lg transition-colors">
               {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Send className="w-4 h-4"/> Post to Community</>}
