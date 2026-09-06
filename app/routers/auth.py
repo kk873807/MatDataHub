@@ -112,9 +112,13 @@ oauth.register(
 @router.get("/google")
 async def login_google(request: Request):
     if not oauth.google.client_id:
-        return {"ok": False, "error": "Google Client ID is missing. Please configure backend environment variables."}
-    redirect_uri = str(request.url).split('?')[0].rstrip('/') + '/callback'
-    redirect_uri = str(redirect_uri).replace("http://", "https://") if "onrender" in str(redirect_uri) else str(redirect_uri)
+        raise HTTPException(
+            status_code=503,
+            detail="Google OAuth not configured. Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in .env"
+        )
+    # Build the callback URL dynamically based on where the request came from
+    base = str(request.base_url).rstrip("/")
+    redirect_uri = f"{base}/api/v1/auth/google/callback"
     return await oauth.google.authorize_redirect(request, redirect_uri)
 
 @router.get("/google/callback")
@@ -148,24 +152,24 @@ async def auth_google_callback(request: Request, db: Session = Depends(get_db)):
                 user.provider_id = google_id
                 db.commit()
 
-        access_token = create_access_token(data={"sub": user.email})
+        # Use correct signature: create_access_token(user_id, email, tier)
+        access_token = create_access_token(user.id, user.email, user.tier)
         
-        frontend_url = os.environ.get("FRONTEND_URL", "https://matdatahub.streamlit.app")
-        if "localhost" in str(request.url):
-            frontend_url = "http://localhost:8501"
-            
-        return RedirectResponse(url=f"{frontend_url}/?t={access_token}")
+        # Redirect to the Next.js frontend with the token as a query param
+        frontend_url = os.environ.get("FRONTEND_URL", "http://localhost:3000")
+        return RedirectResponse(url=f"{frontend_url}/account?t={access_token}")
         
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        frontend_url = os.environ.get("FRONTEND_URL", "http://localhost:3000")
+        return RedirectResponse(url=f"{frontend_url}/account?error=google_auth_failed")
 
 @router.get("/apple")
 async def login_apple(request: Request):
-    return {"ok": False, "error": "Apple OAuth requires an Apple Developer account ($99/yr) and custom Private Key generation. We have scaffolded the route but need keys."}
+    raise HTTPException(status_code=503, detail="Apple Sign In requires an Apple Developer account ($99/yr). Coming soon.")
 
 @router.get("/sms")
 async def login_sms(request: Request):
-    return {"ok": False, "error": "SMS OTP requires a Twilio account. Please provide Twilio SID and Auth Token."}
+    raise HTTPException(status_code=503, detail="Phone OTP requires a Twilio account. Coming soon.")
 
 
 @router.post("/register", response_model=TokenResponse, status_code=201)
