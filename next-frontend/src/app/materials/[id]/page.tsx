@@ -58,7 +58,8 @@ export default function MaterialDetail() {
 
         // Fetch Similar
         const simRes = await fetch(
-          `${API}/materials/${id}/similar?limit=3`
+          `${API}/materials/${id}/similar?limit=3`,
+          { headers }
         );
         if (simRes.ok) {
           setSimilar(await simRes.json());

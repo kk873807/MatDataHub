@@ -4,7 +4,7 @@ import { BookOpen, HelpCircle, LifeBuoy, Send, Loader2, CheckCircle2, Search, Ch
 import { API } from "@/lib/api";
 
 export default function ResourcesPage() {
-  const [activeTab, setActiveTab] = useState<"faqs" | "blogs" | "support">("faqs");
+  const [activeTab, setActiveTab] = useState<"faqs" | "blogs" | "support">("blogs");
 
   // Support State
   const [ticket, setTicket] = useState({ name: "", email: "", category: "Technical Support", message: "", image_data: null as string | null });
@@ -82,18 +82,18 @@ export default function ResourcesPage() {
         {/* Tabs */}
         <div className="flex border-b border-slate-800 gap-6">
           <button 
-            onClick={() => setActiveTab("faqs")} 
-            className={`pb-3 font-semibold text-sm transition-colors relative ${activeTab === 'faqs' ? 'text-indigo-400' : 'text-slate-400 hover:text-slate-200'}`}
-          >
-            <span className="flex items-center gap-2"><HelpCircle className="w-4 h-4" /> FAQs</span>
-            {activeTab === 'faqs' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-500 rounded-t-full" />}
-          </button>
-          <button 
             onClick={() => setActiveTab("blogs")} 
             className={`pb-3 font-semibold text-sm transition-colors relative ${activeTab === 'blogs' ? 'text-indigo-400' : 'text-slate-400 hover:text-slate-200'}`}
           >
             <span className="flex items-center gap-2"><BookOpen className="w-4 h-4" /> Engineering Blogs</span>
             {activeTab === 'blogs' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-500 rounded-t-full" />}
+          </button>
+          <button 
+            onClick={() => setActiveTab("faqs")} 
+            className={`pb-3 font-semibold text-sm transition-colors relative ${activeTab === 'faqs' ? 'text-indigo-400' : 'text-slate-400 hover:text-slate-200'}`}
+          >
+            <span className="flex items-center gap-2"><HelpCircle className="w-4 h-4" /> FAQs</span>
+            {activeTab === 'faqs' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-500 rounded-t-full" />}
           </button>
           <button 
             onClick={() => setActiveTab("support")} 
