@@ -73,6 +73,25 @@ export default function AccountDashboard() {
     const email = form.email.value;
     const password = form.password.value;
     const name = form.username ? form.username.value : undefined;
+
+    // Strict Email Validation Regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError("Please enter a valid email address (e.g. name@domain.com).");
+      return;
+    }
+
+    if (!isLogin) {
+      const confirmPassword = form.confirmPassword.value;
+      if (password !== confirmPassword) {
+        setError("Passwords do not match.");
+        return;
+      }
+      if (password.length < 8 || !/[A-Za-z]/.test(password) || !/[0-9]/.test(password)) {
+        setError("Password must be at least 8 characters and contain both letters and numbers.");
+        return;
+      }
+    }
     
     try {
       const endpoint = isLogin ? "/api/v1/auth/login" : "/api/v1/auth/register";
@@ -117,7 +136,18 @@ export default function AccountDashboard() {
           <div>
             <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Password</label>
             <input name="password" type="password" required defaultValue={isLogin ? "password123" : ""} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" />
+            {!isLogin && (
+              <p className="text-[10px] text-slate-500 mt-1">
+                Use a strong password with at least 8 characters, including letters, numbers, and special characters.
+              </p>
+            )}
           </div>
+          {!isLogin && (
+            <div>
+              <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Confirm Password</label>
+              <input name="confirmPassword" type="password" required={!isLogin} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" />
+            </div>
+          )}
           <button type="submit" className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg transition-colors mt-4">
             {isLogin ? "Sign In" : "Register"}
           </button>
