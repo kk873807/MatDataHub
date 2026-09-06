@@ -89,6 +89,10 @@ export default function SmartSubstitution() {
     }
   };
 
+  if (isAuthenticated === null) {
+    return <div className="flex items-center justify-center h-screen"><Loader2 className="w-8 h-8 animate-spin text-purple-500" /></div>;
+  }
+
   // Sign In Required screen
   if (isAuthenticated === false) {
     return (

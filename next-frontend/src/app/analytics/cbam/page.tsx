@@ -20,7 +20,8 @@ export default function CBAMAnalytics() {
 
   // Results state
   const [loading, setLoading] = useState(false);
-  const [isLocked, setIsLocked] = useState(true); // Locked by default until auth check passes
+  const [isLocked, setIsLocked] = useState(true);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [resultsData, setResultsData] = useState<any[] | null>(null);
   const [totalCO2, setTotalCO2] = useState(0);
   
@@ -31,6 +32,7 @@ export default function CBAMAnalytics() {
       const token = localStorage.getItem("token");
       if (!token) {
         setIsLocked(true);
+        setIsCheckingAuth(false);
         return;
       }
       try {
@@ -39,6 +41,7 @@ export default function CBAMAnalytics() {
         });
         if (!res.ok) {
           setIsLocked(true);
+          setIsCheckingAuth(false);
           return;
         }
         const data = await res.json();
@@ -50,6 +53,8 @@ export default function CBAMAnalytics() {
         }
       } catch (err) {
         setIsLocked(true);
+      } finally {
+        setIsCheckingAuth(false);
       }
     };
     checkAuth();
@@ -169,6 +174,10 @@ export default function CBAMAnalytics() {
     a.click();
     URL.revokeObjectURL(url);
   };
+
+  if (isCheckingAuth) {
+    return <div className="flex items-center justify-center h-screen"><Loader2 className="w-8 h-8 animate-spin text-amber-500" /></div>;
+  }
 
   if (isLocked) {
     return (

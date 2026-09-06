@@ -44,6 +44,7 @@ export default function ProjectWorkspace() {
   // Tools State
   const [activeTool, setActiveTool] = useState("bom");
   const [selectedPartId, setSelectedPartId] = useState("");
+  const [removingId, setRemovingId] = useState<number | null>(null);
 
   // Close material dropdown on outside click
   useEffect(() => {
@@ -127,16 +128,36 @@ export default function ProjectWorkspace() {
   };
 
   const handleRemovePart = async (itemId: number, itemName: string) => {
+    if (removingId) return; // prevent double-click
+    setRemovingId(itemId);
+
+    // Optimistic: remove from UI immediately
+    const prevProject = { ...project, items: [...(project.items || [])] };
+    setProject((prev: any) => ({
+      ...prev,
+      items: (prev.items || []).filter((i: any) => i.id !== itemId)
+    }));
+
     try {
-      const token = getToken();
-      await fetch(`${API}/projects/${id}/items/${itemId}`, {
+      const res = await fetch(`${API}/projects/${id}/items/${itemId}`, {
         method: "DELETE",
-        headers: token ? { Authorization: `Bearer ${token}` } : {}
+        headers: authHeaders()
       });
-      await fetchProject();
-      showToast(`Removed "${itemName}"`);
+      if (res.ok) {
+        showToast(`Removed "${itemName}"`);
+      } else {
+        // Rollback on failure
+        setProject(prevProject);
+        const err = await res.json().catch(() => ({ detail: "Delete failed" }));
+        showToast(`Error: ${err.detail || "Failed to remove part"}`);
+      }
     } catch (err) {
+      // Rollback on network error
+      setProject(prevProject);
+      showToast("Network error removing part");
       console.error(err);
+    } finally {
+      setRemovingId(null);
     }
   };
 
@@ -293,10 +314,11 @@ export default function ProjectWorkspace() {
                       <td className="px-5 py-3 text-center">
                         <button 
                           onClick={() => handleRemovePart(item.id, item.part_name)} 
-                          className="text-slate-500 hover:text-red-400 hover:bg-red-950/30 p-1.5 rounded-md transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"
+                          disabled={removingId === item.id}
+                          className="text-slate-500 hover:text-red-400 hover:bg-red-950/30 p-1.5 rounded-md transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 disabled:opacity-100"
                           title="Delete Part"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          {removingId === item.id ? <Loader2 className="w-4 h-4 animate-spin text-red-400" /> : <Trash2 className="w-4 h-4" />}
                         </button>
                       </td>
                     </tr>

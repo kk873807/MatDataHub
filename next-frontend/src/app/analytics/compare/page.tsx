@@ -49,16 +49,22 @@ export default function CompareMaterials() {
   useEffect(() => {
     if (selectedIds.length > 0) {
       setLoading(true);
+      const token = localStorage.getItem("token");
+      const headers: Record<string, string> = {};
+      if (token) headers["Authorization"] = `Bearer ${token}`;
       const queryParams = selectedIds.map(id => `ids=${id}`).join("&");
-      fetch(`${API}/materials/compare?${queryParams}`)
-        .then(res => res.json())
+      fetch(`${API}/materials/compare?${queryParams}`, { headers })
+        .then(res => {
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          return res.json();
+        })
         .then(data => {
           if (Array.isArray(data)) {
-            // Sort to match selection order
             const sorted = selectedIds.map(id => data.find(m => m.id.toString() === id)).filter(Boolean);
             setComparison(sorted);
           }
         })
+        .catch(err => console.error("Compare failed:", err))
         .finally(() => setLoading(false));
     } else {
       setComparison([]);
@@ -218,6 +224,10 @@ export default function CompareMaterials() {
     }
     return vals[bestIdx] !== null ? bestIdx : -1;
   };
+
+  if (isAuthenticated === null) {
+    return <div className="flex items-center justify-center h-screen"><Loader2 className="w-8 h-8 animate-spin text-blue-500" /></div>;
+  }
 
   if (isAuthenticated === false) {
     return (
