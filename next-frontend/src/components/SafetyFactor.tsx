@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
+import { API } from "@/lib/api";
 
 export function SafetyFactor() {
   const [loading, setLoading] = useState(false);
@@ -20,7 +21,7 @@ export function SafetyFactor() {
   const handleCalculate = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/v1/calculators/safety_factor", {
+      const res = await fetch(`${API}/calculators/safety_factor`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

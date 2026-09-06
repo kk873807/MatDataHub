@@ -67,6 +67,12 @@ with engine.connect() as conn:
         conn.rollback()
 
     try:
+        conn.execute(text("ALTER TABLE users ADD COLUMN is_admin BOOLEAN DEFAULT FALSE;"))
+        conn.commit()
+    except Exception:
+        conn.rollback()
+
+    try:
         # Create transactions table manually if Base.metadata.create_all doesn't catch it
         conn.execute(text("""
         CREATE TABLE IF NOT EXISTS transactions (

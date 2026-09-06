@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
+import { API } from "@/lib/api";
 
 export function Synthesizer() {
   const [loading, setLoading] = useState(false);
@@ -25,7 +26,7 @@ export function Synthesizer() {
   const handleCalculate = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/v1/calculators/synthesizer", {
+      const res = await fetch(`${API}/calculators/synthesizer`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

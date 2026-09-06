@@ -10,7 +10,13 @@ import {
   ShieldAlert,
   Loader2,
   Lock,
+  FolderPlus,
+  GitCompare,
+  Download,
+  CheckCircle2,
+  ChevronRight
 } from "lucide-react";
+import { API } from "@/lib/api";
 
 export default function MaterialDetail() {
   const { id } = useParams();
@@ -20,31 +26,43 @@ export default function MaterialDetail() {
   const [loading, setLoading] = useState(true);
   const [isSimilarLocked, setIsSimilarLocked] = useState(false);
   const [isPriceLocked, setIsPriceLocked] = useState(false);
+  
+  // Toast state
+  const [toastMessage, setToastMessage] = useState("");
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(""), 3000);
+  };
 
   useEffect(() => {
     const fetchAllData = async () => {
       try {
+        const token = localStorage.getItem("token");
+        const headers: Record<string, string> = {};
+        if (token) headers["Authorization"] = `Bearer ${token}`;
         // Fetch Details
-        const res = await fetch(`http://127.0.0.1:8000/api/v1/materials/${id}`);
+        const res = await fetch(`${API}/materials/${id}`);
         if (res.ok) setMaterial(await res.json());
 
         // Fetch Price History
         const priceRes = await fetch(
-          `http://127.0.0.1:8000/api/v1/materials/${id}/price-history`,
+          `${API}/materials/${id}/price-history`,
+          { headers }
         );
         if (priceRes.ok) {
           setPriceHistory(await priceRes.json());
-        } else if (priceRes.status === 403) {
+        } else if (priceRes.status === 403 || priceRes.status === 401) {
           setIsPriceLocked(true);
         }
 
         // Fetch Similar
         const simRes = await fetch(
-          `http://127.0.0.1:8000/api/v1/materials/${id}/similar?limit=3`,
+          `${API}/materials/${id}/similar?limit=3`
         );
         if (simRes.ok) {
           setSimilar(await simRes.json());
-        } else if (simRes.status === 403) {
+        } else if (simRes.status === 403 || simRes.status === 401) {
           setIsSimilarLocked(true);
         }
       } catch (err) {
@@ -79,11 +97,9 @@ export default function MaterialDetail() {
   // SVG Area Chart Calculations
   const generatePath = () => {
     if (priceHistory.length === 0) return "";
-    const width = 1000; // arbitrary internal SVG coordinate width
-    const height = 200; // arbitrary internal SVG coordinate height
-
+    const width = 1000;
+    const height = 200;
     const range = maxPrice - minPrice || 1;
-    // Add 10% padding to top and bottom
     const paddedMin = minPrice - range * 0.1;
     const paddedRange = range * 1.2;
 
@@ -92,7 +108,6 @@ export default function MaterialDetail() {
       const y = height - ((ph.cost_per_kg - paddedMin) / paddedRange) * height;
       return `${x},${y}`;
     });
-
     return `M0,${height} L${points.join(" L")} L${width},${height} Z`;
   };
 
@@ -109,8 +124,7 @@ export default function MaterialDetail() {
       priceHistory
         .map((ph, idx) => {
           const x = (idx / (priceHistory.length - 1)) * width;
-          const y =
-            height - ((ph.cost_per_kg - paddedMin) / paddedRange) * height;
+          const y = height - ((ph.cost_per_kg - paddedMin) / paddedRange) * height;
           return `${x},${y}`;
         })
         .join(" L ")
@@ -118,37 +132,84 @@ export default function MaterialDetail() {
   };
 
   return (
-    <main className="flex flex-col p-6 lg:p-10 w-full">
+    <main className="flex flex-col p-6 lg:p-10 w-full relative">
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3 bg-slate-800 border border-emerald-500/50 rounded-lg shadow-2xl text-white animate-in slide-in-from-bottom-5">
+          <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+          <span className="text-sm font-medium">{toastMessage}</span>
+        </div>
+      )}
+
       <div className="w-full max-w-7xl mx-auto space-y-6">
-        <Link
-          href="/materials"
-          className="inline-flex items-center gap-2 text-slate-200 hover:text-white transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" /> Back to Database
-        </Link>
+        
+        {/* Breadcrumbs */}
+        <nav className="flex items-center gap-2 text-sm text-slate-400 mb-2">
+          <Link href="/materials" className="hover:text-emerald-400 transition-colors flex items-center gap-1">
+            <ArrowLeft className="w-3.5 h-3.5" /> Database
+          </Link>
+          <ChevronRight className="w-4 h-4 text-slate-600" />
+          <span>{material.category}</span>
+          {material.subcategory && (
+            <>
+              <ChevronRight className="w-4 h-4 text-slate-600" />
+              <span>{material.subcategory}</span>
+            </>
+          )}
+          <ChevronRight className="w-4 h-4 text-slate-600" />
+          <span className="text-slate-200 font-medium truncate max-w-[200px]">{material.name}</span>
+        </nav>
 
         {/* Header */}
-        <div className="p-8 rounded-2xl bg-slate-900 border border-slate-800">
-          <div className="flex flex-col md:flex-row justify-between items-start gap-4">
-            <div>
-              <div className="inline-block px-3 py-1 bg-emerald-900/30 text-emerald-400 text-xs font-bold rounded-full mb-3 uppercase tracking-wider">
+        <div className="p-8 rounded-2xl bg-slate-900 border border-slate-800 shadow-lg">
+          <div className="flex flex-col xl:flex-row justify-between items-start gap-6">
+            <div className="flex-1">
+              <div className="inline-block px-3 py-1 bg-emerald-900/30 text-emerald-400 text-xs font-bold rounded-full mb-3 uppercase tracking-wider border border-emerald-800/50">
                 {material.category} • {material.subcategory}
               </div>
-              <h1 className="text-4xl font-bold text-white mb-2">
+              <h1 className="text-4xl font-bold text-white mb-3">
                 {material.name}
               </h1>
-              <p className="text-slate-200 text-lg max-w-2xl">
-                {material.description || "No description available."}
+              <p className="text-slate-300 text-lg max-w-3xl leading-relaxed">
+                {material.description || "No description available for this material."}
               </p>
+              
+              {/* Quick Actions */}
+              <div className="flex flex-wrap gap-3 mt-6">
+                <button 
+                  onClick={() => showToast("Added to recent project workspace")}
+                  className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-bold transition-all shadow-lg shadow-emerald-900/20"
+                >
+                  <FolderPlus className="w-4 h-4" /> Add to Project
+                </button>
+                <button 
+                  onClick={() => showToast("Added to compare list")}
+                  className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 rounded-lg text-sm font-semibold transition-all"
+                >
+                  <GitCompare className="w-4 h-4 text-emerald-400" /> Compare
+                </button>
+                <button 
+                  onClick={() => showToast("Downloading Spec Sheet PDF...")}
+                  className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 rounded-lg text-sm font-semibold transition-all"
+                >
+                  <Download className="w-4 h-4 text-slate-300" /> Export PDF
+                </button>
+              </div>
             </div>
-            <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 text-right min-w-[200px]">
-              <p className="text-slate-300 text-sm mb-1">
-                Current Market Price
+            
+            <div className="bg-slate-950 p-6 rounded-xl border border-slate-800 text-right min-w-[220px] shadow-inner self-stretch flex flex-col justify-center">
+              <p className="text-slate-400 text-sm mb-1 uppercase tracking-wider font-semibold">
+                Market Price
               </p>
-              <p className="text-3xl font-bold text-emerald-400">
+              <p className="text-4xl font-bold text-emerald-400 mb-2">
                 ₹{material.cost_per_kg_min}
-                <span className="text-lg text-slate-300">/kg</span>
+                <span className="text-xl text-slate-500 font-medium">/kg</span>
               </p>
+              {priceHistory.length > 0 && (
+                <div className="flex items-center justify-end gap-1.5 text-xs font-semibold text-emerald-500 bg-emerald-950/40 px-2 py-1 rounded inline-flex self-end">
+                  <TrendingUp className="w-3.5 h-3.5" /> Live Data
+                </div>
+              )}
             </div>
           </div>
         </div>

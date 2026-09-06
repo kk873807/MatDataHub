@@ -99,6 +99,7 @@ class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
     tier: str
+    is_admin: bool = False
     name: Optional[str] = None
 
 
@@ -108,6 +109,7 @@ class UserProfile(BaseModel):
     email: str
     name: Optional[str] = None
     tier: str
+    is_admin: bool = False
     api_key: Optional[str] = None
     api_secret: Optional[str] = None
     created_at: Optional[datetime] = None

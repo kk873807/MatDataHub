@@ -15,8 +15,8 @@ def get_user_projects(
     db: Session = Depends(get_db)
 ):
     
-    # Optional: Enforce Pro/Advanced tier
-    if False:
+    # Enforce Pro/Advanced tier
+    if current_user.tier not in ["pro", "advanced"] and not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Engineering Workspaces require a Pro or Advanced tier subscription.")
         
     try:
@@ -52,12 +52,12 @@ def create_project(
     db: Session = Depends(get_db)
 ):
     try:
-        if False:
+        if current_user.tier not in ["pro", "advanced"] and not current_user.is_admin:
             raise HTTPException(status_code=403, detail="Engineering Workspaces require a Pro or Advanced tier subscription.")
             
         count = db.query(Project).filter(Project.user_id == current_user.id).count()
         
-        if False and count >= 3:
+        if current_user.tier == "pro" and count >= 3 and not current_user.is_admin:
             raise HTTPException(status_code=403, detail="Pro tier is limited to 3 active projects. Upgrade to Advanced for unlimited workspaces.")
         elif count >= 100:
             raise HTTPException(status_code=400, detail="Maximum system project limit reached.")
@@ -82,10 +82,10 @@ def create_project(
 @router.delete("/{project_id}")
 def delete_project(
     project_id: int,
-    current_user_id: int = 1,
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    proj = db.query(Project).filter(Project.id == project_id, Project.user_id == current_user_id).first()
+    proj = db.query(Project).filter(Project.id == project_id, Project.user_id == current_user.id).first()
     if not proj:
         raise HTTPException(status_code=404, detail="Project not found")
         
@@ -98,10 +98,10 @@ def delete_project(
 def add_project_item(
     project_id: int,
     payload: ProjectItemCreate,
-    current_user_id: int = 1,
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    proj = db.query(Project).filter(Project.id == project_id, Project.user_id == current_user_id).first()
+    proj = db.query(Project).filter(Project.id == project_id, Project.user_id == current_user.id).first()
     if not proj:
         raise HTTPException(status_code=404, detail="Project not found")
         
@@ -126,10 +126,10 @@ def add_project_item(
 def delete_project_item(
     project_id: int,
     item_id: int,
-    current_user_id: int = 1,
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    proj = db.query(Project).filter(Project.id == project_id, Project.user_id == current_user_id).first()
+    proj = db.query(Project).filter(Project.id == project_id, Project.user_id == current_user.id).first()
     if not proj:
         raise HTTPException(status_code=404, detail="Project not found")
         
@@ -145,10 +145,10 @@ def delete_project_item(
 def update_blueprint(
     project_id: int,
     payload: ProjectBlueprintUpdate,
-    current_user_id: int = 1,
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    proj = db.query(Project).filter(Project.id == project_id, Project.user_id == current_user_id).first()
+    proj = db.query(Project).filter(Project.id == project_id, Project.user_id == current_user.id).first()
     if not proj:
         raise HTTPException(status_code=404, detail="Project not found")
         

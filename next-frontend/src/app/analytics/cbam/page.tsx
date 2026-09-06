@@ -1,9 +1,12 @@
-﻿"use client";
-import { useState, useRef } from "react";
+"use client";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { ArrowLeft, Factory, UploadCloud, Loader2, FileSpreadsheet, Lock, Download, FileText, Table } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { API } from "@/lib/api";
 
 export default function CBAMAnalytics() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<"upload" | "manual">("upload");
   const [file, setFile] = useState<File | null>(null);
   
@@ -17,11 +20,40 @@ export default function CBAMAnalytics() {
 
   // Results state
   const [loading, setLoading] = useState(false);
-  const [isLocked, setIsLocked] = useState(false); // Can be changed based on auth/tier
+  const [isLocked, setIsLocked] = useState(true); // Locked by default until auth check passes
   const [resultsData, setResultsData] = useState<any[] | null>(null);
   const [totalCO2, setTotalCO2] = useState(0);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setIsLocked(true);
+        return;
+      }
+      try {
+        const res = await fetch(`${API}/auth/me`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!res.ok) {
+          setIsLocked(true);
+          return;
+        }
+        const data = await res.json();
+        // Check admin or advanced tier
+        if (data.is_admin || data.tier === "advanced") {
+          setIsLocked(false);
+        } else {
+          setIsLocked(true);
+        }
+      } catch (err) {
+        setIsLocked(true);
+      }
+    };
+    checkAuth();
+  }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -78,9 +110,12 @@ export default function CBAMAnalytics() {
 
       // Note: Make sure the backend doesn't expect authentication, or send token if needed
       const token = localStorage.getItem("token");
-      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      const headers: Record<string, string> = {};
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
 
-      const res = await fetch("http://127.0.0.1:8000/api/v1/materials/bom_analyze", {
+      const res = await fetch(`${API}/materials/bom_analyze`, {
         method: "POST",
         headers,
         body: formData,

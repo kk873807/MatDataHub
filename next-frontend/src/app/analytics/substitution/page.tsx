@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowLeft, Replace, Loader2, Lock, ShieldAlert } from "lucide-react";
+import { API } from "@/lib/api";
 
 export default function SmartSubstitution() {
   const [allMaterials, setAllMaterials] = useState<any[]>([]);
@@ -18,12 +19,34 @@ export default function SmartSubstitution() {
   const [results, setResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+
+  // Auth check on mount
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setIsAuthenticated(false);
+      return;
+    }
+    fetch(`${API}/auth/me`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(r => {
+        if (r.ok) {
+          setIsAuthenticated(true);
+        } else {
+          setIsAuthenticated(false);
+        }
+      })
+      .catch(() => setIsAuthenticated(false));
+  }, []);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/v1/materials?per_page=100")
+    if (isAuthenticated === false) return;
+    fetch(`${API}/materials?per_page=100`)
       .then(res => res.json())
       .then(data => setAllMaterials(data.materials || []));
-  }, []);
+  }, [isAuthenticated]);
 
   const runSubstitution = async () => {
     if (!baseId) return;
@@ -31,17 +54,21 @@ export default function SmartSubstitution() {
     setIsLocked(false);
     
     try {
-      // Normalize weights 0-100 to 0.0-1.0
+      // Map frontend weight keys to what the backend SubstitutionEngine expects
       const normalizedWeights = {
         cost: weights.cost / 100,
         density: weights.density / 100,
-        tensile: weights.tensile / 100,
-        carbon: weights.carbon / 100
+        tensile_strength: weights.tensile / 100,
+        embodied_carbon: weights.carbon / 100
       };
 
-      const res = await fetch("http://127.0.0.1:8000/api/v1/materials/substitute", {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API}/materials/substitute`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
         body: JSON.stringify({
           base_material_id: parseInt(baseId),
           weights: normalizedWeights
@@ -52,6 +79,8 @@ export default function SmartSubstitution() {
         setResults(await res.json());
       } else if (res.status === 403) {
         setIsLocked(true);
+      } else if (res.status === 401) {
+        setIsAuthenticated(false);
       }
     } catch (err) {
       console.error(err);
@@ -59,6 +88,35 @@ export default function SmartSubstitution() {
       setLoading(false);
     }
   };
+
+  // Sign In Required screen
+  if (isAuthenticated === false) {
+    return (
+      <main className="flex flex-col p-6 lg:p-10 w-full h-full">
+        <div className="w-full max-w-5xl mx-auto space-y-6">
+          <Link href="/analytics" className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors">
+            <ArrowLeft className="w-4 h-4" /> Back to Analytics
+          </Link>
+          
+          <div className="p-10 mt-10 rounded-3xl bg-slate-900 border border-purple-500/30 text-center relative overflow-hidden flex flex-col items-center justify-center">
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 to-transparent"></div>
+            <div className="w-20 h-20 bg-purple-950 rounded-full flex items-center justify-center mb-6 relative z-10 border border-purple-500/50">
+              <Lock className="w-10 h-10 text-purple-500" />
+            </div>
+            
+            <h2 className="text-3xl font-bold text-white mb-4 relative z-10">Sign In Required</h2>
+            <p className="text-slate-300 relative z-10 max-w-2xl mx-auto mb-8 text-lg">
+              You must be signed in to use the Smart AI Substitution engine. 
+            </p>
+            
+            <Link href="/account" className="relative z-10 px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-bold transition-all shadow-lg hover:scale-105">
+              Sign In or Register
+            </Link>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="flex flex-col p-6 lg:p-10 w-full h-full overflow-y-auto">
@@ -167,16 +225,16 @@ export default function SmartSubstitution() {
           {/* Results Panel */}
           <div className="lg:col-span-2">
             {isLocked ? (
-              <div className="p-8 h-full rounded-2xl bg-slate-900 border border-purple-500/30 text-center relative overflow-hidden flex flex-col items-center justify-center">
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 to-transparent"></div>
-                <Lock className="w-12 h-12 text-purple-400 mx-auto mb-4 relative z-10" />
-                <h2 className="text-2xl font-bold text-white mb-2 relative z-10">Pro Feature Locked</h2>
+              <div className="p-8 h-full rounded-2xl bg-slate-900 border border-yellow-500/30 text-center relative overflow-hidden flex flex-col items-center justify-center">
+                <div className="absolute inset-0 bg-gradient-to-br from-yellow-900/20 to-transparent"></div>
+                <Lock className="w-12 h-12 text-yellow-400 mx-auto mb-4 relative z-10" />
+                <h2 className="text-2xl font-bold text-white mb-2 relative z-10">Upgrade Required</h2>
                 <p className="text-slate-300 relative z-10 max-w-md mx-auto mb-6">
-                  Smart AI Substitution is an advanced engine that analyzes hundreds of parametric variables to recommend material replacements. Upgrade to Pro to unlock this workflow.
+                  Smart AI Substitution is a Pro feature. Upgrade your account to unlock this workflow.
                 </p>
-                <button className="relative z-10 px-8 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-bold transition-colors shadow-lg shadow-purple-900/50">
-                  Upgrade to Pro
-                </button>
+                <Link href="/account" className="relative z-10 px-8 py-3 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg font-bold transition-colors shadow-lg shadow-yellow-900/50">
+                  Upgrade Account
+                </Link>
               </div>
             ) : results.length > 0 ? (
               <div className="space-y-4">
@@ -187,7 +245,7 @@ export default function SmartSubstitution() {
                     <div className="flex justify-between items-start mb-3">
                       <div>
                         <h4 className="text-lg font-bold text-white">{res.name}</h4>
-                        <div className="text-sm text-purple-400 font-semibold">{Math.round(res.match_score * 100)}% Match Score</div>
+                        <div className="text-sm text-purple-400 font-semibold">{Math.round(res.match_score)}% Match Score</div>
                       </div>
                       <Link href={`/materials/${res.id}`} className="px-3 py-1 bg-slate-950 border border-slate-800 rounded text-xs text-slate-300 hover:text-white transition-colors">
                         View Details

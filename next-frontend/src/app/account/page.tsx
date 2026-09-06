@@ -1,9 +1,10 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Shield, Key, Zap, CheckCircle2, AlertCircle, ArrowUpRight, LogOut, Clock, Smartphone } from "lucide-react";
+import { API, API_BASE } from "@/lib/api";
 
-export default function AccountDashboard() {
+function AccountDashboardInner() {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [upgrading, setUpgrading] = useState(false);
@@ -40,7 +41,7 @@ export default function AccountDashboard() {
     }
 
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/v1/auth/me", {
+      const res = await fetch(`${API}/auth/me`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -62,7 +63,7 @@ export default function AccountDashboard() {
     if (!token) return;
     setUpgrading(true);
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/v1/auth/upgrade", {
+      const res = await fetch(`${API}/payments/create-link`, {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -71,14 +72,18 @@ export default function AccountDashboard() {
         body: JSON.stringify({ tier })
       });
       if (res.ok) {
-        await fetchProfile(); // Refresh profile to show 'pending' status
-        alert(`Upgrade to ${tier.toUpperCase()} requested! An admin will review it shortly.`);
+        const data = await res.json();
+        if (data.payment_url) {
+          window.location.href = data.payment_url;
+        } else {
+          alert("Payment URL not returned. Please contact support.");
+        }
       } else {
         const err = await res.json();
-        alert(err.detail || "Failed to request upgrade.");
+        alert(err.detail || "Failed to initiate payment.");
       }
     } catch (err) {
-      alert("Network error requesting upgrade.");
+      alert("Network error. Please try again.");
     } finally {
       setUpgrading(false);
     }
@@ -113,7 +118,7 @@ export default function AccountDashboard() {
     try {
       const endpoint = isLogin ? "/api/v1/auth/login" : "/api/v1/auth/register";
       const payload = isLogin ? { email, password } : { email, password, name };
-      const res = await fetch(`http://127.0.0.1:8000${endpoint}`, {
+      const res = await fetch(`${API_BASE}${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
@@ -183,7 +188,7 @@ export default function AccountDashboard() {
           <div className="mt-6 grid grid-cols-3 gap-3">
             <button 
               type="button" 
-              onClick={() => window.location.href = "http://127.0.0.1:8000/api/v1/auth/google"}
+              onClick={() => window.location.href = `${API}/auth/google`}
               className="flex items-center justify-center gap-2 bg-slate-950 border border-slate-800 hover:bg-slate-800 hover:border-slate-700 text-white px-4 py-3 rounded-lg transition-all"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -358,7 +363,7 @@ export default function AccountDashboard() {
                         disabled={upgrading || profile.upgrade_status === "pending"}
                         className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl transition-colors flex justify-center items-center gap-2"
                       >
-                        Request Pro Access <ArrowUpRight className="w-4 h-4" />
+                        Pay ₹499 & Upgrade <ArrowUpRight className="w-4 h-4" />
                       </button>
                     )}
                   </div>
@@ -377,7 +382,7 @@ export default function AccountDashboard() {
                       disabled={upgrading || profile.upgrade_status === "pending"}
                       className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl transition-colors flex justify-center items-center gap-2 relative z-10"
                     >
-                      Request Advanced Access <ArrowUpRight className="w-4 h-4" />
+                      Pay ₹49,999 & Upgrade <ArrowUpRight className="w-4 h-4" />
                     </button>
                   </div>
 
@@ -478,5 +483,13 @@ export default function AccountDashboard() {
 
       </div>
     </main>
+  );
+}
+
+export default function AccountDashboard() {
+  return (
+    <Suspense fallback={<div className="flex justify-center items-center h-screen"><div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div></div>}>
+      <AccountDashboardInner />
+    </Suspense>
   );
 }

@@ -1,4 +1,4 @@
-﻿import os
+import os
 import json
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -42,7 +42,7 @@ def get_ai_advice(req: AIRequest, current_user: User = Depends(get_current_user)
     if not client:
         raise HTTPException(status_code=500, detail="Groq API is not configured on the server.")
         
-    if current_user.tier == "free":
+    if current_user.tier == "free" and not current_user.is_admin:
         raise HTTPException(status_code=403, detail="AI Advisor is a Premium feature. Please upgrade to Pro or Advanced.")
 
     # STEP 1: Extract Constraints

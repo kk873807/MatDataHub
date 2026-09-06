@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
+import { API } from "@/lib/api";
 
 export function ThermalExpansion() {
   const [loading, setLoading] = useState(false);
@@ -16,7 +17,7 @@ export function ThermalExpansion() {
   const handleCalculate = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/v1/calculators/thermal_expansion", {
+      const res = await fetch(`${API}/calculators/thermal_expansion`, {
         method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(formData),
       });
       const data = await res.json();

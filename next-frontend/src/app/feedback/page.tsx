@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { MessageSquare, ThumbsUp, Image as ImageIcon, Send, Loader2, CheckCircle2 } from "lucide-react";
+import { API } from "@/lib/api";
 
 export default function FeedbackCommunityPage() {
   const [feedbacks, setFeedbacks] = useState<any[]>([]);
@@ -14,7 +15,7 @@ export default function FeedbackCommunityPage() {
   const [replyToId, setReplyToId] = useState<number | null>(null);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/v1/feedback/public")
+    fetch(`${API}/feedback/public`)
       .then(res => res.json())
       .then(data => setFeedbacks(Array.isArray(data) ? data : []))
       .catch(console.error)
@@ -51,14 +52,14 @@ export default function FeedbackCommunityPage() {
         parent_id: replyToId
       };
       
-      await fetch("http://127.0.0.1:8000/api/v1/feedback/", {
+      await fetch(`${API}/feedback/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       });
       
       // Refresh list
-      const res = await fetch("http://127.0.0.1:8000/api/v1/feedback/public");
+      const res = await fetch(`${API}/feedback/public`);
       const data = await res.json();
       setFeedbacks(Array.isArray(data) ? data : []);
       

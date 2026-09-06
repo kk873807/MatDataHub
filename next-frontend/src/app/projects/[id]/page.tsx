@@ -1,14 +1,26 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Plus, Trash2, Download, Component, FileText, Wrench, Shield, Thermometer, Activity, IndianRupee, Share2, Flame } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Download, Component, FileText, Wrench, Shield, Thermometer, Activity, IndianRupee, Share2, Flame, Loader2, CheckCircle2 } from "lucide-react";
 import { SafetyFactor } from "@/components/SafetyFactor";
 import { ThermalExpansion } from "@/components/ThermalExpansion";
 import { FatigueLife } from "@/components/FatigueLife";
 import { BeamDeflection } from "@/components/BeamDeflection";
 import { CostOptimizer } from "@/components/CostOptimizer";
 import { ThermalShock } from "@/components/ThermalShock";
+import { API } from "@/lib/api";
+
+function getToken() {
+  return typeof window !== "undefined" ? localStorage.getItem("token") : null;
+}
+
+function authHeaders(): Record<string, string> {
+  const token = getToken();
+  const h: Record<string, string> = { "Content-Type": "application/json" };
+  if (token) h["Authorization"] = `Bearer ${token}`;
+  return h;
+}
 
 export default function ProjectWorkspace() {
   const { id } = useParams();
@@ -22,63 +34,107 @@ export default function ProjectWorkspace() {
   const [searchMatQuery, setSearchMatQuery] = useState("");
   const [searchMatOpen, setSearchMatOpen] = useState(false);
   const [volume, setVolume] = useState("");
+  const [adding, setAdding] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
+
+  // Toast
+  const [toast, setToast] = useState("");
+  const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(""), 3000); };
 
   // Tools State
   const [activeTool, setActiveTool] = useState("bom");
   const [selectedPartId, setSelectedPartId] = useState("");
 
-  const fetchData = async () => {
-    try {
-      const [projRes, matRes] = await Promise.all([
-        fetch(`http://127.0.0.1:8000/api/v1/projects/${id}`),
-        fetch("http://127.0.0.1:8000/api/v1/materials?per_page=200")
-      ]);
-      
-      const currentProj = await projRes.json();
-      const mats = await matRes.json();
-      
-      setProject(currentProj);
-      setMaterials(mats.materials || []);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // Close material dropdown on outside click
   useEffect(() => {
-    fetchData();
-  }, [id]);
+    const handler = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setSearchMatOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
-  const handleAddPart = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!partName || !matId || !volume) return;
-    
+  const fetchProject = async () => {
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/v1/projects/${id}/items`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          material_id: parseInt(matId),
-          part_name: partName,
-          volume_cm3: parseFloat(volume)
-        })
+      const token = getToken();
+      if (!token) return;
+      const res = await fetch(`${API}/projects/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
-        setPartName("");
-        setMatId("");
-        setVolume("");
-        fetchData();
+        setProject(await res.json());
       }
     } catch (err) {
       console.error(err);
     }
   };
 
-  const handleRemovePart = async (itemId: number) => {
+  const fetchMaterials = async () => {
     try {
-      await fetch(`http://127.0.0.1:8000/api/v1/projects/${id}/items/${itemId}`, { method: "DELETE" });
-      fetchData();
+      const res = await fetch(`${API}/materials?per_page=200`);
+      if (res.ok) {
+        const data = await res.json();
+        setMaterials(data.materials || []);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    const init = async () => {
+      await Promise.all([fetchProject(), fetchMaterials()]);
+      setLoading(false);
+    };
+    init();
+  }, [id]);
+
+  const handleAddPart = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!partName.trim() || !matId || !volume) return;
+    setAdding(true);
+    
+    try {
+      const token = getToken();
+      const res = await fetch(`${API}/projects/${id}/items`, {
+        method: "POST",
+        headers: authHeaders(),
+        body: JSON.stringify({
+          material_id: parseInt(matId),
+          part_name: partName.trim(),
+          volume_cm3: parseFloat(volume)
+        })
+      });
+      if (res.ok) {
+        setPartName("");
+        setMatId("");
+        setSearchMatQuery("");
+        setVolume("");
+        await fetchProject();
+        showToast(`Part "${partName.trim()}" added successfully`);
+      } else {
+        const err = await res.json();
+        showToast(`Error: ${err.detail || "Failed to add part"}`);
+      }
+    } catch (err) {
+      console.error(err);
+      showToast("Network error adding part");
+    } finally {
+      setAdding(false);
+    }
+  };
+
+  const handleRemovePart = async (itemId: number, itemName: string) => {
+    try {
+      const token = getToken();
+      await fetch(`${API}/projects/${id}/items/${itemId}`, {
+        method: "DELETE",
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+      });
+      await fetchProject();
+      showToast(`Removed "${itemName}"`);
     } catch (err) {
       console.error(err);
     }
@@ -104,8 +160,8 @@ export default function ProjectWorkspace() {
     a.click();
   };
 
-  if (loading) return <div className="p-20 text-center text-white">Loading Workspace...</div>;
-  if (!project) return <div className="p-20 text-center text-red-400">Project not found.</div>;
+  if (loading) return <div className="flex items-center justify-center h-screen"><Loader2 className="w-8 h-8 animate-spin text-blue-500" /></div>;
+  if (!project) return <div className="p-20 text-center text-red-400">Project not found or access denied.</div>;
 
   // Enriched Items
   const enrichedItems = (project.items || []).map((item: any) => {
@@ -120,6 +176,9 @@ export default function ProjectWorkspace() {
   const totalMass = enrichedItems.reduce((sum: number, i: any) => sum + i.mass_kg, 0);
   const totalCost = enrichedItems.reduce((sum: number, i: any) => sum + i.cost, 0);
 
+  // Filtered materials for dropdown
+  const filteredMats = materials.filter(m => m.name.toLowerCase().includes(searchMatQuery.toLowerCase())).slice(0, 30);
+
   // Tool rendering logic
   const renderTool = () => {
     if (activeTool === "bom") {
@@ -129,30 +188,35 @@ export default function ProjectWorkspace() {
             <h3 className="text-lg font-bold text-white mb-4">Add Part to Assembly</h3>
             <form onSubmit={handleAddPart} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
               <div>
-                <label className="block text-xs text-slate-400 mb-1">Part Name</label>
-                <input type="text" value={partName} onChange={e=>setPartName(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-white text-sm outline-none" required />
+                <label className="block text-xs text-slate-400 mb-1 font-semibold">Part Name</label>
+                <input 
+                  type="text" 
+                  value={partName} 
+                  onChange={e => setPartName(e.target.value)} 
+                  placeholder="e.g. Front Bracket"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2.5 text-white text-sm outline-none focus:border-blue-500 transition-colors" 
+                  required 
+                />
               </div>
-              <div className="relative">
-                <label className="block text-xs text-slate-400 mb-1">Material</label>
-                <div className="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-white text-sm outline-none cursor-text flex items-center justify-between">
-                  <input 
-                    type="text" 
-                    placeholder="Search..." 
-                    className="bg-transparent border-none outline-none w-full text-white placeholder:text-slate-500"
-                    value={searchMatQuery}
-                    onChange={(e) => {
-                      setSearchMatQuery(e.target.value);
-                      setSearchMatOpen(true);
-                    }}
-                    onFocus={() => setSearchMatOpen(true)}
-                  />
-                </div>
-                {searchMatOpen && (
-                  <div className="absolute z-50 w-full mt-1 bg-slate-950 border border-slate-700 rounded-lg shadow-xl max-h-60 overflow-y-auto">
-                    {materials.filter(m => m.name.toLowerCase().includes(searchMatQuery.toLowerCase())).slice(0, 50).map(m => (
+              <div className="relative" ref={searchRef}>
+                <label className="block text-xs text-slate-400 mb-1 font-semibold">Material</label>
+                <input 
+                  type="text" 
+                  placeholder="Search material..." 
+                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2.5 text-white text-sm outline-none focus:border-blue-500 transition-colors placeholder:text-slate-500"
+                  value={searchMatQuery}
+                  onChange={(e) => {
+                    setSearchMatQuery(e.target.value);
+                    setSearchMatOpen(true);
+                  }}
+                  onFocus={() => setSearchMatOpen(true)}
+                />
+                {searchMatOpen && filteredMats.length > 0 && (
+                  <div className="absolute z-50 w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg shadow-2xl max-h-48 overflow-y-auto">
+                    {filteredMats.map(m => (
                       <div 
                         key={m.id} 
-                        className={`px-3 py-2 text-sm hover:bg-slate-800 cursor-pointer ${matId === m.id.toString() ? 'bg-slate-800 text-blue-400' : 'text-slate-300'}`}
+                        className={`px-3 py-2 text-sm hover:bg-slate-800 cursor-pointer transition-colors ${matId === m.id.toString() ? 'bg-slate-800 text-blue-400' : 'text-slate-300'}`}
                         onClick={() => {
                           setMatId(m.id.toString());
                           setSearchMatQuery(m.name);
@@ -162,18 +226,27 @@ export default function ProjectWorkspace() {
                         {m.name}
                       </div>
                     ))}
-                    {materials.filter(m => m.name.toLowerCase().includes(searchMatQuery.toLowerCase())).length === 0 && (
-                      <div className="px-3 py-2 text-slate-500 text-sm">No materials found.</div>
-                    )}
                   </div>
                 )}
               </div>
               <div>
-                <label className="block text-xs text-slate-400 mb-1">Volume (cm³)</label>
-                <input type="number" step="0.1" value={volume} onChange={e=>setVolume(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-white text-sm outline-none focus:border-blue-500 transition-colors" required />
+                <label className="block text-xs text-slate-400 mb-1 font-semibold">Volume (cm³)</label>
+                <input 
+                  type="number" 
+                  step="0.1" 
+                  value={volume} 
+                  onChange={e => setVolume(e.target.value)} 
+                  placeholder="e.g. 125"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2.5 text-white text-sm outline-none focus:border-blue-500 transition-colors" 
+                  required 
+                />
               </div>
-              <button type="submit" className="bg-blue-600 hover:bg-blue-500 active:scale-95 text-white font-bold py-2 px-4 rounded-lg text-sm transition-all h-[38px] flex justify-center items-center shadow-lg shadow-blue-900/20">
-                <Plus className="w-4 h-4 mr-1" /> Add Part
+              <button 
+                type="submit" 
+                disabled={adding || !partName || !matId || !volume}
+                className="bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 text-white font-bold py-2.5 px-4 rounded-lg text-sm transition-all h-[42px] flex justify-center items-center shadow-lg shadow-blue-900/20"
+              >
+                {adding ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Plus className="w-4 h-4 mr-1" /> Add Part</>}
               </button>
             </form>
           </div>
@@ -186,7 +259,7 @@ export default function ProjectWorkspace() {
                   <FileText className="w-3 h-3" /> Smart Import
                   <input type="file" accept=".csv" className="hidden" onChange={(e) => {
                     if (e.target.files && e.target.files.length > 0) {
-                      alert("CSV Parsing Engine initialized. Found 0 rows (demo mode).");
+                      showToast("CSV Parsing Engine initialized. Found 0 rows (demo mode).");
                     }
                   }} />
                 </label>
@@ -212,14 +285,14 @@ export default function ProjectWorkspace() {
                     <tr key={item.id} className="hover:bg-slate-800/40 transition-colors group">
                       <td className="px-5 py-3 text-white font-medium">{item.part_name}</td>
                       <td className="px-5 py-3 text-blue-400">
-                        <Link href={`/materials/${item.material_id}`} className="hover:text-blue-300 hover:underline transition-colors">{item.mat?.name}</Link>
+                        <Link href={`/materials/${item.material_id}`} className="hover:text-blue-300 hover:underline transition-colors">{item.mat?.name || 'Unknown'}</Link>
                       </td>
                       <td className="px-5 py-3 text-slate-300 text-right">{item.volume_cm3}</td>
                       <td className="px-5 py-3 text-slate-300 text-right">{item.mass_kg.toFixed(3)}</td>
                       <td className="px-5 py-3 text-emerald-400 font-medium text-right">₹{item.cost.toFixed(2)}</td>
                       <td className="px-5 py-3 text-center">
                         <button 
-                          onClick={() => handleRemovePart(item.id)} 
+                          onClick={() => handleRemovePart(item.id, item.part_name)} 
                           className="text-slate-500 hover:text-red-400 hover:bg-red-950/30 p-1.5 rounded-md transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"
                           title="Delete Part"
                         >
@@ -303,14 +376,14 @@ export default function ProjectWorkspace() {
 
             {activeTool === "blueprint" && (
               <div className="p-6 border border-slate-700 rounded-xl bg-slate-800/50">
-                <h4 className="font-bold text-white mb-2 flex items-center gap-2"><Share2 className="w-5 h-5 text-indigo-400"/> Project Blueprint Integration</h4>
+                <h4 className="font-bold text-white mb-2 flex items-center gap-2"><Share2 className="w-5 h-5 text-indigo-400"/>Project Blueprint Integration</h4>
                 <p className="text-sm text-slate-300 mb-4">Upload a JSON blueprint to overwrite this assembly, or download the current assembly map.</p>
                 <div className="flex gap-4">
                   <label className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded text-sm font-bold cursor-pointer transition-colors">
                     Upload JSON
                     <input type="file" accept=".json" className="hidden" onChange={(e) => {
                       if (e.target.files && e.target.files.length > 0) {
-                        alert("Blueprint JSON uploaded and synced to backend API successfully!");
+                        showToast("Blueprint JSON uploaded and synced to backend API successfully!");
                       }
                     }} />
                   </label>
@@ -347,8 +420,15 @@ export default function ProjectWorkspace() {
   };
 
   return (
-    <main className="flex flex-col p-0 w-full h-full overflow-hidden bg-slate-950">
-      
+    <main className="flex flex-col p-0 w-full h-full overflow-hidden bg-slate-950 relative">
+      {/* Toast */}
+      {toast && (
+        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3 bg-slate-800 border border-emerald-500/50 rounded-lg shadow-2xl text-white animate-in slide-in-from-bottom-5">
+          <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+          <span className="text-sm font-medium">{toast}</span>
+        </div>
+      )}
+
       {/* Top Navbar for Workspace */}
       <div className="h-16 border-b border-slate-800 bg-slate-900 flex items-center justify-between px-6 shrink-0">
         <div className="flex items-center gap-4">

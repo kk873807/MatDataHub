@@ -45,12 +45,13 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 
 # ── JWT Tokens ──
-def create_access_token(user_id: int, email: str, tier: str, session_token: str = "") -> str:
+def create_access_token(user_id: int, email: str, tier: str, session_token: str = "", is_admin: bool = False) -> str:
     """Create a JWT access token with user info embedded."""
     payload = {
         "sub": str(user_id),
         "email": email,
         "tier": tier,
+        "is_admin": is_admin,
         "sid": session_token,  # session ID for single-session enforcement
         "exp": datetime.now(timezone.utc) + timedelta(hours=JWT_EXPIRY_HOURS),
         "iat": datetime.now(timezone.utc),

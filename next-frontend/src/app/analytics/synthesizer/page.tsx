@@ -1,7 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeft, Layers, Loader2, Beaker } from "lucide-react";
+import { ArrowLeft, Layers, Loader2, Beaker, Lock } from "lucide-react";
+import { API } from "@/lib/api";
 
 export default function CompositeSynthesizer() {
   const [allMaterials, setAllMaterials] = useState<any[]>([]);
@@ -11,18 +12,45 @@ export default function CompositeSynthesizer() {
   
   const [result, setResult] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [userTier, setUserTier] = useState("free");
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  // Auth check on mount
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setIsAuthenticated(false);
+      return;
+    }
+    fetch(`${API}/auth/me`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(async r => {
+        if (r.ok) {
+          const data = await r.json();
+          setIsAuthenticated(true);
+          setUserTier(data.tier);
+          setIsAdmin(data.is_admin || false);
+        } else {
+          setIsAuthenticated(false);
+        }
+      })
+      .catch(() => setIsAuthenticated(false));
+  }, []);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/v1/materials?per_page=100")
+    if (isAuthenticated === false) return;
+    fetch(`${API}/materials?per_page=100`)
       .then(res => res.json())
       .then(data => setAllMaterials(data.materials || []));
-  }, []);
+  }, [isAuthenticated]);
 
   const handleSynthesize = () => {
     if (!matA || !matB) return;
     setLoading(true);
     
-    // Simulate API call for Rule of Mixtures calculation
+    // Rule of Mixtures calculation (client-side)
     setTimeout(() => {
       const objA = allMaterials.find(m => m.id.toString() === matA);
       const objB = allMaterials.find(m => m.id.toString() === matB);
@@ -32,10 +60,10 @@ export default function CompositeSynthesizer() {
         const vB = 1 - vA;
         
         // Rule of Mixtures (Upper Bound)
-        const density = (objA.density * vA) + (objB.density * vB);
-        const elastic_modulus = (objA.elastic_modulus * vA) + (objB.elastic_modulus * vB);
-        const tensile = (objA.tensile_strength_min * vA) + (objB.tensile_strength_min * vB);
-        const cost = (objA.cost_per_kg_min * vA) + (objB.cost_per_kg_min * vB);
+        const density = ((objA.density || 0) * vA) + ((objB.density || 0) * vB);
+        const elastic_modulus = ((objA.elastic_modulus || 0) * vA) + ((objB.elastic_modulus || 0) * vB);
+        const tensile = ((objA.tensile_strength_min || 0) * vA) + ((objB.tensile_strength_min || 0) * vB);
+        const cost = ((objA.cost_per_kg_min || 0) * vA) + ((objB.cost_per_kg_min || 0) * vB);
         
         setResult({
           name: `Composite: ${vA*100}% ${objA.name} / ${vB*100}% ${objB.name}`,
@@ -48,6 +76,64 @@ export default function CompositeSynthesizer() {
       setLoading(false);
     }, 600);
   };
+
+  // Not authenticated — Sign In Required screen
+  if (isAuthenticated === false) {
+    return (
+      <main className="flex flex-col p-6 lg:p-10 w-full h-full">
+        <div className="w-full max-w-4xl mx-auto space-y-6">
+          <Link href="/analytics" className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors">
+            <ArrowLeft className="w-4 h-4" /> Back to Analytics
+          </Link>
+          
+          <div className="p-10 mt-10 rounded-3xl bg-slate-900 border border-cyan-500/30 text-center relative overflow-hidden flex flex-col items-center justify-center">
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan-900/20 to-transparent"></div>
+            <div className="w-20 h-20 bg-cyan-950 rounded-full flex items-center justify-center mb-6 relative z-10 border border-cyan-500/50">
+              <Lock className="w-10 h-10 text-cyan-500" />
+            </div>
+            
+            <h2 className="text-3xl font-bold text-white mb-4 relative z-10">Sign In Required</h2>
+            <p className="text-slate-300 relative z-10 max-w-2xl mx-auto mb-8 text-lg">
+              You must be signed in to use the Composite Material Synthesizer.
+            </p>
+            
+            <Link href="/account" className="relative z-10 px-8 py-4 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl font-bold transition-all shadow-lg hover:scale-105">
+              Sign In or Register
+            </Link>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  // Authenticated but wrong tier — Upgrade Required
+  if (!isAdmin && !["pro", "advanced"].includes(userTier)) {
+    return (
+      <main className="flex flex-col p-6 lg:p-10 w-full h-full">
+        <div className="w-full max-w-4xl mx-auto space-y-6">
+          <Link href="/analytics" className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors">
+            <ArrowLeft className="w-4 h-4" /> Back to Analytics
+          </Link>
+          
+          <div className="p-10 mt-10 rounded-3xl bg-slate-900 border border-yellow-500/30 text-center relative overflow-hidden flex flex-col items-center justify-center">
+            <div className="absolute inset-0 bg-gradient-to-br from-yellow-900/20 to-transparent"></div>
+            <div className="w-20 h-20 bg-yellow-950 rounded-full flex items-center justify-center mb-6 relative z-10 border border-yellow-500/50">
+              <Lock className="w-10 h-10 text-yellow-500" />
+            </div>
+            
+            <h2 className="text-3xl font-bold text-white mb-4 relative z-10">Upgrade Required</h2>
+            <p className="text-slate-300 relative z-10 max-w-2xl mx-auto mb-8 text-lg">
+              The Composite Material Synthesizer is a Pro feature. Upgrade your account to unlock this tool.
+            </p>
+            
+            <Link href="/account" className="relative z-10 px-8 py-4 bg-yellow-600 hover:bg-yellow-700 text-white rounded-xl font-bold transition-all shadow-lg hover:scale-105">
+              Upgrade Account
+            </Link>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="flex flex-col p-6 lg:p-10 w-full h-full overflow-y-auto">

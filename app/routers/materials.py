@@ -258,14 +258,13 @@ def compare_materials(
     request: Request,
     ids: List[int] = Query(..., description="Material IDs to compare, e.g. ?ids=1&ids=2&ids=3"),
     db: Session = Depends(get_db),
-    current_user: Optional[User] = Depends(get_optional_user),
+    current_user: User = Depends(get_current_user),
 ):
     """
     Fetch full details for a set of materials to compare side-by-side.
 
-    No login is required to compare — but the count allowed is capped by
-    tier (TIER_LIMITS[tier]['compare_max']). Not-logged-in visitors get the
-    free-tier cap.
+    Requires login. Count allowed is capped by tier (TIER_LIMITS[tier]['compare_max']).
+    Admin users have no limits.
 
     Example:
         GET /materials/compare?ids=12&ids=45&ids=69
@@ -275,8 +274,12 @@ def compare_materials(
     limit = tier_config["compare_max"]
 
     if len(ids) == 0:
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, "Must provide at least 1 material ID.")
-        
+        return []
+
+    # Admin bypasses limits
+    if current_user and current_user.is_admin:
+        limit = float('inf')
+
     if len(ids) > limit:
         raise HTTPException(
             status_code=403,
@@ -495,7 +498,7 @@ def create_custom_material(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    if current_user.tier != "advanced":
+    if current_user.tier != "advanced" and not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Custom Materials are exclusively available on the Advanced tier.")
     
     db_mat = CustomMaterial(**mat.model_dump(), user_id=current_user.id)
@@ -509,7 +512,7 @@ def get_my_custom_materials(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    if current_user.tier != "advanced":
+    if current_user.tier != "advanced" and not current_user.is_admin:
         return []
     return db.query(CustomMaterial).filter(CustomMaterial.user_id == current_user.id).all()
 
@@ -522,7 +525,8 @@ def get_price_history(
 ):
     # Pro check
     tier = current_user.tier if current_user else "free"
-    if tier not in ["pro", "advanced"]:
+    is_admin = current_user.is_admin if current_user else False
+    if tier not in ["pro", "advanced"] and not is_admin:
         raise HTTPException(
             status_code=403,
             detail="Historical Price Tracking is a Pro+ feature."
@@ -570,10 +574,13 @@ class SubstitutionRequest(BaseModel):
     weights: dict
 
 @router.post("/substitute", tags=["Pro Features"])
-def find_substitutes(req: SubstitutionRequest, db: Session = Depends(get_db)):
+def find_substitutes(req: SubstitutionRequest, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """
     Pro feature: Find alternative materials based on weighted parameters.
     """
+    if current_user.tier not in ["pro", "advanced"] and not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Material Substitution is a Pro feature.")
+
     from app.workflows import SubstitutionEngine
     engine = SubstitutionEngine(db)
     results = engine.find_alternatives(req.base_material_id, req.weights)
@@ -603,11 +610,19 @@ def analyze_bom(
     file: UploadFile = File(...),
     material_col: str = Form(...),
     weight_col: str = Form(...),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     """
     Enterprise feature: Analyze a BOM CSV for ESG and Obsolescence.
+    Requires Admin or Advanced tier.
     """
+    if not current_user.is_admin and current_user.tier != "advanced":
+        raise HTTPException(
+            status_code=403, 
+            detail="Supply Chain Risk & CBAM modeling requires an Enterprise (Advanced) tier or Admin access."
+        )
+
     from app.workflows import BOMProcessor
     contents = file.file.read()
     df = pd.read_csv(io.BytesIO(contents))

@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { BookOpen, HelpCircle, LifeBuoy, Send, Loader2, CheckCircle2, Search, ChevronDown, Clock, ArrowRight, Image as ImageIcon } from "lucide-react";
+import { API } from "@/lib/api";
 
 export default function ResourcesPage() {
   const [activeTab, setActiveTab] = useState<"faqs" | "blogs" | "support">("faqs");
@@ -49,7 +50,7 @@ export default function ResourcesPage() {
         image_data: ticket.image_data,
         page_context: "Support Ticket"
       };
-      const res = await fetch("http://127.0.0.1:8000/api/v1/feedback/", {
+      const res = await fetch(`${API}/feedback/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)

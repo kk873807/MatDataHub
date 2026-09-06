@@ -1,13 +1,17 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeft, Scale, Loader2, Info, Plus, X, Download } from "lucide-react";
+import { ArrowLeft, Scale, Loader2, Info, Plus, X, Download, Lock } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { API } from "@/lib/api";
 
 export default function CompareMaterials() {
+  const router = useRouter();
   const [allMaterials, setAllMaterials] = useState<any[]>([]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [comparison, setComparison] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   // Colors for up to 5 materials
   const colors = [
@@ -18,19 +22,35 @@ export default function CompareMaterials() {
     { hex: "#ec4899", bg: "rgba(236, 72, 153, 0.3)" }  // pink
   ];
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setIsAuthenticated(false);
+      return;
+    }
+    fetch(`${API}/auth/me`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(r => {
+        setIsAuthenticated(r.ok);
+      })
+      .catch(() => setIsAuthenticated(false));
+  }, []);
+
   // Fetch list of materials for dropdowns
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/v1/materials?per_page=100")
+    if (isAuthenticated === false) return;
+    fetch(`${API}/materials?per_page=100`)
       .then(res => res.json())
       .then(data => setAllMaterials(data.materials || []));
-  }, []);
+  }, [isAuthenticated]);
 
   // Fetch comparison
   useEffect(() => {
     if (selectedIds.length > 0) {
       setLoading(true);
       const queryParams = selectedIds.map(id => `ids=${id}`).join("&");
-      fetch(`http://127.0.0.1:8000/api/v1/materials/compare?${queryParams}`)
+      fetch(`${API}/materials/compare?${queryParams}`)
         .then(res => res.json())
         .then(data => {
           if (Array.isArray(data)) {
@@ -198,6 +218,33 @@ export default function CompareMaterials() {
     }
     return vals[bestIdx] !== null ? bestIdx : -1;
   };
+
+  if (isAuthenticated === false) {
+    return (
+      <main className="flex flex-col p-6 lg:p-10 w-full h-full">
+        <div className="w-full max-w-5xl mx-auto space-y-6">
+          <Link href="/analytics" className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors">
+            <ArrowLeft className="w-4 h-4" /> Back to Analytics
+          </Link>
+          
+          <div className="p-10 mt-10 rounded-3xl bg-slate-900 border border-blue-500/30 text-center relative overflow-hidden flex flex-col items-center justify-center">
+            <div className="w-20 h-20 bg-blue-950 rounded-full flex items-center justify-center mb-6 relative z-10 border border-blue-500/50">
+              <Lock className="w-10 h-10 text-blue-500" />
+            </div>
+            
+            <h2 className="text-3xl font-bold text-white mb-4 relative z-10">Sign In Required</h2>
+            <p className="text-slate-300 relative z-10 max-w-2xl mx-auto mb-8 text-lg">
+              You must be signed in to use the Multi-Material Compare tool. 
+            </p>
+            
+            <Link href="/account" className="relative z-10 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-all shadow-lg hover:scale-105">
+              Sign In or Register
+            </Link>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="flex flex-col p-6 lg:p-10 w-full h-full overflow-y-auto">

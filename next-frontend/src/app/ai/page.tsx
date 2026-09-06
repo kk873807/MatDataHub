@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Bot, Send, Loader2, Sparkles, Lock, ArrowUpRight, ChevronRight } from "lucide-react";
 import Link from "next/link";
+import { API } from "@/lib/api";
 
 type Message = {
   role: "user" | "ai";
@@ -28,7 +29,7 @@ export default function AskAIPage() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) { setTier("free"); return; }
-    fetch("http://127.0.0.1:8000/api/v1/auth/me", {
+    fetch(`${API}/auth/me`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(r => r.json())
@@ -49,7 +50,7 @@ export default function AskAIPage() {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://127.0.0.1:8000/api/v1/ai/advise", {
+      const res = await fetch(`${API}/ai/advise`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

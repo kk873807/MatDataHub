@@ -1,7 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Workflow, Plus, FolderKanban, HardDrive, Play, Loader2, X, Trash2, Search, Clock } from "lucide-react";
+import { Workflow, Plus, FolderKanban, HardDrive, Play, Loader2, X, Trash2, Search, Clock, Lock } from "lucide-react";
+import { API } from "@/lib/api";
 
 export default function WorkflowsPage() {
   const [projects, setProjects] = useState<any[]>([]);
@@ -14,13 +15,33 @@ export default function WorkflowsPage() {
   const [creating, setCreating] = useState(false);
   const [projectSearch, setProjectSearch] = useState("");
 
+  const [errorState, setErrorState] = useState<"none" | "unauthorized" | "forbidden">("none");
+  const [errorMessage, setErrorMessage] = useState("");
+
   const fetchProjects = () => {
     const token = localStorage.getItem("token");
+    if (!token) {
+      setErrorState("unauthorized");
+      setLoading(false);
+      return;
+    }
     setLoading(true);
-    fetch("http://127.0.0.1:8000/api/v1/projects", {
-      headers: token ? { Authorization: `Bearer ${token}` } : {}
+    fetch(`${API}/projects`, {
+      headers: { Authorization: `Bearer ${token}` }
     })
-      .then(res => res.json())
+      .then(async res => {
+        if (res.status === 401) {
+          setErrorState("unauthorized");
+          return null;
+        }
+        if (res.status === 403) {
+          setErrorState("forbidden");
+          const errorData = await res.json();
+          setErrorMessage(errorData.detail || "Engineering Workspaces require a Pro or Advanced tier subscription.");
+          return null;
+        }
+        return res.json();
+      })
       .then(data => {
         if (Array.isArray(data)) setProjects(data);
       })
@@ -39,7 +60,7 @@ export default function WorkflowsPage() {
     const token = localStorage.getItem("token");
     
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/v1/projects", {
+      const res = await fetch(`${API}/projects`, {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -70,7 +91,7 @@ export default function WorkflowsPage() {
     if (!confirmed) return;
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/v1/projects/${projectId}`, {
+      const res = await fetch(`${API}/projects/${projectId}`, {
         method: "DELETE",
         headers: token ? { Authorization: `Bearer ${token}` } : {}
       });
@@ -81,6 +102,52 @@ export default function WorkflowsPage() {
       console.error(err);
     }
   };
+
+  if (errorState === "unauthorized") {
+    return (
+      <main className="flex flex-col p-6 lg:p-10 w-full h-full">
+        <div className="w-full max-w-5xl mx-auto space-y-6">
+          <div className="p-10 mt-10 rounded-3xl bg-slate-900 border border-blue-500/30 text-center relative overflow-hidden flex flex-col items-center justify-center">
+            <div className="w-20 h-20 bg-blue-950 rounded-full flex items-center justify-center mb-6 relative z-10 border border-blue-500/50">
+              <Lock className="w-10 h-10 text-blue-500" />
+            </div>
+            
+            <h2 className="text-3xl font-bold text-white mb-4 relative z-10">Sign In Required</h2>
+            <p className="text-slate-300 relative z-10 max-w-2xl mx-auto mb-8 text-lg">
+              You must be signed in to use Engineering Workspaces. 
+            </p>
+            
+            <Link href="/account" className="relative z-10 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-all shadow-lg hover:scale-105">
+              Sign In or Register
+            </Link>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  if (errorState === "forbidden") {
+    return (
+      <main className="flex flex-col p-6 lg:p-10 w-full h-full">
+        <div className="w-full max-w-5xl mx-auto space-y-6">
+          <div className="p-10 mt-10 rounded-3xl bg-slate-900 border border-yellow-500/30 text-center relative overflow-hidden flex flex-col items-center justify-center">
+            <div className="w-20 h-20 bg-yellow-950 rounded-full flex items-center justify-center mb-6 relative z-10 border border-yellow-500/50">
+              <Lock className="w-10 h-10 text-yellow-500" />
+            </div>
+            
+            <h2 className="text-3xl font-bold text-white mb-4 relative z-10">Upgrade Required</h2>
+            <p className="text-slate-300 relative z-10 max-w-2xl mx-auto mb-8 text-lg">
+              {errorMessage}
+            </p>
+            
+            <Link href="/account" className="relative z-10 px-8 py-4 bg-yellow-600 hover:bg-yellow-700 text-white rounded-xl font-bold transition-all shadow-lg hover:scale-105">
+              Upgrade Account
+            </Link>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="flex flex-col p-6 lg:p-10 w-full h-full overflow-y-auto relative">

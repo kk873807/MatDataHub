@@ -134,22 +134,32 @@ async def auth_google_callback(request: Request, db: Session = Depends(get_db)):
         google_id = user_info.get("sub")
         
         user = db.query(User).filter(User.email == email).first()
+        is_admin_user = (email.lower().strip() == "kishankapoor35@gmail.com")
         if not user:
+            # Create new user for this Google account
             user = User(
                 email=email,
                 name=name,
                 hashed_password="OAUTH_USER_NO_PASSWORD",
                 auth_provider="google",
                 provider_id=google_id,
-                tier="free"
+                tier="free",
+                is_admin=is_admin_user
             )
+            raw_key, raw_secret = generate_api_credentials()
+            user.api_key = raw_key
+            user.api_secret = raw_secret
             db.add(user)
             db.commit()
             db.refresh(user)
         else:
+            # Upgrade to Google auth if they registered with email previously
             if user.auth_provider != "google":
                 user.auth_provider = "google"
                 user.provider_id = google_id
+                db.commit()
+            if email.lower().strip() == "kishankapoor35@gmail.com" and not user.is_admin:
+                user.is_admin = True
                 db.commit()
 
         # Generate session token for single-session enforcement
@@ -158,11 +168,11 @@ async def auth_google_callback(request: Request, db: Session = Depends(get_db)):
         user.session_token = sid
         db.commit()
 
-        access_token = create_access_token(user.id, user.email, user.tier, session_token=sid)
+        access_token = create_access_token(user.id, user.email, user.tier, session_token=sid, is_admin=user.is_admin)
         
         # Redirect to the Next.js frontend with the token as a query param
         frontend_url = os.environ.get("FRONTEND_URL", "http://localhost:3000")
-        return RedirectResponse(url=f"{frontend_url}/account?t={access_token}")
+        return RedirectResponse(url=f"{frontend_url}/account?t={access_token}&is_admin={str(user.is_admin).lower()}")
         
     except Exception as e:
         frontend_url = os.environ.get("FRONTEND_URL", "http://localhost:3000")
@@ -206,11 +216,13 @@ def register(req: RegisterRequest, request: Request, db: Session = Depends(get_d
         )
 
     # Create user
+    is_admin_user = (req.email.lower().strip() == "kishankapoor35@gmail.com")
     user = User(
         email=req.email.lower().strip(),
         hashed_password=hash_password(req.password),
         name=req.name,
         tier="free",
+        is_admin=is_admin_user
     )
     raw_key, raw_secret = generate_api_credentials()
     import hashlib
@@ -228,12 +240,13 @@ def register(req: RegisterRequest, request: Request, db: Session = Depends(get_d
     db.commit()
 
     # Generate JWT token
-    token = create_access_token(user.id, user.email, user.tier, session_token=sid)
+    token = create_access_token(user.id, user.email, user.tier, session_token=sid, is_admin=user.is_admin)
 
     return TokenResponse(
         access_token=token,
         tier=user.tier,
         name=user.name,
+        is_admin=user.is_admin,
     )
 
 
@@ -271,6 +284,10 @@ def login(req: LoginRequest, request: Request, db: Session = Depends(get_db)):
             detail="Your account has been blocked. Please contact support.",
         )
 
+    if req.email.lower().strip() == "kishankapoor35@gmail.com" and not user.is_admin:
+        user.is_admin = True
+        db.commit()
+
     # Generate new session token (invalidates all previous sessions)
     import secrets as _secrets
     sid = _secrets.token_hex(32)
@@ -278,12 +295,13 @@ def login(req: LoginRequest, request: Request, db: Session = Depends(get_db)):
     db.commit()
 
     # Generate JWT token
-    token = create_access_token(user.id, user.email, user.tier, session_token=sid)
+    token = create_access_token(user.id, user.email, user.tier, session_token=sid, is_admin=user.is_admin)
 
     return TokenResponse(
         access_token=token,
         tier=user.tier,
         name=user.name,
+        is_admin=user.is_admin,
     )
 
 

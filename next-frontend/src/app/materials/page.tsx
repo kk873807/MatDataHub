@@ -1,8 +1,9 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { Search, Filter, Loader2, Database, SlidersHorizontal } from "lucide-react";
+import { Search, Filter, Loader2, Database, SlidersHorizontal, X, ArrowDownAZ, TrendingUp, Scale, Zap, Beaker, FileBox } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { API } from "@/lib/api";
 
 export default function MaterialsPage() {
   const [materials, setMaterials] = useState<any[]>([]);
@@ -19,8 +20,10 @@ export default function MaterialsPage() {
   const [minTensile, setMinTensile] = useState<number | "">("");
   const [maxCost, setMaxCost] = useState<number | "">("");
   const [minThermal, setMinThermal] = useState<number | "">("");
-  const [perPage, setPerPage] = useState(20);
+  const [perPage, setPerPage] = useState(50);
   
+  // Sorting
+  const [sortBy, setSortBy] = useState("name_asc");
   const [showFilters, setShowFilters] = useState(false);
 
   // Close suggestions when clicking outside
@@ -39,7 +42,7 @@ export default function MaterialsPage() {
     if (search.length < 2) { setSuggestions([]); return; }
     const timer = setTimeout(async () => {
       try {
-        const res = await fetch(`http://127.0.0.1:8000/api/v1/materials/autocomplete?q=${encodeURIComponent(search)}`);
+        const res = await fetch(`${API}/materials/autocomplete?q=${encodeURIComponent(search)}`);
         if (res.ok) {
           const data = await res.json();
           setSuggestions(data);
@@ -54,10 +57,10 @@ export default function MaterialsPage() {
     const fetchMaterials = async () => {
       setLoading(true);
       try {
-        let url = `http://127.0.0.1:8000/api/v1/materials/?per_page=${perPage}`;
+        let url = `${API}/materials/?per_page=${perPage}`;
         
         if (search) {
-          url = `http://127.0.0.1:8000/api/v1/materials/search?q=${encodeURIComponent(search)}&per_page=${perPage}`;
+          url = `${API}/materials/search?q=${encodeURIComponent(search)}&per_page=${perPage}`;
         } else {
           if (category) url += `&category=${encodeURIComponent(category)}`;
           if (minTensile !== "") url += `&min_tensile=${minTensile}`;
@@ -79,62 +82,96 @@ export default function MaterialsPage() {
     return () => clearTimeout(debounce);
   }, [search, category, minTensile, maxCost, minThermal, perPage]);
 
+  // Client-side sorting
+  const sortedMaterials = [...materials].sort((a, b) => {
+    if (sortBy === "name_asc") return a.name.localeCompare(b.name);
+    if (sortBy === "cost_asc") return (a.cost_per_kg_min || 999999) - (b.cost_per_kg_min || 999999);
+    if (sortBy === "cost_desc") return (b.cost_per_kg_min || 0) - (a.cost_per_kg_min || 0);
+    if (sortBy === "tensile_desc") return (b.tensile_strength_min || 0) - (a.tensile_strength_min || 0);
+    if (sortBy === "density_asc") return (a.density || 999999) - (b.density || 999999);
+    return 0;
+  });
+
+  const activeFiltersCount = (category ? 1 : 0) + (minTensile !== "" ? 1 : 0) + (maxCost !== "" ? 1 : 0) + (minThermal !== "" ? 1 : 0);
+
   return (
-    <main className="flex flex-col p-6 lg:p-10 w-full">
+    <main className="flex flex-col p-6 lg:p-10 w-full overflow-y-auto">
       <div className="w-full max-w-7xl mx-auto flex flex-col gap-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div className="space-y-1">
-            <h1 className="text-3xl font-bold text-white flex items-center gap-2">
+            <h1 className="text-3xl font-bold text-white flex items-center gap-3">
               <Database className="w-8 h-8 text-emerald-500" /> Material Database
             </h1>
-            <p className="text-slate-200">Search and filter verified engineering materials.</p>
+            <p className="text-slate-300">Search and filter verified engineering materials.</p>
           </div>
         </div>
 
         {/* Search & Top Filters */}
-        <div className="flex flex-col bg-slate-900 rounded-xl border border-slate-800 p-4 gap-4">
-          <div className="flex flex-col md:flex-row gap-4">
+        <div className="flex flex-col bg-slate-900 rounded-2xl border border-slate-800 p-5 gap-5 shadow-lg">
+          <div className="flex flex-col lg:flex-row gap-4">
             <div className="relative flex-1" ref={searchRef}>
-              <Search className="absolute left-3 top-3 w-5 h-5 text-slate-300" />
+              <Search className="absolute left-4 top-3.5 w-5 h-5 text-slate-400" />
               <input
                 type="text"
-                placeholder="Search by name, grade, standard, application..."
+                placeholder="Search materials (e.g. Aluminum 6061)..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-10 pr-4 py-2.5 text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
+                onFocus={() => setShowSuggestions(suggestions.length > 0)}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-12 pr-4 py-3 text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all placeholder:text-slate-500"
               />
-              
-              {/* Autocomplete Suggestions Dropdown */}
-              {showSuggestions && suggestions.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl z-50 overflow-hidden">
-                  {suggestions.map((s) => (
-                    <button
-                      key={s.id}
-                      onClick={() => {
-                        setSearch(s.name);
-                        setShowSuggestions(false);
-                      }}
-                      className="w-full text-left px-4 py-3 hover:bg-slate-800 transition-colors flex items-center gap-3 border-b border-slate-800/50 last:border-0"
-                    >
-                      <Search className="w-4 h-4 text-slate-500 shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-white text-sm font-medium truncate">{s.name}</p>
-                        <p className="text-slate-500 text-xs">{s.category}{s.grade ? ` · ${s.grade}` : ""}</p>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              )}
+              <AnimatePresence>
+                {showSuggestions && suggestions.length > 0 && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="absolute z-20 w-full mt-2 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl max-h-60 overflow-y-auto overflow-x-hidden"
+                  >
+                    {suggestions.map((s) => (
+                      <button
+                        key={s.id}
+                        onClick={() => {
+                          setSearch(s.name);
+                          setShowSuggestions(false);
+                        }}
+                        className="w-full text-left px-5 py-3 hover:bg-slate-800 transition-colors flex items-center gap-4 border-b border-slate-800/50 last:border-0"
+                      >
+                        <Search className="w-4 h-4 text-emerald-500 shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-white text-sm font-semibold truncate">{s.name}</p>
+                          <p className="text-slate-400 text-xs mt-0.5">{s.category}{s.grade ? ` • ${s.grade}` : ""}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
             
-            <button 
-              onClick={() => setShowFilters(!showFilters)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border transition-colors ${showFilters ? 'bg-emerald-900/30 border-emerald-500/50 text-emerald-400' : 'bg-slate-950 border-slate-800 text-slate-300 hover:bg-slate-800'}`}
-            >
-              <SlidersHorizontal className="w-5 h-5" />
-              Advanced Filters
-            </button>
+            <div className="flex gap-3">
+              <div className="relative">
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="h-full appearance-none bg-slate-950 border border-slate-800 rounded-xl pl-4 pr-10 py-3 text-slate-300 font-medium hover:border-slate-700 focus:border-emerald-500 outline-none transition-colors"
+                >
+                  <option value="name_asc">Name (A-Z)</option>
+                  <option value="cost_asc">Cost (Low-High)</option>
+                  <option value="cost_desc">Cost (High-Low)</option>
+                  <option value="tensile_desc">Tensile (High-Low)</option>
+                  <option value="density_asc">Density (Low-High)</option>
+                </select>
+                <ArrowDownAZ className="w-4 h-4 text-slate-500 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+              </div>
+
+              <button 
+                onClick={() => setShowFilters(!showFilters)}
+                className={`flex items-center gap-2 px-5 py-3 rounded-xl border transition-all font-semibold ${showFilters ? 'bg-emerald-900/40 border-emerald-500 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)]' : 'bg-slate-950 border-slate-800 text-slate-300 hover:bg-slate-800'}`}
+              >
+                <SlidersHorizontal className="w-5 h-5" />
+                Filters {activeFiltersCount > 0 && <span className="flex items-center justify-center w-5 h-5 bg-emerald-500 text-slate-950 rounded-full text-xs ml-1">{activeFiltersCount}</span>}
+              </button>
+            </div>
           </div>
 
           {/* Advanced Filters Panel */}
@@ -144,16 +181,15 @@ export default function MaterialsPage() {
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
-                className="overflow-hidden border-t border-slate-800 pt-4 mt-2"
+                className="overflow-hidden border-t border-slate-800/60 pt-5 mt-1"
               >
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                  {/* Category */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5">
                   <div>
-                    <label className="block text-xs text-slate-300 mb-1">Material Category</label>
+                    <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wider">Material Category</label>
                     <select
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white appearance-none outline-none focus:border-emerald-500"
+                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-sm text-white appearance-none outline-none focus:border-emerald-500 transition-colors"
                     >
                       <option className="bg-slate-900" value="">All Categories</option>
                       <option className="bg-slate-900" value="Metal">Metals</option>
@@ -162,106 +198,165 @@ export default function MaterialsPage() {
                       <option className="bg-slate-900" value="Composite">Composites</option>
                     </select>
                   </div>
-                  
-                  {/* Min Tensile */}
                   <div>
-                    <label className="block text-xs text-slate-300 mb-1">Min Tensile (MPa)</label>
+                    <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wider">Min Tensile (MPa)</label>
                     <input
                       type="number"
-                      placeholder="0"
+                      placeholder="e.g. 300"
                       value={minTensile}
                       onChange={(e) => setMinTensile(e.target.value ? Number(e.target.value) : "")}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-emerald-500"
+                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-sm text-white outline-none focus:border-emerald-500 transition-colors"
                     />
                   </div>
-
-                  {/* Max Cost */}
                   <div>
-                    <label className="block text-xs text-slate-300 mb-1">Max Cost (Rs./kg)</label>
+                    <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wider">Max Cost (₹/kg)</label>
                     <input
                       type="number"
-                      placeholder="0"
+                      placeholder="e.g. 500"
                       value={maxCost}
                       onChange={(e) => setMaxCost(e.target.value ? Number(e.target.value) : "")}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-emerald-500"
+                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-sm text-white outline-none focus:border-emerald-500 transition-colors"
                     />
                   </div>
-
-                  {/* Min Thermal */}
                   <div>
-                    <label className="block text-xs text-slate-300 mb-1">Min Thermal (W/m·K)</label>
+                    <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wider">Min Thermal (W/m·K)</label>
                     <input
                       type="number"
-                      placeholder="0.00"
+                      placeholder="e.g. 15"
                       step="0.1"
                       value={minThermal}
                       onChange={(e) => setMinThermal(e.target.value ? Number(e.target.value) : "")}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-emerald-500"
+                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-sm text-white outline-none focus:border-emerald-500 transition-colors"
                     />
                   </div>
-
-                  {/* Per Page */}
                   <div>
-                    <label className="block text-xs text-slate-300 mb-1">Results per page</label>
+                    <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wider">Results Limit</label>
                     <select
                       value={perPage}
                       onChange={(e) => setPerPage(Number(e.target.value))}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white appearance-none outline-none focus:border-emerald-500"
+                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-sm text-white appearance-none outline-none focus:border-emerald-500 transition-colors"
                     >
-                      <option className="bg-slate-900" value={20}>20</option>
-                      <option className="bg-slate-900" value={50}>50</option>
-                      <option className="bg-slate-900" value={100}>100</option>
+                      <option className="bg-slate-900" value={20}>20 materials</option>
+                      <option className="bg-slate-900" value={50}>50 materials</option>
+                      <option className="bg-slate-900" value={100}>100 materials</option>
                     </select>
                   </div>
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
+          
+          {/* Active Filter Tags */}
+          {activeFiltersCount > 0 && (
+            <div className="flex flex-wrap gap-2 pt-3 border-t border-slate-800/50 mt-1">
+              <span className="text-xs font-semibold text-slate-500 flex items-center mr-2">Active:</span>
+              {category && (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-900/30 text-emerald-400 border border-emerald-800/50 rounded-full text-xs font-medium">
+                  {category}
+                  <button onClick={() => setCategory("")} className="hover:text-emerald-200"><X className="w-3 h-3" /></button>
+                </span>
+              )}
+              {minTensile !== "" && (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-900/30 text-blue-400 border border-blue-800/50 rounded-full text-xs font-medium">
+                  Tensile &gt; {minTensile} MPa
+                  <button onClick={() => setMinTensile("")} className="hover:text-blue-200"><X className="w-3 h-3" /></button>
+                </span>
+              )}
+              {maxCost !== "" && (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-900/30 text-amber-400 border border-amber-800/50 rounded-full text-xs font-medium">
+                  Cost &lt; ₹{maxCost}/kg
+                  <button onClick={() => setMaxCost("")} className="hover:text-amber-200"><X className="w-3 h-3" /></button>
+                </span>
+              )}
+              {minThermal !== "" && (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-orange-900/30 text-orange-400 border border-orange-800/50 rounded-full text-xs font-medium">
+                  Thermal &gt; {minThermal}
+                  <button onClick={() => setMinThermal("")} className="hover:text-orange-200"><X className="w-3 h-3" /></button>
+                </span>
+              )}
+              <button onClick={() => { setCategory(""); setMinTensile(""); setMaxCost(""); setMinThermal(""); }} className="text-xs text-slate-400 hover:text-white ml-2 underline underline-offset-2">
+                Clear all
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div className="flex justify-between items-center text-sm">
+          <span className="text-slate-400 font-medium">
+            {!loading && (
+              <>Showing <span className="text-white font-bold">{sortedMaterials.length}</span> {sortedMaterials.length === 1 ? 'material' : 'materials'}</>
+            )}
+          </span>
         </div>
 
         {/* Results */}
         {loading ? (
-          <div className="flex justify-center items-center py-20">
-            <Loader2 className="w-8 h-8 animate-spin text-emerald-500" />
+          <div className="flex flex-col justify-center items-center py-32 space-y-4">
+            <Loader2 className="w-10 h-10 animate-spin text-emerald-500" />
+            <p className="text-slate-400 font-medium animate-pulse">Searching material database...</p>
           </div>
-        ) : materials.length === 0 ? (
-          <div className="text-center py-20 text-slate-300 bg-slate-900/50 rounded-xl border border-slate-800 border-dashed">
-            No materials found matching your criteria.
+        ) : sortedMaterials.length === 0 ? (
+          <div className="text-center py-24 bg-slate-900/40 rounded-2xl border border-slate-800/60 border-dashed flex flex-col items-center justify-center">
+            <div className="w-20 h-20 bg-slate-800/50 rounded-full flex items-center justify-center mb-6">
+              <FileBox className="w-10 h-10 text-slate-500" />
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2">No materials found</h3>
+            <p className="text-slate-400 max-w-md mx-auto mb-6">We couldn't find any materials matching your specific filters and search criteria.</p>
+            <button 
+              onClick={() => { setSearch(""); setCategory(""); setMinTensile(""); setMaxCost(""); setMinThermal(""); }}
+              className="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-semibold transition-colors"
+            >
+              Clear all filters
+            </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {materials.map((mat, i) => (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.05 }}
-                key={mat.id}
-              >
-                <Link href={`/materials/${mat.id}`} className="block h-full p-5 rounded-xl bg-slate-900 border border-slate-800 hover:border-emerald-500/50 hover:bg-slate-800/80 transition-all group">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-bold text-white text-lg group-hover:text-emerald-400 transition-colors line-clamp-1">{mat.name}</h3>
-                  </div>
-                  <div className="inline-block px-2 py-1 bg-slate-800 rounded text-xs text-slate-300 mb-4">
-                    {mat.category} {mat.subcategory ? `• ${mat.subcategory}` : ''}
-                  </div>
-                  
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between border-b border-slate-800 pb-1">
-                      <span className="text-slate-300">Yield Strength</span>
-                      <span className="text-slate-300">{mat.yield_strength_min || '-'} MPa</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            {sortedMaterials.map((mat, i) => {
+              // Determine category color
+              let catColor = "bg-slate-800 text-slate-300 border-slate-700";
+              if (mat.category === "Metal") catColor = "bg-blue-900/30 text-blue-400 border-blue-800/50";
+              if (mat.category === "Polymer") catColor = "bg-purple-900/30 text-purple-400 border-purple-800/50";
+              if (mat.category === "Ceramic") catColor = "bg-orange-900/30 text-orange-400 border-orange-800/50";
+              if (mat.category === "Composite") catColor = "bg-emerald-900/30 text-emerald-400 border-emerald-800/50";
+
+              return (
+                <motion.div
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: Math.min(i * 0.05, 0.5) }}
+                  key={mat.id}
+                >
+                  <Link href={`/materials/${mat.id}`} className="block h-full flex flex-col p-5 rounded-2xl bg-slate-900 border border-slate-800 hover:border-emerald-500/50 hover:bg-slate-900/80 hover:shadow-xl hover:shadow-emerald-900/10 transition-all group relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-slate-800 to-transparent opacity-20 group-hover:from-emerald-800 transition-colors pointer-events-none rounded-tr-2xl"></div>
+                    
+                    <div className="flex justify-between items-start mb-3 relative z-10">
+                      <h3 className="font-bold text-white text-lg group-hover:text-emerald-400 transition-colors line-clamp-1 pr-2" title={mat.name}>{mat.name}</h3>
                     </div>
-                    <div className="flex justify-between border-b border-slate-800 pb-1">
-                      <span className="text-slate-300">Density</span>
-                      <span className="text-slate-300">{mat.density || '-'} g/cm³</span>
+                    
+                    <div className="mb-5 relative z-10">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${catColor}`}>
+                        {mat.category} {mat.subcategory ? `• ${mat.subcategory}` : ''}
+                      </span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-300">Cost</span>
-                      <span className="text-emerald-400 font-medium">₹{mat.cost_per_kg_min || '-'}/kg</span>
+                    
+                    <div className="space-y-2.5 text-sm mt-auto relative z-10">
+                      <div className="flex justify-between items-center border-b border-slate-800/60 pb-1.5">
+                        <span className="text-slate-400 flex items-center gap-1.5"><TrendingUp className="w-3.5 h-3.5" /> Yield</span>
+                        <span className="text-slate-200 font-medium">{mat.yield_strength_min || '-'} MPa</span>
+                      </div>
+                      <div className="flex justify-between items-center border-b border-slate-800/60 pb-1.5">
+                        <span className="text-slate-400 flex items-center gap-1.5"><Scale className="w-3.5 h-3.5" /> Density</span>
+                        <span className="text-slate-200 font-medium">{mat.density || '-'} g/cm³</span>
+                      </div>
+                      <div className="flex justify-between items-center pt-0.5">
+                        <span className="text-slate-400 flex items-center gap-1.5"><Zap className="w-3.5 h-3.5" /> Est. Cost</span>
+                        <span className="text-emerald-400 font-bold">₹{mat.cost_per_kg_min || '-'}/kg</span>
+                      </div>
                     </div>
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
+                  </Link>
+                </motion.div>
+              );
+            })}
           </div>
         )}
       </div>

@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { ShieldAlert, Check, X, Lock, Users, MessageSquare } from "lucide-react";
+import { API } from "@/lib/api";
 
 export default function AdminDashboard() {
   const [secret, setSecret] = useState("");
@@ -21,10 +22,10 @@ export default function AdminDashboard() {
     setLoading(true);
     try {
       const [reqRes, feedRes] = await Promise.all([
-        fetch("http://127.0.0.1:8000/api/v1/admin/upgrade-requests", {
+        fetch(`${API}/admin/upgrade-requests`, {
           headers: { "X-Admin-Secret": adminSecret }
         }),
-        fetch("http://127.0.0.1:8000/api/v1/feedback/", {
+        fetch(`${API}/feedback/`, {
           headers: { "X-Admin-Secret": adminSecret }
         })
       ]);
@@ -48,7 +49,7 @@ export default function AdminDashboard() {
 
   const handleAction = async (userId: number, action: "approve" | "reject") => {
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/v1/admin/upgrade-requests/${userId}/${action}`, {
+      const res = await fetch(`${API}/admin/upgrade-requests/${userId}/${action}`, {
         method: "POST",
         headers: { "X-Admin-Secret": secret }
       });
@@ -66,7 +67,7 @@ export default function AdminDashboard() {
 
   const handleFeedbackAction = async (fbId: number, action: "delete" | "hide" | "resolve", userId?: number) => {
     try {
-      let url = `http://127.0.0.1:8000/api/v1/feedback/${fbId}`;
+      let url = `${API}/feedback/${fbId}`;
       let method = "DELETE";
       if (action === "hide") { url += "/visibility"; method = "PATCH"; }
       if (action === "resolve") { url += "/resolve"; method = "POST"; }
@@ -81,7 +82,7 @@ export default function AdminDashboard() {
   const handleBlockUser = async (userId: number) => {
     if (!confirm("Are you sure you want to block this user?")) return;
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/v1/admin/users/${userId}/block`, {
+      const res = await fetch(`${API}/admin/users/${userId}/block`, {
         method: "POST", headers: { "X-Admin-Secret": secret }
       });
       if (res.ok) {
@@ -97,7 +98,7 @@ export default function AdminDashboard() {
     const replyText = prompt("Enter official admin reply:");
     if (!replyText) return;
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/v1/feedback/${fbId}/reply`, {
+      const res = await fetch(`${API}/feedback/${fbId}/reply`, {
         method: "POST",
         headers: { "X-Admin-Secret": secret, "Content-Type": "application/json" },
         body: JSON.stringify({ reply_text: replyText })
