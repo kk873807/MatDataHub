@@ -18,11 +18,42 @@ export default function Home() {
             Welcome to the Next Generation
           </div>
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-br from-white via-slate-200 to-slate-500 drop-shadow-sm">
-            MatDataHub OS
+            Welcome to MatDataHub
           </h1>
           <p className="text-base md:text-xl text-slate-400 max-w-2xl mx-auto font-medium">
             Your centralized platform for engineering physics, materials data, and financial analytics.
           </p>
+        </div>
+
+        {/* Platform Guide / Explore Feature */}
+        <div className="pt-10 mb-2">
+          <div className="text-left mb-6">
+            <h2 className="text-2xl font-bold text-white mb-2">Platform Guide</h2>
+            <p className="text-slate-400 text-sm">Explore our toolkit to optimize your engineering workflow.</p>
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-left">
+            <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl hover:border-blue-500/50 transition-colors">
+              <Database className="w-6 h-6 text-blue-400 mb-3" />
+              <h3 className="font-bold text-white text-sm mb-1">Material Database</h3>
+              <p className="text-slate-500 text-xs leading-relaxed">Search 1000+ materials and compare their mechanical, thermal, and electrical properties.</p>
+            </div>
+            <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl hover:border-indigo-500/50 transition-colors">
+              <Calculator className="w-6 h-6 text-indigo-400 mb-3" />
+              <h3 className="font-bold text-white text-sm mb-1">CBAM Calculator</h3>
+              <p className="text-slate-500 text-xs leading-relaxed">Estimate Carbon Border Adjustment Mechanism costs for importing metals into the EU.</p>
+            </div>
+            <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl hover:border-emerald-500/50 transition-colors">
+              <Bot className="w-6 h-6 text-emerald-400 mb-3" />
+              <h3 className="font-bold text-white text-sm mb-1">AI Advisor</h3>
+              <p className="text-slate-500 text-xs leading-relaxed">Ask our AI to recommend alternative materials based on specific use cases and constraints.</p>
+            </div>
+            <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl hover:border-amber-500/50 transition-colors">
+              <Workflow className="w-6 h-6 text-amber-400 mb-3" />
+              <h3 className="font-bold text-white text-sm mb-1">REST API</h3>
+              <p className="text-slate-500 text-xs leading-relaxed">Integrate MatDataHub directly into your internal tools and CI/CD pipelines.</p>
+            </div>
+          </div>
         </div>
 
         {/* Featured Engineering Blog Banner */}
