@@ -14,13 +14,16 @@ export default function WorkflowsPage() {
   const [creating, setCreating] = useState(false);
 
   const fetchProjects = () => {
+    const token = localStorage.getItem("token");
     setLoading(true);
-    fetch("http://127.0.0.1:8000/api/v1/projects")
+    fetch("http://127.0.0.1:8000/api/v1/projects", {
+      headers: token ? { Authorization: `Bearer ${token}` } : {}
+    })
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) setProjects(data);
       })
-      .catch(err => console.error(err))
+      .catch(console.error)
       .finally(() => setLoading(false));
   };
 
@@ -30,13 +33,17 @@ export default function WorkflowsPage() {
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newProjectName) return;
+    if (!newProjectName.trim()) return;
     setCreating(true);
+    const token = localStorage.getItem("token");
     
     try {
       const res = await fetch("http://127.0.0.1:8000/api/v1/projects", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          ...(token ? { "Authorization": `Bearer ${token}` } : {})
+        },
         body: JSON.stringify({ name: newProjectName, description: newProjectDesc })
       });
       if (res.ok) {
@@ -60,9 +67,11 @@ export default function WorkflowsPage() {
       "This action CANNOT be undone or restored."
     );
     if (!confirmed) return;
+    const token = localStorage.getItem("token");
     try {
       const res = await fetch(`http://127.0.0.1:8000/api/v1/projects/${projectId}`, {
-        method: "DELETE"
+        method: "DELETE",
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
       });
       if (res.ok) {
         fetchProjects();
