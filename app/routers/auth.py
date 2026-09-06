@@ -56,7 +56,7 @@ from app.auth import (
     hash_password,
     verify_password,
     create_access_token,
-    generate_api_key,
+    generate_api_credentials,
     get_current_user,
 )
 from app.schemas import (
@@ -202,8 +202,12 @@ def register(req: RegisterRequest, request: Request, db: Session = Depends(get_d
         hashed_password=hash_password(req.password),
         name=req.name,
         tier="free",
-        api_key=generate_api_key(),
     )
+    raw_key, raw_secret = generate_api_credentials()
+    import hashlib
+    user.api_key = raw_key
+    user.api_secret = raw_secret
+    
     db.add(user)
     db.commit()
     db.refresh(user)
