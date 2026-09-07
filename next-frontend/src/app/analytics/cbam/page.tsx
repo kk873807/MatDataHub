@@ -24,6 +24,7 @@ export default function CBAMAnalytics() {
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [resultsData, setResultsData] = useState<any[] | null>(null);
   const [totalCO2, setTotalCO2] = useState(0);
+  const [totalCbamCost, setTotalCbamCost] = useState(0);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -133,6 +134,7 @@ export default function CBAMAnalytics() {
         const headersArr = rows[0].split(",").map(h => h.trim());
         
         let total = 0;
+        let totalCbamEur = 0;
         const parsedData = rows.slice(1).map(row => {
           const values = row.split(",");
           const rowObj: any = {};
@@ -141,12 +143,16 @@ export default function CBAMAnalytics() {
             if (header === "Total_CO2_kg") {
               total += parseFloat(values[index] || "0");
             }
+            if (header === "CBAM_Cost_EUR") {
+              totalCbamEur += parseFloat(values[index] || "0");
+            }
           });
           return rowObj;
         });
 
         setResultsData(parsedData);
         setTotalCO2(total);
+        setTotalCbamCost(totalCbamEur);
       } else if (res.status === 403) {
         setIsLocked(true);
       } else {
@@ -208,8 +214,8 @@ export default function CBAMAnalytics() {
     );
   }
 
-  // Estimated CBAM tax (rough estimate €50 / ton CO2)
-  const estimatedTaxEUR = (totalCO2 / 1000) * 50;
+  // CBAM cost now comes from backend (€75/tCO2e reference price)
+  const estimatedTaxEUR = totalCbamCost;
 
   return (
     <main className="flex flex-col p-6 lg:p-10 w-full h-full overflow-y-auto">
@@ -352,7 +358,7 @@ export default function CBAMAnalytics() {
               </div>
               <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl flex flex-col justify-center">
                 <p className="text-slate-400 font-medium mb-1 flex items-center gap-2"><FileText className="w-4 h-4 text-amber-400" /> Est. CBAM Tax Obligation</p>
-                <h3 className="text-3xl font-bold text-amber-500">€{estimatedTaxEUR.toLocaleString(undefined, { maximumFractionDigits: 2 })} <span className="text-lg text-slate-500 font-normal">(@ €50/ton)</span></h3>
+                <h3 className="text-3xl font-bold text-amber-500">€{estimatedTaxEUR.toLocaleString(undefined, { maximumFractionDigits: 2 })} <span className="text-lg text-slate-500 font-normal">(@ €75/tCO₂e)</span></h3>
               </div>
             </div>
 

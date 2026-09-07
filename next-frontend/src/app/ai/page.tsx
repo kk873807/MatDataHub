@@ -3,6 +3,8 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Bot, Send, Loader2, Sparkles, Lock, ArrowUpRight, ChevronRight } from "lucide-react";
 import Link from "next/link";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { API } from "@/lib/api";
 
 type Message = {
@@ -178,7 +180,37 @@ export default function AskAIPage() {
                   </div>
                 ) : (
                   <div className={`p-4 rounded-2xl text-sm max-w-[85%] space-y-4 ${msg.role === "user" ? "bg-emerald-900/40 border border-emerald-900 rounded-tr-none text-white" : "bg-slate-800 rounded-tl-none text-slate-200"}`}>
-                    <div className="whitespace-pre-wrap">{msg.content}</div>
+                    <div className="prose prose-invert prose-sm max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+                      <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        components={{
+                          h1: ({children}) => <h3 className="text-lg font-bold text-white mt-4 mb-2">{children}</h3>,
+                          h2: ({children}) => <h4 className="text-base font-bold text-white mt-3 mb-2">{children}</h4>,
+                          h3: ({children}) => <h5 className="text-sm font-bold text-blue-300 mt-3 mb-1">{children}</h5>,
+                          p: ({children}) => <p className="text-slate-200 leading-relaxed mb-2">{children}</p>,
+                          strong: ({children}) => <strong className="text-white font-bold">{children}</strong>,
+                          ul: ({children}) => <ul className="list-disc list-inside space-y-1 my-2 text-slate-200">{children}</ul>,
+                          ol: ({children}) => <ol className="list-decimal list-inside space-y-1 my-2 text-slate-200">{children}</ol>,
+                          li: ({children}) => <li className="text-slate-200 leading-relaxed">{children}</li>,
+                          code: ({className, children}) => {
+                            const isBlock = className?.includes("language-");
+                            return isBlock
+                              ? <pre className="bg-slate-900 border border-slate-700 rounded-lg p-3 overflow-x-auto my-2"><code className="text-emerald-400 text-xs">{children}</code></pre>
+                              : <code className="bg-slate-900 text-emerald-400 px-1.5 py-0.5 rounded text-xs">{children}</code>;
+                          },
+                          table: ({children}) => <div className="overflow-x-auto my-3 rounded-lg border border-slate-700"><table className="w-full text-left text-xs">{children}</table></div>,
+                          thead: ({children}) => <thead className="bg-slate-900 text-slate-400 uppercase text-xs">{children}</thead>,
+                          tbody: ({children}) => <tbody className="divide-y divide-slate-700/50">{children}</tbody>,
+                          tr: ({children}) => <tr className="hover:bg-slate-700/30 transition-colors">{children}</tr>,
+                          th: ({children}) => <th className="px-3 py-2 font-semibold whitespace-nowrap">{children}</th>,
+                          td: ({children}) => <td className="px-3 py-2 text-slate-300 whitespace-nowrap">{children}</td>,
+                          blockquote: ({children}) => <blockquote className="border-l-2 border-blue-500 pl-3 my-2 text-slate-400 italic">{children}</blockquote>,
+                          hr: () => <hr className="border-slate-700 my-3" />,
+                        }}
+                      >
+                        {msg.content}
+                      </ReactMarkdown>
+                    </div>
                     {msg.materials && msg.materials.length > 0 && (
                       <div className="mt-4 pt-4 border-t border-slate-700">
                         <h4 className="font-bold flex items-center gap-2 mb-3 text-blue-300"><Sparkles className="w-4 h-4" /> Top Database Matches</h4>
