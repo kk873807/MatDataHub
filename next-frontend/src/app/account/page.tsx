@@ -282,7 +282,7 @@ function AccountDashboardInner() {
                 </div>
                 <div>
                   <h3 className="text-white font-bold">{profile.name || "User"}</h3>
-                  <p className="text-xs text-slate-400">Member since {new Date(profile.created_at).getFullYear()}</p>
+                  <p className="text-xs text-slate-400">Member since {new Date(profile.created_at).toLocaleDateString('en-GB')}</p>
                 </div>
                 <button 
                   onClick={() => {

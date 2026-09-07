@@ -491,7 +491,307 @@ export default function ProjectWorkspace() {
             <p className="text-[10px] uppercase tracking-wider text-slate-500 font-bold">Total Cost</p>
             <p className="text-sm font-bold text-emerald-400">₹{totalCost.toFixed(2)}</p>
           </div>
-          <button className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded text-xs font-semibold transition-colors border border-slate-700">
+          <button
+            onClick={() => {
+              const now = new Date();
+              const dd = String(now.getDate()).padStart(2, "0");
+              const mm = String(now.getMonth() + 1).padStart(2, "0");
+              const yyyy = now.getFullYear();
+              const reportDate = `${dd}/${mm}/${yyyy}`;
+
+              const escapeHtml = (str: any) =>
+                String(str ?? "")
+                  .replace(/&/g, "&amp;")
+                  .replace(/</g, "&lt;")
+                  .replace(/>/g, "&gt;")
+                  .replace(/"/g, "&quot;")
+                  .replace(/'/g, "&#039;");
+
+              const rowsHtml = (enrichedItems || []).map((item: any) => {
+                const mat = item.mat || item.material || {};
+                const matName = mat.name || "Unknown";
+                const category = mat.category || "General";
+                const volume = Number(item.volume_cm3 || 0);
+                const density = Number(mat.density || 0);
+                const massKg = Number(item.mass_kg ?? ((volume * density) / 1000));
+                const unitCost = Number(mat.cost_per_kg_min || 0);
+                const cost = Number(item.cost ?? (massKg * unitCost));
+
+                return `
+                  <tr>
+                    <td style="padding:10px 12px;border:1px solid #e2e8f0;font-weight:500;color:#0f172a;">${escapeHtml(item.part_name)}</td>
+                    <td style="padding:10px 12px;border:1px solid #e2e8f0;color:#2563eb;">${escapeHtml(matName)}</td>
+                    <td style="padding:10px 12px;border:1px solid #e2e8f0;color:#64748b;font-size:12px;">${escapeHtml(category)}</td>
+                    <td style="padding:10px 12px;border:1px solid #e2e8f0;text-align:right;">${volume.toFixed(1)}</td>
+                    <td style="padding:10px 12px;border:1px solid #e2e8f0;text-align:right;">${density.toFixed(2)}</td>
+                    <td style="padding:10px 12px;border:1px solid #e2e8f0;text-align:right;">${massKg.toFixed(3)}</td>
+                    <td style="padding:10px 12px;border:1px solid #e2e8f0;text-align:right;">₹${unitCost.toFixed(2)}</td>
+                    <td style="padding:10px 12px;border:1px solid #e2e8f0;text-align:right;font-weight:600;color:#059669;">₹${cost.toFixed(2)}</td>
+                  </tr>
+                `;
+              }).join("");
+
+              const emptyRow = `<tr><td colspan="8" style="padding:24px;text-align:center;color:#94a3b8;border:1px solid #e2e8f0;">No parts added to this project yet.</td></tr>`;
+
+              const reportHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>${escapeHtml(project.name)} — Engineering Report</title>
+  <style>
+    @media print {
+      .no-print { display: none !important; }
+      body { padding: 0 !important; background: #ffffff !important; }
+      .container { border: none !important; box-shadow: none !important; margin: 0 !important; width: 100% !important; max-width: 100% !important; }
+      @page { margin: 15mm; }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+      line-height: 1.5;
+      padding: 32px 16px;
+    }
+    .toolbar {
+      max-width: 960px;
+      margin: 0 auto 16px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+    .btn {
+      padding: 8px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid #0f172a;
+      background: #0f172a;
+      color: #ffffff;
+      transition: background 0.15s;
+    }
+    .btn:hover {
+      background: #1e293b;
+    }
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+      padding: 40px;
+    }
+    .header {
+      border-bottom: 2px solid #0f172a;
+      padding-bottom: 20px;
+      margin-bottom: 24px;
+    }
+    .brand-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .brand {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: #0f172a;
+      text-transform: uppercase;
+    }
+    .badge {
+      font-size: 11px;
+      font-weight: 700;
+      color: #2563eb;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      padding: 4px 10px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    h1 {
+      font-size: 24px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+    .description {
+      font-size: 14px;
+      color: #64748b;
+      margin-bottom: 16px;
+    }
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      font-size: 12px;
+      color: #475569;
+      background: #f8fafc;
+      padding: 10px 16px;
+      border-radius: 6px;
+      border: 1px solid #e2e8f0;
+    }
+    .meta-item strong {
+      color: #0f172a;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .stat-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .stat-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #64748b;
+      margin-bottom: 4px;
+    }
+    .stat-value {
+      font-size: 22px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+    .stat-value.cost {
+      color: #059669;
+    }
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #334155;
+      margin-bottom: 12px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-bottom: 32px;
+    }
+    th {
+      background: #f1f5f9;
+      color: #334155;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      text-align: left;
+    }
+    th.text-right {
+      text-align: right;
+    }
+    tfoot td {
+      font-weight: 700;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      color: #0f172a;
+      padding: 12px;
+    }
+    .footer {
+      border-top: 1px solid #e2e8f0;
+      padding-top: 20px;
+      text-align: center;
+      font-size: 12px;
+      color: #64748b;
+    }
+  </style>
+</head>
+<body>
+  <div class="toolbar no-print">
+    <button class="btn" onclick="window.print()">Print / Save as PDF</button>
+  </div>
+  <div class="container">
+    <div class="header">
+      <div class="brand-row">
+        <div class="brand">MatDataHub</div>
+        <div class="badge">Professional Engineering Report</div>
+      </div>
+      <h1>${escapeHtml(project.name)}</h1>
+      <p class="description">${escapeHtml(project.description || "No project description provided.")}</p>
+      <div class="meta-row">
+        <div class="meta-item"><strong>Date:</strong> ${reportDate}</div>
+        <div class="meta-item"><strong>Project ID:</strong> ${escapeHtml(project.id ?? id)}</div>
+        <div class="meta-item"><strong>Status:</strong> Active Engineering BOM</div>
+      </div>
+    </div>
+
+    <div class="section-title">Summary Statistics</div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Parts Count</div>
+        <div class="stat-value">${(enrichedItems || []).length}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Mass</div>
+        <div class="stat-value">${totalMass.toFixed(2)} kg</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Estimated Cost</div>
+        <div class="stat-value cost">₹${totalCost.toFixed(2)}</div>
+      </div>
+    </div>
+
+    <div class="section-title">Bill of Materials (BOM)</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Part Name</th>
+          <th>Material</th>
+          <th>Category</th>
+          <th class="text-right">Volume (cm³)</th>
+          <th class="text-right">Density (g/cm³)</th>
+          <th class="text-right">Mass (kg)</th>
+          <th class="text-right">Unit Cost (₹/kg)</th>
+          <th class="text-right">Total Cost (₹)</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rowsHtml || emptyRow}
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3">Assembly Totals</td>
+          <td class="text-right">-</td>
+          <td class="text-right">-</td>
+          <td class="text-right">${totalMass.toFixed(3)} kg</td>
+          <td class="text-right">-</td>
+          <td class="text-right" style="color: #059669;">₹${totalCost.toFixed(2)}</td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <div class="footer">
+      Generated by MatDataHub — Enterprise Materials Intelligence Platform
+    </div>
+  </div>
+</body>
+</html>`;
+
+              const printWin = window.open("", "_blank");
+              if (printWin) {
+                printWin.document.open();
+                printWin.document.write(reportHtml);
+                printWin.document.close();
+                printWin.focus();
+              } else {
+                showToast("Please allow popups to generate and view the report.");
+              }
+            }}
+            className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded text-xs font-semibold transition-colors border border-slate-700 cursor-pointer"
+          >
             <FileText className="w-4 h-4" /> Professional Report
           </button>
         </div>

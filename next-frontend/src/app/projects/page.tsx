@@ -216,7 +216,7 @@ export default function WorkflowsPage() {
                   <div className="flex justify-between items-center text-xs text-slate-500 mt-auto pt-4 border-t border-slate-800">
                     <span className="flex items-center gap-1">
                       <Clock className="w-3 h-3" />
-                      {proj.created_at ? new Date(proj.created_at).toLocaleDateString() : "Recently"}
+                      {proj.created_at ? new Date(proj.created_at).toLocaleDateString('en-GB') : "Recently"}
                     </span>
                     <span className="flex items-center gap-1 text-blue-400 font-semibold group-hover:text-blue-300">
                       <Play className="w-3 h-3" /> Open Canvas

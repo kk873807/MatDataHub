@@ -103,7 +103,7 @@ export default function FeedbackCommunityPage() {
                       <h4 className="font-bold text-white">{fb.name || 'Anonymous Engineer'}</h4>
                       <span className="text-xs font-semibold px-2 py-0.5 bg-indigo-900/30 text-indigo-400 rounded-full border border-indigo-700/50">{fb.category}</span>
                     </div>
-                    <span className="text-xs text-slate-500">{new Date(fb.created_at).toLocaleDateString()}</span>
+                    <span className="text-xs text-slate-500">{new Date(fb.created_at).toLocaleDateString('en-GB')}</span>
                   </div>
                   <p className="text-slate-300 text-sm mb-4 leading-relaxed">{fb.message}</p>
                   
@@ -133,7 +133,7 @@ export default function FeedbackCommunityPage() {
                     <div key={reply.id} className="mt-4 pl-4 border-l-2 border-slate-700 bg-slate-800/30 p-3 rounded-r-lg">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="font-bold text-white text-xs">{reply.name || "User"}</span>
-                        <span className="text-slate-500 text-[10px]">{new Date(reply.created_at).toLocaleDateString()}</span>
+                        <span className="text-slate-500 text-[10px]">{new Date(reply.created_at).toLocaleDateString('en-GB')}</span>
                       </div>
                       <p className="text-slate-300 text-xs">{reply.message}</p>
                     </div>
