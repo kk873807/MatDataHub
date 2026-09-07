@@ -12,6 +12,8 @@ export default function CompareMaterials() {
   const [comparison, setComparison] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [userTier, setUserTier] = useState("free");
+  const [isAdmin, setIsAdmin] = useState(false);
 
   // Colors for up to 5 materials
   const colors = [
@@ -31,8 +33,15 @@ export default function CompareMaterials() {
     fetch(`${API}/auth/me`, {
       headers: { Authorization: `Bearer ${token}` }
     })
-      .then(r => {
-        setIsAuthenticated(r.ok);
+      .then(async r => {
+        if (r.ok) {
+          const data = await r.json();
+          setIsAuthenticated(true);
+          setUserTier(data.tier || "free");
+          setIsAdmin(data.is_admin || false);
+        } else {
+          setIsAuthenticated(false);
+        }
       })
       .catch(() => setIsAuthenticated(false));
   }, []);
@@ -86,9 +95,11 @@ export default function CompareMaterials() {
     { key: "cost_per_kg_min", label: "Cost (₹/kg)", max: 100000 }
   ];
 
+  const maxCompare = isAdmin ? 99 : userTier === "advanced" ? 99 : userTier === "pro" ? 5 : 2;
+
   const handleAddMaterial = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const val = e.target.value;
-    if (val && !selectedIds.includes(val) && selectedIds.length < 5) {
+    if (val && !selectedIds.includes(val) && selectedIds.length < maxCompare) {
       setSelectedIds([...selectedIds, val]);
     }
     e.target.value = "";
@@ -290,9 +301,9 @@ export default function CompareMaterials() {
             <select
               onChange={handleAddMaterial}
               className="w-full max-w-sm bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white appearance-none outline-none focus:border-blue-500"
-              disabled={selectedIds.length >= 5}
+              disabled={selectedIds.length >= maxCompare}
             >
-              <option className="bg-slate-900" value="">{selectedIds.length >= 5 ? "Maximum reached (Pro limit)" : "Add material to compare..."}</option>
+              <option className="bg-slate-900" value="">{selectedIds.length >= maxCompare ? `Maximum reached (${userTier} tier limit: ${maxCompare})` : "Add material to compare..."}</option>
               {allMaterials.filter(m => !selectedIds.includes(m.id.toString())).map(m => (
                 <option className="bg-slate-900" key={m.id} value={m.id}>{m.name}</option>
               ))}

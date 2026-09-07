@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Bot, Send, Loader2, Sparkles, Lock, ArrowUpRight, ChevronRight } from "lucide-react";
@@ -24,7 +24,26 @@ export default function AskAIPage() {
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [tier, setTier] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
+
+  // Daily message limit tracking
+  const todayKey = `ai_msg_${new Date().toISOString().slice(0, 10)}`;
+  const getDailyCount = () => {
+    if (typeof window === "undefined") return 0;
+    return parseInt(localStorage.getItem(todayKey) || "0", 10);
+  };
+  const incrementDaily = () => {
+    if (typeof window === "undefined") return;
+    localStorage.setItem(todayKey, String(getDailyCount() + 1));
+  };
+  const getDailyLimit = () => {
+    if (isAdmin) return Infinity;
+    if (tier === "advanced") return Infinity;
+    if (tier === "pro") return 25;
+    return 5;
+  };
+  const isLimitReached = getDailyCount() >= getDailyLimit();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -32,8 +51,8 @@ export default function AskAIPage() {
     fetch(`${API}/auth/me`, {
       headers: { Authorization: `Bearer ${token}` }
     })
-      .then(r => r.json())
-      .then(d => setTier(d.tier || "free"))
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (d) { setTier(d.tier || "free"); setIsAdmin(d.is_admin || false); } else { setTier("free"); } })
       .catch(() => setTier("free"));
   }, []);
 
@@ -45,6 +64,18 @@ export default function AskAIPage() {
     e?.preventDefault();
     const query = overridePrompt ?? prompt;
     if (!query.trim() || loading) return;
+
+    // Check daily limit
+    if (getDailyCount() >= getDailyLimit()) {
+      const limitNum = getDailyLimit();
+      setMessages(prev => [...prev,
+        { role: "user", content: query },
+        { role: "ai", content: `You've used all ${limitNum} of your daily AI queries. ${tier === "free" ? "Upgrade to Pro for 25 queries/day." : "Upgrade to Advanced for unlimited queries."}` }
+      ]);
+      setPrompt("");
+      return;
+    }
+
     setMessages(prev => [...prev, { role: "user", content: query }]);
     setPrompt("");
     setLoading(true);
@@ -64,6 +95,7 @@ export default function AskAIPage() {
       } else if (res.status === 401) {
         setMessages(prev => [...prev, { role: "ai", content: "Please sign in to use the AI Adviser." }]);
       } else {
+        incrementDaily();
         setMessages(prev => [...prev, {
           role: "ai",
           content: data.response || data.detail || "Sorry, I could not process that.",
@@ -92,6 +124,11 @@ export default function AskAIPage() {
           {tier && tier !== "free" && (
             <span className="ml-auto px-3 py-1 bg-emerald-900/30 border border-emerald-700/50 text-emerald-400 text-xs font-bold rounded-full uppercase tracking-wider">
               {tier} access
+            </span>
+          )}
+          {tier && getDailyLimit() !== Infinity && (
+            <span className={`${tier !== "free" ? "" : "ml-auto"} px-3 py-1 ${isLimitReached ? "bg-red-900/30 border-red-700/50 text-red-400" : "bg-slate-800 border-slate-700 text-slate-400"} border text-xs font-bold rounded-full`}>
+              {getDailyCount()}/{getDailyLimit()} today
             </span>
           )}
         </div>

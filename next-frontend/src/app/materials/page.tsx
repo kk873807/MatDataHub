@@ -1,9 +1,11 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { Search, Filter, Loader2, Database, SlidersHorizontal, X, ArrowDownAZ, TrendingUp, Scale, Zap, Beaker, FileBox } from "lucide-react";
+import { Search, Filter, Loader2, Database, SlidersHorizontal, X, ArrowDownAZ, TrendingUp, Scale, Zap, Beaker, FileBox, Lock } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { API } from "@/lib/api";
+
+const FREE_BROWSE_LIMIT = 40;
 
 export default function MaterialsPage() {
   const [materials, setMaterials] = useState<any[]>([]);
@@ -25,6 +27,21 @@ export default function MaterialsPage() {
   // Sorting
   const [sortBy, setSortBy] = useState("name_asc");
   const [showFilters, setShowFilters] = useState(false);
+
+  // Tier gating
+  const [userTier, setUserTier] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const isFree = !isAdmin && (!userTier || userTier === "free");
+
+  // Fetch user tier
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) { setUserTier("free"); return; }
+    fetch(`${API}/auth/me`, { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (d) { setUserTier(d.tier || "free"); setIsAdmin(d.is_admin || false); } else { setUserTier("free"); } })
+      .catch(() => setUserTier("free"));
+  }, []);
 
   // Close suggestions when clicking outside
   useEffect(() => {
@@ -83,7 +100,7 @@ export default function MaterialsPage() {
   }, [search, category, minTensile, maxCost, minThermal, perPage]);
 
   // Client-side sorting
-  const sortedMaterials = [...materials].sort((a, b) => {
+  const sortedAll = [...materials].sort((a, b) => {
     if (sortBy === "name_asc") return a.name.localeCompare(b.name);
     if (sortBy === "cost_asc") return (a.cost_per_kg_min || 999999) - (b.cost_per_kg_min || 999999);
     if (sortBy === "cost_desc") return (b.cost_per_kg_min || 0) - (a.cost_per_kg_min || 0);
@@ -91,6 +108,10 @@ export default function MaterialsPage() {
     if (sortBy === "density_asc") return (a.density || 999999) - (b.density || 999999);
     return 0;
   });
+
+  // Cap for free users
+  const isFreeCapped = isFree && sortedAll.length > FREE_BROWSE_LIMIT;
+  const sortedMaterials = isFree ? sortedAll.slice(0, FREE_BROWSE_LIMIT) : sortedAll;
 
   const activeFiltersCount = (category ? 1 : 0) + (minTensile !== "" ? 1 : 0) + (maxCost !== "" ? 1 : 0) + (minThermal !== "" ? 1 : 0);
 
@@ -357,6 +378,20 @@ export default function MaterialsPage() {
                 </motion.div>
               );
             })}
+          </div>
+        )}
+
+        {/* Free tier upgrade banner */}
+        {isFreeCapped && (
+          <div className="mt-6 p-6 rounded-2xl bg-gradient-to-r from-emerald-950/60 to-slate-900 border border-emerald-800/40 text-center">
+            <div className="flex items-center justify-center gap-3 mb-3">
+              <Lock className="w-5 h-5 text-emerald-400" />
+              <h3 className="text-lg font-bold text-white">Showing first {FREE_BROWSE_LIMIT} of {sortedAll.length}+ materials</h3>
+            </div>
+            <p className="text-slate-300 text-sm mb-4">Upgrade to Pro to browse the full materials database with unlimited search and advanced filters.</p>
+            <Link href="/account" className="inline-block px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold transition-all hover:scale-105">
+              Upgrade to Pro
+            </Link>
           </div>
         )}
       </div>

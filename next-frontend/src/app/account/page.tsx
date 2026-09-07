@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { Shield, Key, Zap, CheckCircle2, AlertCircle, ArrowUpRight, LogOut, Clock, Smartphone } from "lucide-react";
+import { Shield, Key, Zap, CheckCircle2, AlertCircle, ArrowUpRight, LogOut, Clock, Smartphone, FileText } from "lucide-react";
 import { API, API_BASE } from "@/lib/api";
 
 function AccountDashboardInner() {
@@ -414,18 +414,17 @@ function AccountDashboardInner() {
                     <th className="px-6 py-4 font-semibold text-right">Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/50">
-                  <tr className="hover:bg-slate-800/30 transition-colors">
-                    <td className="px-6 py-4 text-slate-300">Oct 1, 2023</td>
-                    <td className="px-6 py-4 text-slate-300">Pro Plan (Annual)</td>
-                    <td className="px-6 py-4 text-slate-300">$299.00</td>
-                    <td className="px-6 py-4 text-right text-emerald-400">Paid</td>
-                  </tr>
-                  <tr className="hover:bg-slate-800/30 transition-colors">
-                    <td className="px-6 py-4 text-slate-300">Sep 1, 2023</td>
-                    <td className="px-6 py-4 text-slate-300">Free Tier Sign Up</td>
-                    <td className="px-6 py-4 text-slate-300">$0.00</td>
-                    <td className="px-6 py-4 text-right text-emerald-400">Paid</td>
+                <tbody>
+                  <tr>
+                    <td colSpan={4} className="px-6 py-12 text-center text-slate-500">
+                      <div className="flex flex-col items-center gap-3">
+                        <div className="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center">
+                          <FileText className="w-6 h-6 text-slate-600" />
+                        </div>
+                        <p className="font-medium">No transactions yet</p>
+                        <p className="text-sm text-slate-600 max-w-sm">Your payment history will appear here after your first purchase or subscription upgrade.</p>
+                      </div>
+                    </td>
                   </tr>
                 </tbody>
               </table>

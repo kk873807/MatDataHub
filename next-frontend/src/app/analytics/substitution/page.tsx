@@ -20,6 +20,8 @@ export default function SmartSubstitution() {
   const [loading, setLoading] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [userTier, setUserTier] = useState("free");
+  const [isAdmin, setIsAdmin] = useState(false);
 
   // Auth check on mount
   useEffect(() => {
@@ -31,9 +33,12 @@ export default function SmartSubstitution() {
     fetch(`${API}/auth/me`, {
       headers: { Authorization: `Bearer ${token}` }
     })
-      .then(r => {
+      .then(async r => {
         if (r.ok) {
+          const data = await r.json();
           setIsAuthenticated(true);
+          setUserTier(data.tier || "free");
+          setIsAdmin(data.is_admin || false);
         } else {
           setIsAuthenticated(false);
         }
@@ -122,6 +127,34 @@ export default function SmartSubstitution() {
     );
   }
 
+  // Free tier — Upgrade Required (pre-gate before showing any UI)
+  if (!isAdmin && !["pro", "advanced"].includes(userTier)) {
+    return (
+      <main className="flex flex-col p-6 lg:p-10 w-full h-full">
+        <div className="w-full max-w-5xl mx-auto space-y-6">
+          <Link href="/analytics" className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors">
+            <ArrowLeft className="w-4 h-4" /> Back to Analytics
+          </Link>
+          
+          <div className="p-10 mt-10 rounded-3xl bg-slate-900 border border-yellow-500/30 text-center relative overflow-hidden flex flex-col items-center justify-center">
+            <div className="absolute inset-0 bg-gradient-to-br from-yellow-900/20 to-transparent"></div>
+            <div className="w-20 h-20 bg-yellow-950 rounded-full flex items-center justify-center mb-6 relative z-10 border border-yellow-500/50">
+              <Lock className="w-10 h-10 text-yellow-500" />
+            </div>
+            
+            <h2 className="text-3xl font-bold text-white mb-4 relative z-10">Upgrade Required</h2>
+            <p className="text-slate-300 relative z-10 max-w-2xl mx-auto mb-8 text-lg">
+              Smart AI Substitution is a Pro feature. Upgrade your account to unlock intelligent material replacement suggestions.
+            </p>
+            
+            <Link href="/account" className="relative z-10 px-8 py-4 bg-yellow-600 hover:bg-yellow-700 text-white rounded-xl font-bold transition-all shadow-lg hover:scale-105">
+              Upgrade Account
+            </Link>
+          </div>
+        </div>
+      </main>
+    );
+  }
   return (
     <main className="flex flex-col p-6 lg:p-10 w-full h-full overflow-y-auto">
       <div className="w-full max-w-5xl mx-auto space-y-8">

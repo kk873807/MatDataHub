@@ -57,8 +57,8 @@ def create_project(
             
         count = db.query(Project).filter(Project.user_id == current_user.id).count()
         
-        if current_user.tier == "pro" and count >= 3 and not current_user.is_admin:
-            raise HTTPException(status_code=403, detail="Pro tier is limited to 3 active projects. Upgrade to Advanced for unlimited workspaces.")
+        if current_user.tier == "pro" and count >= 2 and not current_user.is_admin:
+            raise HTTPException(status_code=403, detail="Pro tier is limited to 2 active projects. Upgrade to Advanced for unlimited workspaces.")
         elif count >= 100:
             raise HTTPException(status_code=400, detail="Maximum system project limit reached.")
             
