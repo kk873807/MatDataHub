@@ -49,7 +49,7 @@ export default function CompareMaterials() {
   // Fetch list of materials for dropdowns
   useEffect(() => {
     if (isAuthenticated === false) return;
-    fetch(`${API}/materials?per_page=100`)
+    fetch(`${API}/materials?per_page=500`)
       .then(res => res.json())
       .then(data => setAllMaterials(data.materials || []));
   }, [isAuthenticated]);

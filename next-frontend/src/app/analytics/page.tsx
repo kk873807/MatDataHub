@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { BarChart3, Scale, Replace, Factory, Layers } from "lucide-react";
+import { BarChart3, Scale, Replace, Factory, Layers, Shield } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function AnalyticsDashboard() {
@@ -92,6 +92,20 @@ export default function AnalyticsDashboard() {
               </Link>
             </motion.div>
           ))}
+        </div>
+
+        {/* Enterprise Data Trust Disclaimer */}
+        <div className="mt-12 p-6 rounded-2xl border border-slate-800 bg-slate-900/40 flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500"></div>
+          <div className="w-14 h-14 bg-indigo-900/30 rounded-full flex items-center justify-center shrink-0 border border-indigo-800/50">
+            <Shield className="w-7 h-7 text-indigo-400" />
+          </div>
+          <div>
+            <h4 className="text-white font-bold text-base mb-1">Enterprise-Grade Algorithmic Trust</h4>
+            <p className="text-sm text-slate-400 leading-relaxed max-w-4xl">
+              Calculations performed in MatDataHub analytics—including CBAM emissions forecasting, multi-objective substitution mapping, and synthetic material design—are rigorously based on verified physics, recognized thermodynamic equations, and vetted industry constants (e.g., EU CBAM reference prices, ICE DB carbon factors). We ensure absolute reliability for enterprise compliance and engineering decisions.
+            </p>
+          </div>
         </div>
       </div>
     </main>

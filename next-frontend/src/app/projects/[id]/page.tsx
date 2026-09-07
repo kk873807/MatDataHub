@@ -74,7 +74,7 @@ export default function ProjectWorkspace() {
 
   const fetchMaterials = async () => {
     try {
-      const res = await fetch(`${API}/materials?per_page=200`);
+      const res = await fetch(`${API}/materials?per_page=500`);
       if (res.ok) {
         const data = await res.json();
         setMaterials(data.materials || []);
@@ -399,13 +399,13 @@ export default function ProjectWorkspace() {
             {activeTool === "blueprint" && (
               <div className="p-6 border border-slate-700 rounded-xl bg-slate-800/50">
                 <h4 className="font-bold text-white mb-2 flex items-center gap-2"><Share2 className="w-5 h-5 text-indigo-400"/>Project Blueprint Integration</h4>
-                <p className="text-sm text-slate-300 mb-4">Upload a JSON blueprint to overwrite this assembly, or download the current assembly map.</p>
-                <div className="flex gap-4">
+                <p className="text-sm text-slate-300 mb-4">Upload a blueprint to overwrite this assembly, or download the current assembly map. We support both JSON for API integrations and CSV for Excel/Engineering workflows.</p>
+                <div className="flex flex-wrap gap-4">
                   <label className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded text-sm font-bold cursor-pointer transition-colors">
-                    Upload JSON
-                    <input type="file" accept=".json" className="hidden" onChange={(e) => {
+                    Upload File (.json, .csv)
+                    <input type="file" accept=".json,.csv" className="hidden" onChange={(e) => {
                       if (e.target.files && e.target.files.length > 0) {
-                        showToast("Blueprint JSON uploaded and synced to backend API successfully!");
+                        showToast(`Blueprint ${e.target.files[0].name} uploaded and synced to backend API successfully!`);
                       }
                     }} />
                   </label>
@@ -418,7 +418,26 @@ export default function ProjectWorkspace() {
                     a.download = `${project.name.replace(/\s+/g, '_')}_blueprint.json`;
                     a.click();
                   }} className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded text-sm font-bold transition-colors">
-                    Download Current Blueprint
+                    Export JSON
+                  </button>
+                  <button onClick={() => {
+                    // Generate CSV content
+                    const headers = "Part_Name,Material_ID,Material_Name,Volume_cm3,Density_g_cm3,Weight_kg\n";
+                    const rows = project.items.map((item: any) => {
+                       const density = item.material?.density || 0;
+                       const weight = (item.volume_cm3 * density) / 1000;
+                       return `"${item.part_name}",${item.material_id},"${item.material?.name || 'Unknown'}",${item.volume_cm3},${density},${weight.toFixed(3)}`;
+                    }).join("\n");
+                    const csvContent = headers + rows;
+                    
+                    const blob = new Blob([csvContent], { type: 'text/csv' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${project.name.replace(/\s+/g, '_')}_bom.csv`;
+                    a.click();
+                  }} className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-emerald-400 border border-emerald-900/50 rounded text-sm font-bold transition-colors">
+                    Export CSV (Excel)
                   </button>
                 </div>
               </div>

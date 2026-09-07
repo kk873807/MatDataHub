@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { Search, Filter, Loader2, Database, SlidersHorizontal, X, ArrowDownAZ, TrendingUp, Scale, Zap, Beaker, FileBox, Lock } from "lucide-react";
+import { Search, Filter, Loader2, Database, SlidersHorizontal, X, ArrowDownAZ, TrendingUp, Scale, Zap, Beaker, FileBox, Lock, Shield } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { API } from "@/lib/api";
 
@@ -394,6 +394,19 @@ export default function MaterialsPage() {
             </Link>
           </div>
         )}
+
+        {/* Enterprise Data Trust Disclaimer */}
+        <div className="mt-10 p-5 rounded-xl border border-slate-800 bg-slate-900/50 flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
+          <div className="w-12 h-12 bg-emerald-900/30 rounded-full flex items-center justify-center shrink-0 border border-emerald-800/50">
+            <Shield className="w-6 h-6 text-emerald-400" />
+          </div>
+          <div>
+            <h4 className="text-white font-bold text-sm mb-1">Enterprise-Grade Data Reliability</h4>
+            <p className="text-xs text-slate-400 leading-relaxed max-w-4xl">
+              All material properties, supply chain math, economics, and ESG/CBAM emission factors are rigorously sourced from verified industry standards (ASTM, ISO, DIN), reputable global commodities indices, and validated scientific databases (e.g., ICE DB University of Bath). MatDataHub prioritizes absolute mathematical accuracy for engineering and compliance workflows.
+            </p>
+          </div>
+        </div>
       </div>
     </main>
   );

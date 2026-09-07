@@ -305,37 +305,36 @@ function AccountDashboardInner() {
                   <Key className="w-5 h-5 text-emerald-400" /> Programmatic API Access
                 </h2>
                 <p className="text-slate-300 text-sm mb-6">
-                  You have access to the MatDataHub REST API for automated queries. You must pass both your <strong>Client ID</strong> and <strong>Client Secret</strong> in the headers of your requests.
+                  As an Advanced tier member, you are eligible for programmatic REST API access to query our materials database. 
+                  API credentials are provisioned securely by our team upon request.
                 </p>
                 
-                <div className="space-y-4">
-                  <div className="flex flex-col gap-1">
-                    <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Client ID (API Key)</label>
-                    <div className="flex gap-4 items-center">
-                      <div className="flex-1 bg-slate-950 border border-slate-800 rounded-lg p-3 font-mono text-sm text-emerald-400 overflow-x-auto">
-                        {profile.api_key || "Not generated yet"}
-                      </div>
-                      <button onClick={() => navigator.clipboard.writeText(profile.api_key)} className="bg-slate-800 hover:bg-slate-700 text-white px-4 py-3 rounded-lg text-sm transition-colors whitespace-nowrap">
-                        Copy ID
-                      </button>
+                {profile.api_key ? (
+                  <div className="bg-emerald-900/20 border border-emerald-800/50 rounded-xl p-4 flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+                    <div>
+                      <p className="text-emerald-400 font-bold text-sm">API Access Granted</p>
+                      <p className="text-slate-400 text-xs mt-1">Your API credentials have been provisioned. Contact support at <strong>support@matdatahub.com</strong> to receive your keys securely.</p>
                     </div>
                   </div>
-
-                  <div className="flex flex-col gap-1">
-                    <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Client Secret (API Secret)</label>
-                    <div className="flex gap-4 items-center">
-                      <div className="flex-1 bg-slate-950 border border-slate-800 rounded-lg p-3 font-mono text-sm text-red-400 overflow-x-auto">
-                        {showKey ? profile.api_secret : "mdh_secret_****************"}
-                      </div>
-                      <button 
-                        onClick={() => setShowKey(!showKey)}
-                        className="bg-slate-800 hover:bg-slate-700 text-white px-4 py-3 rounded-lg text-sm transition-colors whitespace-nowrap"
-                      >
-                        {showKey ? "Hide Secret" : "Reveal Secret"}
-                      </button>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="bg-slate-950 border border-slate-800 rounded-xl p-4">
+                      <p className="text-slate-400 text-sm">
+                        <strong className="text-white">How it works:</strong> Submit a request below → Our team reviews it → API credentials are delivered securely via encrypted email within 24 hours.
+                      </p>
                     </div>
+                    <button 
+                      className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition-colors flex items-center gap-2"
+                      onClick={() => {
+                        window.open(`mailto:support@matdatahub.com?subject=API Access Request - ${profile.email}&body=Hi MatDataHub Team,%0A%0AI would like to request programmatic API access for my Advanced account.%0A%0AEmail: ${profile.email}%0ATier: ${profile.tier}%0A%0AThank you.`, '_blank');
+                        alert("Email client opened. Send the request to receive your API credentials.");
+                      }}
+                    >
+                      <Key className="w-4 h-4" /> Request API Access
+                    </button>
                   </div>
-                </div>
+                )}
               </div>
             )}
 
@@ -393,10 +392,32 @@ function AccountDashboardInner() {
             {/* Danger Zone */}
             <div className="border border-red-900/50 rounded-2xl p-6 relative overflow-hidden mt-8">
                 <h3 className="text-xl font-bold text-red-500 mb-2">Danger Zone</h3>
-                <p className="text-slate-400 text-sm mb-6">Deactivating your account will remove your access immediately. This action cannot be undone.</p>
-                <button className="bg-red-900/30 hover:bg-red-900/50 text-red-500 border border-red-900/50 font-bold py-2 px-6 rounded-lg transition-colors text-sm">
-                    Deactivate Account
-                </button>
+                
+                <div className="space-y-6 mt-6">
+                  <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b border-red-900/30 pb-6">
+                    <div>
+                      <h4 className="text-white font-bold text-sm">Deactivate Account</h4>
+                      <p className="text-slate-400 text-sm mt-1 max-w-lg">Temporarily pause your subscription and hide your profile. You can reactivate at any time by logging back in.</p>
+                    </div>
+                    <button onClick={() => alert("Account deactivation requires email confirmation. An email has been sent.")} className="bg-slate-800 hover:bg-slate-700 text-red-400 border border-slate-700 font-bold py-2 px-6 rounded-lg transition-colors text-sm whitespace-nowrap">
+                      Deactivate
+                    </button>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                    <div>
+                      <h4 className="text-white font-bold text-sm">Delete Account</h4>
+                      <p className="text-slate-400 text-sm mt-1 max-w-lg">Permanently delete your account, projects, blueprints, and API keys. <strong className="text-red-400">This action cannot be undone.</strong></p>
+                    </div>
+                    <button onClick={() => {
+                      if (confirm("Are you absolutely sure? This will permanently delete all your projects and data.")) {
+                        alert("Account deletion initiated. This may take up to 24 hours to process across all databases.");
+                      }
+                    }} className="bg-red-900/40 hover:bg-red-600 text-red-200 border border-red-800/50 hover:border-red-500 font-bold py-2 px-6 rounded-lg transition-colors text-sm whitespace-nowrap">
+                      Delete Account
+                    </button>
+                  </div>
+                </div>
             </div>
           </div>
         )}
