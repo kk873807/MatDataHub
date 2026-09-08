@@ -1,11 +1,32 @@
+# Python
 venv/
 .venv/
 __pycache__/
 *.pyc
+
+# Environment
 .env
+
+# Database
 *.db
+
+# IDE
 .idea/
 .vscode/
+
+# Old Streamlit
 .streamlit/secrets.toml
+frontend/
+archive/
+scraper/
+scrapers/
+.devcontainer/
+account_temp.txt
+
+# Node / Next.js
 node_modules/
 .next/
+
+# OS
+.DS_Store
+Thumbs.db
