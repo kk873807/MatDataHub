@@ -4,11 +4,15 @@ import Link from "next/link";
 import { ArrowLeft, Scale, Loader2, Info, Plus, X, Download, Lock } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { API } from "@/lib/api";
+import MaterialSearchSelect from "@/components/MaterialSearchSelect";
 
 export default function CompareMaterials() {
   const router = useRouter();
   const [allMaterials, setAllMaterials] = useState<any[]>([]);
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [selectedIds, setSelectedIds] = useState<string[]>(() => {
+    const addId = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("add") : null;
+    return addId ? [addId] : [];
+  });
   const [comparison, setComparison] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -298,16 +302,17 @@ export default function CompareMaterials() {
           </div>
 
           <div className="flex items-center gap-4">
-            <select
-              onChange={handleAddMaterial}
-              className="w-full max-w-sm bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white appearance-none outline-none focus:border-blue-500"
+            <MaterialSearchSelect
+              materials={allMaterials}
+              excludeIds={selectedIds}
               disabled={selectedIds.length >= maxCompare}
-            >
-              <option className="bg-slate-900" value="">{selectedIds.length >= maxCompare ? `Maximum reached (${userTier} tier limit: ${maxCompare})` : "Add material to compare..."}</option>
-              {allMaterials.filter(m => !selectedIds.includes(m.id.toString())).map(m => (
-                <option className="bg-slate-900" key={m.id} value={m.id}>{m.name}</option>
-              ))}
-            </select>
+              placeholder={selectedIds.length >= maxCompare ? `Maximum reached (${userTier} tier limit: ${maxCompare})` : "Search and add material..."}
+              onSelect={(id) => {
+                if (!selectedIds.includes(id) && selectedIds.length < maxCompare) {
+                  setSelectedIds([...selectedIds, id]);
+                }
+              }}
+            />
           </div>
         </div>
 

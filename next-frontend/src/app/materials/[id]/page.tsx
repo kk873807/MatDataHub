@@ -177,18 +177,24 @@ export default function MaterialDetail() {
               
               {/* Quick Actions */}
               <div className="flex flex-wrap gap-3 mt-6">
-                <button 
-                  onClick={() => showToast("Added to recent project workspace")}
-                  className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-bold transition-all shadow-lg shadow-emerald-900/20"
+                <Link 
+                  href={`/analytics/compare?add=${id}`}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-bold transition-all shadow-lg shadow-blue-900/20"
                 >
-                  <FolderPlus className="w-4 h-4" /> Add to Project
-                </button>
-                <button 
-                  onClick={() => showToast("Added to compare list")}
-                  className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 rounded-lg text-sm font-semibold transition-all"
+                  <GitCompare className="w-4 h-4" /> Add to Compare
+                </Link>
+                <Link 
+                  href={`/analytics/substitution?base=${id}`}
+                  className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-bold transition-all shadow-lg shadow-purple-900/20"
                 >
-                  <GitCompare className="w-4 h-4 text-emerald-400" /> Compare
-                </button>
+                  <SearchCode className="w-4 h-4" /> Find Substitution
+                </Link>
+                <Link 
+                  href={`/analytics/synthesizer?matA=${id}`}
+                  className="flex items-center gap-2 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg text-sm font-bold transition-all shadow-lg shadow-cyan-900/20"
+                >
+                  <Beaker className="w-4 h-4" /> Use in Synthesizer
+                </Link>
                 <button 
                   onClick={() => showToast("Downloading Spec Sheet PDF...")}
                   className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 rounded-lg text-sm font-semibold transition-all"

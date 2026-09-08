@@ -6,9 +6,19 @@ import { API } from "@/lib/api";
 
 export default function SmartSubstitution() {
   const [allMaterials, setAllMaterials] = useState<any[]>([]);
-  const [baseId, setBaseId] = useState("");
+  const [baseId, setBaseId] = useState(() => {
+    return typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("base") || "" : "";
+  });
   const [searchQuery, setSearchQuery] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
+
+  // Auto-fill search query when baseId is set from URL and materials load
+  useEffect(() => {
+    if (baseId && allMaterials.length > 0 && !searchQuery) {
+      const mat = allMaterials.find(m => m.id.toString() === baseId);
+      if (mat) setSearchQuery(mat.name);
+    }
+  }, [baseId, allMaterials]);
   const [weights, setWeights] = useState({
     cost: 50,
     density: 50,

@@ -3,10 +3,13 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowLeft, Layers, Loader2, Beaker, Lock } from "lucide-react";
 import { API } from "@/lib/api";
+import MaterialSearchSelect from "@/components/MaterialSearchSelect";
 
 export default function CompositeSynthesizer() {
   const [allMaterials, setAllMaterials] = useState<any[]>([]);
-  const [matA, setMatA] = useState("");
+  const [matA, setMatA] = useState(() => {
+    return typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("matA") || "" : "";
+  });
   const [matB, setMatB] = useState("");
   const [volFractionA, setVolFractionA] = useState(50);
   
@@ -160,18 +163,20 @@ export default function CompositeSynthesizer() {
           <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-6">
             <div>
               <label className="block text-sm font-semibold text-cyan-400 mb-2">Matrix Material (A)</label>
-              <select value={matA} onChange={(e) => setMatA(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white appearance-none outline-none focus:border-cyan-500">
-                <option value="">Select Material...</option>
-                {allMaterials.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
-              </select>
+              <MaterialSearchSelect
+                materials={allMaterials}
+                placeholder={matA ? allMaterials.find(m => m.id.toString() === matA)?.name || "Select Material..." : "Search matrix material..."}
+                onSelect={(id) => setMatA(id)}
+              />
             </div>
             
             <div>
               <label className="block text-sm font-semibold text-teal-400 mb-2">Reinforcement Material (B)</label>
-              <select value={matB} onChange={(e) => setMatB(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white appearance-none outline-none focus:border-teal-500">
-                <option value="">Select Material...</option>
-                {allMaterials.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
-              </select>
+              <MaterialSearchSelect
+                materials={allMaterials}
+                placeholder={matB ? allMaterials.find(m => m.id.toString() === matB)?.name || "Select Material..." : "Search reinforcement material..."}
+                onSelect={(id) => setMatB(id)}
+              />
             </div>
 
             <div>
