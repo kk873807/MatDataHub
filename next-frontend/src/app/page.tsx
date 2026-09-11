@@ -93,10 +93,10 @@ export default function Home() {
             <div className="w-14 h-14 rounded-2xl bg-orange-500/10 border border-orange-500/20 text-orange-400 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
               <Workflow className="w-7 h-7" />
             </div>
-            <h3 className="text-xl font-bold text-white mb-3">Project Workflows</h3>
-            <p className="text-slate-400 text-sm leading-relaxed mb-6">Create, save, and manage complex material selection workflows.</p>
+            <h3 className="text-xl font-bold text-white mb-3">Project Workspaces</h3>
+            <p className="text-slate-400 text-sm leading-relaxed mb-6">Create, save, and manage complex material selection workspaces.</p>
             <div className="text-xs font-bold text-orange-400 flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              View Workflows <ArrowRight className="w-3 h-3" />
+              View Workspaces <ArrowRight className="w-3 h-3" />
             </div>
           </Link>
 

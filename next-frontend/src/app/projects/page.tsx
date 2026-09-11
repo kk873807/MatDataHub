@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Workflow, Plus, FolderKanban, HardDrive, Play, Loader2, X, Trash2, Search, Clock, Lock } from "lucide-react";
 import { API } from "@/lib/api";
 
-export default function WorkflowsPage() {
+export default function WorkspacesPage() {
   const [projects, setProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   

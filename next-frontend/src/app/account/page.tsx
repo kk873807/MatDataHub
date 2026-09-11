@@ -322,12 +322,27 @@ function AccountDashboardInner() {
                     <div className="space-y-4">
                       <button 
                         className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition-colors flex items-center gap-2"
-                        onClick={() => {
-                          window.open(`mailto:support@matdatahub.com?subject=API Access Request - ${profile.email}&body=Hi MatDataHub Team,%0A%0AI would like to request programmatic API access for my Advanced account.%0A%0AEmail: ${profile.email}%0ATier: ${profile.tier}%0A%0AThank you.`, '_blank');
-                          alert("Email client opened. Send the request to receive your API credentials.");
+                        onClick={async () => {
+                          try {
+                            const res = await fetch(`${API}/auth/generate-api`, {
+                              method: "POST",
+                              headers: {
+                                "Authorization": `Bearer ${localStorage.getItem("token")}`
+                              }
+                            });
+                            if (res.ok) {
+                              const data = await res.json();
+                              alert(`SUCCESS! Your API credentials:\n\nKey: ${data.api_key}\nSecret: ${data.api_secret}\n\nPlease save these immediately. The secret will not be shown again.`);
+                              window.location.reload();
+                            } else {
+                              alert("Failed to generate API credentials.");
+                            }
+                          } catch (err) {
+                            alert("Network error");
+                          }
                         }}
                       >
-                        <Key className="w-4 h-4" /> Request API Access
+                        <Key className="w-4 h-4" /> Generate API Keys
                       </button>
                     </div>
                   )}
@@ -372,14 +387,27 @@ function AccountDashboardInner() {
                     
                     <ul className="space-y-3 mb-8 relative">
                       <li className="flex items-center gap-2 text-sm text-slate-300"><CheckCircle2 className="w-4 h-4 text-emerald-400" /> Programmatic REST API Key</li>
+                    <div className="text-center mb-6">
+                      <span className="text-sm text-slate-400 line-through mr-2">₹49,999</span>
+                      <span className="text-4xl font-black text-white">₹19,999</span>
+                      <span className="text-slate-400">/year</span>
+                      <div className="text-emerald-400 text-xs font-bold mt-1 uppercase tracking-wider animate-pulse">Launch Offer - 60% Off</div>
+                    </div>
+                    <ul className="space-y-3 mb-6 text-sm text-slate-300">
+                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-400" /> Unlimited Material Lookups</li>
+                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-400" /> Unlimited Compare Limit</li>
+                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-400" /> Advanced Analytics Engine</li>
+                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-400" /> Export Professional PDFs</li>
+                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-400" /> Unlimited AI Adviser Chats</li>
+                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-400" /> Private DB Uploads (CSV/Excel)</li>
+                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-400" /> REST API Access</li>
                     </ul>
-                    
                     <button 
                       onClick={() => handleUpgrade("advanced")}
                       disabled={upgrading || profile.upgrade_status === "pending"}
                       className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl transition-colors flex justify-center items-center gap-2 relative z-10"
                     >
-                      Pay ₹49,999 & Upgrade <ArrowUpRight className="w-4 h-4" />
+                      Pay ₹19,999 & Upgrade <ArrowUpRight className="w-4 h-4" />
                     </button>
                   </div>
 

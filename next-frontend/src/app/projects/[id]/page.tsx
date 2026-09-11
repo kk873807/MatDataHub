@@ -84,8 +84,17 @@ export default function ProjectWorkspace() {
     }
   };
 
+  const [profile, setProfile] = useState<any>(null);
+
   useEffect(() => {
     const init = async () => {
+      const token = getToken();
+      if (token) {
+        fetch(`${API}/auth/me`, { headers: authHeaders() })
+          .then(res => res.ok ? res.json() : null)
+          .then(data => setProfile(data))
+          .catch(console.error);
+      }
       await Promise.all([fetchProject(), fetchMaterials()]);
       setLoading(false);
     };
@@ -808,7 +817,7 @@ export default function ProjectWorkspace() {
             <Share2 className="w-4 h-4" /> Blueprints (JSON)
           </button>
           
-          <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mt-6 mb-2 ml-2">Engineering Tools</div>
+          <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mt-6 mb-2 ml-2">Engineering Tools</div>`n          {profile?.tier !== "advanced" && !profile?.is_admin && <div className="ml-2 mb-2 px-2 py-1 bg-amber-900/30 text-amber-400 text-[10px] rounded border border-amber-900/50 uppercase tracking-wider font-bold">Advanced Tier Only</div>}
           <button onClick={()=>setActiveTool("safety")} className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTool === 'safety' ? 'bg-emerald-600/20 text-emerald-400 border border-emerald-500/30' : 'text-slate-400 hover:bg-slate-900 hover:text-white border border-transparent'}`}>
             <Shield className="w-4 h-4" /> Safety Factor
           </button>

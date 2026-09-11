@@ -25,6 +25,21 @@ export default function AskAIPage() {
   const [prompt, setPrompt] = useState("");
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
+
+  // Load chat history
+  useEffect(() => {
+    const saved = localStorage.getItem("ai_chat_history");
+    if (saved) {
+      try { setMessages(JSON.parse(saved)); } catch (e) {}
+    }
+  }, []);
+
+  // Save chat history
+  useEffect(() => {
+    if (messages.length > 0) {
+      localStorage.setItem("ai_chat_history", JSON.stringify(messages));
+    }
+  }, [messages]);
   const [tier, setTier] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -115,7 +130,7 @@ export default function AskAIPage() {
     <main className="flex flex-col h-[calc(100vh-2rem)] p-6 lg:p-10 w-full">
       <div className="w-full max-w-4xl mx-auto flex flex-col h-full bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl relative">
 
-        <div className="p-6 border-b border-slate-800 bg-slate-950/50 flex items-center gap-4">
+        <div className="p-6 border-b border-slate-800 bg-slate-950/50 flex items-center gap-4 flex-wrap">`n          <div className="w-full flex justify-end gap-2 mb-2 order-first md:order-last md:mb-0 md:w-auto md:ml-auto">`n            {messages.length > 0 && <button onClick={() => { setMessages([]); localStorage.removeItem("ai_chat_history"); }} className="px-3 py-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-xs font-bold rounded-full transition-colors">Clear Chat</button>}`n            {messages.length > 0 && <button onClick={() => { const text = messages.map(m => (m.role === "user" ? "USER: " : "AI: ") + m.content).join("\n\n"); const blob = new Blob([text], { type: "text/plain" }); const url = window.URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = "Chat_History.txt"; a.click(); }} className="px-3 py-1 bg-blue-900/30 hover:bg-blue-800/50 border border-blue-700/50 text-blue-400 text-xs font-bold rounded-full transition-colors">Export Chat</button>}`n          </div>
           <div className="w-12 h-12 rounded-xl bg-blue-600/20 flex items-center justify-center border border-blue-500/30">
             <Bot className="w-6 h-6 text-blue-400" />
           </div>
@@ -124,7 +139,7 @@ export default function AskAIPage() {
             <p className="text-sm text-slate-400">Describe your requirements and I will recommend the best materials.</p>
           </div>
           {tier && tier !== "free" && (
-            <span className="ml-auto px-3 py-1 bg-emerald-900/30 border border-emerald-700/50 text-emerald-400 text-xs font-bold rounded-full uppercase tracking-wider">
+            <span className="px-3 py-1 bg-emerald-900/30 border border-emerald-700/50 text-emerald-400 text-xs font-bold rounded-full uppercase tracking-wider">
               {tier} access
             </span>
           )}

@@ -10,7 +10,7 @@ const navItems = [
   { name: "Browse Materials", href: "/materials", icon: Database },
   { name: "Analytics", href: "/analytics", icon: BarChart3 },
   { name: "Ask AI Adviser", href: "/ai", icon: Bot },
-  { name: "Workflows", href: "/projects", icon: Workflow },
+  { name: "Workspaces", href: "/projects", icon: Workflow },
   { name: "Resources", href: "/resources", icon: BookOpen },
   { name: "Community", href: "/feedback", icon: MessageSquare },
   { name: "Account", href: "/account", icon: User },
