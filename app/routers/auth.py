@@ -363,14 +363,13 @@ def request_upgrade(
         requested_tier=current_user.requested_tier,
     )
 
- @ r o u t e r . p o s t ( " / g e n e r a t e - a p i " ) 
- d e f   g e n e r a t e _ m y _ a p i _ k e y s ( d b :   S e s s i o n   =   D e p e n d s ( g e t _ d b ) ,   c u r r e n t _ u s e r :   U s e r   =   D e p e n d s ( g e t _ c u r r e n t _ u s e r ) ) : 
-         i f   c u r r e n t _ u s e r . t i e r   ! =   " a d v a n c e d "   a n d   n o t   c u r r e n t _ u s e r . i s _ a d m i n : 
-                 r a i s e   H T T P E x c e p t i o n ( s t a t u s _ c o d e = 4 0 3 ,   d e t a i l = " A P I   a c c e s s   i s   r e s t r i c t e d   t o   A d v a n c e d   t i e r . " ) 
-         r a w _ k e y ,   r a w _ s e c r e t   =   g e n e r a t e _ a p i _ c r e d e n t i a l s ( ) 
-         c u r r e n t _ u s e r . a p i _ k e y   =   r a w _ k e y 
-         c u r r e n t _ u s e r . a p i _ s e c r e t   =   r a w _ s e c r e t 
-         d b . c o m m i t ( ) 
-         r e t u r n   { " a p i _ k e y " :   r a w _ k e y ,   " a p i _ s e c r e t " :   r a w _ s e c r e t } 
-  
- 
+@router.post("/generate-api")
+def generate_my_api_keys(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    if current_user.tier != "advanced" and not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="API access is restricted to Advanced tier.")
+    raw_key, raw_secret = generate_api_credentials()
+    current_user.api_key = raw_key
+    current_user.api_secret = raw_secret
+    db.commit()
+    return {"api_key": raw_key, "api_secret": raw_secret}
+
