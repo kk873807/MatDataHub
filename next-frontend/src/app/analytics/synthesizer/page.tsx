@@ -1,15 +1,20 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { ArrowLeft, Layers, Loader2, Beaker, Lock } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import { API } from "@/lib/api";
 import MaterialSearchSelect from "@/components/MaterialSearchSelect";
 
-export default function CompositeSynthesizer() {
+function CompositeSynthesizerContent() {
+  const searchParams = useSearchParams();
   const [allMaterials, setAllMaterials] = useState<any[]>([]);
-  const [matA, setMatA] = useState(() => {
-    return typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("matA") || "" : "";
-  });
+  const [matA, setMatA] = useState("");
+
+  useEffect(() => {
+    const mat = searchParams.get("matA");
+    if (mat) setMatA(mat);
+  }, [searchParams]);
   const [matB, setMatB] = useState("");
   const [volFractionA, setVolFractionA] = useState(50);
   
@@ -43,11 +48,10 @@ export default function CompositeSynthesizer() {
   }, []);
 
   useEffect(() => {
-    if (isAuthenticated === false) return;
-    fetch(`${API}/materials?per_page=500`)
+    fetch(`${API}/materials?per_page=2000`)
       .then(res => res.json())
       .then(data => setAllMaterials(data.materials || []));
-  }, [isAuthenticated]);
+  }, []);
 
   const handleSynthesize = () => {
     if (!matA || !matB) return;
@@ -239,5 +243,13 @@ export default function CompositeSynthesizer() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function CompositeSynthesizer() {
+  return (
+    <Suspense fallback={<div className="p-12 text-center text-slate-400">Loading...</div>}>
+      <CompositeSynthesizerContent />
+    </Suspense>
   );
 }

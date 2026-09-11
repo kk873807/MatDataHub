@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { ShieldAlert, Check, X, Lock, Users, MessageSquare, FileText, Plus } from "lucide-react";
 import { API } from "@/lib/api";
+import MaterialManager from "@/components/MaterialManager";
 
 export default function AdminDashboard() {
   const [secret, setSecret] = useState("");
@@ -155,6 +156,8 @@ export default function AdminDashboard() {
           <div className="p-12 text-center text-slate-400">Loading admin data...</div>
         ) : (
           <div className="space-y-8">
+            
+            <MaterialManager secret={secret} />
             
             {/* Upgrade Requests */}
             <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">

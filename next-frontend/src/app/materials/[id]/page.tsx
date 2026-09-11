@@ -196,7 +196,7 @@ export default function MaterialDetail() {
                   <Beaker className="w-4 h-4" /> Use in Synthesizer
                 </Link>
                 <button 
-                  onClick={() => showToast("Downloading Spec Sheet PDF...")}
+                  onClick={() => window.print()}
                   className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 rounded-lg text-sm font-semibold transition-all"
                 >
                   <Download className="w-4 h-4 text-slate-300" /> Export PDF

@@ -74,7 +74,7 @@ export default function ProjectWorkspace() {
 
   const fetchMaterials = async () => {
     try {
-      const res = await fetch(`${API}/materials?per_page=500`);
+      const res = await fetch(`${API}/materials?per_page=2000`);
       if (res.ok) {
         const data = await res.json();
         setMaterials(data.materials || []);

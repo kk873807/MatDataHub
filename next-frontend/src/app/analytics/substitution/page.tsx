@@ -1,14 +1,19 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { ArrowLeft, Replace, Loader2, Lock, ShieldAlert } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import { API } from "@/lib/api";
 
-export default function SmartSubstitution() {
+function SmartSubstitutionContent() {
+  const searchParams = useSearchParams();
   const [allMaterials, setAllMaterials] = useState<any[]>([]);
-  const [baseId, setBaseId] = useState(() => {
-    return typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("base") || "" : "";
-  });
+  const [baseId, setBaseId] = useState("");
+
+  useEffect(() => {
+    const base = searchParams.get("base");
+    if (base) setBaseId(base);
+  }, [searchParams]);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
 
@@ -57,11 +62,10 @@ export default function SmartSubstitution() {
   }, []);
 
   useEffect(() => {
-    if (isAuthenticated === false) return;
-    fetch(`${API}/materials?per_page=500`)
+    fetch(`${API}/materials?per_page=2000`)
       .then(res => res.json())
       .then(data => setAllMaterials(data.materials || []));
-  }, [isAuthenticated]);
+  }, []);
 
   const runSubstitution = async () => {
     if (!baseId) return;
@@ -333,5 +337,13 @@ export default function SmartSubstitution() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function SmartSubstitution() {
+  return (
+    <Suspense fallback={<div className="p-12 text-center text-slate-400">Loading...</div>}>
+      <SmartSubstitutionContent />
+    </Suspense>
   );
 }

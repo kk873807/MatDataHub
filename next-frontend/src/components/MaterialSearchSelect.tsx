@@ -40,7 +40,7 @@ export default function MaterialSearchSelect({
         onClick={() => !disabled && setIsOpen(!isOpen)}
         className={`w-full bg-slate-950 border ${disabled ? 'border-slate-800 opacity-50 cursor-not-allowed' : 'border-slate-800 hover:border-slate-600 cursor-pointer'} rounded-lg px-4 py-3 flex items-center justify-between text-slate-300 transition-colors`}
       >
-        <span className="truncate text-sm">{disabled ? placeholder : "Search and add material..."}</span>
+        <span className="truncate text-sm">{placeholder}</span>
         <ChevronDown className="w-4 h-4 text-slate-500" />
       </div>
 

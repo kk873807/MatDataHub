@@ -1,18 +1,21 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { ArrowLeft, Scale, Loader2, Info, Plus, X, Download, Lock } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { API } from "@/lib/api";
 import MaterialSearchSelect from "@/components/MaterialSearchSelect";
 
-export default function CompareMaterials() {
+function CompareMaterialsContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [allMaterials, setAllMaterials] = useState<any[]>([]);
-  const [selectedIds, setSelectedIds] = useState<string[]>(() => {
-    const addId = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("add") : null;
-    return addId ? [addId] : [];
-  });
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    const addId = searchParams.get("add");
+    if (addId && !selectedIds.includes(addId)) setSelectedIds([addId, ...selectedIds]);
+  }, [searchParams]);
   const [comparison, setComparison] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -52,11 +55,10 @@ export default function CompareMaterials() {
 
   // Fetch list of materials for dropdowns
   useEffect(() => {
-    if (isAuthenticated === false) return;
-    fetch(`${API}/materials?per_page=500`)
+    fetch(`${API}/materials?per_page=2000`)
       .then(res => res.json())
       .then(data => setAllMaterials(data.materials || []));
-  }, [isAuthenticated]);
+  }, []);
 
   // Fetch comparison
   useEffect(() => {
@@ -391,3 +393,5 @@ export default function CompareMaterials() {
     </main>
   );
 }
+
+export default function CompareMaterials() { return <Suspense fallback={<div className='p-12 text-center text-slate-400'>Loading...</div>}><CompareMaterialsContent /></Suspense>; }
