@@ -23,7 +23,7 @@ export default function BlogEditor({ secret }: { secret: string }) {
       content: fd.get("content")
     };
     try {
-      const res = await fetch(${API}/blogs/, {
+      const res = await fetch(`${API}/blogs/`, {
         method: "POST", headers: { "Content-Type": "application/json", "X-Admin-Secret": secret },
         body: JSON.stringify(payload)
       });
