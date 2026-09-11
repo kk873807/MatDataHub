@@ -564,14 +564,14 @@ def get_price_history(
             # Values represent the price multiplier relative to the current base price (1.0)
             # These reflect general industrial supply chain index trends
             proxy_curves = {
-                \"Metals\": [1.08, 1.05, 1.07, 1.02, 0.98, 0.95, 0.96, 0.99, 1.01, 1.04, 1.02, 1.00],
-                \"Polymers\": [0.92, 0.90, 0.88, 0.85, 0.87, 0.91, 0.94, 0.96, 0.98, 0.99, 1.01, 1.00],
-                \"Ceramics\": [0.95, 0.96, 0.95, 0.97, 0.98, 0.99, 0.98, 0.99, 1.00, 1.01, 1.00, 1.00],
-                \"Composites\": [1.10, 1.08, 1.05, 1.02, 1.00, 0.98, 0.97, 0.96, 0.97, 0.98, 0.99, 1.00],
-                \"Default\": [0.98, 0.97, 0.99, 0.96, 0.95, 0.98, 1.01, 1.02, 1.00, 1.03, 1.01, 1.00]
+                "Metals": [1.08, 1.05, 1.07, 1.02, 0.98, 0.95, 0.96, 0.99, 1.01, 1.04, 1.02, 1.00],
+                "Polymers": [0.92, 0.90, 0.88, 0.85, 0.87, 0.91, 0.94, 0.96, 0.98, 0.99, 1.01, 1.00],
+                "Ceramics": [0.95, 0.96, 0.95, 0.97, 0.98, 0.99, 0.98, 0.99, 1.00, 1.01, 1.00, 1.00],
+                "Composites": [1.10, 1.08, 1.05, 1.02, 1.00, 0.98, 0.97, 0.96, 0.97, 0.98, 0.99, 1.00],
+                "Default": [0.98, 0.97, 0.99, 0.96, 0.95, 0.98, 1.01, 1.02, 1.00, 1.03, 1.01, 1.00]
             }
             
-            category = mat.category if mat.category in proxy_curves else \"Default\"
+            category = mat.category if mat.category in proxy_curves else "Default"
             curve = proxy_curves[category]
             
             # We want rolling 12 months ending in the PREVIOUS month.
