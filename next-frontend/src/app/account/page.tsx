@@ -385,8 +385,6 @@ function AccountDashboardInner() {
                     <h3 className="text-2xl font-bold text-white mb-2 relative">Advanced</h3>
                     <p className="text-slate-400 text-sm mb-6 flex-1 relative">For enterprises and automation pipelines.</p>
                     
-                    <ul className="space-y-3 mb-8 relative">
-                      <li className="flex items-center gap-2 text-sm text-slate-300"><CheckCircle2 className="w-4 h-4 text-emerald-400" /> Programmatic REST API Key</li>
                     <div className="text-center mb-6">
                       <span className="text-sm text-slate-400 line-through mr-2">₹49,999</span>
                       <span className="text-4xl font-black text-white">₹19,999</span>
