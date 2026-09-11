@@ -1,5 +1,7 @@
 "use client";
 import { useState, useEffect, Suspense } from "react";
+import MaterialManager from "@/components/MaterialManager";
+import AdvancedMaterialManager from "@/components/AdvancedMaterialManager";
 import { useSearchParams } from "next/navigation";
 import { Shield, Key, Zap, CheckCircle2, AlertCircle, ArrowUpRight, LogOut, Clock, Smartphone, FileText } from "lucide-react";
 import { API, API_BASE } from "@/lib/api";

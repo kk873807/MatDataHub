@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BookOpen, HelpCircle, LifeBuoy, Send, Loader2, CheckCircle2, Search, ChevronDown, Clock, ArrowRight, Image as ImageIcon, ArrowLeft, Star } from "lucide-react";
 import { API } from "@/lib/api";
 import ReactMarkdown from "react-markdown";
