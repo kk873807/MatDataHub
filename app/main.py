@@ -159,3 +159,6 @@ def seed_demo_data():
         return {"ok": True, "message": f"Successfully seeded {added} materials for the demo!"}
     except Exception as e:
         return {"ok": False, "error": str(e)}
+
+from app.routers import blogs
+app.include_router(blogs.router, prefix="/api/v1")

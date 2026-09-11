@@ -248,3 +248,16 @@ class PriceHistory(Base):
     recorded_date = Column(DateTime(timezone=True), server_default=func.now())
     
     material = relationship("Material")
+
+class Blog(Base):
+    __tablename__ = "blogs"
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    title = Column(String(255), nullable=False)
+    date = Column(String(50), nullable=False)
+    author = Column(String(100), nullable=False)
+    readTime = Column(String(50), nullable=True)
+    tag = Column(String(50), nullable=True)
+    featured = Column(Boolean, default=False)
+    excerpt = Column(Text, nullable=False)
+    content = Column(Text, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())

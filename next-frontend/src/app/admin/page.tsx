@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ShieldAlert, Check, X, Lock, Users, MessageSquare, FileText, Plus } from "lucide-react";
 import { API } from "@/lib/api";
 import MaterialManager from "@/components/MaterialManager";
+import BlogEditor from "@/components/BlogEditor";
 
 export default function AdminDashboard() {
   const [secret, setSecret] = useState("");
@@ -253,22 +254,7 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            {/* Content Management (Blogs) */}
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-              <div className="p-6 border-b border-slate-800 flex items-center justify-between bg-slate-950/50">
-                <div className="flex items-center gap-3">
-                  <FileText className="w-5 h-5 text-emerald-400" />
-                  <h2 className="text-xl font-bold text-white">Content Management</h2>
-                </div>
-                <button onClick={() => alert("Blog editor will open in MatDataHub CMS.")} className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg transition-colors text-sm flex items-center gap-2">
-                  <Plus className="w-4 h-4" /> Post New Blog
-                </button>
-              </div>
-              <div className="p-6 text-center text-slate-400">
-                <p>Currently 8 technical articles are published to the Resources page.</p>
-                <p className="text-xs mt-2 text-slate-500">To edit or post new Markdown blogs directly from your admin panel, the full CMS module will be deployed in the next minor release.</p>
-              </div>
-            </div>
+            <BlogEditor secret={secret} />
 
           </div>
         )}

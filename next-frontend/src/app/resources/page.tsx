@@ -13,6 +13,11 @@ export default function ResourcesPage() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
+  const [apiBlogs, setApiBlogs] = useState<any[]>([]);
+  useEffect(() => {
+    fetch(`${API}/blogs/`).then(r => r.ok ? r.json() : []).then(d => setApiBlogs(d)).catch(() => {});
+  }, []);
+
   // FAQ State
   const [faqSearch, setFaqSearch] = useState("");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -28,7 +33,7 @@ export default function ResourcesPage() {
   const [selectedBlog, setSelectedBlog] = useState<number | null>(null);
   const [blogFilter, setBlogFilter] = useState<string>("All");
 
-  const blogs = [
+  const hardcodedBlogs = [
     { 
       title: "Why India's Manufacturing Sector Needs a Materials Intelligence Platform", 
       date: "07/09/2026", author: "MatDataHub Editorial", readTime: "6 min", tag: "Industry", featured: true,
@@ -78,6 +83,8 @@ export default function ResourcesPage() {
       content: `MatDataHub's Workspace includes a built-in beam deflection calculator. Here's the engineering science behind it.\n\n## Euler-Bernoulli Beam Theory\n\nFor a simply-supported beam with a point load P at midspan:\n\nδ_max = PL³ / (48EI)\n\nWhere:\n- δ_max = maximum deflection (m)\n- P = applied load (N)\n- L = span length (m)\n- E = elastic modulus (Pa)\n- I = second moment of area (m⁴)\n\n## For a cantilever with end load:\n\nδ_max = PL³ / (3EI)\n\n## Practical Example\n\nA 2-meter cantilever shelf bracket made from AISI 304 stainless steel (E = 193 GPa), rectangular cross-section 50mm × 10mm, supporting 50 kg:\n\n- P = 50 × 9.81 = 490.5 N\n- I = (0.05 × 0.01³) / 12 = 4.167 × 10⁻⁹ m⁴\n- δ = (490.5 × 2³) / (3 × 193e9 × 4.167e-9)\n- δ = 3924 / 2412.7 = **1.63 mm**\n\nThis is within the L/500 serviceability limit (4mm), so the design is acceptable.\n\n**MatDataHub automatically pulls the elastic modulus from our verified database** when you select a material in the Workspace, eliminating manual lookup errors.`
     }
   ];
+
+  const blogs = [...apiBlogs, ...hardcodedBlogs];
 
   const allTags = ["All", ...Array.from(new Set(blogs.map(b => b.tag)))];
   const filteredBlogs = blogFilter === "All" ? blogs : blogs.filter(b => b.tag === blogFilter);
