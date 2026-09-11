@@ -299,42 +299,40 @@ function AccountDashboardInner() {
 
             {/* API Access (Advanced Only) */}
             {profile.tier === "advanced" && (
-              <div className="bg-slate-900 border border-emerald-900/50 rounded-2xl p-8 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl"></div>
-                <h2 className="text-xl font-bold text-white flex items-center gap-2 mb-4">
-                  <Key className="w-5 h-5 text-emerald-400" /> Programmatic API Access
-                </h2>
-                <p className="text-slate-300 text-sm mb-6">
-                  As an Advanced tier member, you are eligible for programmatic REST API access to query our materials database. 
-                  API credentials are provisioned securely by our team upon request.
-                </p>
-                
-                {profile.api_key ? (
-                  <div className="bg-emerald-900/20 border border-emerald-800/50 rounded-xl p-4 flex items-center gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
-                    <div>
-                      <p className="text-emerald-400 font-bold text-sm">API Access Granted</p>
-                      <p className="text-slate-400 text-xs mt-1">Your API credentials have been provisioned. Contact support at <strong>support@matdatahub.com</strong> to receive your keys securely.</p>
+              <div className="space-y-8">
+                <div className="bg-slate-900 border border-emerald-900/50 rounded-2xl p-8 relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl"></div>
+                  <h2 className="text-xl font-bold text-white flex items-center gap-2 mb-4">
+                    <Key className="w-5 h-5 text-emerald-400" /> Programmatic API Access
+                  </h2>
+                  <p className="text-slate-300 text-sm mb-6">
+                    As an Advanced tier member, you are eligible for programmatic REST API access to query our materials database. 
+                    API credentials are provisioned securely by our team upon request.
+                  </p>
+                  
+                  {profile.api_key ? (
+                    <div className="bg-emerald-900/20 border border-emerald-800/50 rounded-xl p-4 flex items-center gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+                      <div>
+                        <p className="text-emerald-400 font-bold text-sm">API Access Granted</p>
+                        <p className="text-slate-400 text-xs mt-1">Your API credentials have been provisioned. Contact support at <strong>support@matdatahub.com</strong> to receive your keys securely.</p>
+                      </div>
                     </div>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    <div className="bg-slate-950 border border-slate-800 rounded-xl p-4">
-                      <p className="text-slate-400 text-sm">
-                        <strong className="text-white">How it works:</strong> Submit a request below → Our team reviews it → API credentials are delivered securely via encrypted email within 24 hours.
-                      </p>
+                  ) : (
+                    <div className="space-y-4">
+                      <button 
+                        className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition-colors flex items-center gap-2"
+                        onClick={() => {
+                          window.open(`mailto:support@matdatahub.com?subject=API Access Request - ${profile.email}&body=Hi MatDataHub Team,%0A%0AI would like to request programmatic API access for my Advanced account.%0A%0AEmail: ${profile.email}%0ATier: ${profile.tier}%0A%0AThank you.`, '_blank');
+                          alert("Email client opened. Send the request to receive your API credentials.");
+                        }}
+                      >
+                        <Key className="w-4 h-4" /> Request API Access
+                      </button>
                     </div>
-                    <button 
-                      className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition-colors flex items-center gap-2"
-                      onClick={() => {
-                        window.open(`mailto:support@matdatahub.com?subject=API Access Request - ${profile.email}&body=Hi MatDataHub Team,%0A%0AI would like to request programmatic API access for my Advanced account.%0A%0AEmail: ${profile.email}%0ATier: ${profile.tier}%0A%0AThank you.`, '_blank');
-                        alert("Email client opened. Send the request to receive your API credentials.");
-                      }}
-                    >
-                      <Key className="w-4 h-4" /> Request API Access
-                    </button>
-                  </div>
-                )}
+                  )}
+                </div>
+                <AdvancedMaterialManager />
               </div>
             )}
 

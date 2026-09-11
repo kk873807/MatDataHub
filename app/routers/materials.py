@@ -516,6 +516,23 @@ def get_my_custom_materials(
         return []
     return db.query(CustomMaterial).filter(CustomMaterial.user_id == current_user.id).all()
 
+@router.post("/custom/bulk", response_model=dict)
+def bulk_create_custom_materials(
+    materials: List[CustomMaterialCreate],
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    if current_user.tier != "advanced" and not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Custom Materials are exclusively available on the Advanced tier.")
+    
+    inserted = 0
+    for mat in materials:
+        db_mat = CustomMaterial(**mat.model_dump(), user_id=current_user.id)
+        db.add(db_mat)
+        inserted += 1
+    db.commit()
+    return {"inserted": inserted}
+
 # --- Historical Price Tracking ---
 @router.get("/{material_id}/price-history", response_model=List[PriceHistoryResponse])
 def get_price_history(
