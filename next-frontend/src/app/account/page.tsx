@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect, Suspense } from "react";
 import MaterialManager from "@/components/MaterialManager";
 import AdvancedMaterialManager from "@/components/AdvancedMaterialManager";
@@ -276,7 +276,15 @@ function AccountDashboardInner() {
                     <h3 className="text-2xl font-bold text-white mb-2">Pro</h3>
                     <p className="text-slate-400 text-sm mb-6 flex-1">Perfect for engineers who need deeper material comparisons and exports.</p>
                     
+                    <div className="text-center mb-6">
+                      <span className="text-4xl font-black text-white">&#8377;499</span>
+                      <span className="text-slate-400">/mo</span>
+                    </div>
                     <ul className="space-y-3 mb-8">
+                      <li className="flex items-center gap-2 text-sm text-slate-300"><CheckCircle2 className="w-4 h-4 text-emerald-400" /> Full 1000+ material database</li>
+                      <li className="flex items-center gap-2 text-sm text-slate-300"><CheckCircle2 className="w-4 h-4 text-emerald-400" /> Export detailed professional PDFs</li>
+                      <li className="flex items-center gap-2 text-sm text-slate-300"><CheckCircle2 className="w-4 h-4 text-emerald-400" /> Advanced AI Adviser capabilities</li>
+                      <li className="flex items-center gap-2 text-sm text-slate-300"><CheckCircle2 className="w-4 h-4 text-emerald-400" /> Unlimited engineering workspaces</li>
                       <li className="flex items-center gap-2 text-sm text-slate-300"><CheckCircle2 className="w-4 h-4 text-emerald-400" /> Compare up to 5 materials</li>
                     </ul>
                     
@@ -286,7 +294,7 @@ function AccountDashboardInner() {
                         disabled={upgrading || profile.upgrade_status === "pending"}
                         className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl transition-colors flex justify-center items-center gap-2"
                       >
-                        Pay ₹499 & Upgrade <ArrowUpRight className="w-4 h-4" />
+                        Pay &#8377;499/mo & Upgrade <ArrowUpRight className="w-4 h-4" />
                       </button>
                     )}
                   </div>
@@ -297,10 +305,8 @@ function AccountDashboardInner() {
                     <p className="text-slate-400 text-sm mb-6 flex-1 relative">For enterprises and automation pipelines.</p>
                     
                     <div className="text-center mb-6">
-                      <span className="text-sm text-slate-400 line-through mr-2">₹49,999</span>
-                      <span className="text-4xl font-black text-white">₹19,999</span>
-                      <span className="text-slate-400">/year</span>
-                      <div className="text-emerald-400 text-xs font-bold mt-1 uppercase tracking-wider animate-pulse">Launch Offer - 60% Off</div>
+                      <span className="text-4xl font-black text-white">&#8377;19,999</span>
+                      <span className="text-slate-400">/mo</span>
                     </div>
                     <ul className="space-y-3 mb-6 text-sm text-slate-300">
                       <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-400" /> Unlimited Material Lookups</li>
@@ -316,7 +322,7 @@ function AccountDashboardInner() {
                       disabled={upgrading || profile.upgrade_status === "pending"}
                       className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl transition-colors flex justify-center items-center gap-2 relative z-10"
                     >
-                      Pay ₹19,999 & Upgrade <ArrowUpRight className="w-4 h-4" />
+                      Pay &#8377;19,999/mo & Upgrade <ArrowUpRight className="w-4 h-4" />
                     </button>
                   </div>
 
