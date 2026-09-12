@@ -15,9 +15,10 @@ export default function AdminDashboard() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!secret) return;
+    const cleanSecret = secret.trim();
+    if (!cleanSecret) return;
     setAuthed(true);
-    fetchAdminData(secret);
+    fetchAdminData(cleanSecret);
   };
 
   const fetchAdminData = async (adminSecret: string) => {
@@ -43,6 +44,7 @@ export default function AdminDashboard() {
         setFeedback(await feedRes.json());
       }
     } catch (err) {
+      setAuthed(false);
       setError("Network error fetching admin data.");
     } finally {
       setLoading(false);
