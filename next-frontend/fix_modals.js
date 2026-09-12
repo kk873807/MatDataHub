@@ -1,4 +1,9 @@
-import React, { useState, useEffect } from 'react';
+const fs = require('fs');
+
+let content = fs.readFileSync('src/components/AccountModals.tsx', 'utf8');
+
+// Just completely replace it with a comprehensive version!
+const fullContent = `import React, { useState, useEffect } from 'react';
 import { Settings, CreditCard, LifeBuoy, X, Download, Shield, Key, FileText, Zap, CheckCircle2, ArrowUpRight, LogOut, AlertCircle } from 'lucide-react';
 import AdvancedMaterialManager from "@/components/AdvancedMaterialManager";
 import { API } from "@/lib/api";
@@ -23,8 +28,8 @@ export function AccountModals({ activeModal, setActiveModal, userInfo }: Account
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
     if (!token) return;
     try {
-      const res = await fetch(`${API}/auth/me`, {
-        headers: { Authorization: `Bearer ${token}` }
+      const res = await fetch(\`\${API}/auth/me\`, {
+        headers: { Authorization: \`Bearer \${token}\` }
       });
       if (res.ok) {
         setProfile(await res.json());
@@ -37,11 +42,11 @@ export function AccountModals({ activeModal, setActiveModal, userInfo }: Account
     if (!token) return;
     setUpgrading(true);
     try {
-      const res = await fetch(`${API}/payments/create-link`, {
+      const res = await fetch(\`\${API}/payments/create-link\`, {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}` 
+          "Authorization": \`Bearer \${token}\` 
         },
         body: JSON.stringify({ tier })
       });
@@ -65,13 +70,13 @@ export function AccountModals({ activeModal, setActiveModal, userInfo }: Account
 
   const generateApiKeys = async () => {
     try {
-      const res = await fetch(`${API}/auth/generate-api`, {
+      const res = await fetch(\`\${API}/auth/generate-api\`, {
         method: "POST",
-        headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
+        headers: { "Authorization": \`Bearer \${localStorage.getItem("token")}\` }
       });
       if (res.ok) {
         const data = await res.json();
-        alert(`SUCCESS! Your API credentials:\n\nKey: ${data.api_key}\nSecret: ${data.api_secret}\n\nPlease save these immediately. The secret will not be shown again.`);
+        alert(\`SUCCESS! Your API credentials:\\n\\nKey: \${data.api_key}\\nSecret: \${data.api_secret}\\n\\nPlease save these immediately. The secret will not be shown again.\`);
         fetchProfile();
       } else {
         alert("Failed to generate API credentials.");
@@ -172,7 +177,7 @@ export function AccountModals({ activeModal, setActiveModal, userInfo }: Account
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     
                     {/* Pro Plan */}
-                    <div className={`bg-white dark:bg-slate-900 border ${profile.tier === "pro" ? "border-blue-500" : "border-slate-200 dark:border-slate-800"} rounded-2xl p-6 relative flex flex-col shadow-sm`}>
+                    <div className={\`bg-white dark:bg-slate-900 border \${profile.tier === "pro" ? "border-blue-500" : "border-slate-200 dark:border-slate-800"} rounded-2xl p-6 relative flex flex-col shadow-sm\`}>
                       {profile.tier === "pro" && <div className="absolute top-0 right-0 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-xl">Current Plan</div>}
                       <h3 className="text-xl font-bold text-slate-900 dark:text-white font-heading mb-2">Pro</h3>
                       <p className="text-slate-500 dark:text-slate-400 text-sm mb-4 flex-1">Perfect for engineers who need deeper material comparisons and exports.</p>
@@ -307,3 +312,7 @@ export function AccountModals({ activeModal, setActiveModal, userInfo }: Account
     </div>
   );
 }
+`;
+
+fs.writeFileSync('src/components/AccountModals.tsx', fullContent);
+console.log('Restored all features to AccountModals');
