@@ -1,119 +1,211 @@
 "use client";
 import Link from "next/link";
-import { Database, Calculator, Workflow, Bot, BookOpen, ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
+import { ArrowRight, BookOpen, Database, Target, BrainCircuit, ShieldCheck, Cpu, TestTube2, CheckCircle2 } from "lucide-react";
 
-export default function Home() {
+export default function LandingPage() {
   return (
-    <main className="relative flex flex-col items-center justify-start min-h-screen pt-12 pb-24 px-6 lg:px-12 overflow-x-hidden">
+    <div className="min-h-screen bg-slate-950 text-slate-200 selection:bg-indigo-500/30 overflow-x-hidden font-sans">
       
-      {/* Glassmorphism Background Orbs */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-600/10 blur-[120px] pointer-events-none"></div>
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-emerald-600/10 blur-[120px] pointer-events-none"></div>
-
-      <div className="w-full max-w-5xl text-center space-y-10 relative z-10">
-        
-        <div className="space-y-6">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-blue-500/30 bg-blue-500/10 text-blue-400 text-sm font-bold uppercase tracking-wider backdrop-blur-md hover:bg-blue-500/20 transition-colors cursor-default">
-            <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
-            Welcome to the Next Generation
+      {/* Navbar */}
+      <nav className="fixed top-0 w-full border-b border-slate-800/50 bg-slate-950/80 backdrop-blur-lg z-50">
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+              <Database className="w-4 h-4 text-white" />
+            </div>
+            <span className="font-bold text-xl tracking-tight text-white">MatDataHub</span>
           </div>
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-br from-white via-slate-200 to-slate-500 drop-shadow-sm">
-            Welcome to MatDataHub
-          </h1>
-          <p className="text-base md:text-xl text-slate-400 max-w-2xl mx-auto font-medium">
-            Your centralized platform for engineering physics, materials data, and financial analytics.
-          </p>
-        </div>
-
-        {/* Platform Guide / Explore Feature */}
-        <div className="pt-10 mb-2">
-          <div className="text-left mb-6">
-            <h2 className="text-2xl font-bold text-white mb-2">Platform Guide</h2>
-            <p className="text-slate-400 text-sm">Explore our toolkit to optimize your engineering workflow.</p>
-          </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-left">
-            <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl hover:border-blue-500/50 transition-colors">
-              <Database className="w-6 h-6 text-blue-400 mb-3" />
-              <h3 className="font-bold text-white text-sm mb-1">Material Database</h3>
-              <p className="text-slate-500 text-xs leading-relaxed">Search 1000+ materials and compare their mechanical, thermal, and electrical properties.</p>
-            </div>
-            <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl hover:border-indigo-500/50 transition-colors">
-              <Calculator className="w-6 h-6 text-indigo-400 mb-3" />
-              <h3 className="font-bold text-white text-sm mb-1">CBAM Calculator</h3>
-              <p className="text-slate-500 text-xs leading-relaxed">Estimate Carbon Border Adjustment Mechanism costs for importing metals into the EU.</p>
-            </div>
-            <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl hover:border-emerald-500/50 transition-colors">
-              <Bot className="w-6 h-6 text-emerald-400 mb-3" />
-              <h3 className="font-bold text-white text-sm mb-1">AI Advisor</h3>
-              <p className="text-slate-500 text-xs leading-relaxed">Ask our AI to recommend alternative materials based on specific use cases and constraints.</p>
-            </div>
-            <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl hover:border-amber-500/50 transition-colors">
-              <Workflow className="w-6 h-6 text-amber-400 mb-3" />
-              <h3 className="font-bold text-white text-sm mb-1">REST API</h3>
-              <p className="text-slate-500 text-xs leading-relaxed">Integrate MatDataHub directly into your internal tools and CI/CD pipelines.</p>
-            </div>
+          <div className="flex items-center gap-6">
+            <Link href="#problem" className="text-sm font-medium hover:text-indigo-400 transition-colors hidden md:block">Problem</Link>
+            <Link href="#solution" className="text-sm font-medium hover:text-indigo-400 transition-colors hidden md:block">Platform</Link>
+            <Link href="#pricing" className="text-sm font-medium hover:text-indigo-400 transition-colors hidden md:block">Pricing</Link>
+            <Link href="/account" className="text-sm font-semibold text-white bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg transition-all border border-slate-700">
+              Sign In
+            </Link>
+            <Link href="/dashboard" className="text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-lg transition-all shadow-lg shadow-indigo-600/20 hidden sm:block">
+              Go to Dashboard
+            </Link>
           </div>
         </div>
+      </nav>
 
-        {/* Featured Engineering Blog Banner */}
-        <div className="pt-6">
-          <Link href="/resources" onClick={() => alert('Coming soon in the next release!')} className="group relative block overflow-hidden rounded-3xl border border-indigo-500/30 bg-indigo-950/20 text-left transition-all hover:bg-indigo-900/40 hover:border-indigo-500/60 hover:shadow-[0_0_40px_-10px_rgba(99,102,241,0.2)] backdrop-blur-sm">
-            <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-indigo-400 to-purple-500"></div>
-            <div className="p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
-              <div className="space-y-3 max-w-2xl">
-                <div className="flex items-center gap-3">
-                  <span className="px-2.5 py-1 text-[10px] font-black uppercase tracking-widest bg-indigo-500 text-white rounded-md shadow-lg">New Research</span>
-                  <span className="text-xs font-bold text-slate-400">Sept 4, 2026 • 8 min read</span>
+      {/* Hero Section */}
+      <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 px-6">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none"></div>
+        <div className="max-w-5xl mx-auto text-center relative z-10">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 text-xs font-semibold uppercase tracking-widest mb-6">
+              <BookOpen className="w-3.5 h-3.5" /> Academic-Grade Materials Intelligence
+            </div>
+            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-white mb-6 leading-tight">
+              Engineering decisions, <br />
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-cyan-400">backed by physics.</span>
+            </h1>
+            <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed font-light">
+              A unified platform for mechanical properties, macroeconomic cost indices, and AI-driven substitution analysis. Designed for the rigor of modern R&D.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link href="/account" className="flex items-center gap-2 px-8 py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold transition-all shadow-xl shadow-indigo-600/20 w-full sm:w-auto justify-center">
+                Access Platform <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Problem Section */}
+      <section id="problem" className="py-24 bg-slate-900/50 border-y border-slate-800/50">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid md:grid-cols-2 gap-16 items-center">
+            <div>
+              <h2 className="text-3xl font-bold text-white mb-6">The Data Fragmentation Problem</h2>
+              <p className="text-slate-400 leading-relaxed mb-6">
+                Engineers and material scientists spend countless hours cross-referencing isolated databases to find mechanical limits, pricing estimates, and ESG compliance factors (like CBAM).
+              </p>
+              <ul className="space-y-4">
+                {["Inconsistent datasheets from different suppliers", "Lack of historical pricing trends for accurate BOM estimation", "Disconnect between mechanical viability and financial reality"].map((item, i) => (
+                  <li key={i} className="flex items-start gap-3 text-slate-300">
+                    <Target className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="bg-slate-950 p-8 rounded-2xl border border-slate-800 shadow-2xl relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/10 blur-[50px]"></div>
+              <div className="space-y-4 relative z-10 opacity-70 grayscale">
+                <div className="h-4 bg-slate-800 rounded w-3/4"></div>
+                <div className="h-4 bg-slate-800 rounded w-full"></div>
+                <div className="h-4 bg-slate-800 rounded w-5/6"></div>
+                <div className="h-4 bg-rose-900/30 border border-rose-800/50 rounded w-full mt-8 p-3 text-xs text-rose-400 font-mono">Error: Property mismatch across datasets.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Solution Section */}
+      <section id="solution" className="py-24 px-6">
+        <div className="max-w-7xl mx-auto text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">A Unified Academic & Industrial Solution</h2>
+          <p className="text-slate-400 max-w-2xl mx-auto">MatDataHub bridges the gap between theoretical material science and practical engineering economics.</p>
+        </div>
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+          {[
+            { title: "Parametric Database", desc: "Search thousands of materials with verified mechanical, thermal, and electrical properties.", icon: Database, color: "text-blue-400" },
+            { title: "Macroeconomic Pricing", desc: "Analyze supply chain risks and cost-per-kg trends mapped via trailing global indices.", icon: ShieldCheck, color: "text-emerald-400" },
+            { title: "AI Substitution", desc: "Use advanced algorithms to discover alternative materials based on multi-objective constraints.", icon: BrainCircuit, color: "text-purple-400" },
+            { title: "CBAM Emissions", desc: "Calculate predictive Carbon Border Adjustment Mechanism taxes for EU procurement.", icon: Target, color: "text-amber-400" },
+            { title: "Engineering Workspaces", desc: "Calculate beam deflection, thermal shock, and safety factors directly in your browser.", icon: Cpu, color: "text-rose-400" },
+            { title: "Composite Synthesizer", desc: "Blend theoretical materials using Rule of Mixtures to predict hybrid properties.", icon: TestTube2, color: "text-cyan-400" },
+          ].map((feat, i) => (
+            <div key={i} className="bg-slate-900/40 border border-slate-800 p-8 rounded-2xl hover:bg-slate-800/40 transition-colors">
+              <feat.icon className={`w-8 h-8 ${feat.color} mb-5`} />
+              <h3 className="text-xl font-bold text-white mb-2">{feat.title}</h3>
+              <p className="text-slate-400 text-sm leading-relaxed">{feat.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="py-24 bg-slate-900/50 border-y border-slate-800/50">
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          <h2 className="text-3xl font-bold text-white mb-12">Trusted by Researchers & Engineers</h2>
+          <div className="grid md:grid-cols-3 gap-8 text-left">
+            {[
+              { quote: "MatDataHub completely changed how we estimate aerospace BOM costs. The multi-objective substitution tool saved us months of R&D.", author: "Dr. Sarah Jenkins", role: "Lead Materials Scientist" },
+              { quote: "Finally, a platform that understands both the physics and the economics of materials. The CBAM calculator is a lifesaver for EU imports.", author: "Marcus Thorne", role: "Supply Chain Director" },
+              { quote: "The clean, academic interface makes it a joy to use. It feels like having an expert metallurgist sitting right next to you.", author: "Elena Rodriguez", role: "Mechanical Engineer" }
+            ].map((test, i) => (
+              <div key={i} className="p-8 bg-slate-950 border border-slate-800 rounded-2xl shadow-xl relative">
+                <div className="text-4xl text-indigo-500/20 absolute top-4 left-4 font-serif">"</div>
+                <p className="text-slate-300 relative z-10 mb-6 text-sm leading-relaxed italic">"{test.quote}"</p>
+                <div>
+                  <p className="text-white font-bold text-sm">{test.author}</p>
+                  <p className="text-slate-500 text-xs">{test.role}</p>
                 </div>
-                <h2 className="text-xl md:text-2xl font-bold text-white group-hover:text-indigo-300 transition-colors leading-tight">Modeling Thermal Expansion in Aerospace Alloys</h2>
-                <p className="text-slate-400 text-sm md:text-base leading-relaxed">Deep dive into isotropic thermal expansion formulas and why Titanium out-performs Aluminum 7075.</p>
               </div>
-              <div className="hidden md:flex flex-shrink-0 items-center justify-center p-4 bg-indigo-900/40 border border-indigo-500/20 rounded-2xl group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 shadow-xl">
-                <BookOpen className="w-8 h-8 text-indigo-400" />
-              </div>
-            </div>
-          </Link>
+            ))}
+          </div>
         </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pt-8">
-          
-          <Link href="/materials" className="group p-8 rounded-3xl bg-slate-900/50 border border-slate-700/50 hover:border-emerald-500/50 hover:bg-slate-800/80 transition-all backdrop-blur-sm hover:shadow-[0_0_30px_-10px_rgba(16,185,129,0.15)] hover:-translate-y-1">
-            <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-              <Database className="w-7 h-7" />
-            </div>
-            <h3 className="text-xl font-bold text-white mb-3">Browse Materials</h3>
-            <p className="text-slate-400 text-sm leading-relaxed mb-6">Access 1000+ verified engineering materials and their physical properties.</p>
-            <div className="text-xs font-bold text-emerald-400 flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              Explore Database <ArrowRight className="w-3 h-3" />
-            </div>
-          </Link>
+      </section>
 
-          <Link href="/projects" className="group p-8 rounded-3xl bg-slate-900/50 border border-slate-700/50 hover:border-orange-500/50 hover:bg-slate-800/80 transition-all backdrop-blur-sm hover:shadow-[0_0_30px_-10px_rgba(249,115,22,0.15)] hover:-translate-y-1">
-            <div className="w-14 h-14 rounded-2xl bg-orange-500/10 border border-orange-500/20 text-orange-400 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-              <Workflow className="w-7 h-7" />
+      {/* Pricing */}
+      <section id="pricing" className="py-24 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-white mb-4">Transparent Pricing Models</h2>
+            <p className="text-slate-400">Select the tier that fits your research and engineering needs.</p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            
+            {/* Free */}
+            <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 flex flex-col">
+              <h3 className="text-xl font-bold text-white mb-2">Academic Free</h3>
+              <p className="text-slate-400 text-sm mb-6 h-10">Perfect for students and open research.</p>
+              <div className="text-4xl font-extrabold text-white mb-8">₹0<span className="text-lg font-medium text-slate-500">/mo</span></div>
+              <ul className="space-y-3 mb-8 flex-1">
+                {["Search 100+ basic materials", "View mechanical properties", "Standard AI Adviser access", "Up to 2 Workspaces"].map((f, i) => (
+                  <li key={i} className="flex items-center gap-2 text-sm text-slate-300">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500" /> {f}
+                  </li>
+                ))}
+              </ul>
+              <Link href="/account" className="block text-center w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold transition-colors">Start Free</Link>
             </div>
-            <h3 className="text-xl font-bold text-white mb-3">Project Workspaces</h3>
-            <p className="text-slate-400 text-sm leading-relaxed mb-6">Create, save, and manage complex material selection workspaces.</p>
-            <div className="text-xs font-bold text-orange-400 flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              View Workspaces <ArrowRight className="w-3 h-3" />
-            </div>
-          </Link>
 
-          <Link href="/ai" className="group p-8 rounded-3xl bg-slate-900/50 border border-slate-700/50 hover:border-blue-500/50 hover:bg-slate-800/80 transition-all backdrop-blur-sm hover:shadow-[0_0_30px_-10px_rgba(59,130,246,0.15)] hover:-translate-y-1">
-            <div className="w-14 h-14 rounded-2xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-              <Bot className="w-7 h-7" />
+            {/* Pro */}
+            <div className="bg-slate-900 border-2 border-indigo-500 rounded-2xl p-8 flex flex-col relative transform md:-translate-y-4 shadow-2xl shadow-indigo-900/20">
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-indigo-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Most Popular</div>
+              <h3 className="text-xl font-bold text-white mb-2">Professional</h3>
+              <p className="text-slate-400 text-sm mb-6 h-10">For independent engineers and small firms.</p>
+              <div className="text-4xl font-extrabold text-white mb-8">₹2,499<span className="text-lg font-medium text-slate-500">/mo</span></div>
+              <ul className="space-y-3 mb-8 flex-1">
+                {["Full 1000+ material database", "Export detailed PDFs", "AI Material Substitution", "Unlimited Workspaces"].map((f, i) => (
+                  <li key={i} className="flex items-center gap-2 text-sm text-slate-300">
+                    <CheckCircle2 className="w-4 h-4 text-indigo-400" /> {f}
+                  </li>
+                ))}
+              </ul>
+              <Link href="/account" className="block text-center w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold transition-colors">Upgrade to Pro</Link>
             </div>
-            <h3 className="text-xl font-bold text-white mb-3">Ask AI Adviser</h3>
-            <p className="text-slate-400 text-sm leading-relaxed mb-6">Describe constraints in plain English and let AI find the perfect material.</p>
-            <div className="text-xs font-bold text-blue-400 flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              Ask Adviser <ArrowRight className="w-3 h-3" />
-            </div>
-          </Link>
 
+            {/* Advanced */}
+            <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 flex flex-col">
+              <h3 className="text-xl font-bold text-white mb-2">Advanced Enterprise</h3>
+              <p className="text-slate-400 text-sm mb-6 h-10">Full financial & physics capabilities.</p>
+              <div className="text-4xl font-extrabold text-white mb-8">₹19,999<span className="text-lg font-medium text-slate-500">/mo</span></div>
+              <ul className="space-y-3 mb-8 flex-1">
+                {["Macroeconomic Proxy Pricing", "CBAM Emissions Calculator", "Engineering Physics Tools (Safety, Fatigue)", "Composite Synthesizer", "Priority API Access"].map((f, i) => (
+                  <li key={i} className="flex items-center gap-2 text-sm text-slate-300">
+                    <CheckCircle2 className="w-4 h-4 text-amber-500" /> {f}
+                  </li>
+                ))}
+              </ul>
+              <Link href="/account" className="block text-center w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold transition-colors">Get Advanced</Link>
+            </div>
+
+          </div>
         </div>
+      </section>
 
-      </div>
-    </main>
+      {/* Footer */}
+      <footer className="bg-slate-950 border-t border-slate-800 py-12 px-6">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="flex items-center gap-2">
+            <Database className="w-5 h-5 text-indigo-500" />
+            <span className="font-bold text-white">MatDataHub</span>
+          </div>
+          <p className="text-slate-500 text-sm">© 2026 MatDataHub. Empowering material intelligence.</p>
+          <div className="flex gap-6">
+            <Link href="#" className="text-sm text-slate-400 hover:text-white transition-colors">Terms & Conditions</Link>
+            <Link href="#" className="text-sm text-slate-400 hover:text-white transition-colors">Privacy Policy</Link>
+            <Link href="#" className="text-sm text-slate-400 hover:text-white transition-colors">Contact</Link>
+          </div>
+        </div>
+      </footer>
+    </div>
   );
 }

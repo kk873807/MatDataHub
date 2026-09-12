@@ -6,7 +6,7 @@ import { Home, Database, Calculator, Workflow, User, Bot, BarChart3, BookOpen, M
 import { API } from "@/lib/api";
 
 const navItems = [
-  { name: "Dashboard", href: "/", icon: Home },
+  { name: "Dashboard", href: "/dashboard", icon: Home },
   { name: "Browse Materials", href: "/materials", icon: Database },
   { name: "Analytics", href: "/analytics", icon: BarChart3 },
   { name: "Ask AI Adviser", href: "/ai", icon: Bot },
@@ -45,6 +45,7 @@ export function Sidebar() {
 
   const tierLabel = userInfo?.is_admin ? "Admin" : (userInfo?.tier || "free").charAt(0).toUpperCase() + (userInfo?.tier || "free").slice(1);
 
+  if (pathname === '/') return null;
   return (
     <aside className={`${collapsed ? 'w-20' : 'w-64'} bg-slate-950 border-r border-slate-800 h-screen sticky top-0 flex-col hidden md:flex transition-all duration-300 z-50`}>
       <div className="p-4 border-b border-slate-800 flex items-center justify-between h-[73px]">
