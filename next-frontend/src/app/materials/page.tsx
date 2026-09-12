@@ -155,7 +155,7 @@ export default function MaterialsPage() {
                           setSearch(s.name);
                           setShowSuggestions(false);
                         }}
-                        className="w-full text-left px-5 py-3 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-4 border-b border-slate-200 dark:border-slate-800/50 last:border-0"
+                        className="w-full text-left px-5 py-3 hover:bg-slate-100 dark:hover:bg-slate-100 dark:bg-slate-800 transition-colors flex items-center gap-4 border-b border-slate-200 dark:border-slate-800/50 last:border-0"
                       >
                         <Search className="w-4 h-4 text-emerald-500 shrink-0" />
                         <div className="flex-1 min-w-0">
@@ -174,7 +174,7 @@ export default function MaterialsPage() {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="h-full appearance-none bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl pl-4 pr-10 py-3 text-slate-600 dark:text-slate-300 font-medium hover:border-slate-200 dark:hover:border-slate-700 focus:border-emerald-500 outline-none transition-colors"
+                  className="h-full appearance-none bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl pl-4 pr-10 py-3 text-slate-600 dark:text-slate-300 font-medium hover:border-slate-200 dark:hover:border-slate-200 dark:border-slate-700 focus:border-emerald-500 outline-none transition-colors"
                 >
                   <option value="name_asc">Name (A-Z)</option>
                   <option value="cost_asc">Cost (Low-High)</option>
@@ -187,7 +187,7 @@ export default function MaterialsPage() {
 
               <button 
                 onClick={() => setShowFilters(!showFilters)}
-                className={`flex items-center gap-2 px-5 py-3 rounded-xl border transition-all font-semibold ${showFilters ? 'bg-emerald-100  dark:bg-emerald-900/40 border-emerald-500 text-emerald-600 dark:text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)]' : 'bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+                className={`flex items-center gap-2 px-5 py-3 rounded-xl border transition-all font-semibold ${showFilters ? 'bg-emerald-100  dark:bg-emerald-900/40 border-emerald-500 text-emerald-600 dark:text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)]' : 'bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-100 dark:bg-slate-800'}`}
               >
                 <SlidersHorizontal className="w-5 h-5" />
                 Filters {activeFiltersCount > 0 && <span className="flex items-center justify-center w-5 h-5 bg-emerald-500 text-slate-950 rounded-full text-xs ml-1">{activeFiltersCount}</span>}
@@ -278,19 +278,19 @@ export default function MaterialsPage() {
                 </span>
               )}
               {minTensile !== "" && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-100 dark:bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50 rounded-full text-xs font-medium">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50 rounded-full text-xs font-medium">
                   Tensile &gt; {minTensile} MPa
                   <button onClick={() => setMinTensile("")} className="hover:text-blue-200"><X className="w-3 h-3" /></button>
                 </span>
               )}
               {maxCost !== "" && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-100 dark:bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800/50 rounded-full text-xs font-medium">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800/50 rounded-full text-xs font-medium">
                   Cost &lt; ₹{maxCost}/kg
                   <button onClick={() => setMaxCost("")} className="hover:text-amber-200"><X className="w-3 h-3" /></button>
                 </span>
               )}
               {minThermal !== "" && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-orange-100 dark:bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-800/50 rounded-full text-xs font-medium">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-800/50 rounded-full text-xs font-medium">
                   Thermal &gt; {minThermal}
                   <button onClick={() => setMinThermal("")} className="hover:text-orange-200"><X className="w-3 h-3" /></button>
                 </span>
@@ -325,7 +325,7 @@ export default function MaterialsPage() {
             <p className="text-slate-500 dark:text-slate-400 max-w-md mx-auto mb-6">We couldn't find any materials matching your specific filters and search criteria.</p>
             <button 
               onClick={() => { setSearch(""); setCategory(""); setMinTensile(""); setMaxCost(""); setMinThermal(""); }}
-              className="px-6 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-700 text-slate-900 dark:text-white rounded-2xl font-semibold transition-colors"
+              className="px-6 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-white rounded-2xl font-semibold transition-colors"
             >
               Clear all filters
             </button>
@@ -335,9 +335,9 @@ export default function MaterialsPage() {
             {sortedMaterials.map((mat, i) => {
               // Determine category color
               let catColor = "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700";
-              if (mat.category === "Metal") catColor = "bg-blue-100 dark:bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800/50";
-              if (mat.category === "Polymer") catColor = "bg-purple-100 dark:bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-800/50";
-              if (mat.category === "Ceramic") catColor = "bg-orange-100 dark:bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 border-orange-200 dark:border-orange-800/50";
+              if (mat.category === "Metal") catColor = "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800/50";
+              if (mat.category === "Polymer") catColor = "bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-800/50";
+              if (mat.category === "Ceramic") catColor = "bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 border-orange-200 dark:border-orange-800/50";
               if (mat.category === "Composite") catColor = "bg-emerald-100  dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800/50";
 
               return (
@@ -363,11 +363,11 @@ export default function MaterialsPage() {
                     <div className="space-y-2.5 text-sm mt-auto relative z-10">
                       <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-800/60 pb-1.5">
                         <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5"><TrendingUp className="w-3.5 h-3.5" /> Yield</span>
-                        <span className="text-slate-200 font-medium">{mat.yield_strength_min || '-'} MPa</span>
+                        <span className="text-slate-700 dark:text-slate-200 font-medium">{mat.yield_strength_min || '-'} MPa</span>
                       </div>
                       <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-800/60 pb-1.5">
                         <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5"><Scale className="w-3.5 h-3.5" /> Density</span>
-                        <span className="text-slate-200 font-medium">{mat.density || '-'} g/cm³</span>
+                        <span className="text-slate-700 dark:text-slate-200 font-medium">{mat.density || '-'} g/cm³</span>
                       </div>
                       <div className="flex justify-between items-center pt-0.5">
                         <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5"><Zap className="w-3.5 h-3.5" /> Est. Cost</span>

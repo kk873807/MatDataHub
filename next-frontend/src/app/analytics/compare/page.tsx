@@ -175,7 +175,7 @@ function CompareMaterialsContent() {
               const angle = i * angleStep - Math.PI / 2;
               return `${center + radius * scale * Math.cos(angle)},${center + radius * scale * Math.sin(angle)}`;
             }).join(" ")}
-            fill="none" stroke="#334155" strokeWidth="1"
+            fill="none" className="stroke-slate-200 dark:stroke-slate-700" strokeWidth="1"
           />
         ))}
         {/* Axes */}
@@ -187,8 +187,8 @@ function CompareMaterialsContent() {
           const textY = center + (radius + 15) * Math.sin(angle);
           return (
             <g key={prop.key}>
-              <line x1={center} y1={center} x2={x} y2={y} stroke="#334155" strokeWidth="1" strokeDasharray="4,4" />
-              <text x={textX} y={textY} fill="#94a3b8" fontSize="8" textAnchor="middle" dominantBaseline="middle">
+              <line x1={center} y1={center} x2={x} y2={y} className="stroke-slate-200 dark:stroke-slate-700" strokeWidth="1" strokeDasharray="4,4" />
+              <text x={textX} y={textY} className="fill-slate-600 dark:fill-slate-400" fontSize="8" textAnchor="middle" dominantBaseline="middle">
                 {prop.label.split("(")[0].trim()}
               </text>
             </g>
@@ -202,7 +202,7 @@ function CompareMaterialsContent() {
             fill={colors[idx % colors.length].bg} 
             stroke={colors[idx % colors.length].hex} 
             strokeWidth="3" 
-            style={{ mixBlendMode: 'screen' }}
+            className="mix-blend-multiply dark:mix-blend-screen opacity-70"
           />
         ))}
       </svg>
@@ -338,7 +338,7 @@ function CompareMaterialsContent() {
               <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-x-auto">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="font-bold text-slate-900 dark:text-white font-heading">Direct Comparison Matrix</h3>
-                  <button onClick={exportCSV} className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold rounded-2xl transition-colors border border-slate-200 dark:border-slate-700">
+                  <button onClick={exportCSV} className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold rounded-2xl transition-colors border border-slate-200 dark:border-slate-700">
                     <Download className="w-3 h-3" /> Export CSV
                   </button>
                 </div>
@@ -360,7 +360,7 @@ function CompareMaterialsContent() {
                         <tr key={prop.key}>
                           <td className="py-3 text-slate-600 dark:text-slate-300 whitespace-nowrap">{prop.label}</td>
                           {comparison.map((m, idx) => (
-                            <td key={idx} className={`py-3 px-2 font-medium ${idx === bestIdx ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-200'}`}>
+                            <td key={idx} className={`py-3 px-2 font-medium ${idx === bestIdx ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-700 dark:text-slate-200'}`}>
                               {m[prop.key] || '-'}
                               {idx === bestIdx && m[prop.key] && <span className="ml-1 text-[10px]">★</span>}
                             </td>

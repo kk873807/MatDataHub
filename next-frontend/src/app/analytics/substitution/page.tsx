@@ -190,7 +190,7 @@ function SmartSubstitutionContent() {
           {/* Controls Panel */}
           <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-6">
             <div className="relative">
-              <label className="block text-sm font-semibold text-slate-200 mb-2">Base Material</label>
+              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Base Material</label>
               <div 
                 className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-3 text-slate-500 dark:text-slate-400 cursor-text flex items-center justify-between outline-none focus-within:border-purple-500"
               >
@@ -305,19 +305,19 @@ function SmartSubstitutionContent() {
                     <div className="grid grid-cols-4 gap-4 pt-3 border-t border-slate-200 dark:border-slate-800">
                       <div>
                         <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase">Cost</div>
-                        <div className="text-sm font-medium text-slate-200">₹{res.cost}/kg</div>
+                        <div className="text-sm font-medium text-slate-700 dark:text-slate-200">₹{res.cost}/kg</div>
                       </div>
                       <div>
                         <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase">Density</div>
-                        <div className="text-sm font-medium text-slate-200">{res.density} g/cm³</div>
+                        <div className="text-sm font-medium text-slate-700 dark:text-slate-200">{res.density} g/cm³</div>
                       </div>
                       <div>
                         <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase">Tensile</div>
-                        <div className="text-sm font-medium text-slate-200">{res.tensile} MPa</div>
+                        <div className="text-sm font-medium text-slate-700 dark:text-slate-200">{res.tensile} MPa</div>
                       </div>
                       <div>
                         <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase">Carbon</div>
-                        <div className="text-sm font-medium text-slate-200">{res.carbon} kgCO2</div>
+                        <div className="text-sm font-medium text-slate-700 dark:text-slate-200">{res.carbon} kgCO2</div>
                       </div>
                     </div>
                   </div>

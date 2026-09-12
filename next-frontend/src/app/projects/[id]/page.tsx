@@ -264,7 +264,7 @@ export default function ProjectWorkspace() {
                     {filteredMats.map(m => (
                       <div 
                         key={m.id} 
-                        className={`px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-colors ${matId === m.id.toString() ? 'bg-slate-100 dark:bg-slate-800 text-blue-600 dark:text-blue-400' : 'text-slate-600 dark:text-slate-300'}`}
+                        className={`px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-100 dark:bg-slate-800 cursor-pointer transition-colors ${matId === m.id.toString() ? 'bg-slate-100 dark:bg-slate-800 text-blue-600 dark:text-blue-400' : 'text-slate-600 dark:text-slate-300'}`}
                         onClick={() => {
                           setMatId(m.id.toString());
                           setSearchMatQuery(m.name);
@@ -303,7 +303,7 @@ export default function ProjectWorkspace() {
             <div className="flex justify-between items-center p-4 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50">
               <h3 className="text-lg font-bold text-slate-900 dark:text-white font-heading flex items-center gap-2"><Component className="w-5 h-5 text-blue-600 dark:text-blue-600 dark:text-blue-400" /> Bill of Materials</h3>
               <div className="flex gap-2">
-                <label className="flex items-center gap-2 text-xs font-semibold bg-indigo-100 dark:bg-indigo-100 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-300 py-1.5 px-3 rounded-2xl transition-colors cursor-pointer border border-indigo-200 dark:border-indigo-700/50">
+                <label className="flex items-center gap-2 text-xs font-semibold bg-indigo-100 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-300 py-1.5 px-3 rounded-2xl transition-colors cursor-pointer border border-indigo-200 dark:border-indigo-700/50">
                   <FileText className="w-3 h-3" /> Smart Import
                   <input type="file" accept=".csv" className="hidden" onChange={(e) => {
                     if (e.target.files && e.target.files.length > 0) {
@@ -311,7 +311,7 @@ export default function ProjectWorkspace() {
                     }
                   }} />
                 </label>
-                <button onClick={exportCSV} className="flex items-center gap-2 text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-700 text-slate-200 py-1.5 px-3 rounded-2xl transition-colors border border-slate-200 dark:border-slate-700">
+                <button onClick={exportCSV} className="flex items-center gap-2 text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 py-1.5 px-3 rounded-2xl transition-colors border border-slate-200 dark:border-slate-700">
                   <Download className="w-3 h-3" /> Export CSV
                 </button>
               </div>
@@ -330,7 +330,7 @@ export default function ProjectWorkspace() {
                 </thead>
                 <tbody className="divide-y divide-slate-800/50">
                   {enrichedItems.map((item: any) => (
-                    <tr key={item.id} className="hover:bg-slate-100 dark:hover:bg-slate-800/40 transition-colors group">
+                    <tr key={item.id} className="hover:bg-slate-100 dark:hover:bg-slate-100 dark:bg-slate-800/40 transition-colors group">
                       <td className="px-5 py-3 text-slate-900 dark:text-white font-medium">{item.part_name}</td>
                       <td className="px-5 py-3 text-blue-600 dark:text-blue-400">
                         <Link href={`/materials/${item.material_id}`} className="hover:text-blue-600 dark:text-blue-300 hover:underline transition-colors">{item.mat?.name || 'Unknown'}</Link>
@@ -444,7 +444,7 @@ export default function ProjectWorkspace() {
                     a.href = url;
                     a.download = `${project.name.replace(/\s+/g, '_')}_blueprint.json`;
                     a.click();
-                  }} className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-900 dark:text-white rounded text-sm font-bold transition-colors">
+                  }} className="px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-600 text-slate-900 dark:text-white rounded text-sm font-bold transition-colors">
                     Export JSON
                   </button>
                   <button onClick={() => {
@@ -463,7 +463,7 @@ export default function ProjectWorkspace() {
                     a.href = url;
                     a.download = `${project.name.replace(/\s+/g, '_')}_bom.csv`;
                     a.click();
-                  }} className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-emerald-600 dark:text-emerald-400 border border-emerald-900/50 rounded text-sm font-bold transition-colors">
+                  }} className="px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-600 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/50 rounded text-sm font-bold transition-colors">
                     Export CSV (Excel)
                   </button>
                 </div>
@@ -500,7 +500,7 @@ export default function ProjectWorkspace() {
       {/* Top Navbar for Workspace */}
       <div className="h-16 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between px-6 shrink-0">
         <div className="flex items-center gap-4">
-          <Link href="/projects" className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white transition-colors">
+          <Link href="/projects" className="p-2 hover:bg-slate-100 dark:hover:bg-slate-100 dark:bg-slate-800 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white transition-colors">
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div>
@@ -817,7 +817,7 @@ export default function ProjectWorkspace() {
                 showToast("Please allow popups to generate and view the report.");
               }
             }}
-            className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-700 text-slate-900 dark:text-white rounded text-xs font-semibold transition-colors border border-slate-200 dark:border-slate-700 cursor-pointer"
+            className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-white rounded text-xs font-semibold transition-colors border border-slate-200 dark:border-slate-700 cursor-pointer"
           >
             <FileText className="w-4 h-4" /> Professional Report
           </button>
@@ -835,7 +835,7 @@ export default function ProjectWorkspace() {
             <Share2 className="w-4 h-4" /> Blueprints (JSON)
           </button>
           
-          <div className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mt-6 mb-2 ml-2">Engineering Tools</div>          {profile?.tier !== "advanced" && !profile?.is_admin && <div className="ml-2 mb-2 px-2 py-1 bg-amber-100 dark:bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 text-[10px] rounded border border-amber-900/50 uppercase tracking-wider font-bold">Advanced Tier Only</div>}
+          <div className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mt-6 mb-2 ml-2">Engineering Tools</div>          {profile?.tier !== "advanced" && !profile?.is_admin && <div className="ml-2 mb-2 px-2 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 text-[10px] rounded border border-amber-900/50 uppercase tracking-wider font-bold">Advanced Tier Only</div>}
           <button onClick={()=>setActiveTool("safety")} className={`flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-medium transition-colors ${activeTool === 'safety' ? 'bg-emerald-600/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30' : 'text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-900 hover:text-white border border-transparent'}`}>
             <Shield className="w-4 h-4" /> Safety Factor
           </button>
