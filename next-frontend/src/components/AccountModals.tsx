@@ -249,7 +249,7 @@ export function AccountModals({ activeModal, setActiveModal, userInfo }: Account
                 <div className="flex items-center justify-between text-sm font-medium text-slate-300 border-t border-slate-700 pt-4">
                   <span>Next billing date: {profile.tier === 'free' ? 'N/A (Free Plan)' : (profile.next_billing_date ? new Date(profile.next_billing_date).toLocaleDateString() : 'Active Subscription')}</span>
                   {profile.tier !== 'free' && (
-                    <button onClick={() => alert("Billing portal integration coming soon.")} className="px-4 py-1.5 bg-white text-slate-900 rounded-lg hover:bg-slate-200 transition-colors font-bold">Manage Plan</button>
+                    <a href="mailto:billing@matdatahub.com?subject=Manage%20Subscription%20Plan" className="px-4 py-1.5 bg-white text-slate-900 rounded-lg hover:bg-slate-200 transition-colors font-bold inline-block">Manage Plan</a>
                   )}
                   {profile.tier === 'free' && (
                     <button onClick={() => setActiveModal('account')} className="px-4 py-1.5 bg-white text-slate-900 rounded-lg hover:bg-slate-200 transition-colors font-bold">Upgrade Now</button>
