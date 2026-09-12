@@ -1,7 +1,7 @@
 ﻿"use client";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { LayoutGrid, List, Search, Filter, Loader2, Database, SlidersHorizontal, X, ArrowDownAZ, TrendingUp, Scale, Zap, Beaker, FileBox, Lock, Shield } from "lucide-react";
+import { LayoutGrid, List, Search, ArrowLeft, Filter, Loader2, Database, SlidersHorizontal, X, ArrowDownAZ, TrendingUp, Scale, Zap, Beaker, FileBox, Lock, Shield } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { API } from "@/lib/api";
 
@@ -119,6 +119,7 @@ export default function MaterialsPage() {
   return (
     <main className="flex flex-col p-6 lg:p-10 w-full overflow-y-auto">
       <div className="w-full max-w-7xl mx-auto flex flex-col gap-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-emerald-600 dark:text-slate-400 dark:hover:text-emerald-400 transition-colors w-fit mb-2"><ArrowLeft className="w-4 h-4" /> Back to Home</Link>
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div className="space-y-1">
             <h1 className="text-3xl font-bold text-slate-900 dark:text-white font-heading flex items-center gap-3">
@@ -161,7 +162,7 @@ export default function MaterialsPage() {
                         <Search className="w-4 h-4 text-emerald-500 shrink-0" />
                         <div className="flex-1 min-w-0">
                           <p className="text-slate-900 dark:text-white text-sm font-semibold truncate">{s.name}</p>
-                          <p className="text-slate-500 dark:text-slate-400 text-xs mt-0.5">{s.category}{s.grade ? ` â€¢ ${s.grade}` : ""}</p>
+                          <p className="text-slate-500 dark:text-slate-400 text-xs mt-0.5">{s.category}{s.grade ? ` • ${s.grade}` : ""}</p>
                         </div>
                       </button>
                     ))}
@@ -246,7 +247,7 @@ export default function MaterialsPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Max Cost (â‚¹/kg)</label>
+                    <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Max Cost (₹/kg)</label>
                     <input
                       type="number"
                       placeholder="e.g. 500"
@@ -256,7 +257,7 @@ export default function MaterialsPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Min Thermal (W/mÂ·K)</label>
+                    <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Min Thermal (W/m·K)</label>
                     <input
                       type="number"
                       placeholder="e.g. 15"
@@ -301,7 +302,7 @@ export default function MaterialsPage() {
               )}
               {maxCost !== "" && (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800/50 rounded-full text-xs font-medium">
-                  Cost &lt; â‚¹{maxCost}/kg
+                  Cost &lt; ₹{maxCost}/kg
                   <button onClick={() => setMaxCost("")} className="hover:text-amber-200"><X className="w-3 h-3" /></button>
                 </span>
               )}
@@ -372,7 +373,7 @@ export default function MaterialsPage() {
                     
                     <div className="mb-5 relative z-10">
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${catColor}`}>
-                        {mat.category} {mat.subcategory ? `â€¢ ${mat.subcategory}` : ''}
+                        {mat.category} {mat.subcategory ? `• ${mat.subcategory}` : ''}
                       </span>
                     </div>
                     
@@ -399,7 +400,7 @@ export default function MaterialsPage() {
 
                       <div className="flex justify-between items-center pt-3 mt-3 border-t border-slate-200 dark:border-slate-800">
                         <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider"><Zap className="w-3.5 h-3.5" /> Est. Cost</span>
-                        <span className="text-emerald-600 dark:text-emerald-400 font-black text-base">?{mat.cost_per_kg_min || '-'}<span className="text-xs font-medium text-emerald-600/70 dark:text-emerald-400/70">/kg</span></span>
+                        <span className="text-emerald-600 dark:text-emerald-400 font-black text-base">₹{mat.cost_per_kg_min || '-'}<span className="text-xs font-medium text-emerald-600/70 dark:text-emerald-400/70">/kg</span></span>
                       </div>
                     </div>
                   </Link>
