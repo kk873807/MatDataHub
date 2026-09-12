@@ -239,7 +239,7 @@ export default function LandingPage() {
               <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-indigo-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Most Popular</div>
               <h3 className="text-xl font-bold text-white mb-2">Professional</h3>
               <p className="text-slate-400 text-sm mb-6 h-10">For independent engineers and small firms.</p>
-              <div className="text-4xl font-extrabold text-white mb-8">₹2,499<span className="text-lg font-medium text-slate-500">/mo</span></div>
+              <div className="text-4xl font-extrabold text-white mb-8">₹499<span className="text-lg font-medium text-slate-500">/mo</span></div>
               <ul className="space-y-3 mb-8 flex-1">
                 {["Full 1000+ material database", "Export detailed PDFs", "AI Material Substitution", "Unlimited Workspaces"].map((f, i) => (
                   <li key={i} className="flex items-center gap-2 text-sm text-slate-300">
@@ -278,9 +278,9 @@ export default function LandingPage() {
           </div>
           <p className="text-slate-500 text-sm">© 2026 MatDataHub. Empowering material intelligence.</p>
           <div className="flex gap-6">
-            <Link href="#" className="text-sm text-slate-400 hover:text-white transition-colors">Terms & Conditions</Link>
-            <Link href="#" className="text-sm text-slate-400 hover:text-white transition-colors">Privacy Policy</Link>
-            <Link href="#" className="text-sm text-slate-400 hover:text-white transition-colors">Contact</Link>
+            <Link href="/terms" className="text-sm text-slate-400 hover:text-white transition-colors">Terms & Conditions</Link>
+            <Link href="/privacy" className="text-sm text-slate-400 hover:text-white transition-colors">Privacy Policy</Link>
+            <Link href="/contact" className="text-sm text-slate-400 hover:text-white transition-colors">Contact</Link>
           </div>
         </div>
       </footer>

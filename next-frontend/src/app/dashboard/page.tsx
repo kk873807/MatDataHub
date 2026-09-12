@@ -1,119 +1,101 @@
 "use client";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Database, Calculator, Workflow, Bot, BookOpen, ArrowRight } from "lucide-react";
+import { Database, Calculator, Workflow, Bot, BarChart3, Plus, ArrowRight, LayoutDashboard, Search } from "lucide-react";
+import { API } from "@/lib/api";
 
-export default function Home() {
+export default function AppDashboard() {
+  const [profile, setProfile] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      fetch(`${API}/auth/me`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (!data.detail) setProfile(data);
+      })
+      .finally(() => setLoading(false));
+    } else {
+      setLoading(false);
+    }
+  }, []);
+
+  if (loading) {
+    return <div className="p-12 text-center text-slate-400">Loading workspace...</div>;
+  }
+
   return (
-    <main className="relative flex flex-col items-center justify-start min-h-screen pt-12 pb-24 px-6 lg:px-12 overflow-x-hidden">
+    <main className="p-6 lg:p-10 w-full max-w-7xl mx-auto space-y-10">
       
-      {/* Glassmorphism Background Orbs */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-600/10 blur-[120px] pointer-events-none"></div>
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-emerald-600/10 blur-[120px] pointer-events-none"></div>
-
-      <div className="w-full max-w-5xl text-center space-y-10 relative z-10">
-        
-        <div className="space-y-6">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-blue-500/30 bg-blue-500/10 text-blue-400 text-sm font-bold uppercase tracking-wider backdrop-blur-md hover:bg-blue-500/20 transition-colors cursor-default">
-            <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
-            Welcome to the Next Generation
-          </div>
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-br from-white via-slate-200 to-slate-500 drop-shadow-sm">
-            Welcome to MatDataHub
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-white flex items-center gap-3">
+            <LayoutDashboard className="w-8 h-8 text-indigo-400" />
+            Welcome back{profile?.username ? `, ${profile.username}` : ''}
           </h1>
-          <p className="text-base md:text-xl text-slate-400 max-w-2xl mx-auto font-medium">
-            Your centralized platform for engineering physics, materials data, and financial analytics.
-          </p>
+          <p className="text-slate-400 mt-1">Here is what's happening in your engineering workspace today.</p>
         </div>
-
-        {/* Platform Guide / Explore Feature */}
-        <div className="pt-10 mb-2">
-          <div className="text-left mb-6">
-            <h2 className="text-2xl font-bold text-white mb-2">Platform Guide</h2>
-            <p className="text-slate-400 text-sm">Explore our toolkit to optimize your engineering workflow.</p>
-          </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-left">
-            <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl hover:border-blue-500/50 transition-colors">
-              <Database className="w-6 h-6 text-blue-400 mb-3" />
-              <h3 className="font-bold text-white text-sm mb-1">Material Database</h3>
-              <p className="text-slate-500 text-xs leading-relaxed">Search 1000+ materials and compare their mechanical, thermal, and electrical properties.</p>
-            </div>
-            <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl hover:border-indigo-500/50 transition-colors">
-              <Calculator className="w-6 h-6 text-indigo-400 mb-3" />
-              <h3 className="font-bold text-white text-sm mb-1">CBAM Calculator</h3>
-              <p className="text-slate-500 text-xs leading-relaxed">Estimate Carbon Border Adjustment Mechanism costs for importing metals into the EU.</p>
-            </div>
-            <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl hover:border-emerald-500/50 transition-colors">
-              <Bot className="w-6 h-6 text-emerald-400 mb-3" />
-              <h3 className="font-bold text-white text-sm mb-1">AI Advisor</h3>
-              <p className="text-slate-500 text-xs leading-relaxed">Ask our AI to recommend alternative materials based on specific use cases and constraints.</p>
-            </div>
-            <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl hover:border-amber-500/50 transition-colors">
-              <Workflow className="w-6 h-6 text-amber-400 mb-3" />
-              <h3 className="font-bold text-white text-sm mb-1">REST API</h3>
-              <p className="text-slate-500 text-xs leading-relaxed">Integrate MatDataHub directly into your internal tools and CI/CD pipelines.</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Featured Engineering Blog Banner */}
-        <div className="pt-6">
-          <Link href="/resources" onClick={() => alert('Coming soon in the next release!')} className="group relative block overflow-hidden rounded-3xl border border-indigo-500/30 bg-indigo-950/20 text-left transition-all hover:bg-indigo-900/40 hover:border-indigo-500/60 hover:shadow-[0_0_40px_-10px_rgba(99,102,241,0.2)] backdrop-blur-sm">
-            <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-indigo-400 to-purple-500"></div>
-            <div className="p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
-              <div className="space-y-3 max-w-2xl">
-                <div className="flex items-center gap-3">
-                  <span className="px-2.5 py-1 text-[10px] font-black uppercase tracking-widest bg-indigo-500 text-white rounded-md shadow-lg">New Research</span>
-                  <span className="text-xs font-bold text-slate-400">Sept 4, 2026 • 8 min read</span>
-                </div>
-                <h2 className="text-xl md:text-2xl font-bold text-white group-hover:text-indigo-300 transition-colors leading-tight">Modeling Thermal Expansion in Aerospace Alloys</h2>
-                <p className="text-slate-400 text-sm md:text-base leading-relaxed">Deep dive into isotropic thermal expansion formulas and why Titanium out-performs Aluminum 7075.</p>
-              </div>
-              <div className="hidden md:flex flex-shrink-0 items-center justify-center p-4 bg-indigo-900/40 border border-indigo-500/20 rounded-2xl group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 shadow-xl">
-                <BookOpen className="w-8 h-8 text-indigo-400" />
-              </div>
-            </div>
+        <div className="flex gap-3">
+          <Link href="/materials" className="bg-slate-900 border border-slate-700 hover:bg-slate-800 px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2 text-white">
+            <Search className="w-4 h-4" /> Browse Database
+          </Link>
+          <Link href="/projects" className="bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-lg text-sm font-semibold transition-colors text-white flex items-center gap-2 shadow-lg shadow-indigo-600/20">
+            <Plus className="w-4 h-4" /> New Workspace
           </Link>
         </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pt-8">
-          
-          <Link href="/materials" className="group p-8 rounded-3xl bg-slate-900/50 border border-slate-700/50 hover:border-emerald-500/50 hover:bg-slate-800/80 transition-all backdrop-blur-sm hover:shadow-[0_0_30px_-10px_rgba(16,185,129,0.15)] hover:-translate-y-1">
-            <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-              <Database className="w-7 h-7" />
-            </div>
-            <h3 className="text-xl font-bold text-white mb-3">Browse Materials</h3>
-            <p className="text-slate-400 text-sm leading-relaxed mb-6">Access 1000+ verified engineering materials and their physical properties.</p>
-            <div className="text-xs font-bold text-emerald-400 flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              Explore Database <ArrowRight className="w-3 h-3" />
-            </div>
-          </Link>
-
-          <Link href="/projects" className="group p-8 rounded-3xl bg-slate-900/50 border border-slate-700/50 hover:border-orange-500/50 hover:bg-slate-800/80 transition-all backdrop-blur-sm hover:shadow-[0_0_30px_-10px_rgba(249,115,22,0.15)] hover:-translate-y-1">
-            <div className="w-14 h-14 rounded-2xl bg-orange-500/10 border border-orange-500/20 text-orange-400 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-              <Workflow className="w-7 h-7" />
-            </div>
-            <h3 className="text-xl font-bold text-white mb-3">Project Workspaces</h3>
-            <p className="text-slate-400 text-sm leading-relaxed mb-6">Create, save, and manage complex material selection workspaces.</p>
-            <div className="text-xs font-bold text-orange-400 flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              View Workspaces <ArrowRight className="w-3 h-3" />
-            </div>
-          </Link>
-
-          <Link href="/ai" className="group p-8 rounded-3xl bg-slate-900/50 border border-slate-700/50 hover:border-blue-500/50 hover:bg-slate-800/80 transition-all backdrop-blur-sm hover:shadow-[0_0_30px_-10px_rgba(59,130,246,0.15)] hover:-translate-y-1">
-            <div className="w-14 h-14 rounded-2xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-              <Bot className="w-7 h-7" />
-            </div>
-            <h3 className="text-xl font-bold text-white mb-3">Ask AI Adviser</h3>
-            <p className="text-slate-400 text-sm leading-relaxed mb-6">Describe constraints in plain English and let AI find the perfect material.</p>
-            <div className="text-xs font-bold text-blue-400 flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              Ask Adviser <ArrowRight className="w-3 h-3" />
-            </div>
-          </Link>
-
-        </div>
-
       </div>
+
+      {/* Quick Actions Grid */}
+      <div>
+        <h2 className="text-lg font-bold text-white mb-4">Quick Actions</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Link href="/materials" className="bg-slate-900/50 border border-slate-800 p-5 rounded-2xl hover:bg-slate-800/50 hover:border-slate-700 transition-all group">
+            <Database className="w-6 h-6 text-blue-400 mb-3 group-hover:scale-110 transition-transform" />
+            <h3 className="font-bold text-white text-sm mb-1">Material Search</h3>
+            <p className="text-slate-500 text-xs">Access 1000+ verified materials.</p>
+          </Link>
+          <Link href="/analytics/cbam" className="bg-slate-900/50 border border-slate-800 p-5 rounded-2xl hover:bg-slate-800/50 hover:border-slate-700 transition-all group">
+            <Calculator className="w-6 h-6 text-amber-400 mb-3 group-hover:scale-110 transition-transform" />
+            <h3 className="font-bold text-white text-sm mb-1">CBAM Calculator</h3>
+            <p className="text-slate-500 text-xs">Estimate carbon tax emissions.</p>
+          </Link>
+          <Link href="/ai" className="bg-slate-900/50 border border-slate-800 p-5 rounded-2xl hover:bg-slate-800/50 hover:border-slate-700 transition-all group">
+            <Bot className="w-6 h-6 text-emerald-400 mb-3 group-hover:scale-110 transition-transform" />
+            <h3 className="font-bold text-white text-sm mb-1">AI Adviser</h3>
+            <p className="text-slate-500 text-xs">Chat with our engineering AI.</p>
+          </Link>
+          <Link href="/analytics/compare" className="bg-slate-900/50 border border-slate-800 p-5 rounded-2xl hover:bg-slate-800/50 hover:border-slate-700 transition-all group">
+            <BarChart3 className="w-6 h-6 text-purple-400 mb-3 group-hover:scale-110 transition-transform" />
+            <h3 className="font-bold text-white text-sm mb-1">Compare Materials</h3>
+            <p className="text-slate-500 text-xs">Side-by-side radar analysis.</p>
+          </Link>
+        </div>
+      </div>
+
+      {/* Recent Activity Mockup */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-bold text-white">Recent Workspaces</h2>
+          <Link href="/projects" className="text-xs font-semibold text-indigo-400 hover:text-indigo-300 flex items-center gap-1">
+            View All <ArrowRight className="w-3 h-3" />
+          </Link>
+        </div>
+        <div className="bg-slate-900/30 border border-slate-800 rounded-2xl p-6">
+          <div className="text-center py-8">
+            <Workflow className="w-10 h-10 text-slate-700 mx-auto mb-3" />
+            <p className="text-slate-400 text-sm">You haven't created any engineering workspaces recently.</p>
+            <Link href="/projects" className="inline-block mt-4 text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg transition-colors">
+              Go to Workspaces
+            </Link>
+          </div>
+        </div>
+      </div>
+
     </main>
   );
 }

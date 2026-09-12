@@ -2,11 +2,12 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Database, Calculator, Workflow, User, Bot, BarChart3, BookOpen, MessageSquare, PanelLeftClose, PanelRightClose, ShieldAlert, Crown, Shield } from "lucide-react";
+import { Home, Globe, Database, Calculator, Workflow, User, Bot, BarChart3, BookOpen, MessageSquare, PanelLeftClose, PanelRightClose, ShieldAlert, Crown, Shield } from "lucide-react";
 import { API } from "@/lib/api";
 
 const navItems = [
-  { name: "Dashboard", href: "/dashboard", icon: Home },
+  { name: "App Dashboard", href: "/dashboard", icon: Home },
+  { name: "Website Home", href: "/", icon: Globe },
   { name: "Browse Materials", href: "/materials", icon: Database },
   { name: "Analytics", href: "/analytics", icon: BarChart3 },
   { name: "Ask AI Adviser", href: "/ai", icon: Bot },
