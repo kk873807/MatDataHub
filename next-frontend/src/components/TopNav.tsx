@@ -5,17 +5,33 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { 
   Database, Home, BarChart3, Bot, Workflow, 
-  BookOpen, User, ShieldAlert, Crown, Shield, Menu, X 
-} from "lucide-react";
+  BookOpen, User, ShieldAlert, Crown, Shield, Menu, X, FileText, HelpCircle, MessageSquare, ChevronDown } from "lucide-react";
 import { API } from "@/lib/api";
 import { ThemeToggle } from "./ThemeToggle";
 import { LoginModal } from "./LoginModal";
 
-const appNavItems = [
+type NavItem = {
+  name: string;
+  href?: string;
+  icon: any;
+  subItems?: { name: string; href: string }[];
+};
+
+const appNavItems: NavItem[] = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
   { name: "Materials", href: "/materials", icon: Database },
   { name: "Analytics", href: "/analytics", icon: BarChart3 },
   { name: "Workspaces", href: "/projects", icon: Workflow },
+  { name: "Blog", href: "/blog", icon: FileText },
+  { 
+    name: "Help & Support", 
+    icon: HelpCircle,
+    subItems: [
+      { name: "FAQs", href: "/faq" },
+      { name: "Support Centre", href: "/contact" }
+    ]
+  },
+  { name: "Feedback", href: "/feedback", icon: MessageSquare },
 ];
 
 export function TopNav() {
@@ -72,11 +88,30 @@ export function TopNav() {
             {!isLanding && (
               <div className="hidden lg:flex items-center gap-1 ml-4">
                 {appNavItems.map((item) => {
-                  const isActive = pathname === item.href || (item.href !== "/" && pathname?.startsWith(item.href));
+                  if (item.subItems) {
+                    return (
+                      <div key={item.name} className="relative group">
+                        <button className="flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium transition-all text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white">
+                          <item.icon className="w-4 h-4" />
+                          {item.name}
+                          <ChevronDown className="w-3 h-3 ml-0.5 opacity-50" />
+                        </button>
+                        <div className="absolute top-full left-0 mt-2 w-48 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all flex flex-col p-2 z-50">
+                          {item.subItems.map(sub => (
+                            <Link key={sub.name} href={sub.href} className="px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white rounded-xl transition-colors">
+                              {sub.name}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  const isActive = item.href && (pathname === item.href || (item.href !== "/" && pathname?.startsWith(item.href)));
                   return (
                     <Link
                       key={item.name}
-                      href={item.href}
+                      href={item.href!}
                       className={`flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium transition-all ${
                         isActive 
                           ? "bg-slate-900 text-white dark:bg-slate-800 dark:text-blue-400" 
@@ -152,17 +187,39 @@ export function TopNav() {
                 <Link href="#blog" onClick={() => setMobileMenuOpen(false)} className="font-medium text-slate-700 dark:text-slate-200">Blog</Link>
               </div>
             ) : (
-              appNavItems.map(item => (
-                <Link 
-                  key={item.name} 
-                  href={item.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 font-medium text-slate-700 dark:text-slate-200"
-                >
-                  <item.icon className="w-5 h-5 text-blue-500" />
-                  {item.name}
-                </Link>
-              ))
+              appNavItems.map(item => {
+                if (item.subItems) {
+                  return (
+                    <div key={item.name} className="flex flex-col gap-1">
+                      <div className="flex items-center gap-3 p-3 font-medium text-slate-400 dark:text-slate-500 uppercase text-[10px] tracking-wider mt-2">
+                        <item.icon className="w-4 h-4" />
+                        {item.name}
+                      </div>
+                      {item.subItems.map(sub => (
+                        <Link 
+                          key={sub.name} 
+                          href={sub.href}
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="flex items-center gap-3 p-3 pl-10 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 font-medium text-slate-700 dark:text-slate-200"
+                        >
+                          {sub.name}
+                        </Link>
+                      ))}
+                    </div>
+                  );
+                }
+                return (
+                  <Link 
+                    key={item.name} 
+                    href={item.href!}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 font-medium text-slate-700 dark:text-slate-200"
+                  >
+                    <item.icon className="w-5 h-5 text-blue-500" />
+                    {item.name}
+                  </Link>
+                );
+              })
             )}
           </div>
         )}
