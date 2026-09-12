@@ -61,7 +61,7 @@ export default function LandingPage() {
             <Link href="#problem" className="text-sm font-medium hover:text-indigo-400 transition-colors hidden md:block">Problem</Link>
             <Link href="#solution" className="text-sm font-medium hover:text-indigo-400 transition-colors hidden md:block">Platform</Link>
             <Link href="#pricing" className="text-sm font-medium hover:text-indigo-400 transition-colors hidden md:block">Pricing</Link>
-            <Link href="/resources" className="text-sm font-medium hover:text-indigo-400 transition-colors hidden md:block">Engineering Blog</Link>
+            <Link href="#blog" className="text-sm font-medium hover:text-indigo-400 transition-colors hidden md:block">Engineering Blog</Link>
             {!authChecked ? null : isLoggedIn ? (
               <Link href="/dashboard" className="text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-lg transition-all shadow-lg shadow-indigo-600/20">
                 Go to App Dashboard
@@ -188,7 +188,7 @@ export default function LandingPage() {
       </section>
 
       {/* Featured Engineering Blog Banner */}
-      <section className="py-12 px-6">
+      <section id="blog" className="py-12 px-6">
         <div className="max-w-5xl mx-auto">
           <Link href="/resources"  className="group relative block overflow-hidden rounded-3xl border border-indigo-500/30 bg-indigo-950/20 text-left transition-all hover:bg-indigo-900/40 hover:border-indigo-500/60 hover:shadow-[0_0_40px_-10px_rgba(99,102,241,0.2)] backdrop-blur-sm">
             <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-indigo-400 to-purple-500"></div>
