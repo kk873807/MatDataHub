@@ -1,7 +1,7 @@
 ﻿"use client";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { LayoutGrid, List, Search, Filter, Loader2, Database, SlidersHorizontal, X, ArrowDownAZ, TrendingUp, Scale, Zap, Beaker, FileBox, Lock, Shield } from "lucide-react";
+import { Search, Filter, Loader2, Database, SlidersHorizontal, X, ArrowDownAZ, TrendingUp, Scale, Zap, Beaker, FileBox, Lock, Shield } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { API } from "@/lib/api";
 
@@ -26,7 +26,6 @@ export default function MaterialsPage() {
   
   // Sorting
   const [sortBy, setSortBy] = useState("name_asc");
-  const [viewMode, setViewMode] = useState<"grid" | "table">("grid");
   const [showFilters, setShowFilters] = useState(false);
 
   // Tier gating
@@ -184,21 +183,6 @@ export default function MaterialsPage() {
                   <option value="density_asc">Density (Low-High)</option>
                 </select>
                 <ArrowDownAZ className="w-4 h-4 text-slate-500 dark:text-slate-400 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
-              </div>
-
-              <div className="flex bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-1">
-                <button 
-                  onClick={() => setViewMode('grid')}
-                  className={`p-2 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}`}
-                >
-                  <LayoutGrid className="w-5 h-5" />
-                </button>
-                <button 
-                  onClick={() => setViewMode('table')}
-                  className={`p-2 rounded-lg transition-all ${viewMode === 'table' ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}`}
-                >
-                  <List className="w-5 h-5" />
-                </button>
               </div>
 
               <button 
@@ -376,30 +360,18 @@ export default function MaterialsPage() {
                       </span>
                     </div>
                     
-                    <div className="space-y-3.5 text-sm mt-auto relative z-10 bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200/60 dark:border-slate-800/60 group-hover:border-emerald-500/30 transition-colors">
-                      <div>
-                        <div className="flex justify-between items-center mb-1.5">
-                          <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider"><TrendingUp className="w-3.5 h-3.5" /> Yield</span>
-                          <span className="text-slate-900 dark:text-white font-bold">{mat.yield_strength_min || '-'} <span className="text-slate-500 dark:text-slate-400 text-xs font-normal">MPa</span></span>
-                        </div>
-                        <div className="w-full bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                          <div className="bg-emerald-500 h-full rounded-full" style={{ width: `${Math.min(((mat.yield_strength_min || 0) / 1000) * 100, 100)}%` }}></div>
-                        </div>
+                    <div className="space-y-2.5 text-sm mt-auto relative z-10">
+                      <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-800/60 pb-1.5">
+                        <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5"><TrendingUp className="w-3.5 h-3.5" /> Yield</span>
+                        <span className="text-slate-700 dark:text-slate-200 font-medium">{mat.yield_strength_min || '-'} MPa</span>
                       </div>
-                      
-                      <div>
-                        <div className="flex justify-between items-center mb-1.5">
-                          <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider"><Scale className="w-3.5 h-3.5" /> Density</span>
-                          <span className="text-slate-900 dark:text-white font-bold">{mat.density || '-'} <span className="text-slate-500 dark:text-slate-400 text-xs font-normal">g/cm&sup3;</span></span>
-                        </div>
-                        <div className="w-full bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                          <div className="bg-blue-500 h-full rounded-full" style={{ width: `${Math.min(((mat.density || 0) / 20) * 100, 100)}%` }}></div>
-                        </div>
+                      <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-800/60 pb-1.5">
+                        <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5"><Scale className="w-3.5 h-3.5" /> Density</span>
+                        <span className="text-slate-700 dark:text-slate-200 font-medium">{mat.density || '-'} g/cmÂ³</span>
                       </div>
-
-                      <div className="flex justify-between items-center pt-3 mt-3 border-t border-slate-200 dark:border-slate-800">
-                        <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider"><Zap className="w-3.5 h-3.5" /> Est. Cost</span>
-                        <span className="text-emerald-600 dark:text-emerald-400 font-black text-base">?{mat.cost_per_kg_min || '-'}<span className="text-xs font-medium text-emerald-600/70 dark:text-emerald-400/70">/kg</span></span>
+                      <div className="flex justify-between items-center pt-0.5">
+                        <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5"><Zap className="w-3.5 h-3.5" /> Est. Cost</span>
+                        <span className="text-emerald-600 dark:text-emerald-400 font-bold">â‚¹{mat.cost_per_kg_min || '-'}/kg</span>
                       </div>
                     </div>
                   </Link>
