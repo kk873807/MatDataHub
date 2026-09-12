@@ -38,7 +38,7 @@ const appNavItems: NavItem[] = [
 export function TopNav() {
   const pathname = usePathname();
   const isLanding = pathname === "/";
-  const [userInfo, setUserInfo] = useState<{ name: string; tier: string; is_admin: boolean } | null>(null);
+  const [userInfo, setUserInfo] = useState<any>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [authChecked, setAuthChecked] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -56,7 +56,7 @@ export function TopNav() {
       })
         .then(r => r.ok ? r.json() : null)
         .then(data => {
-          if (data) setUserInfo({ name: data.name || data.email, tier: data.tier, is_admin: data.is_admin || false });
+          if (data) { data.name = data.name || data.email; setUserInfo(data); }
         })
         .catch(() => {});
     }

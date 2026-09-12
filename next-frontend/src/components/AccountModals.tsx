@@ -10,14 +10,14 @@ type AccountModalsProps = {
 };
 
 export function AccountModals({ activeModal, setActiveModal, userInfo }: AccountModalsProps) {
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<any>(userInfo || null);
   const [upgrading, setUpgrading] = useState(false);
 
   useEffect(() => {
-    if (activeModal) {
-      fetchProfile();
+    if (userInfo) {
+      setProfile(userInfo);
     }
-  }, [activeModal]);
+  }, [userInfo]);
 
   const fetchProfile = async () => {
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
