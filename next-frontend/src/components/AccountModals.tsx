@@ -74,7 +74,7 @@ export function AccountModals({ activeModal, setActiveModal, userInfo }: Account
         alert(`SUCCESS! Your API credentials:\n\nKey: ${data.api_key}\nSecret: ${data.api_secret}\n\nPlease save these immediately. The secret will not be shown again.`);
         fetchProfile();
       } else {
-        alert("Failed to generate API credentials.");
+        const errData = await res.json().catch(() => ({})); alert("Failed to generate API credentials: " + (errData.detail || "Server Error"));
       }
     } catch (err) {
       alert("Network error");
@@ -133,7 +133,7 @@ export function AccountModals({ activeModal, setActiveModal, userInfo }: Account
               {profile.tier === "advanced" && (
                 <div className="space-y-6">
                   <div className="bg-white dark:bg-slate-900 border border-emerald-900/50 rounded-2xl p-6 relative overflow-hidden shadow-sm">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl"></div>
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
                     <h2 className="text-xl font-bold text-slate-900 dark:text-white font-heading flex items-center gap-2 mb-4">
                       <Key className="w-5 h-5 text-emerald-600 dark:text-emerald-400" /> Programmatic API Access
                     </h2>
@@ -150,7 +150,7 @@ export function AccountModals({ activeModal, setActiveModal, userInfo }: Account
                         </div>
                       </div>
                     ) : (
-                      <button onClick={generateApiKeys} className="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition-colors flex items-center gap-2">
+                      <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); generateApiKeys(); }} className="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition-colors flex items-center gap-2 relative z-10 cursor-pointer">
                         <Key className="w-4 h-4" /> Generate API Keys
                       </button>
                     )}
