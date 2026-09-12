@@ -22,7 +22,7 @@ const appNavItems: NavItem[] = [
   { name: "Materials", href: "/materials", icon: Database },
   { name: "Analytics", href: "/analytics", icon: BarChart3 },
   { name: "Workspaces", href: "/projects", icon: Workflow },
-  { name: "Blog", href: "/blog", icon: FileText },
+  { name: "Blog", href: "/blogs", icon: FileText },
   { 
     name: "Help & Support", 
     icon: HelpCircle,

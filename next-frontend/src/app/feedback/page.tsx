@@ -101,7 +101,7 @@ export default function FeedbackCommunityPage() {
                   <div className="flex justify-between items-start mb-3">
                     <div>
                       <h4 className="font-bold text-slate-900 dark:text-white font-heading">{fb.name || 'Anonymous Engineer'}</h4>
-                      <span className="text-xs font-semibold px-2 py-0.5 bg-indigo-100 dark:bg-indigo-100 dark:bg-indigo-900/30 text-blue-600 dark:text-blue-400 rounded-full border border-indigo-200 dark:border-indigo-700/50">{fb.category}</span>
+                      <span className="text-xs font-semibold px-2 py-0.5 bg-indigo-100 dark:bg-indigo-900/30 text-blue-600 dark:text-blue-400 rounded-full border border-indigo-200 dark:border-indigo-700/50">{fb.category}</span>
                     </div>
                     <span className="text-xs text-slate-500 dark:text-slate-400">{new Date(fb.created_at).toLocaleDateString('en-GB')}</span>
                   </div>
