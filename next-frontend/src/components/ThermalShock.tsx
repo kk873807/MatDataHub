@@ -86,19 +86,18 @@ export function ThermalShock() {
       </button>
 
       {result && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className={`mt-4 p-4 rounded-xl border ${result.survives ? 'bg-emerald-100  dark:bg-emerald-900/20 border-emerald-900/50' : 'bg-red-100 dark:bg-red-100 dark:bg-red-900/20 border-red-900/50'} space-y-2`}>
-          <div className="flex justify-between items-center mb-1">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-4 p-4 rounded-xl bg-orange-100 dark:bg-orange-900/20 border border-orange-900/50 space-y-2">
+          <div className="flex justify-between items-center border-b border-orange-900/30 pb-2">
             <span className="text-xs text-slate-600 dark:text-slate-300">Induced Surface Stress</span>
-            <span className="font-medium text-slate-900 dark:text-white">{result.induced_stress.toFixed(1)} MPa</span>
+            <span className="font-medium text-slate-600 dark:text-slate-300">{result.induced_stress.toFixed(1)} MPa</span>
           </div>
-          <div className="flex justify-between items-center mb-2 pb-2 border-b border-slate-200 dark:border-slate-700/50">
-            <span className="text-xs text-slate-600 dark:text-slate-300">Safety Margin</span>
+          <div className="flex justify-between items-center">
+            <span className={`text-xs font-bold ${result.survives ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>Safety Margin</span>
             <span className={`font-bold ${result.survives ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>{result.margin.toFixed(1)} MPa</span>
           </div>
-          <p className={`text-xs font-bold text-center ${result.survives ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
-            {result.survives ? '✓ Material Survives Thermal Shock' : '⚠ Fracture Imminent'}
+          <p className={`text-[10px] pt-2 border-t ${result.survives ? 'border-emerald-900/50 text-emerald-600 dark:text-emerald-300' : 'border-red-900/50 text-red-600 dark:text-red-300'}`}>
+            {result.survives ? '? Material Survives Thermal Shock.' : '? Fracture Imminent.'} Induced stress compares the sudden contraction forces against the material's yield limits.
           </p>
-          <p className="text-[10px] text-slate-500 dark:text-slate-400 text-center">Induced stress compares the sudden contraction forces against the material's yield limits.</p>
         </motion.div>
       )}
     </motion.div>

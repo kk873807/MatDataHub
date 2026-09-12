@@ -58,15 +58,18 @@ export function ThermalExpansion() {
         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Calculate"}
       </button>
       {result && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-4 p-4 rounded-xl bg-orange-100 dark:bg-orange-100 dark:bg-orange-900/20 border border-orange-900/50">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-xs text-slate-700 dark:text-slate-200">CTE (µm/m·°C)</span>
-            <span className="font-medium text-slate-900 dark:text-white">{result.cte.toFixed(1)}</span>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-4 p-4 rounded-xl bg-orange-100 dark:bg-orange-900/20 border border-orange-900/50 space-y-2">
+          <div className="flex justify-between items-center border-b border-orange-900/30 pb-2">
+            <span className="text-xs text-slate-600 dark:text-slate-300">CTE</span>
+            <span className="font-medium text-slate-600 dark:text-slate-300">{result.cte.toFixed(1)} &mu;m/m&middot;&deg;C</span>
           </div>
           <div className="flex justify-between items-center">
-            <span className="text-xs text-slate-700 dark:text-slate-200">Expansion</span>
+            <span className="text-xs text-orange-600 dark:text-orange-400 font-bold">Expansion</span>
             <span className="font-bold text-orange-600 dark:text-orange-400">{result.expansion_mm.toFixed(3)} mm</span>
           </div>
+          <p className="text-[10px] text-orange-600 dark:text-orange-300 pt-2 border-t border-orange-900/50">
+            Total change in length due to thermal delta.
+          </p>
         </motion.div>
       )}
     </motion.div>

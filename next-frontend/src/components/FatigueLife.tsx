@@ -46,13 +46,18 @@ export function FatigueLife() {
         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Estimate Endurance"}
       </button>
       {result && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-4 p-4 rounded-xl bg-cyan-100 dark:bg-cyan-900/20 border border-cyan-200 dark:border-cyan-900/50">
-          <p className="text-xs text-slate-700 dark:text-slate-200 mb-2">{result.note}</p>
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-xs text-slate-700 dark:text-slate-200">Endurance Limit</span>
-            <span className="font-bold text-cyan-700 dark:text-cyan-400">{result.endurance_limit.toFixed(1)} MPa</span>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-4 p-4 rounded-xl bg-cyan-100 dark:bg-cyan-900/20 border border-cyan-900/50 space-y-2">
+          <div className="flex justify-between items-center border-b border-cyan-900/30 pb-2">
+            <span className="text-xs text-slate-600 dark:text-slate-300">Material Family</span>
+            <span className="font-medium text-slate-600 dark:text-slate-300">{result.note.split(" ")[0]}</span>
           </div>
-          <p className="text-[10px] text-cyan-600 dark:text-cyan-300">This value indicates the maximum stress level below which the material can endure an infinite number of load cycles without failing.</p>
+          <div className="flex justify-between items-center">
+            <span className="text-xs text-cyan-600 dark:text-cyan-400 font-bold">Endurance Limit</span>
+            <span className="font-bold text-cyan-600 dark:text-cyan-400">{result.endurance_limit.toFixed(1)} MPa</span>
+          </div>
+          <p className="text-[10px] text-cyan-600 dark:text-cyan-300 pt-2 border-t border-cyan-900/50">
+            {result.note}
+          </p>
         </motion.div>
       )}
     </motion.div>

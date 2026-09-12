@@ -56,15 +56,18 @@ export function SafetyFactor() {
         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Calculate"}
       </button>
       {result && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-4 p-4 rounded-xl bg-emerald-100  dark:bg-emerald-900/20 border border-emerald-900/50">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-xs text-slate-700 dark:text-slate-200">Stress</span>
-            <span className="font-medium text-slate-900 dark:text-white">{result.stress_mpa.toFixed(2)} MPa</span>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-4 p-4 rounded-xl bg-emerald-100 dark:bg-emerald-900/20 border border-emerald-900/50 space-y-2">
+          <div className="flex justify-between items-center border-b border-emerald-900/30 pb-2">
+            <span className="text-xs text-slate-600 dark:text-slate-300">Stress</span>
+            <span className="font-medium text-slate-600 dark:text-slate-300">{result.stress_mpa.toFixed(2)} MPa</span>
           </div>
           <div className="flex justify-between items-center">
-            <span className="text-xs text-slate-700 dark:text-slate-200">Safety Factor</span>
+            <span className="text-xs text-emerald-600 dark:text-emerald-400 font-bold">Safety Factor</span>
             <span className={`font-bold ${result.safety_factor >= 1.5 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>{result.safety_factor.toFixed(2)}</span>
           </div>
+          <p className={`text-[10px] pt-2 border-t border-emerald-900/50 ${result.safety_factor >= 1.5 ? 'text-emerald-600 dark:text-emerald-300' : 'text-red-600 dark:text-red-300'}`}>
+            {result.safety_factor >= 1.5 ? 'Design meets standard safety margins (>1.5).' : 'Warning: Design is below recommended safety margins.'}
+          </p>
         </motion.div>
       )}
     </motion.div>
