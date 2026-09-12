@@ -34,9 +34,6 @@ export function AiChatWidget() {
   const [tier, setTier] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
 
-  // Hidden on landing page
-  if (pathname === "/") return null;
-
   // Daily message limit tracking
   const todayKey = typeof window !== "undefined" ? `ai_msg_${new Date().toISOString().slice(0, 10)}` : "ai_msg_default";
   const getDailyCount = () => {
@@ -155,6 +152,9 @@ export function AiChatWidget() {
     a.click();
   };
 
+  // Hidden on landing page
+  if (pathname === "/") return null;
+
   return (
     <>
       {/* Floating Button */}
@@ -162,7 +162,7 @@ export function AiChatWidget() {
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: isOpen ? 0 : 1, opacity: isOpen ? 0 : 1 }}
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-12 right-6 lg:right-8 z-50 p-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full shadow-2xl shadow-emerald-600/30 transition-all hover:scale-110 flex items-center justify-center pointer-events-auto"
+        className="fixed bottom-12 left-6 lg:left-8 z-50 p-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full shadow-2xl shadow-emerald-600/30 transition-all hover:scale-110 flex items-center justify-center pointer-events-auto"
       >
         <Bot className="w-7 h-7" />
       </motion.button>
@@ -175,7 +175,7 @@ export function AiChatWidget() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 50, scale: 0.9 }}
             transition={{ type: "spring", bounce: 0.3 }}
-            className={`fixed bottom-12 right-6 lg:right-8 z-50 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.3)] dark:shadow-[0_10px_40px_-10px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden pointer-events-auto transition-all duration-300 origin-bottom-right ${
+            className={`fixed bottom-12 left-6 lg:left-8 z-50 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.3)] dark:shadow-[0_10px_40px_-10px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden pointer-events-auto transition-all duration-300 origin-bottom-left ${
               isExpanded ? "w-[90vw] md:w-[700px] h-[85vh] max-h-[900px]" : "w-[90vw] md:w-[450px] h-[70vh] max-h-[700px]"
             }`}
           >
