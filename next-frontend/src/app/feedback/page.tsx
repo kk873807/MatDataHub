@@ -132,7 +132,7 @@ export default function FeedbackCommunityPage() {
                   {feedbacks.filter(r => r.parent_id === fb.id).map(reply => (
                     <div key={reply.id} className="mt-4 pl-4 border-l-2 border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800/30 p-3 rounded-r-lg">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="font-bold text-white text-xs">{reply.name || "User"}</span>
+                        <span className="font-bold text-slate-900 dark:text-white text-xs">{reply.name || "User"}</span>
                         <span className="text-slate-500 text-[10px]">{new Date(reply.created_at).toLocaleDateString('en-GB')}</span>
                       </div>
                       <p className="text-slate-600 dark:text-slate-300 text-xs">{reply.message}</p>
@@ -155,24 +155,24 @@ export default function FeedbackCommunityPage() {
           {replyToId && (
             <div className="mb-4 p-3 bg-blue-900/20 border border-blue-900/50 rounded-2xl flex justify-between items-center">
               <span className="text-blue-400 text-xs">Replying to feedback #{replyToId}</span>
-              <button onClick={() => setReplyToId(null)} className="text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 text-xs">Cancel</button>
+              <button onClick={() => setReplyToId(null)} className="text-slate-500 hover:text-slate-600 dark:hover:text-slate-600 dark:text-slate-300 text-xs">Cancel</button>
             </div>
           )}
           
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1 uppercase tracking-wider">Your Name (Optional)</label>
-              <input type="text" value={form.name} onChange={e=>setForm({...form, name: e.target.value})} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-3 py-2 text-white outline-none focus:border-indigo-500 text-sm" />
+              <input type="text" value={form.name} onChange={e=>setForm({...form, name: e.target.value})} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-3 py-2 text-slate-900 dark:text-white outline-none focus:border-indigo-500 text-sm" />
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1 uppercase tracking-wider">Email (Required for spam prevention)</label>
-              <input type="email" required value={form.email} onChange={e=>setForm({...form, email: e.target.value})} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-3 py-2 text-white outline-none focus:border-indigo-500 text-sm" />
+              <input type="email" required value={form.email} onChange={e=>setForm({...form, email: e.target.value})} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-3 py-2 text-slate-900 dark:text-white outline-none focus:border-indigo-500 text-sm" />
             </div>
             
             <div>
               <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1 uppercase tracking-wider">Category</label>
-              <select value={form.category} onChange={e=>setForm({...form, category: e.target.value})} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-3 py-2 text-white outline-none focus:border-indigo-500 text-sm">
+              <select value={form.category} onChange={e=>setForm({...form, category: e.target.value})} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-3 py-2 text-slate-900 dark:text-white outline-none focus:border-indigo-500 text-sm">
                 <option>Feature Request</option>
                 <option>Bug Report</option>
                 <option>Data Correction</option>
@@ -182,7 +182,7 @@ export default function FeedbackCommunityPage() {
             
             <div>
               <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1 uppercase tracking-wider">Message</label>
-              <textarea required minLength={10} value={form.message} onChange={e=>setForm({...form, message: e.target.value})} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-3 py-2 text-white outline-none focus:border-indigo-500 min-h-[100px] text-sm" />
+              <textarea required minLength={10} value={form.message} onChange={e=>setForm({...form, message: e.target.value})} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-3 py-2 text-slate-900 dark:text-white outline-none focus:border-indigo-500 min-h-[100px] text-sm" />
             </div>
 
             <div>

@@ -128,7 +128,7 @@ export default function AdminDashboard() {
                 value={secret} 
                 onChange={e => setSecret(e.target.value)} 
                 placeholder="ADMIN_SECRET"
-                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-3 text-white focus:border-red-500 transition-colors outline-none"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-3 text-slate-900 dark:text-white focus:border-red-500 transition-colors outline-none"
                 required
               />
             </div>
@@ -150,7 +150,7 @@ export default function AdminDashboard() {
             <ShieldAlert className="w-8 h-8 text-red-500" />
             Admin Operations
           </h1>
-          <button onClick={() => setAuthed(false)} className="text-slate-500 dark:text-slate-400 hover:text-white text-sm">Lock Session</button>
+          <button onClick={() => setAuthed(false)} className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white text-sm">Lock Session</button>
         </div>
 
         {loading ? (
@@ -241,7 +241,7 @@ export default function AdminDashboard() {
                         </td>
                         <td className="px-6 py-4 text-right space-x-2 space-y-1">
                           <button onClick={() => handleReply(fb.id)} className="bg-blue-900/30 hover:bg-blue-900/50 text-blue-400 px-2 py-1 rounded transition-colors text-xs">Reply</button>
-                          <button onClick={() => handleFeedbackAction(fb.id, "hide")} className="bg-slate-700 hover:bg-slate-600 text-white px-2 py-1 rounded transition-colors text-xs">Toggle Hide</button>
+                          <button onClick={() => handleFeedbackAction(fb.id, "hide")} className="bg-slate-700 hover:bg-slate-600 text-slate-900 dark:text-white px-2 py-1 rounded transition-colors text-xs">Toggle Hide</button>
                           <button onClick={() => handleFeedbackAction(fb.id, "delete")} className="bg-red-900/30 hover:bg-red-900/50 text-red-400 px-2 py-1 rounded transition-colors text-xs">Delete</button>
                         </td>
                       </tr>

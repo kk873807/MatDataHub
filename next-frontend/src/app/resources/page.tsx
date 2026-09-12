@@ -174,7 +174,7 @@ export default function ResourcesPage() {
                 placeholder="Search documentation and FAQs..." 
                 value={faqSearch}
                 onChange={e => setFaqSearch(e.target.value)}
-                className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl pl-12 pr-4 py-4 text-white outline-none focus:border-indigo-500 transition-colors"
+                className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl pl-12 pr-4 py-4 text-slate-900 dark:text-white outline-none focus:border-indigo-500 transition-colors"
               />
             </div>
             
@@ -209,7 +209,7 @@ export default function ResourcesPage() {
               <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 lg:p-12 overflow-hidden relative">
                 <button 
                   onClick={() => setSelectedBlog(null)}
-                  className="flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-white transition-colors text-sm font-semibold mb-8"
+                  className="flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white transition-colors text-sm font-semibold mb-8"
                 >
                   <ArrowLeft className="w-4 h-4" /> Back to all articles
                 </button>
@@ -233,7 +233,7 @@ export default function ResourcesPage() {
                   </div>
                 </div>
                 
-                <div className="prose prose-invert prose-indigo max-w-none prose-headings:font-bold prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-h2:border-b prose-h2:border-slate-200 dark:border-slate-800 prose-h2:pb-2 prose-p:text-slate-600 dark:text-slate-300 prose-p:leading-relaxed prose-p:mb-6 prose-li:text-slate-600 prose-li:my-1 prose-strong:text-white prose-strong:font-bold prose-table:w-full prose-table:text-sm prose-table:border-collapse prose-table:my-8 prose-th:bg-slate-50 dark:bg-slate-950 prose-th:p-3 prose-th:border prose-th:border-slate-200 dark:border-slate-700 prose-th:text-slate-600 prose-td:p-3 prose-td:border prose-td:border-slate-200 prose-td:text-slate-500 dark:text-slate-400 prose-blockquote:border-l-4 prose-blockquote:border-indigo-500 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-slate-500">
+                <div className="prose prose-invert prose-indigo max-w-none prose-headings:font-bold prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-h2:border-b prose-h2:border-slate-200 dark:border-slate-800 prose-h2:pb-2 prose-p:text-slate-600 dark:text-slate-300 prose-p:leading-relaxed prose-p:mb-6 prose-li:text-slate-600 prose-li:my-1 prose-strong:text-slate-900 dark:text-white prose-strong:font-bold prose-table:w-full prose-table:text-sm prose-table:border-collapse prose-table:my-8 prose-th:bg-slate-50 dark:bg-slate-950 prose-th:p-3 prose-th:border prose-th:border-slate-200 dark:border-slate-700 prose-th:text-slate-600 prose-td:p-3 prose-td:border prose-td:border-slate-200 prose-td:text-slate-500 dark:text-slate-400 prose-blockquote:border-l-4 prose-blockquote:border-indigo-500 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-slate-500">
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>
                     {blogs[selectedBlog].content}
                   </ReactMarkdown>
@@ -305,7 +305,7 @@ export default function ResourcesPage() {
                 <CheckCircle2 className="w-16 h-16 text-emerald-500 mx-auto" />
                 <h2 className="text-2xl font-bold text-slate-900 dark:text-white font-heading">Ticket Submitted</h2>
                 <p className="text-slate-500 dark:text-slate-400">Our engineering team has received your request and will respond to {ticket.email || 'your account email'} within 24 hours.</p>
-                <button onClick={() => setSubmitted(false)} className="mt-4 px-6 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-700 text-white rounded-2xl text-sm font-semibold transition-colors">
+                <button onClick={() => setSubmitted(false)} className="mt-4 px-6 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-700 text-slate-900 dark:text-white rounded-2xl text-sm font-semibold transition-colors">
                   Submit Another Ticket
                 </button>
               </div>
@@ -320,7 +320,7 @@ export default function ResourcesPage() {
                       <input 
                         type="text" required
                         value={ticket.name} onChange={e => setTicket({...ticket, name: e.target.value})}
-                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2 text-white outline-none focus:border-indigo-500"
+                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2 text-slate-900 dark:text-white outline-none focus:border-indigo-500"
                       />
                     </div>
                     <div>
@@ -328,7 +328,7 @@ export default function ResourcesPage() {
                       <input 
                         type="email" required
                         value={ticket.email} onChange={e => setTicket({...ticket, email: e.target.value})}
-                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2 text-white outline-none focus:border-indigo-500"
+                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2 text-slate-900 dark:text-white outline-none focus:border-indigo-500"
                       />
                     </div>
                   </div>
@@ -336,7 +336,7 @@ export default function ResourcesPage() {
                     <label className="block text-sm font-semibold text-slate-600 dark:text-slate-300 mb-1">Category</label>
                     <select 
                       value={ticket.category} onChange={e => setTicket({...ticket, category: e.target.value})}
-                      className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2 text-white outline-none focus:border-indigo-500"
+                      className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2 text-slate-900 dark:text-white outline-none focus:border-indigo-500"
                     >
                       <option>Technical Support</option>
                       <option>Billing & Enterprise Upgrades</option>
@@ -350,7 +350,7 @@ export default function ResourcesPage() {
                       required minLength={10}
                       value={ticket.message} onChange={e => setTicket({...ticket, message: e.target.value})}
                       placeholder="Describe your issue or question in detail..."
-                      className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-3 text-white outline-none focus:border-indigo-500 min-h-[120px]"
+                      className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-3 text-slate-900 dark:text-white outline-none focus:border-indigo-500 min-h-[120px]"
                     />
                   </div>
                   <div>

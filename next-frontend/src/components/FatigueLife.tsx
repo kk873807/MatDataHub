@@ -31,18 +31,18 @@ export function FatigueLife() {
       <div className="space-y-4 flex-grow">
         <div>
           <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Material Name</label>
-          <input type="text" name="material_name" value={formData.material_name} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white focus:ring-2 focus:ring-cyan-500 outline-none" />
+          <input type="text" name="material_name" value={formData.material_name} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-cyan-500 outline-none" />
         </div>
         <div>
           <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Category</label>
-          <input type="text" name="category" value={formData.category} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white focus:ring-2 focus:ring-cyan-500 outline-none" />
+          <input type="text" name="category" value={formData.category} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-cyan-500 outline-none" />
         </div>
         <div>
           <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Ultimate Tensile Strength (MPa)</label>
-          <input type="number" name="tensile_strength" value={formData.tensile_strength} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white outline-none" />
+          <input type="number" name="tensile_strength" value={formData.tensile_strength} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-slate-900 dark:text-white outline-none" />
         </div>
       </div>
-      <button onClick={handleCalculate} disabled={loading} className="mt-6 w-full py-2.5 rounded-2xl bg-cyan-600 hover:bg-cyan-700 text-white font-medium flex justify-center items-center">
+      <button onClick={handleCalculate} disabled={loading} className="mt-6 w-full py-2.5 rounded-2xl bg-cyan-600 hover:bg-cyan-700 text-slate-900 dark:text-white font-medium flex justify-center items-center">
         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Estimate Endurance"}
       </button>
       {result && (

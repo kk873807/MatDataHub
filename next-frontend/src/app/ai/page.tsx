@@ -203,7 +203,7 @@ export default function AskAIPage() {
                           h2: ({children}) => <h4 className="text-base font-bold text-slate-900 dark:text-white font-heading mt-3 mb-2">{children}</h4>,
                           h3: ({children}) => <h5 className="text-sm font-bold text-blue-300 mt-3 mb-1">{children}</h5>,
                           p: ({children}) => <p className="text-slate-200 leading-relaxed mb-2">{children}</p>,
-                          strong: ({children}) => <strong className="text-white font-bold">{children}</strong>,
+                          strong: ({children}) => <strong className="text-slate-900 dark:text-white font-bold">{children}</strong>,
                           ul: ({children}) => <ul className="list-disc list-inside space-y-1 my-2 text-slate-200">{children}</ul>,
                           ol: ({children}) => <ol className="list-decimal list-inside space-y-1 my-2 text-slate-200">{children}</ol>,
                           li: ({children}) => <li className="text-slate-200 leading-relaxed">{children}</li>,
@@ -232,7 +232,7 @@ export default function AskAIPage() {
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           {msg.materials.map((m: any, j: number) => (
                             <div key={j} className="p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl">
-                              <p className="font-bold text-white text-sm">{m.name}</p>
+                              <p className="font-bold text-slate-900 dark:text-white text-sm">{m.name}</p>
                               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{m.category} · {m.cost}</p>
                               <p className="text-xs text-slate-500 dark:text-slate-400">Tensile: {m.tensile_strength}</p>
                             </div>
@@ -268,7 +268,7 @@ export default function AskAIPage() {
               onChange={(e) => setPrompt(e.target.value)}
               placeholder="Describe your material requirements..."
               disabled={loading}
-              className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl pl-4 pr-14 py-4 text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+              className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl pl-4 pr-14 py-4 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
             />
             <button type="submit" disabled={loading || !prompt.trim()} className="absolute right-2 p-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl transition-colors disabled:opacity-40">
               <Send className="w-4 h-4" />

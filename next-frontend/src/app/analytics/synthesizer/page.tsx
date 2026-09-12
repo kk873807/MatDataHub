@@ -93,7 +93,7 @@ function CompositeSynthesizerContent() {
     return (
       <main className="flex flex-col p-6 lg:p-10 w-full h-full">
         <div className="w-full max-w-4xl mx-auto space-y-6">
-          <Link href="/analytics" className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-white transition-colors">
+          <Link href="/analytics" className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white transition-colors">
             <ArrowLeft className="w-4 h-4" /> Back to Analytics
           </Link>
           
@@ -108,7 +108,7 @@ function CompositeSynthesizerContent() {
               You must be signed in to use the Composite Material Synthesizer.
             </p>
             
-            <Link href="/account" className="relative z-10 px-8 py-4 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl font-bold transition-all shadow-lg hover:scale-105">
+            <Link href="/account" className="relative z-10 px-8 py-4 bg-cyan-600 hover:bg-cyan-700 text-slate-900 dark:text-white rounded-xl font-bold transition-all shadow-lg hover:scale-105">
               Sign In or Register
             </Link>
           </div>
@@ -122,7 +122,7 @@ function CompositeSynthesizerContent() {
     return (
       <main className="flex flex-col p-6 lg:p-10 w-full h-full">
         <div className="w-full max-w-4xl mx-auto space-y-6">
-          <Link href="/analytics" className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-white transition-colors">
+          <Link href="/analytics" className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white transition-colors">
             <ArrowLeft className="w-4 h-4" /> Back to Analytics
           </Link>
           
@@ -137,7 +137,7 @@ function CompositeSynthesizerContent() {
               The Composite Material Synthesizer is a Pro feature. Upgrade your account to unlock this tool.
             </p>
             
-            <Link href="/account" className="relative z-10 px-8 py-4 bg-yellow-600 hover:bg-yellow-700 text-white rounded-xl font-bold transition-all shadow-lg hover:scale-105">
+            <Link href="/account" className="relative z-10 px-8 py-4 bg-yellow-600 hover:bg-yellow-700 text-slate-900 dark:text-white rounded-xl font-bold transition-all shadow-lg hover:scale-105">
               Upgrade Account
             </Link>
           </div>
@@ -150,7 +150,7 @@ function CompositeSynthesizerContent() {
     <main className="flex flex-col p-6 lg:p-10 w-full h-full overflow-y-auto">
       <div className="w-full max-w-4xl mx-auto space-y-8">
         
-        <Link href="/analytics" className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-white transition-colors">
+        <Link href="/analytics" className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white transition-colors">
           <ArrowLeft className="w-4 h-4" /> Back to Analytics
         </Link>
 
@@ -198,7 +198,7 @@ function CompositeSynthesizerContent() {
             <button 
               onClick={handleSynthesize}
               disabled={!matA || !matB || loading}
-              className="w-full py-3 bg-cyan-600 hover:bg-cyan-700 disabled:opacity-50 text-white font-bold rounded-2xl transition-colors flex items-center justify-center gap-2"
+              className="w-full py-3 bg-cyan-600 hover:bg-cyan-700 disabled:opacity-50 text-slate-900 dark:text-white font-bold rounded-2xl transition-colors flex items-center justify-center gap-2"
             >
               {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Beaker className="w-5 h-5" />}
               Synthesize Composite
@@ -211,7 +211,7 @@ function CompositeSynthesizerContent() {
               <div className="space-y-6">
                 <div className="text-center">
                   <h3 className="text-sm text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold mb-1">Generated Hybrid</h3>
-                  <p className="text-lg font-bold text-white leading-tight">{result.name}</p>
+                  <p className="text-lg font-bold text-slate-900 dark:text-white leading-tight">{result.name}</p>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">

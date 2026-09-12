@@ -136,7 +136,7 @@ export default function MaterialDetail() {
     <main className="flex flex-col p-6 lg:p-10 w-full relative">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3 bg-slate-100 dark:bg-slate-800 border border-emerald-500/50 rounded-2xl shadow-2xl text-white animate-in slide-in-from-bottom-5">
+        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3 bg-slate-100 dark:bg-slate-800 border border-emerald-500/50 rounded-2xl shadow-2xl text-slate-900 dark:text-white animate-in slide-in-from-bottom-5">
           <CheckCircle2 className="w-5 h-5 text-emerald-400" />
           <span className="text-sm font-medium">{toastMessage}</span>
         </div>
@@ -191,13 +191,13 @@ export default function MaterialDetail() {
                 </Link>
                 <Link 
                   href={`/analytics/synthesizer?matA=${id}`}
-                  className="flex items-center gap-2 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-2xl text-sm font-bold transition-all shadow-lg shadow-cyan-900/20"
+                  className="flex items-center gap-2 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-slate-900 dark:text-white rounded-2xl text-sm font-bold transition-all shadow-lg shadow-cyan-900/20"
                 >
                   <Beaker className="w-4 h-4" /> Use in Synthesizer
                 </Link>
                 <button 
                   onClick={() => window.print()}
-                  className="flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-700 text-white border border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-semibold transition-all"
+                  className="flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-700 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-semibold transition-all"
                 >
                   <Download className="w-4 h-4 text-slate-600 dark:text-slate-300" /> Export PDF
                 </button>
@@ -420,7 +420,7 @@ export default function MaterialDetail() {
                           <div className="absolute inset-0 z-20 hover:bg-emerald-500/10 transition-colors cursor-crosshair"></div>
 
                           {/* Tooltip */}
-                          <div className="absolute top-0 opacity-0 group-hover:opacity-100 bg-slate-100 dark:bg-slate-800 text-white text-xs py-1 px-2 rounded pointer-events-none transition-opacity z-30 whitespace-nowrap shadow-lg border border-slate-200 dark:border-slate-700">
+                          <div className="absolute top-0 opacity-0 group-hover:opacity-100 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white text-xs py-1 px-2 rounded pointer-events-none transition-opacity z-30 whitespace-nowrap shadow-lg border border-slate-200 dark:border-slate-700">
                             ₹{ph.cost_per_kg.toFixed(2)}
                           </div>
 
@@ -481,7 +481,7 @@ export default function MaterialDetail() {
                       key={sim.id}
                       className="block p-3 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 hover:border-purple-500/50 transition-colors"
                     >
-                      <p className="font-semibold text-white text-sm">
+                      <p className="font-semibold text-slate-900 dark:text-white text-sm">
                         {sim.name}
                       </p>
                       <div className="flex justify-between text-xs text-slate-600 dark:text-slate-300 mt-1">

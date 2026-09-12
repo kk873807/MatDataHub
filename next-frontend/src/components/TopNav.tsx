@@ -65,7 +65,7 @@ export function TopNav() {
           <div className="flex items-center gap-6">
             <Link href="/" className="flex items-center gap-2 group">
               <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-600 to-violet-600 flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:shadow-blue-500/40 transition-all">
-                <Database className="w-4 h-4 text-white" />
+                <Database className="w-4 h-4 text-slate-900 dark:text-white" />
               </div>
               <span className="font-bold text-xl tracking-tight text-slate-900 dark:text-white" style={{ fontFamily: "var(--font-red-hat)" }}>MatDataHub</span>
             </Link>

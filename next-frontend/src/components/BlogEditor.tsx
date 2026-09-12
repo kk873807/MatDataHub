@@ -57,7 +57,7 @@ export default function BlogEditor({ secret }: { secret: string }) {
             <input type="checkbox" name="featured" value="true" /> Featured Blog?
           </label>
           <textarea name="excerpt" required placeholder="Short Excerpt" rows={2} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded px-4 py-2 text-slate-900 dark:text-white"></textarea>
-          <textarea name="content" required placeholder="Markdown Content..." rows={10} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded px-4 py-2 text-white font-mono text-sm"></textarea>
+          <textarea name="content" required placeholder="Markdown Content..." rows={10} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded px-4 py-2 text-slate-900 dark:text-white font-mono text-sm"></textarea>
           <button type="submit" disabled={loading} className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-2xl">
             {loading ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : "Publish Blog"}
           </button>

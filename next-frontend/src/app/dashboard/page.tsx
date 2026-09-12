@@ -89,7 +89,7 @@ export default function AppDashboard() {
           <div className="text-center py-8">
             <Workflow className="w-10 h-10 text-slate-700 mx-auto mb-3" />
             <p className="text-slate-500 dark:text-slate-400 text-sm">You haven't created any engineering workspaces recently.</p>
-            <Link href="/projects" className="inline-block mt-4 text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-2xl transition-colors">
+            <Link href="/projects" className="inline-block mt-4 text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-700 text-slate-900 dark:text-white px-4 py-2 rounded-2xl transition-colors">
               Go to Workspaces
             </Link>
           </div>

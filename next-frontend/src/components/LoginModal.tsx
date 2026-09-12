@@ -48,7 +48,7 @@ export function LoginModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden relative animate-in zoom-in-95 duration-200">
         <button 
           onClick={onClose}
-          className="absolute top-4 right-4 text-slate-500 dark:text-slate-400 hover:text-white transition-colors"
+          className="absolute top-4 right-4 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
@@ -100,7 +100,7 @@ export function LoginModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =
                     type="text" 
                     value={name}
                     onChange={e => setName(e.target.value)}
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 pl-11 text-white focus:outline-none focus:border-indigo-500 transition-colors"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 pl-11 text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500 transition-colors"
                     placeholder="John Doe"
                   />
                   <div className="absolute left-4 top-3.5 text-slate-500">
@@ -118,7 +118,7 @@ export function LoginModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =
                   required
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 pl-11 text-white focus:outline-none focus:border-indigo-500 transition-colors"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 pl-11 text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500 transition-colors"
                   placeholder="name@company.com"
                 />
                 <div className="absolute left-4 top-3.5 text-slate-500">
@@ -135,7 +135,7 @@ export function LoginModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =
                   required 
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 pl-11 text-white focus:outline-none focus:border-indigo-500 transition-colors"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 pl-11 text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500 transition-colors"
                   placeholder="••••••••"
                 />
                 <div className="absolute left-4 top-3.5 text-slate-500">
@@ -161,7 +161,7 @@ export function LoginModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =
                 setIsRegister(!isRegister);
                 setError("");
               }}
-              className="text-sm text-slate-500 dark:text-slate-400 hover:text-white transition-colors"
+              className="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white transition-colors"
             >
               {isRegister ? "Already have an account? Sign in" : "Don't have an account? Create one"}
             </button>

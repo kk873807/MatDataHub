@@ -124,7 +124,7 @@ export default function MaterialManager({ secret }: { secret: string }) {
             />
             <label
               htmlFor="file-upload"
-              className="cursor-pointer bg-cyan-600 hover:bg-cyan-500 text-white font-semibold py-2 px-6 rounded-2xl transition-colors flex items-center gap-2"
+              className="cursor-pointer bg-cyan-600 hover:bg-cyan-500 text-slate-900 dark:text-white font-semibold py-2 px-6 rounded-2xl transition-colors flex items-center gap-2"
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileUp className="w-4 h-4" />}
               {loading ? "Processing..." : "Select File"}
@@ -191,8 +191,8 @@ export default function MaterialManager({ secret }: { secret: string }) {
               <input type="number" step="any" name="density" placeholder="Density" className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-slate-900 dark:text-white" />
               <input type="number" step="any" name="cost_per_kg_min" placeholder="Cost / kg (Min)" className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-slate-900 dark:text-white" />
             </div>
-            <textarea name="description" placeholder="Description" className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-white mb-4"></textarea>
-            <button disabled={loading} type="submit" className="bg-cyan-600 hover:bg-cyan-500 text-white font-semibold py-2 px-6 rounded-2xl transition-colors">
+            <textarea name="description" placeholder="Description" className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-slate-900 dark:text-white mb-4"></textarea>
+            <button disabled={loading} type="submit" className="bg-cyan-600 hover:bg-cyan-500 text-slate-900 dark:text-white font-semibold py-2 px-6 rounded-2xl transition-colors">
               {loading ? "Adding..." : "Add Material"}
             </button>
           </form>

@@ -250,7 +250,7 @@ function CompareMaterialsContent() {
     return (
       <main className="flex flex-col p-6 lg:p-10 w-full h-full">
         <div className="w-full max-w-5xl mx-auto space-y-6">
-          <Link href="/analytics" className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-white transition-colors">
+          <Link href="/analytics" className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white transition-colors">
             <ArrowLeft className="w-4 h-4" /> Back to Analytics
           </Link>
           
@@ -277,7 +277,7 @@ function CompareMaterialsContent() {
     <main className="flex flex-col p-6 lg:p-10 w-full h-full overflow-y-auto">
       <div className="w-full max-w-6xl mx-auto space-y-8">
         
-        <Link href="/analytics" className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-white transition-colors">
+        <Link href="/analytics" className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white transition-colors">
           <ArrowLeft className="w-4 h-4" /> Back to Analytics
         </Link>
 

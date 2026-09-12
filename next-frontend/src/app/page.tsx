@@ -44,7 +44,7 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-200 transition-colors duration-300 selection:bg-indigo-500/30 overflow-x-hidden font-sans">
+    <div className="min-h-screen bg-slate-50 dark:bg-white dark:bg-slate-950 text-white dark:text-slate-200 transition-colors duration-300 selection:bg-indigo-500/30 overflow-x-hidden font-sans">
       
       {/* Navbar */}
       
@@ -104,7 +104,7 @@ export default function LandingPage() {
                   </div>
                   <div>
                     <div className="h-2.5 w-24 bg-slate-700 rounded mb-1.5"></div>
-                    <div className="h-2 w-16 bg-slate-100 dark:bg-slate-100 dark:bg-slate-800 rounded"></div>
+                    <div className="h-2 w-16 bg-slate-100 dark:bg-slate-800 rounded"></div>
                   </div>
                 </div>
                 <div className="flex gap-1.5">
@@ -140,7 +140,7 @@ export default function LandingPage() {
       {/* Solution Section */}
       <section id="solution" className="py-24 px-6">
         <div className="max-w-7xl mx-auto text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 font-heading">A Unified Academic & Industrial Solution</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4 font-heading">A Unified Academic & Industrial Solution</h2>
           <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">MatDataHub bridges the gap between theoretical material science and practical engineering economics.</p>
         </div>
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -154,7 +154,7 @@ export default function LandingPage() {
           ].map((feat, i) => (
             <div key={i} className="bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 p-8 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-100 dark:hover:bg-slate-800/40 transition-colors">
               <feat.icon className={`w-8 h-8 ${feat.color} mb-5`} />
-              <h3 className="text-xl font-bold text-white mb-2 font-heading">{feat.title}</h3>
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2 font-heading">{feat.title}</h3>
               <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">{feat.desc}</p>
             </div>
           ))}
@@ -172,12 +172,12 @@ export default function LandingPage() {
                   <span className="px-2.5 py-1 text-[10px] font-black uppercase tracking-widest bg-indigo-500 text-white rounded-md shadow-lg">New Research</span>
                   <span className="text-xs font-bold text-slate-600 dark:text-slate-400">Sept 4, 2026 • 8 min read</span>
                 </div>
-                <h2 className="text-xl md:text-2xl font-bold text-white group-hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors leading-tight font-heading">Modeling Thermal Expansion in Aerospace Alloys</h2>
+                <h2 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white group-hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors leading-tight font-heading">Modeling Thermal Expansion in Aerospace Alloys</h2>
                 <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed max-w-xl">
                   A deep dive into how our new predictive modeling engine handles extreme temperature deltas in titanium composites compared to legacy FEM solvers.
                 </p>
               </div>
-              <div className="shrink-0 flex items-center justify-center w-12 h-12 rounded-full bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-all">
+              <div className="shrink-0 flex items-center justify-center w-12 h-12 rounded-full bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white dark:hover:text-white transition-all">
                 <ArrowRight className="w-5 h-5" />
               </div>
             </div>
@@ -190,7 +190,7 @@ export default function LandingPage() {
       {/* Testimonials / Community Feedback */}
       <section className="py-24 bg-white dark:bg-slate-50 dark:bg-slate-900/50 border-y border-slate-200 dark:border-slate-200 dark:border-slate-800/50">
         <div className="max-w-7xl mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold text-white mb-4 font-heading">Live Community Feedback</h2>
+          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4 font-heading">Live Community Feedback</h2>
           <p className="text-slate-600 dark:text-slate-400 mb-12 max-w-2xl mx-auto">See what our community of engineers and scientists are saying directly from our platform.</p>
           
           <div className="grid md:grid-cols-3 gap-8 text-left">
@@ -204,7 +204,7 @@ export default function LandingPage() {
                   <p className="text-slate-600 dark:text-slate-300 relative z-10 mb-6 text-sm leading-relaxed italic flex-1">"{fb.message}"</p>
                   <div className="flex justify-between items-end border-t border-slate-200 dark:border-slate-800 pt-4 mt-auto">
                     <div>
-                      <p className="text-white font-bold text-sm">{fb.name || 'Anonymous Engineer'}</p>
+                      <p className="text-slate-900 dark:text-white font-bold text-sm">{fb.name || 'Anonymous Engineer'}</p>
                       <p className="text-slate-500 text-[10px]">{new Date(fb.created_at).toLocaleDateString()}</p>
                     </div>
                     <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400">
@@ -224,7 +224,7 @@ export default function LandingPage() {
                   <div className="text-4xl text-indigo-500/20 absolute top-4 left-4 font-serif">"</div>
                   <p className="text-slate-600 dark:text-slate-300 relative z-10 mb-6 text-sm leading-relaxed italic flex-1">"{test.quote}"</p>
                   <div>
-                    <p className="text-white font-bold text-sm">{test.author}</p>
+                    <p className="text-slate-900 dark:text-white font-bold text-sm">{test.author}</p>
                     <p className="text-slate-500 text-xs">{test.role}</p>
                   </div>
                 </div>
@@ -233,7 +233,7 @@ export default function LandingPage() {
           </div>
           
           <div className="mt-12">
-             <Link href="/feedback" className="inline-flex items-center gap-2 px-6 py-2.5 bg-slate-100 dark:bg-slate-100 dark:bg-slate-800 hover:bg-slate-700 text-white rounded-xl font-medium transition-colors text-sm border border-slate-700">
+             <Link href="/feedback" className="inline-flex items-center gap-2 px-6 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-xl font-medium transition-colors text-sm border border-slate-700">
                <MessageSquare className="w-4 h-4" /> View All Community Discussions
              </Link>
           </div>
@@ -244,16 +244,16 @@ export default function LandingPage() {
       <section id="pricing" className="py-24 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-white mb-4 font-heading">Transparent Pricing Models</h2>
+            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4 font-heading">Transparent Pricing Models</h2>
             <p className="text-slate-600 dark:text-slate-400">Select the tier that fits your research and engineering needs.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             
             {/* Free */}
             <div className="bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl p-8 flex flex-col">
-              <h3 className="text-xl font-bold text-white mb-2 font-heading">Academic Free</h3>
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2 font-heading">Academic Free</h3>
               <p className="text-slate-600 dark:text-slate-400 text-sm mb-6 h-10">Perfect for students and open research.</p>
-              <div className="text-4xl font-extrabold text-white mb-8">&#8377;0<span className="text-lg font-medium text-slate-500">/mo</span></div>
+              <div className="text-4xl font-extrabold text-slate-900 dark:text-white mb-8">&#8377;0<span className="text-lg font-medium text-slate-500">/mo</span></div>
               <ul className="space-y-3 mb-8 flex-1">
                 {["Search limited basic materials", "View mechanical properties", "Basic AI Adviser", "Community Support"].map((f, i) => (
                   <li key={i} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
@@ -261,15 +261,15 @@ export default function LandingPage() {
                   </li>
                 ))}
               </ul>
-              <button onClick={() => window.dispatchEvent(new Event("openLoginModal"))} className="block text-center w-full py-3 rounded-xl bg-slate-100 dark:bg-slate-100 dark:bg-slate-800 hover:bg-slate-700 text-white font-bold transition-colors">Start Free</button>
+              <button onClick={() => window.dispatchEvent(new Event("openLoginModal"))} className="block text-center w-full py-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-bold transition-colors">Start Free</button>
             </div>
 
             {/* Pro */}
             <div className="bg-slate-50 dark:bg-slate-900 border-2 border-indigo-500 rounded-2xl p-8 flex flex-col relative transform md:-translate-y-4 shadow-2xl shadow-indigo-900/20">
               <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-indigo-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Most Popular</div>
-              <h3 className="text-xl font-bold text-white mb-2 font-heading">Professional</h3>
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2 font-heading">Professional</h3>
               <p className="text-slate-600 dark:text-slate-400 text-sm mb-6 h-10">For independent engineers and small firms.</p>
-              <div className="text-4xl font-extrabold text-white mb-8">&#8377;499<span className="text-lg font-medium text-slate-500">/mo</span></div>
+              <div className="text-4xl font-extrabold text-slate-900 dark:text-white mb-8">&#8377;499<span className="text-lg font-medium text-slate-500">/mo</span></div>
               <ul className="space-y-3 mb-8 flex-1">
                 {["Full 1000+ material database", "Export detailed PDFs", "Advanced AI Adviser", "Unlimited Workspaces"].map((f, i) => (
                   <li key={i} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
@@ -282,9 +282,9 @@ export default function LandingPage() {
 
             {/* Advanced */}
             <div className="bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl p-8 flex flex-col">
-              <h3 className="text-xl font-bold text-white mb-2 font-heading">Advanced Enterprise</h3>
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2 font-heading">Advanced Enterprise</h3>
               <p className="text-slate-600 dark:text-slate-400 text-sm mb-6 h-10">Full financial & physics capabilities.</p>
-              <div className="text-4xl font-extrabold text-white mb-8">&#8377;19,999<span className="text-lg font-medium text-slate-500">/mo</span></div>
+              <div className="text-4xl font-extrabold text-slate-900 dark:text-white mb-8">&#8377;19,999<span className="text-lg font-medium text-slate-500">/mo</span></div>
               <ul className="space-y-3 mb-8 flex-1">
                 {["Macroeconomic Proxy Pricing", "CBAM Emissions Calculator", "Engineering Physics Tools", "Composite Synthesizer", "Priority API Access"].map((f, i) => (
                   <li key={i} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
@@ -292,7 +292,7 @@ export default function LandingPage() {
                   </li>
                 ))}
               </ul>
-              <button onClick={() => window.dispatchEvent(new Event("openLoginModal"))} className="block text-center w-full py-3 rounded-xl bg-slate-100 dark:bg-slate-100 dark:bg-slate-800 hover:bg-slate-700 text-white font-bold transition-colors">Get Advanced</button>
+              <button onClick={() => window.dispatchEvent(new Event("openLoginModal"))} className="block text-center w-full py-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-bold transition-colors">Get Advanced</button>
             </div>
 
           </div>
@@ -308,9 +308,9 @@ export default function LandingPage() {
           </div>
           <p className="text-slate-500 text-sm">© 2026 MatDataHub. Empowering material intelligence.</p>
           <div className="flex gap-6">
-            <Link href="/terms" className="text-sm text-slate-600 dark:text-slate-400 hover:text-white transition-colors">Terms & Conditions</Link>
-            <Link href="/privacy" className="text-sm text-slate-600 dark:text-slate-400 hover:text-white transition-colors">Privacy Policy</Link>
-            <Link href="/contact" className="text-sm text-slate-600 dark:text-slate-400 hover:text-white transition-colors">Contact</Link>
+            <Link href="/terms" className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-900 dark:text-white transition-colors">Terms & Conditions</Link>
+            <Link href="/privacy" className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-900 dark:text-white transition-colors">Privacy Policy</Link>
+            <Link href="/contact" className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-900 dark:text-white transition-colors">Contact</Link>
           </div>
         </div>
       </footer>

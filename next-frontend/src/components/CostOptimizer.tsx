@@ -56,21 +56,21 @@ export function CostOptimizer() {
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Cost (₹/kg)</label>
-            <input type="number" name="cost_per_kg" value={formData.cost_per_kg} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white outline-none focus:ring-1 focus:ring-emerald-500" />
+            <input type="number" name="cost_per_kg" value={formData.cost_per_kg} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-slate-900 dark:text-white outline-none focus:ring-1 focus:ring-emerald-500" />
           </div>
           <div>
             <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Volume (cm³)</label>
-            <input type="number" name="volume_cm3" value={formData.volume_cm3} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white outline-none focus:ring-1 focus:ring-emerald-500" />
+            <input type="number" name="volume_cm3" value={formData.volume_cm3} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-slate-900 dark:text-white outline-none focus:ring-1 focus:ring-emerald-500" />
           </div>
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Density (g/cm³)</label>
-            <input type="number" name="density_gcm3" value={formData.density_gcm3} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white outline-none focus:ring-1 focus:ring-emerald-500" />
+            <input type="number" name="density_gcm3" value={formData.density_gcm3} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-slate-900 dark:text-white outline-none focus:ring-1 focus:ring-emerald-500" />
           </div>
           <div>
             <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Batch Size</label>
-            <input type="number" name="batch_size" value={formData.batch_size} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white outline-none focus:ring-1 focus:ring-emerald-500" />
+            <input type="number" name="batch_size" value={formData.batch_size} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-slate-900 dark:text-white outline-none focus:ring-1 focus:ring-emerald-500" />
           </div>
         </div>
       </div>

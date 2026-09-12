@@ -58,26 +58,26 @@ export function ThermalShock() {
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="block text-[10px] text-slate-600 dark:text-slate-300 mb-1 uppercase tracking-wider">Tensile (MPa)</label>
-            <input type="number" name="tensile_strength" value={formData.tensile_strength} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-2 py-1.5 text-sm text-white outline-none focus:ring-1 focus:ring-orange-500" />
+            <input type="number" name="tensile_strength" value={formData.tensile_strength} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-2 py-1.5 text-sm text-slate-900 dark:text-white outline-none focus:ring-1 focus:ring-orange-500" />
           </div>
           <div>
             <label className="block text-[10px] text-slate-600 dark:text-slate-300 mb-1 uppercase tracking-wider">Modulus (GPa)</label>
-            <input type="number" name="elastic_modulus" value={formData.elastic_modulus} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-2 py-1.5 text-sm text-white outline-none focus:ring-1 focus:ring-orange-500" />
+            <input type="number" name="elastic_modulus" value={formData.elastic_modulus} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-2 py-1.5 text-sm text-slate-900 dark:text-white outline-none focus:ring-1 focus:ring-orange-500" />
           </div>
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="block text-[10px] text-slate-600 dark:text-slate-300 mb-1 uppercase tracking-wider">Conductivity (W/mK)</label>
-            <input type="number" name="thermal_conductivity" value={formData.thermal_conductivity} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-2 py-1.5 text-sm text-white outline-none focus:ring-1 focus:ring-orange-500" />
+            <input type="number" name="thermal_conductivity" value={formData.thermal_conductivity} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-2 py-1.5 text-sm text-slate-900 dark:text-white outline-none focus:ring-1 focus:ring-orange-500" />
           </div>
           <div>
             <label className="block text-[10px] text-slate-600 dark:text-slate-300 mb-1 uppercase tracking-wider">Expansion (µm/mK)</label>
-            <input type="number" name="thermal_expansion" value={formData.thermal_expansion} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-2 py-1.5 text-sm text-white outline-none focus:ring-1 focus:ring-orange-500" />
+            <input type="number" name="thermal_expansion" value={formData.thermal_expansion} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-2 py-1.5 text-sm text-slate-900 dark:text-white outline-none focus:ring-1 focus:ring-orange-500" />
           </div>
         </div>
         <div>
           <label className="block text-xs text-orange-300 mb-1 font-semibold mt-2">Expected Sudden Temp Drop (ΔT °C)</label>
-          <input type="number" name="delta_t" value={formData.delta_t} onChange={handleChange} className="w-full bg-white dark:bg-slate-900 border border-orange-900/50 rounded px-3 py-2 text-sm text-white outline-none focus:ring-1 focus:ring-orange-500" />
+          <input type="number" name="delta_t" value={formData.delta_t} onChange={handleChange} className="w-full bg-white dark:bg-slate-900 border border-orange-900/50 rounded px-3 py-2 text-sm text-slate-900 dark:text-white outline-none focus:ring-1 focus:ring-orange-500" />
         </div>
       </div>
       

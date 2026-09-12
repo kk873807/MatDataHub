@@ -138,7 +138,7 @@ export default function MaterialsPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 onFocus={() => setShowSuggestions(suggestions.length > 0)}
-                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl pl-12 pr-4 py-3 text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all placeholder:text-slate-500"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl pl-12 pr-4 py-3 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all placeholder:text-slate-500"
               />
               <AnimatePresence>
                 {showSuggestions && suggestions.length > 0 && (
@@ -159,7 +159,7 @@ export default function MaterialsPage() {
                       >
                         <Search className="w-4 h-4 text-emerald-500 shrink-0" />
                         <div className="flex-1 min-w-0">
-                          <p className="text-white text-sm font-semibold truncate">{s.name}</p>
+                          <p className="text-slate-900 dark:text-white text-sm font-semibold truncate">{s.name}</p>
                           <p className="text-slate-500 dark:text-slate-400 text-xs mt-0.5">{s.category}{s.grade ? ` • ${s.grade}` : ""}</p>
                         </div>
                       </button>
@@ -210,7 +210,7 @@ export default function MaterialsPage() {
                     <select
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
-                      className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2.5 text-sm text-white appearance-none outline-none focus:border-emerald-500 transition-colors"
+                      className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2.5 text-sm text-slate-900 dark:text-white appearance-none outline-none focus:border-emerald-500 transition-colors"
                     >
                       <option className="bg-white dark:bg-slate-900" value="">All Categories</option>
                       <option className="bg-white dark:bg-slate-900" value="Metal">Metals</option>
@@ -226,7 +226,7 @@ export default function MaterialsPage() {
                       placeholder="e.g. 300"
                       value={minTensile}
                       onChange={(e) => setMinTensile(e.target.value ? Number(e.target.value) : "")}
-                      className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2.5 text-sm text-white outline-none focus:border-emerald-500 transition-colors"
+                      className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2.5 text-sm text-slate-900 dark:text-white outline-none focus:border-emerald-500 transition-colors"
                     />
                   </div>
                   <div>
@@ -236,7 +236,7 @@ export default function MaterialsPage() {
                       placeholder="e.g. 500"
                       value={maxCost}
                       onChange={(e) => setMaxCost(e.target.value ? Number(e.target.value) : "")}
-                      className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2.5 text-sm text-white outline-none focus:border-emerald-500 transition-colors"
+                      className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2.5 text-sm text-slate-900 dark:text-white outline-none focus:border-emerald-500 transition-colors"
                     />
                   </div>
                   <div>
@@ -247,7 +247,7 @@ export default function MaterialsPage() {
                       step="0.1"
                       value={minThermal}
                       onChange={(e) => setMinThermal(e.target.value ? Number(e.target.value) : "")}
-                      className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2.5 text-sm text-white outline-none focus:border-emerald-500 transition-colors"
+                      className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2.5 text-sm text-slate-900 dark:text-white outline-none focus:border-emerald-500 transition-colors"
                     />
                   </div>
                   <div>
@@ -255,7 +255,7 @@ export default function MaterialsPage() {
                     <select
                       value={perPage}
                       onChange={(e) => setPerPage(Number(e.target.value))}
-                      className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2.5 text-sm text-white appearance-none outline-none focus:border-emerald-500 transition-colors"
+                      className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2.5 text-sm text-slate-900 dark:text-white appearance-none outline-none focus:border-emerald-500 transition-colors"
                     >
                       <option className="bg-white dark:bg-slate-900" value={20}>20 materials</option>
                       <option className="bg-white dark:bg-slate-900" value={50}>50 materials</option>
@@ -295,7 +295,7 @@ export default function MaterialsPage() {
                   <button onClick={() => setMinThermal("")} className="hover:text-orange-200"><X className="w-3 h-3" /></button>
                 </span>
               )}
-              <button onClick={() => { setCategory(""); setMinTensile(""); setMaxCost(""); setMinThermal(""); }} className="text-xs text-slate-500 dark:text-slate-400 hover:text-white ml-2 underline underline-offset-2">
+              <button onClick={() => { setCategory(""); setMinTensile(""); setMaxCost(""); setMinThermal(""); }} className="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white ml-2 underline underline-offset-2">
                 Clear all
               </button>
             </div>
@@ -305,7 +305,7 @@ export default function MaterialsPage() {
         <div className="flex justify-between items-center text-sm">
           <span className="text-slate-500 dark:text-slate-400 font-medium">
             {!loading && (
-              <>Showing <span className="text-white font-bold">{sortedMaterials.length}</span> {sortedMaterials.length === 1 ? 'material' : 'materials'}</>
+              <>Showing <span className="text-slate-900 dark:text-white font-bold">{sortedMaterials.length}</span> {sortedMaterials.length === 1 ? 'material' : 'materials'}</>
             )}
           </span>
         </div>
@@ -325,7 +325,7 @@ export default function MaterialsPage() {
             <p className="text-slate-500 dark:text-slate-400 max-w-md mx-auto mb-6">We couldn't find any materials matching your specific filters and search criteria.</p>
             <button 
               onClick={() => { setSearch(""); setCategory(""); setMinTensile(""); setMaxCost(""); setMinThermal(""); }}
-              className="px-6 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-700 text-white rounded-2xl font-semibold transition-colors"
+              className="px-6 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-700 text-slate-900 dark:text-white rounded-2xl font-semibold transition-colors"
             >
               Clear all filters
             </button>

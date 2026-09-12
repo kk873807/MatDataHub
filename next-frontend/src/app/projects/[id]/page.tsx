@@ -242,7 +242,7 @@ export default function ProjectWorkspace() {
                   value={partName} 
                   onChange={e => setPartName(e.target.value)} 
                   placeholder="e.g. Front Bracket"
-                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-3 py-2.5 text-white text-sm outline-none focus:border-blue-500 transition-colors" 
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-3 py-2.5 text-slate-900 dark:text-white text-sm outline-none focus:border-blue-500 transition-colors" 
                   required 
                 />
               </div>
@@ -251,7 +251,7 @@ export default function ProjectWorkspace() {
                 <input 
                   type="text" 
                   placeholder="Search material..." 
-                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-3 py-2.5 text-white text-sm outline-none focus:border-blue-500 transition-colors placeholder:text-slate-500"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-3 py-2.5 text-slate-900 dark:text-white text-sm outline-none focus:border-blue-500 transition-colors placeholder:text-slate-500"
                   value={searchMatQuery}
                   onChange={(e) => {
                     setSearchMatQuery(e.target.value);
@@ -285,7 +285,7 @@ export default function ProjectWorkspace() {
                   value={volume} 
                   onChange={e => setVolume(e.target.value)} 
                   placeholder="e.g. 125"
-                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-3 py-2.5 text-white text-sm outline-none focus:border-blue-500 transition-colors" 
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-3 py-2.5 text-slate-900 dark:text-white text-sm outline-none focus:border-blue-500 transition-colors" 
                   required 
                 />
               </div>
@@ -331,7 +331,7 @@ export default function ProjectWorkspace() {
                 <tbody className="divide-y divide-slate-800/50">
                   {enrichedItems.map((item: any) => (
                     <tr key={item.id} className="hover:bg-slate-100 dark:hover:bg-slate-800/40 transition-colors group">
-                      <td className="px-5 py-3 text-white font-medium">{item.part_name}</td>
+                      <td className="px-5 py-3 text-slate-900 dark:text-white font-medium">{item.part_name}</td>
                       <td className="px-5 py-3 text-blue-400">
                         <Link href={`/materials/${item.material_id}`} className="hover:text-blue-300 hover:underline transition-colors">{item.mat?.name || 'Unknown'}</Link>
                       </td>
@@ -378,7 +378,7 @@ export default function ProjectWorkspace() {
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 min-h-[400px]">
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-xl font-bold text-slate-900 dark:text-white font-heading capitalize">{activeTool} Analysis</h3>
-          <select value={selectedPartId} onChange={e=>setSelectedPartId(e.target.value)} className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded px-3 py-1.5 text-white text-sm outline-none">
+          <select value={selectedPartId} onChange={e=>setSelectedPartId(e.target.value)} className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded px-3 py-1.5 text-slate-900 dark:text-white text-sm outline-none">
             <option value="">Select part to analyze...</option>
             {enrichedItems.map((i: any) => <option key={i.id} value={i.id}>{i.part_name} ({i.mat?.name})</option>)}
           </select>
@@ -444,7 +444,7 @@ export default function ProjectWorkspace() {
                     a.href = url;
                     a.download = `${project.name.replace(/\s+/g, '_')}_blueprint.json`;
                     a.click();
-                  }} className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded text-sm font-bold transition-colors">
+                  }} className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-900 dark:text-white rounded text-sm font-bold transition-colors">
                     Export JSON
                   </button>
                   <button onClick={() => {
@@ -491,7 +491,7 @@ export default function ProjectWorkspace() {
     <main className="flex flex-col p-0 w-full h-full overflow-hidden bg-slate-50 dark:bg-slate-950 relative">
       {/* Toast */}
       {toast && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3 bg-slate-100 dark:bg-slate-800 border border-emerald-500/50 rounded-2xl shadow-2xl text-white animate-in slide-in-from-bottom-5">
+        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3 bg-slate-100 dark:bg-slate-800 border border-emerald-500/50 rounded-2xl shadow-2xl text-slate-900 dark:text-white animate-in slide-in-from-bottom-5">
           <CheckCircle2 className="w-5 h-5 text-emerald-400" />
           <span className="text-sm font-medium">{toast}</span>
         </div>
@@ -500,7 +500,7 @@ export default function ProjectWorkspace() {
       {/* Top Navbar for Workspace */}
       <div className="h-16 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between px-6 shrink-0">
         <div className="flex items-center gap-4">
-          <Link href="/projects" className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-white transition-colors">
+          <Link href="/projects" className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white transition-colors">
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div>
@@ -817,7 +817,7 @@ export default function ProjectWorkspace() {
                 showToast("Please allow popups to generate and view the report.");
               }
             }}
-            className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-700 text-white rounded text-xs font-semibold transition-colors border border-slate-200 dark:border-slate-700 cursor-pointer"
+            className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-700 text-slate-900 dark:text-white rounded text-xs font-semibold transition-colors border border-slate-200 dark:border-slate-700 cursor-pointer"
           >
             <FileText className="w-4 h-4" /> Professional Report
           </button>

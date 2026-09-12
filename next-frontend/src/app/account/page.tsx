@@ -167,7 +167,7 @@ function AccountDashboardInner() {
                 <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl"></div>
                 <h2 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Current Tier</h2>
                 <div className="flex items-end gap-4 mb-4">
-                  <span className="text-4xl font-extrabold text-white capitalize">{profile.tier}</span>
+                  <span className="text-4xl font-extrabold text-slate-900 dark:text-white capitalize">{profile.tier}</span>
                   {profile.tier === "advanced" && <span className="text-emerald-400 text-sm font-bold bg-emerald-900/30 px-2 py-1 rounded">Maximum Access</span>}
                 </div>
                 <p className="text-slate-600 dark:text-slate-300 text-sm">
@@ -400,7 +400,7 @@ function AccountDashboardInner() {
             
             <div className="space-y-4">
               <details className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 cursor-pointer group">
-                <summary className="font-bold text-white group-hover:text-blue-400 transition-colors">Privacy Policy</summary>
+                <summary className="font-bold text-slate-900 dark:text-white group-hover:text-blue-400 transition-colors">Privacy Policy</summary>
                 <div className="mt-4 text-slate-500 dark:text-slate-400 text-sm space-y-2">
                   <p>We respect your privacy and are committed to protecting your personal data.</p>
                   <p>Your passwords and secrets are encrypted. We do not sell your data to third parties.</p>
@@ -408,7 +408,7 @@ function AccountDashboardInner() {
               </details>
               
               <details className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 cursor-pointer group">
-                <summary className="font-bold text-white group-hover:text-blue-400 transition-colors">Terms of Service</summary>
+                <summary className="font-bold text-slate-900 dark:text-white group-hover:text-blue-400 transition-colors">Terms of Service</summary>
                 <div className="mt-4 text-slate-500 dark:text-slate-400 text-sm space-y-2">
                   <p>By using MatDataHub, you agree to not abuse our APIs or scrape our database.</p>
                   <p>Be polite in community feedback. Violations will result in a permanent ban.</p>

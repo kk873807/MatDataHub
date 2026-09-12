@@ -117,7 +117,7 @@ function SmartSubstitutionContent() {
     return (
       <main className="flex flex-col p-6 lg:p-10 w-full h-full">
         <div className="w-full max-w-5xl mx-auto space-y-6">
-          <Link href="/analytics" className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-white transition-colors">
+          <Link href="/analytics" className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white transition-colors">
             <ArrowLeft className="w-4 h-4" /> Back to Analytics
           </Link>
           
@@ -146,7 +146,7 @@ function SmartSubstitutionContent() {
     return (
       <main className="flex flex-col p-6 lg:p-10 w-full h-full">
         <div className="w-full max-w-5xl mx-auto space-y-6">
-          <Link href="/analytics" className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-white transition-colors">
+          <Link href="/analytics" className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white transition-colors">
             <ArrowLeft className="w-4 h-4" /> Back to Analytics
           </Link>
           
@@ -161,7 +161,7 @@ function SmartSubstitutionContent() {
               Smart AI Substitution is a Pro feature. Upgrade your account to unlock intelligent material replacement suggestions.
             </p>
             
-            <Link href="/account" className="relative z-10 px-8 py-4 bg-yellow-600 hover:bg-yellow-700 text-white rounded-xl font-bold transition-all shadow-lg hover:scale-105">
+            <Link href="/account" className="relative z-10 px-8 py-4 bg-yellow-600 hover:bg-yellow-700 text-slate-900 dark:text-white rounded-xl font-bold transition-all shadow-lg hover:scale-105">
               Upgrade Account
             </Link>
           </div>
@@ -173,7 +173,7 @@ function SmartSubstitutionContent() {
     <main className="flex flex-col p-6 lg:p-10 w-full h-full overflow-y-auto">
       <div className="w-full max-w-5xl mx-auto space-y-8">
         
-        <Link href="/analytics" className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-white transition-colors">
+        <Link href="/analytics" className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white transition-colors">
           <ArrowLeft className="w-4 h-4" /> Back to Analytics
         </Link>
 
@@ -197,7 +197,7 @@ function SmartSubstitutionContent() {
                 <input 
                   type="text" 
                   placeholder="Search material to replace..." 
-                  className="bg-transparent border-none outline-none w-full text-white placeholder:text-slate-500"
+                  className="bg-transparent border-none outline-none w-full text-slate-900 dark:text-white placeholder:text-slate-500"
                   value={searchQuery}
                   onChange={(e) => {
                     setSearchQuery(e.target.value);
@@ -283,7 +283,7 @@ function SmartSubstitutionContent() {
                 <p className="text-slate-600 dark:text-slate-300 relative z-10 max-w-md mx-auto mb-6">
                   Smart AI Substitution is a Pro feature. Upgrade your account to unlock this workflow.
                 </p>
-                <Link href="/account" className="relative z-10 px-8 py-3 bg-yellow-600 hover:bg-yellow-700 text-white rounded-2xl font-bold transition-colors shadow-lg shadow-yellow-900/50">
+                <Link href="/account" className="relative z-10 px-8 py-3 bg-yellow-600 hover:bg-yellow-700 text-slate-900 dark:text-white rounded-2xl font-bold transition-colors shadow-lg shadow-yellow-900/50">
                   Upgrade Account
                 </Link>
               </div>
@@ -298,7 +298,7 @@ function SmartSubstitutionContent() {
                         <h4 className="text-lg font-bold text-slate-900 dark:text-white font-heading">{res.name}</h4>
                         <div className="text-sm text-purple-400 font-semibold">{Math.round(res.match_score)}% Match Score</div>
                       </div>
-                      <Link href={`/materials/${res.id}`} className="px-3 py-1 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded text-xs text-slate-600 dark:text-slate-300 hover:text-white transition-colors">
+                      <Link href={`/materials/${res.id}`} className="px-3 py-1 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded text-xs text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:text-white transition-colors">
                         View Details
                       </Link>
                     </div>

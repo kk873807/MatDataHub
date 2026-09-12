@@ -60,19 +60,19 @@ export function Synthesizer() {
           <h3 className="text-lg font-medium text-slate-600 dark:text-slate-300">Material 1</h3>
           <div>
             <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Density (g/cm³)</label>
-            <input type="number" name="mat1_density" value={formData.mat1_density} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <input type="number" name="mat1_density" value={formData.mat1_density} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
           <div>
             <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Tensile Strength (MPa)</label>
-            <input type="number" name="mat1_tensile" value={formData.mat1_tensile} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <input type="number" name="mat1_tensile" value={formData.mat1_tensile} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
           <div>
             <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Cost ($/kg)</label>
-            <input type="number" name="mat1_cost_min" value={formData.mat1_cost_min} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <input type="number" name="mat1_cost_min" value={formData.mat1_cost_min} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
           <div>
             <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Volume %</label>
-            <input type="number" name="mat1_vol_percent" value={formData.mat1_vol_percent} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <input type="number" name="mat1_vol_percent" value={formData.mat1_vol_percent} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
         </div>
 
@@ -81,15 +81,15 @@ export function Synthesizer() {
           <h3 className="text-lg font-medium text-slate-600 dark:text-slate-300">Material 2</h3>
           <div>
             <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Density (g/cm³)</label>
-            <input type="number" name="mat2_density" value={formData.mat2_density} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <input type="number" name="mat2_density" value={formData.mat2_density} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
           <div>
             <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Tensile Strength (MPa)</label>
-            <input type="number" name="mat2_tensile" value={formData.mat2_tensile} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <input type="number" name="mat2_tensile" value={formData.mat2_tensile} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
           <div>
             <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Cost ($/kg)</label>
-            <input type="number" name="mat2_cost_min" value={formData.mat2_cost_min} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <input type="number" name="mat2_cost_min" value={formData.mat2_cost_min} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
           <div>
             <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Volume %</label>

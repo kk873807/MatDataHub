@@ -140,7 +140,7 @@ export default function WorkspacesPage() {
               {errorMessage}
             </p>
             
-            <Link href="/account" className="relative z-10 px-8 py-4 bg-yellow-600 hover:bg-yellow-700 text-white rounded-xl font-bold transition-all shadow-lg hover:scale-105">
+            <Link href="/account" className="relative z-10 px-8 py-4 bg-yellow-600 hover:bg-yellow-700 text-slate-900 dark:text-white rounded-xl font-bold transition-all shadow-lg hover:scale-105">
               Upgrade Account
             </Link>
           </div>
@@ -178,7 +178,7 @@ export default function WorkspacesPage() {
             placeholder="Search your projects..."
             value={projectSearch}
             onChange={(e) => setProjectSearch(e.target.value)}
-            className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl pl-10 pr-4 py-2.5 text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+            className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl pl-10 pr-4 py-2.5 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
           />
         </div>
 
@@ -233,7 +233,7 @@ export default function WorkspacesPage() {
       {isModalOpen && (
         <div className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-slate-50 dark:bg-slate-950/80 backdrop-blur-sm">
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 w-full max-w-md shadow-2xl relative">
-            <button onClick={() => setIsModalOpen(false)} className="absolute top-4 right-4 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+            <button onClick={() => setIsModalOpen(false)} className="absolute top-4 right-4 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-900 dark:text-white">
               <X className="w-5 h-5" />
             </button>
             <h2 className="text-xl font-bold text-slate-900 dark:text-white font-heading mb-6">Create New Workspace</h2>
@@ -244,7 +244,7 @@ export default function WorkspacesPage() {
                   type="text" 
                   value={newProjectName}
                   onChange={e => setNewProjectName(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2 text-white outline-none focus:border-blue-500"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2 text-slate-900 dark:text-white outline-none focus:border-blue-500"
                   required
                 />
               </div>
@@ -253,7 +253,7 @@ export default function WorkspacesPage() {
                 <textarea 
                   value={newProjectDesc}
                   onChange={e => setNewProjectDesc(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2 text-white outline-none focus:border-blue-500 min-h-[100px]"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2 text-slate-900 dark:text-white outline-none focus:border-blue-500 min-h-[100px]"
                 />
               </div>
               <button 

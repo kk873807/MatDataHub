@@ -32,26 +32,26 @@ export function RiskAuditor() {
         <div className="space-y-4">
           <div>
             <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Material Name (For Geopolitical AI Analysis)</label>
-            <input type="text" name="material_name" value={formData.material_name} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white focus:ring-2 focus:ring-red-500 outline-none" />
+            <input type="text" name="material_name" value={formData.material_name} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-red-500 outline-none" />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Embodied Carbon (kg CO2e/kg)</label>
-              <input type="number" name="embodied_carbon" value={formData.embodied_carbon} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white outline-none" />
+              <input type="number" name="embodied_carbon" value={formData.embodied_carbon} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-slate-900 dark:text-white outline-none" />
             </div>
             <div>
               <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Est. Volume (Tons)</label>
-              <input type="number" name="volume_tons" value={formData.volume_tons} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white outline-none" />
+              <input type="number" name="volume_tons" value={formData.volume_tons} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-slate-900 dark:text-white outline-none" />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Cost (INR/kg)</label>
-              <input type="number" name="cost_per_kg_inr" value={formData.cost_per_kg_inr} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white outline-none" />
+              <input type="number" name="cost_per_kg_inr" value={formData.cost_per_kg_inr} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-slate-900 dark:text-white outline-none" />
             </div>
             <div>
               <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">CBAM Carbon Price ($/Ton)</label>
-              <input type="number" name="cbam_price_usd" value={formData.cbam_price_usd} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white outline-none" />
+              <input type="number" name="cbam_price_usd" value={formData.cbam_price_usd} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-slate-900 dark:text-white outline-none" />
             </div>
           </div>
           <button onClick={handleCalculate} disabled={loading} className="mt-4 w-full py-2.5 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-medium flex justify-center items-center">

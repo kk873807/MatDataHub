@@ -41,15 +41,15 @@ export function SafetyFactor() {
       <div className="space-y-4 flex-grow">
         <div>
           <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Yield Strength (MPa)</label>
-          <input type="number" name="yield_strength" value={formData.yield_strength} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white focus:ring-2 focus:ring-emerald-500 outline-none" />
+          <input type="number" name="yield_strength" value={formData.yield_strength} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none" />
         </div>
         <div>
           <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Applied Load (N)</label>
-          <input type="number" name="load_n" value={formData.load_n} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white focus:ring-2 focus:ring-emerald-500 outline-none" />
+          <input type="number" name="load_n" value={formData.load_n} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none" />
         </div>
         <div>
           <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Cross-sectional Area (cm²)</label>
-          <input type="number" name="area_cm2" value={formData.area_cm2} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white focus:ring-2 focus:ring-emerald-500 outline-none" />
+          <input type="number" name="area_cm2" value={formData.area_cm2} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none" />
         </div>
       </div>
       <button onClick={handleCalculate} disabled={loading} className="mt-6 w-full py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-medium flex justify-center items-center">

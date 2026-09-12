@@ -32,25 +32,25 @@ export function ThermalExpansion() {
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Material Name</label>
-            <input type="text" name="material_name" value={formData.material_name} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white focus:ring-2 focus:ring-orange-500 outline-none" />
+            <input type="text" name="material_name" value={formData.material_name} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 outline-none" />
           </div>
           <div>
             <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Category</label>
-            <input type="text" name="category" value={formData.category} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white focus:ring-2 focus:ring-orange-500 outline-none" />
+            <input type="text" name="category" value={formData.category} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 outline-none" />
           </div>
         </div>
         <div>
           <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Original Length (mm)</label>
-          <input type="number" name="part_length_mm" value={formData.part_length_mm} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white outline-none" />
+          <input type="number" name="part_length_mm" value={formData.part_length_mm} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-slate-900 dark:text-white outline-none" />
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Initial Temp (°C)</label>
-            <input type="number" name="initial_temp" value={formData.initial_temp} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white outline-none" />
+            <input type="number" name="initial_temp" value={formData.initial_temp} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-slate-900 dark:text-white outline-none" />
           </div>
           <div>
             <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Final Temp (°C)</label>
-            <input type="number" name="final_temp" value={formData.final_temp} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white outline-none" />
+            <input type="number" name="final_temp" value={formData.final_temp} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-slate-900 dark:text-white outline-none" />
           </div>
         </div>
       </div>
