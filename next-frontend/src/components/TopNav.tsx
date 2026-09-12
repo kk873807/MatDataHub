@@ -9,6 +9,7 @@ import {
 import { API } from "@/lib/api";
 import { ThemeToggle } from "./ThemeToggle";
 import { LoginModal } from "./LoginModal";
+import { AccountModals } from "./AccountModals";
 
 type NavItem = {
   name: string;
@@ -42,6 +43,7 @@ export function TopNav() {
   const [authChecked, setAuthChecked] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showShortcuts, setShowShortcuts] = useState(false);
+  const [activeAccountModal, setActiveAccountModal] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -189,20 +191,20 @@ export function TopNav() {
                           <p className="text-sm font-bold text-slate-900 dark:text-white truncate">{userInfo?.name || "User"}</p>
                           <p className="text-xs text-slate-500 dark:text-slate-400">{tierLabel} Plan</p>
                         </div>
-                        <Link href="/account" className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white rounded-xl transition-colors">
-                          <Settings className="w-4 h-4" /> Account Management
-                        </Link>
+                        <button onClick={() => setActiveAccountModal('account')} className="w-full text-left flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white rounded-xl transition-colors">
+                            <Settings className="w-4 h-4" /> Account Management
+                          </button>
                         {userInfo?.is_admin && (
                           <Link href="/admin" className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-amber-600 dark:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-700 dark:hover:text-amber-400 rounded-xl transition-colors">
                             <ShieldAlert className="w-4 h-4" /> Admin Dashboard
                           </Link>
                         )}
-                        <Link href="/account?tab=billing" className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white rounded-xl transition-colors">
-                          <CreditCard className="w-4 h-4" /> Transactions & Billing
-                        </Link>
-                        <Link href="/contact" className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white rounded-xl transition-colors">
-                          <LifeBuoy className="w-4 h-4" /> Help Centre & Legal
-                        </Link>
+                        <button onClick={() => setActiveAccountModal('billing')} className="w-full text-left flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white rounded-xl transition-colors">
+                            <CreditCard className="w-4 h-4" /> Transactions & Billing
+                          </button>
+                        <button onClick={() => setActiveAccountModal('help')} className="w-full text-left flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white rounded-xl transition-colors">
+                            <LifeBuoy className="w-4 h-4" /> Help Centre & Legal
+                          </button>
                         <button onClick={() => setShowShortcuts(true)} className="w-full flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white rounded-xl transition-colors text-left">
                           <Keyboard className="w-4 h-4" /> Keyboard Shortcuts
                         </button>
@@ -329,6 +331,7 @@ export function TopNav() {
         </div>
       )}
 
+      <AccountModals activeModal={activeAccountModal} setActiveModal={setActiveAccountModal} userInfo={userInfo} />
       <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
     </>
   );
