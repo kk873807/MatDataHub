@@ -70,7 +70,7 @@ export function LoginModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =
 
           <button 
             type="button"
-            onClick={() => { window.location.href = `${API}/auth/google/login`; }}
+            onClick={() => { window.location.href = `${API}/auth/google`; }}
             className="w-full bg-white hover:bg-slate-100 text-slate-900 font-bold py-3 rounded-xl flex items-center justify-center gap-3 transition-colors mb-6 shadow-lg"
           >
             <svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
