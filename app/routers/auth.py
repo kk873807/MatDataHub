@@ -172,11 +172,11 @@ async def auth_google_callback(request: Request, db: Session = Depends(get_db)):
         
         # Redirect to the Next.js frontend with the token as a query param
         frontend_url = os.environ.get("FRONTEND_URL", "http://localhost:3000")
-        return RedirectResponse(url=f"{frontend_url}/account?t={access_token}&is_admin={str(user.is_admin).lower()}")
+        return RedirectResponse(url=f"{frontend_url}/?t={access_token}&is_admin={str(user.is_admin).lower()}")
         
     except Exception as e:
         frontend_url = os.environ.get("FRONTEND_URL", "http://localhost:3000")
-        return RedirectResponse(url=f"{frontend_url}/account?error=google_auth_failed")
+        return RedirectResponse(url=f"{frontend_url}/?error=google_auth_failed")
 
 @router.get("/apple")
 async def login_apple(request: Request):

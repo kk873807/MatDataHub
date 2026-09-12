@@ -35,7 +35,7 @@ export function LoginModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =
       localStorage.setItem("token", data.access_token);
       onClose();
       // Redirect to dashboard
-      router.push("/dashboard");
+      window.location.reload();
     } catch (err: any) {
       setError(err.message);
     } finally {

@@ -13,6 +13,14 @@ export default function LandingPage() {
   const [showLoginModal, setShowLoginModal] = useState(false);
 
   useEffect(() => {
+    // Capture Google OAuth token if present
+    const urlParams = new URLSearchParams(window.location.search);
+    const oauthToken = urlParams.get("t");
+    if (oauthToken) {
+      localStorage.setItem("token", oauthToken);
+      window.history.replaceState({}, "", "/");
+    }
+
     // Check auth
     const token = localStorage.getItem("token");
     if (token) setIsLoggedIn(true);
