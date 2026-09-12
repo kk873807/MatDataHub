@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -61,6 +61,7 @@ export default function LandingPage() {
             <Link href="#problem" className="text-sm font-medium hover:text-indigo-400 transition-colors hidden md:block">Problem</Link>
             <Link href="#solution" className="text-sm font-medium hover:text-indigo-400 transition-colors hidden md:block">Platform</Link>
             <Link href="#pricing" className="text-sm font-medium hover:text-indigo-400 transition-colors hidden md:block">Pricing</Link>
+            <Link href="/resources" className="text-sm font-medium hover:text-indigo-400 transition-colors hidden md:block">Engineering Blog</Link>
             {!authChecked ? null : isLoggedIn ? (
               <Link href="/dashboard" className="text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-lg transition-all shadow-lg shadow-indigo-600/20">
                 Go to App Dashboard
