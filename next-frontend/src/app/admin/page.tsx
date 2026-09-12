@@ -115,7 +115,7 @@ export default function AdminDashboard() {
     return (
       <main className="flex flex-col items-center justify-center min-h-[80vh] p-6">
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-8 w-full max-w-md shadow-2xl">
-          <div className="w-16 h-16 bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="w-16 h-16 bg-red-100 dark:bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
             <ShieldAlert className="w-8 h-8 text-red-500" />
           </div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white font-heading text-center mb-2">Admin Portal</h1>
@@ -132,7 +132,7 @@ export default function AdminDashboard() {
                 required
               />
             </div>
-            {error && <p className="text-red-400 text-sm text-center">{error}</p>}
+            {error && <p className="text-red-600 dark:text-red-400 text-sm text-center">{error}</p>}
             <button type="submit" className="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-3 rounded-2xl transition-colors flex justify-center items-center gap-2">
               <Lock className="w-4 h-4" /> Authenticate
             </button>
@@ -163,7 +163,7 @@ export default function AdminDashboard() {
             {/* Upgrade Requests */}
             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-xl">
               <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center gap-3 bg-slate-50 dark:bg-slate-950/50">
-                <Users className="w-5 h-5 text-blue-400" />
+                <Users className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                 <h2 className="text-xl font-bold text-slate-900 dark:text-white font-heading">Pending Upgrade Requests</h2>
               </div>
               <div className="overflow-x-auto">
@@ -185,13 +185,13 @@ export default function AdminDashboard() {
                           <div className="text-slate-500 dark:text-slate-400 text-xs">{req.email}</div>
                         </td>
                         <td className="px-6 py-4 text-slate-600 dark:text-slate-300 uppercase text-xs">{req.current_tier}</td>
-                        <td className="px-6 py-4 font-bold text-amber-400 uppercase text-xs">{req.requested_tier}</td>
+                        <td className="px-6 py-4 font-bold text-amber-600 dark:text-amber-400 uppercase text-xs">{req.requested_tier}</td>
                         <td className="px-6 py-4 text-slate-500 dark:text-slate-400 text-xs">{new Date(req.requested_at).toLocaleString('en-GB')}</td>
                         <td className="px-6 py-4 text-right space-x-2">
-                          <button onClick={() => handleAction(req.id, "reject")} className="bg-red-900/30 hover:bg-red-900/50 text-red-400 px-3 py-1.5 rounded-2xl transition-colors inline-flex items-center gap-1">
+                          <button onClick={() => handleAction(req.id, "reject")} className="bg-red-100 dark:bg-red-100 dark:bg-red-900/30 hover:bg-red-100 dark:bg-red-100 dark:bg-red-900/50 text-red-600 dark:text-red-400 px-3 py-1.5 rounded-2xl transition-colors inline-flex items-center gap-1">
                             <X className="w-3 h-3" /> Reject
                           </button>
-                          <button onClick={() => handleAction(req.id, "approve")} className="bg-emerald-900/30 hover:bg-emerald-900/50 text-emerald-400 px-3 py-1.5 rounded-2xl transition-colors inline-flex items-center gap-1">
+                          <button onClick={() => handleAction(req.id, "approve")} className="bg-emerald-100  dark:bg-emerald-900/30 hover:bg-emerald-100  dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 px-3 py-1.5 rounded-2xl transition-colors inline-flex items-center gap-1">
                             <Check className="w-3 h-3" /> Approve
                           </button>
                         </td>
@@ -208,7 +208,7 @@ export default function AdminDashboard() {
             {/* Feedback & Support */}
             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-xl">
               <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center gap-3 bg-slate-50 dark:bg-slate-950/50">
-                <MessageSquare className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                <MessageSquare className="w-5 h-5 text-blue-600 dark:text-blue-600 dark:text-blue-400" />
                 <h2 className="text-xl font-bold text-slate-900 dark:text-white font-heading">System Feedback & Tickets</h2>
               </div>
               <div className="overflow-x-auto">
@@ -228,7 +228,7 @@ export default function AdminDashboard() {
                         <td className="px-6 py-4 text-slate-600 dark:text-slate-300 font-medium capitalize">{fb.category}</td>
                         <td className="px-6 py-4 text-slate-500 dark:text-slate-400 max-w-md">
                           <p className="line-clamp-2">{fb.message}</p>
-                          {fb.admin_reply && <p className="text-xs text-blue-400 mt-1">Admin Reply: {fb.admin_reply}</p>}
+                          {fb.admin_reply && <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">Admin Reply: {fb.admin_reply}</p>}
                         </td>
                         <td className="px-6 py-4 text-slate-500 dark:text-slate-400 text-xs">
                           {fb.email || fb.name || "Anonymous"}
@@ -237,12 +237,12 @@ export default function AdminDashboard() {
                           )}
                         </td>
                         <td className="px-6 py-4 text-slate-500 dark:text-slate-400 text-xs">
-                          {fb.status === "hidden" ? <span className="text-red-400">Hidden</span> : <span className="text-emerald-400">Visible</span>}
+                          {fb.status === "hidden" ? <span className="text-red-600 dark:text-red-400">Hidden</span> : <span className="text-emerald-600 dark:text-emerald-400">Visible</span>}
                         </td>
                         <td className="px-6 py-4 text-right space-x-2 space-y-1">
-                          <button onClick={() => handleReply(fb.id)} className="bg-blue-900/30 hover:bg-blue-900/50 text-blue-400 px-2 py-1 rounded transition-colors text-xs">Reply</button>
+                          <button onClick={() => handleReply(fb.id)} className="bg-blue-100 dark:bg-blue-100 dark:bg-blue-900/30 hover:bg-blue-100 dark:bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 px-2 py-1 rounded transition-colors text-xs">Reply</button>
                           <button onClick={() => handleFeedbackAction(fb.id, "hide")} className="bg-slate-700 hover:bg-slate-600 text-slate-900 dark:text-white px-2 py-1 rounded transition-colors text-xs">Toggle Hide</button>
-                          <button onClick={() => handleFeedbackAction(fb.id, "delete")} className="bg-red-900/30 hover:bg-red-900/50 text-red-400 px-2 py-1 rounded transition-colors text-xs">Delete</button>
+                          <button onClick={() => handleFeedbackAction(fb.id, "delete")} className="bg-red-100 dark:bg-red-100 dark:bg-red-900/30 hover:bg-red-100 dark:bg-red-100 dark:bg-red-900/50 text-red-600 dark:text-red-400 px-2 py-1 rounded transition-colors text-xs">Delete</button>
                         </td>
                       </tr>
                     ))}

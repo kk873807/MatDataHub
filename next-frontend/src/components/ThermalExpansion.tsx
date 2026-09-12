@@ -58,14 +58,14 @@ export function ThermalExpansion() {
         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Calculate"}
       </button>
       {result && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-4 p-4 rounded-xl bg-orange-900/20 border border-orange-900/50">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-4 p-4 rounded-xl bg-orange-100 dark:bg-orange-100 dark:bg-orange-900/20 border border-orange-900/50">
           <div className="flex justify-between items-center mb-2">
             <span className="text-xs text-slate-200">CTE (µm/m·°C)</span>
             <span className="font-medium text-slate-900 dark:text-white">{result.cte.toFixed(1)}</span>
           </div>
           <div className="flex justify-between items-center">
             <span className="text-xs text-slate-200">Expansion</span>
-            <span className="font-bold text-orange-400">{result.expansion_mm.toFixed(3)} mm</span>
+            <span className="font-bold text-orange-600 dark:text-orange-400">{result.expansion_mm.toFixed(3)} mm</span>
           </div>
         </motion.div>
       )}

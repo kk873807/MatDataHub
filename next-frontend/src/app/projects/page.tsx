@@ -154,7 +154,7 @@ export default function WorkspacesPage() {
       <div className="w-full max-w-6xl mx-auto space-y-8">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white font-heading flex items-center gap-3">
-            <Workflow className="w-8 h-8 text-blue-400" />
+            <Workflow className="w-8 h-8 text-blue-600 dark:text-blue-400" />
             Engineering Workspaces
           </h1>
           <p className="text-slate-600 dark:text-slate-300 mt-2">Manage your multi-part assemblies and interactive blueprints.</p>
@@ -199,18 +199,18 @@ export default function WorkspacesPage() {
                   {/* Delete Button */}
                   <button 
                     onClick={(e) => handleDelete(e, proj.id)}
-                    className="absolute top-4 right-4 p-2 text-slate-600 dark:text-slate-300 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800"
+                    className="absolute top-4 right-4 p-2 text-slate-600 dark:text-slate-300 hover:text-red-600 dark:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800"
                     title="Delete Project"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
 
                   <div className="flex justify-between items-start mb-4 pr-10">
-                    <h3 className="font-bold text-slate-900 dark:text-white font-heading text-lg group-hover:text-blue-400 transition-colors">{proj.name}</h3>
+                    <h3 className="font-bold text-slate-900 dark:text-white font-heading text-lg group-hover:text-blue-600 dark:text-blue-400 transition-colors">{proj.name}</h3>
                   </div>
                   {/* Status Badge */}
                   <div className="mb-3">
-                    <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-emerald-900/30 text-emerald-400 border border-emerald-800/50 rounded-full">Active</span>
+                    <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-emerald-100  dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50 rounded-full">Active</span>
                   </div>
                   <p className="text-sm text-slate-500 dark:text-slate-400 mb-6 flex-1 line-clamp-2">{proj.description}</p>
                   <div className="flex justify-between items-center text-xs text-slate-500 dark:text-slate-400 mt-auto pt-4 border-t border-slate-200 dark:border-slate-800">
@@ -218,7 +218,7 @@ export default function WorkspacesPage() {
                       <Clock className="w-3 h-3" />
                       {proj.created_at ? new Date(proj.created_at).toLocaleDateString('en-GB') : "Recently"}
                     </span>
-                    <span className="flex items-center gap-1 text-blue-400 font-semibold group-hover:text-blue-300">
+                    <span className="flex items-center gap-1 text-blue-600 dark:text-blue-400 font-semibold group-hover:text-blue-600 dark:text-blue-300">
                       <Play className="w-3 h-3" /> Open Canvas
                     </span>
                   </div>

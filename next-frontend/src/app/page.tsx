@@ -54,7 +54,7 @@ export default function LandingPage() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-400/20 dark:bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none"></div>
         <div className="max-w-5xl mx-auto text-center relative z-10">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 text-xs font-semibold uppercase tracking-widest mb-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-700 dark:text-indigo-600 dark:text-indigo-300 text-xs font-semibold uppercase tracking-widest mb-6">
               <BookOpen className="w-3.5 h-3.5" /> Academic-Grade Materials Intelligence
             </div>
             <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-6 font-heading leading-tight">
@@ -87,7 +87,7 @@ export default function LandingPage() {
               <ul className="space-y-4">
                 {["Inconsistent datasheets from different suppliers", "Lack of historical pricing trends for accurate BOM estimation", "Disconnect between mechanical viability and financial reality"].map((item, i) => (
                   <li key={i} className="flex items-start gap-3 text-slate-600 dark:text-slate-300">
-                    <Target className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
+                    <Target className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
                     <span>{item}</span>
                   </li>
                 ))}
@@ -99,8 +99,8 @@ export default function LandingPage() {
               
               <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4 mb-6 relative z-10">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-indigo-900/30 flex items-center justify-center border border-indigo-500/20">
-                    <Database className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+                  <div className="w-10 h-10 rounded-lg bg-indigo-100 dark:bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center border border-indigo-500/20">
+                    <Database className="w-5 h-5 text-indigo-600 dark:text-indigo-600 dark:text-indigo-400" />
                   </div>
                   <div>
                     <div className="h-2.5 w-24 bg-slate-700 rounded mb-1.5"></div>
@@ -145,11 +145,11 @@ export default function LandingPage() {
         </div>
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
           {[
-            { title: "Parametric Database", desc: "Search thousands of materials with verified mechanical, thermal, and electrical properties.", icon: Database, color: "text-blue-400" },
-            { title: "Macroeconomic Pricing", desc: "Analyze supply chain risks and cost-per-kg trends mapped via trailing global indices.", icon: ShieldCheck, color: "text-emerald-600 dark:text-emerald-400" },
-            { title: "AI Substitution", desc: "Use advanced algorithms to discover alternative materials based on multi-objective constraints.", icon: BrainCircuit, color: "text-purple-400" },
-            { title: "CBAM Emissions", desc: "Calculate predictive Carbon Border Adjustment Mechanism taxes for EU procurement.", icon: Target, color: "text-amber-400" },
-            { title: "Engineering Workspaces", desc: "Calculate beam deflection, thermal shock, and safety factors directly in your browser.", icon: Cpu, color: "text-rose-400" },
+            { title: "Parametric Database", desc: "Search thousands of materials with verified mechanical, thermal, and electrical properties.", icon: Database, color: "text-blue-600 dark:text-blue-400" },
+            { title: "Macroeconomic Pricing", desc: "Analyze supply chain risks and cost-per-kg trends mapped via trailing global indices.", icon: ShieldCheck, color: "text-emerald-600 dark:text-emerald-600 dark:text-emerald-400" },
+            { title: "AI Substitution", desc: "Use advanced algorithms to discover alternative materials based on multi-objective constraints.", icon: BrainCircuit, color: "text-purple-600 dark:text-purple-400" },
+            { title: "CBAM Emissions", desc: "Calculate predictive Carbon Border Adjustment Mechanism taxes for EU procurement.", icon: Target, color: "text-amber-600 dark:text-amber-400" },
+            { title: "Engineering Workspaces", desc: "Calculate beam deflection, thermal shock, and safety factors directly in your browser.", icon: Cpu, color: "text-rose-600 dark:text-rose-400" },
             { title: "Composite Synthesizer", desc: "Blend theoretical materials using Rule of Mixtures to predict hybrid properties.", icon: TestTube2, color: "text-cyan-400" },
           ].map((feat, i) => (
             <div key={i} className="bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 p-8 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-100 dark:hover:bg-slate-800/40 transition-colors">
@@ -172,12 +172,12 @@ export default function LandingPage() {
                   <span className="px-2.5 py-1 text-[10px] font-black uppercase tracking-widest bg-indigo-500 text-white rounded-md shadow-lg">New Research</span>
                   <span className="text-xs font-bold text-slate-600 dark:text-slate-400">Sept 4, 2026 • 8 min read</span>
                 </div>
-                <h2 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white group-hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors leading-tight font-heading">Modeling Thermal Expansion in Aerospace Alloys</h2>
+                <h2 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white group-hover:text-indigo-700 dark:hover:text-indigo-600 dark:text-indigo-300 transition-colors leading-tight font-heading">Modeling Thermal Expansion in Aerospace Alloys</h2>
                 <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed max-w-xl">
                   A deep dive into how our new predictive modeling engine handles extreme temperature deltas in titanium composites compared to legacy FEM solvers.
                 </p>
               </div>
-              <div className="shrink-0 flex items-center justify-center w-12 h-12 rounded-full bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white dark:hover:text-white transition-all">
+              <div className="shrink-0 flex items-center justify-center w-12 h-12 rounded-full bg-indigo-500/20 text-indigo-600 dark:text-indigo-600 dark:text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white dark:hover:text-white transition-all">
                 <ArrowRight className="w-5 h-5" />
               </div>
             </div>
@@ -199,7 +199,7 @@ export default function LandingPage() {
                 <div key={i} className="p-8 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl flex flex-col relative overflow-hidden">
                   <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500/50"></div>
                   <div className="flex items-center gap-2 mb-4">
-                    <span className="text-xs font-semibold px-2 py-0.5 bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-full border border-indigo-700/50">{fb.category}</span>
+                    <span className="text-xs font-semibold px-2 py-0.5 bg-indigo-100 dark:bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-600 dark:text-indigo-400 rounded-full border border-indigo-200 dark:border-indigo-700/50">{fb.category}</span>
                   </div>
                   <p className="text-slate-600 dark:text-slate-300 relative z-10 mb-6 text-sm leading-relaxed italic flex-1">"{fb.message}"</p>
                   <div className="flex justify-between items-end border-t border-slate-200 dark:border-slate-800 pt-4 mt-auto">
@@ -273,7 +273,7 @@ export default function LandingPage() {
               <ul className="space-y-3 mb-8 flex-1">
                 {["Full 1000+ material database", "Export detailed PDFs", "Advanced AI Adviser", "Unlimited Workspaces"].map((f, i) => (
                   <li key={i} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
-                    <CheckCircle2 className="w-4 h-4 text-indigo-600 dark:text-indigo-400" /> {f}
+                    <CheckCircle2 className="w-4 h-4 text-indigo-600 dark:text-indigo-600 dark:text-indigo-400" /> {f}
                   </li>
                 ))}
               </ul>

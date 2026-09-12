@@ -133,7 +133,7 @@ export default function ResourcesPage() {
       <div className="w-full max-w-5xl mx-auto space-y-8">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white font-heading flex items-center gap-3">
-            <BookOpen className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+            <BookOpen className="w-8 h-8 text-blue-600 dark:text-blue-600 dark:text-blue-400" />
             Learning & Resources
           </h1>
           <p className="text-slate-600 dark:text-slate-300 mt-2">Get help, read documentation, and explore advanced engineering mathematics.</p>
@@ -143,21 +143,21 @@ export default function ResourcesPage() {
         <div className="flex border-b border-slate-200 dark:border-slate-800 gap-6">
           <button 
             onClick={() => setActiveTab("blogs")} 
-            className={`pb-3 font-semibold text-sm transition-colors relative ${activeTab === 'blogs' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400 hover:text-slate-200'}`}
+            className={`pb-3 font-semibold text-sm transition-colors relative ${activeTab === 'blogs' ? 'text-blue-600 dark:text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400 hover:text-slate-200'}`}
           >
             <span className="flex items-center gap-2"><BookOpen className="w-4 h-4" /> Blogs</span>
             {activeTab === 'blogs' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-500 rounded-t-full" />}
           </button>
           <button 
             onClick={() => setActiveTab("faqs")} 
-            className={`pb-3 font-semibold text-sm transition-colors relative ${activeTab === 'faqs' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400 hover:text-slate-200'}`}
+            className={`pb-3 font-semibold text-sm transition-colors relative ${activeTab === 'faqs' ? 'text-blue-600 dark:text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400 hover:text-slate-200'}`}
           >
             <span className="flex items-center gap-2"><HelpCircle className="w-4 h-4" /> FAQs</span>
             {activeTab === 'faqs' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-500 rounded-t-full" />}
           </button>
           <button 
             onClick={() => setActiveTab("support")} 
-            className={`pb-3 font-semibold text-sm transition-colors relative ${activeTab === 'support' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400 hover:text-slate-200'}`}
+            className={`pb-3 font-semibold text-sm transition-colors relative ${activeTab === 'support' ? 'text-blue-600 dark:text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400 hover:text-slate-200'}`}
           >
             <span className="flex items-center gap-2"><LifeBuoy className="w-4 h-4" /> Support Centre</span>
             {activeTab === 'support' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-500 rounded-t-full" />}
@@ -215,7 +215,7 @@ export default function ResourcesPage() {
                 </button>
                 
                 <div className="flex flex-wrap gap-3 items-center mb-6">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 bg-indigo-900/30 border border-indigo-800/50 px-2 py-1 rounded">{blogs[selectedBlog].tag}</span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-600 dark:text-blue-400 bg-indigo-100 dark:bg-indigo-100 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-800/50 px-2 py-1 rounded">{blogs[selectedBlog].tag}</span>
                   <span className="text-sm text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1"><Clock className="w-4 h-4"/> {blogs[selectedBlog].readTime} read</span>
                   <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">·</span>
                   <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">{blogs[selectedBlog].date}</span>
@@ -224,7 +224,7 @@ export default function ResourcesPage() {
                 <h2 className="text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white font-heading mb-6 leading-tight">{blogs[selectedBlog].title}</h2>
                 
                 <div className="flex items-center gap-3 border-b border-slate-200 dark:border-slate-800 pb-8 mb-8">
-                  <div className="w-10 h-10 rounded-full bg-indigo-900/50 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold border border-indigo-500/30">
+                  <div className="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-blue-600 dark:text-blue-600 dark:text-blue-400 font-bold border border-indigo-500/30">
                     {blogs[selectedBlog].author.charAt(0)}
                   </div>
                   <div>
@@ -275,19 +275,19 @@ export default function ResourcesPage() {
                       {blog.featured && <div className="absolute top-0 right-0 w-16 h-16 bg-indigo-500/10 rounded-bl-full blur-xl"></div>}
                       
                       <div className="flex justify-between items-start mb-4">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 bg-indigo-900/30 border border-indigo-800/50 px-2 py-1 rounded flex items-center gap-1">
-                          {blog.featured && <Star className="w-3 h-3 text-amber-400" fill="currentColor" />}
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-600 dark:text-blue-400 bg-indigo-100 dark:bg-indigo-100 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-800/50 px-2 py-1 rounded flex items-center gap-1">
+                          {blog.featured && <Star className="w-3 h-3 text-amber-600 dark:text-amber-400" fill="currentColor" />}
                           {blog.tag}
                         </span>
                         <div className="flex items-center gap-1 text-slate-500 dark:text-slate-400 text-xs font-medium">
                           <Clock className="w-3 h-3" /> {blog.readTime}
                         </div>
                       </div>
-                      <h3 className="text-xl font-bold text-slate-900 dark:text-white font-heading mb-3 group-hover:text-indigo-300 transition-colors leading-tight">{blog.title}</h3>
+                      <h3 className="text-xl font-bold text-slate-900 dark:text-white font-heading mb-3 group-hover:text-indigo-600 dark:text-indigo-300 transition-colors leading-tight">{blog.title}</h3>
                       <p className="text-sm text-slate-500 dark:text-slate-400 mb-6 flex-1 line-clamp-3 leading-relaxed">{blog.excerpt}</p>
                       <div className="flex justify-between items-center border-t border-slate-200 dark:border-slate-800/50 pt-4 mt-auto">
                         <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">By {blog.author}</span>
-                        <span className="text-sm font-semibold text-blue-600 dark:text-blue-400 flex items-center gap-1 group-hover:gap-2 transition-all">Read <ArrowRight className="w-4 h-4"/></span>
+                        <span className="text-sm font-semibold text-blue-600 dark:text-blue-600 dark:text-blue-400 flex items-center gap-1 group-hover:gap-2 transition-all">Read <ArrowRight className="w-4 h-4"/></span>
                       </div>
                     </div>
                   ))}
@@ -360,7 +360,7 @@ export default function ResourcesPage() {
                         <ImageIcon className="w-4 h-4" /> Upload Image
                         <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
                       </label>
-                      {ticket.image_data && <span className="text-sm text-emerald-400 flex items-center gap-1"><CheckCircle2 className="w-4 h-4"/> Attached</span>}
+                      {ticket.image_data && <span className="text-sm text-emerald-600 dark:text-emerald-400 flex items-center gap-1"><CheckCircle2 className="w-4 h-4"/> Attached</span>}
                     </div>
                   </div>
                   <button 

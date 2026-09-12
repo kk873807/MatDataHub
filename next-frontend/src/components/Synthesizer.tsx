@@ -114,9 +114,9 @@ export function Synthesizer() {
         <motion.div 
           initial={{ opacity: 0, height: 0 }} 
           animate={{ opacity: 1, height: "auto" }}
-          className="mt-6 p-4 rounded-xl bg-blue-900/20 border border-blue-900/50"
+          className="mt-6 p-4 rounded-xl bg-blue-100 dark:bg-blue-100 dark:bg-blue-900/20 border border-blue-900/50"
         >
-          <h3 className="text-blue-400 font-medium mb-3">Estimated Composite Properties</h3>
+          <h3 className="text-blue-600 dark:text-blue-400 font-medium mb-3">Estimated Composite Properties</h3>
           <div className="grid grid-cols-3 gap-4">
             <div>
               <p className="text-xs text-slate-200">Density</p>

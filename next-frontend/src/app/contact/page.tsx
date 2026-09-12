@@ -8,7 +8,7 @@ export default function ContactPage() {
       
       <div className="max-w-lg">
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-2xl">
-          <Mail className="w-8 h-8 text-blue-600 dark:text-blue-400 mb-4" />
+          <Mail className="w-8 h-8 text-blue-600 dark:text-blue-600 dark:text-blue-400 mb-4" />
           <h2 className="text-xl font-bold text-slate-900 dark:text-white font-heading mb-2">Email Support</h2>
           <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">Our engineering team usually responds within 24 hours.</p>
           <a href="mailto:support@matdatahub.com" className="inline-block bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 text-white font-bold py-3 px-6 rounded-xl transition-colors">

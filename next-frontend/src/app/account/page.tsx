@@ -146,7 +146,7 @@ function AccountDashboardInner() {
       {/* Sidebar */}
       <div className="w-full md:w-64 shrink-0 flex flex-col gap-2">
         <h1 className="text-2xl font-bold text-slate-900 dark:text-white font-heading flex items-center gap-2 mb-6">
-          <Shield className="w-6 h-6 text-blue-400" />
+          <Shield className="w-6 h-6 text-blue-600 dark:text-blue-400" />
           Settings
         </h1>
         
@@ -168,18 +168,18 @@ function AccountDashboardInner() {
                 <h2 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Current Tier</h2>
                 <div className="flex items-end gap-4 mb-4">
                   <span className="text-4xl font-extrabold text-slate-900 dark:text-white capitalize">{profile.tier}</span>
-                  {profile.tier === "advanced" && <span className="text-emerald-400 text-sm font-bold bg-emerald-900/30 px-2 py-1 rounded">Maximum Access</span>}
+                  {profile.tier === "advanced" && <span className="text-emerald-600 dark:text-emerald-400 text-sm font-bold bg-emerald-100  dark:bg-emerald-900/30 px-2 py-1 rounded">Maximum Access</span>}
                 </div>
                 <p className="text-slate-600 dark:text-slate-300 text-sm">
                   Logged in as <span className="font-semibold text-slate-900 dark:text-white">{profile.email}</span>
                 </p>
                 
                 {profile.upgrade_status === "pending" && (
-                  <div className="mt-6 bg-amber-900/20 border border-amber-900/50 rounded-2xl p-4 flex items-start gap-3">
-                    <Clock className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+                  <div className="mt-6 bg-amber-100 dark:bg-amber-100 dark:bg-amber-900/20 border border-amber-900/50 rounded-2xl p-4 flex items-start gap-3">
+                    <Clock className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
                     <div>
-                      <h4 className="text-sm font-bold text-amber-400">Upgrade Request Pending</h4>
-                      <p className="text-xs text-amber-300/70 mt-1">
+                      <h4 className="text-sm font-bold text-amber-600 dark:text-amber-400">Upgrade Request Pending</h4>
+                      <p className="text-xs text-amber-600 dark:text-amber-300/70 mt-1">
                         Your request for the <span className="uppercase font-bold">{profile.requested_tier}</span> tier is currently under review by an administrator.
                       </p>
                     </div>
@@ -201,7 +201,7 @@ function AccountDashboardInner() {
                     setProfile(null);
                     setIsLogin(true);
                   }}
-                  className="text-xs text-red-400 hover:text-red-300 flex items-center gap-1 mt-2 transition-colors"
+                  className="text-xs text-red-600 dark:text-red-400 hover:text-red-600 dark:text-red-300 flex items-center gap-1 mt-2 transition-colors"
                 >
                   <LogOut className="w-3 h-3" /> Sign Out
                 </button>
@@ -214,7 +214,7 @@ function AccountDashboardInner() {
                 <div className="bg-white dark:bg-slate-900 border border-emerald-900/50 rounded-2xl p-8 relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl"></div>
                   <h2 className="text-xl font-bold text-slate-900 dark:text-white font-heading flex items-center gap-2 mb-4">
-                    <Key className="w-5 h-5 text-emerald-400" /> Programmatic API Access
+                    <Key className="w-5 h-5 text-emerald-600 dark:text-emerald-400" /> Programmatic API Access
                   </h2>
                   <p className="text-slate-600 dark:text-slate-300 text-sm mb-6">
                     As an Advanced tier member, you are eligible for programmatic REST API access to query our materials database. 
@@ -222,10 +222,10 @@ function AccountDashboardInner() {
                   </p>
                   
                   {profile.api_key ? (
-                    <div className="bg-emerald-900/20 border border-emerald-800/50 rounded-xl p-4 flex items-center gap-3">
-                      <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+                    <div className="bg-emerald-100  dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/50 rounded-xl p-4 flex items-center gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
                       <div>
-                        <p className="text-emerald-400 font-bold text-sm">API Access Granted</p>
+                        <p className="text-emerald-600 dark:text-emerald-400 font-bold text-sm">API Access Granted</p>
                         <p className="text-slate-500 dark:text-slate-400 text-xs mt-1">Your API credentials have been provisioned. Contact support at <strong>support@matdatahub.com</strong> to receive your keys securely.</p>
                       </div>
                     </div>
@@ -266,7 +266,7 @@ function AccountDashboardInner() {
             {profile.tier !== "advanced" && (
               <div>
                 <h2 className="text-xl font-bold text-slate-900 dark:text-white font-heading mb-6 flex items-center gap-2">
-                  <Zap className="w-5 h-5 text-amber-400" /> Upgrade Your Plan
+                  <Zap className="w-5 h-5 text-amber-600 dark:text-amber-400" /> Upgrade Your Plan
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   
@@ -281,11 +281,11 @@ function AccountDashboardInner() {
                       <span className="text-slate-500 dark:text-slate-400">/mo</span>
                     </div>
                     <ul className="space-y-3 mb-8">
-                      <li className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300"><CheckCircle2 className="w-4 h-4 text-emerald-400" /> Full 1000+ material database</li>
-                      <li className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300"><CheckCircle2 className="w-4 h-4 text-emerald-400" /> Export detailed professional PDFs</li>
-                      <li className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300"><CheckCircle2 className="w-4 h-4 text-emerald-400" /> Advanced AI Adviser capabilities</li>
-                      <li className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300"><CheckCircle2 className="w-4 h-4 text-emerald-400" /> Unlimited engineering workspaces</li>
-                      <li className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300"><CheckCircle2 className="w-4 h-4 text-emerald-400" /> Compare up to 5 materials</li>
+                      <li className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300"><CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> Full 1000+ material database</li>
+                      <li className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300"><CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> Export detailed professional PDFs</li>
+                      <li className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300"><CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> Advanced AI Adviser capabilities</li>
+                      <li className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300"><CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> Unlimited engineering workspaces</li>
+                      <li className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300"><CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> Compare up to 5 materials</li>
                     </ul>
                     
                     {profile.tier === "free" && (
@@ -309,13 +309,13 @@ function AccountDashboardInner() {
                       <span className="text-slate-500 dark:text-slate-400">/mo</span>
                     </div>
                     <ul className="space-y-3 mb-6 text-sm text-slate-600 dark:text-slate-300">
-                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-400" /> Unlimited Material Lookups</li>
-                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-400" /> Unlimited Compare Limit</li>
-                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-400" /> Advanced Analytics Engine</li>
-                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-400" /> Export Professional PDFs</li>
-                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-400" /> Unlimited AI Adviser Chats</li>
-                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-400" /> Private DB Uploads (CSV/Excel)</li>
-                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-400" /> REST API Access</li>
+                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> Unlimited Material Lookups</li>
+                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> Unlimited Compare Limit</li>
+                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> Advanced Analytics Engine</li>
+                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> Export Professional PDFs</li>
+                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> Unlimited AI Adviser Chats</li>
+                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> Private DB Uploads (CSV/Excel)</li>
+                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> REST API Access</li>
                     </ul>
                     <button 
                       onClick={() => handleUpgrade("advanced")}
@@ -340,7 +340,7 @@ function AccountDashboardInner() {
                       <h4 className="text-slate-900 dark:text-white font-heading font-bold text-sm">Deactivate Account</h4>
                       <p className="text-slate-500 dark:text-slate-400 text-sm mt-1 max-w-lg">Temporarily pause your subscription and hide your profile. You can reactivate at any time by logging back in.</p>
                     </div>
-                    <button onClick={() => alert("Account deactivation requires email confirmation. An email has been sent.")} className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-700 text-red-400 border border-slate-200 dark:border-slate-700 font-bold py-2 px-6 rounded-2xl transition-colors text-sm whitespace-nowrap">
+                    <button onClick={() => alert("Account deactivation requires email confirmation. An email has been sent.")} className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-700 text-red-600 dark:text-red-400 border border-slate-200 dark:border-slate-700 font-bold py-2 px-6 rounded-2xl transition-colors text-sm whitespace-nowrap">
                       Deactivate
                     </button>
                   </div>
@@ -348,13 +348,13 @@ function AccountDashboardInner() {
                   <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
                     <div>
                       <h4 className="text-slate-900 dark:text-white font-heading font-bold text-sm">Delete Account</h4>
-                      <p className="text-slate-500 dark:text-slate-400 text-sm mt-1 max-w-lg">Permanently delete your account, projects, blueprints, and API keys. <strong className="text-red-400">This action cannot be undone.</strong></p>
+                      <p className="text-slate-500 dark:text-slate-400 text-sm mt-1 max-w-lg">Permanently delete your account, projects, blueprints, and API keys. <strong className="text-red-600 dark:text-red-400">This action cannot be undone.</strong></p>
                     </div>
                     <button onClick={() => {
                       if (confirm("Are you absolutely sure? This will permanently delete all your projects and data.")) {
                         alert("Account deletion initiated. This may take up to 24 hours to process across all databases.");
                       }
-                    }} className="bg-red-900/40 hover:bg-red-600 text-red-200 border border-red-800/50 hover:border-red-500 font-bold py-2 px-6 rounded-2xl transition-colors text-sm whitespace-nowrap">
+                    }} className="bg-red-100 dark:bg-red-100 dark:bg-red-900/40 hover:bg-red-600 text-red-200 border border-red-200 dark:border-red-800/50 hover:border-red-500 font-bold py-2 px-6 rounded-2xl transition-colors text-sm whitespace-nowrap">
                       Delete Account
                     </button>
                   </div>
@@ -400,7 +400,7 @@ function AccountDashboardInner() {
             
             <div className="space-y-4">
               <details className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 cursor-pointer group">
-                <summary className="font-bold text-slate-900 dark:text-white group-hover:text-blue-400 transition-colors">Privacy Policy</summary>
+                <summary className="font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:text-blue-400 transition-colors">Privacy Policy</summary>
                 <div className="mt-4 text-slate-500 dark:text-slate-400 text-sm space-y-2">
                   <p>We respect your privacy and are committed to protecting your personal data.</p>
                   <p>Your passwords and secrets are encrypted. We do not sell your data to third parties.</p>
@@ -408,7 +408,7 @@ function AccountDashboardInner() {
               </details>
               
               <details className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 cursor-pointer group">
-                <summary className="font-bold text-slate-900 dark:text-white group-hover:text-blue-400 transition-colors">Terms of Service</summary>
+                <summary className="font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:text-blue-400 transition-colors">Terms of Service</summary>
                 <div className="mt-4 text-slate-500 dark:text-slate-400 text-sm space-y-2">
                   <p>By using MatDataHub, you agree to not abuse our APIs or scrape our database.</p>
                   <p>Be polite in community feedback. Violations will result in a permanent ban.</p>

@@ -83,7 +83,7 @@ export default function MaterialDetail() {
     );
   if (!material)
     return (
-      <div className="p-10 text-center text-red-400">Material not found.</div>
+      <div className="p-10 text-center text-red-600 dark:text-red-400">Material not found.</div>
     );
 
   const maxPrice =
@@ -137,7 +137,7 @@ export default function MaterialDetail() {
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3 bg-slate-100 dark:bg-slate-800 border border-emerald-500/50 rounded-2xl shadow-2xl text-slate-900 dark:text-white animate-in slide-in-from-bottom-5">
-          <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+          <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
           <span className="text-sm font-medium">{toastMessage}</span>
         </div>
       )}
@@ -146,7 +146,7 @@ export default function MaterialDetail() {
         
         {/* Breadcrumbs */}
         <nav className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-2">
-          <Link href="/materials" className="hover:text-emerald-400 transition-colors flex items-center gap-1">
+          <Link href="/materials" className="hover:text-emerald-600 dark:text-emerald-400 transition-colors flex items-center gap-1">
             <ArrowLeft className="w-3.5 h-3.5" /> Database
           </Link>
           <ChevronRight className="w-4 h-4 text-slate-600 dark:text-slate-300" />
@@ -165,7 +165,7 @@ export default function MaterialDetail() {
         <div className="p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-lg">
           <div className="flex flex-col xl:flex-row justify-between items-start gap-6">
             <div className="flex-1">
-              <div className="inline-block px-3 py-1 bg-emerald-900/30 text-emerald-400 text-xs font-bold rounded-full mb-3 uppercase tracking-wider border border-emerald-800/50">
+              <div className="inline-block px-3 py-1 bg-emerald-100  dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-xs font-bold rounded-full mb-3 uppercase tracking-wider border border-emerald-200 dark:border-emerald-800/50">
                 {material.category} • {material.subcategory}
               </div>
               <h1 className="text-4xl font-bold text-slate-900 dark:text-white font-heading mb-3">
@@ -208,7 +208,7 @@ export default function MaterialDetail() {
               <p className="text-slate-500 dark:text-slate-400 text-sm mb-1 uppercase tracking-wider font-semibold">
                 Market Price
               </p>
-              <p className="text-4xl font-bold text-emerald-400 mb-2">
+              <p className="text-4xl font-bold text-emerald-600 dark:text-emerald-400 mb-2">
                 ₹{material.cost_per_kg_min}
                 <span className="text-xl text-slate-500 dark:text-slate-400 font-medium">/kg</span>
               </p>
@@ -228,7 +228,7 @@ export default function MaterialDetail() {
             {/* Mechanical Properties Panel */}
             <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
               <h3 className="text-xl font-bold text-slate-900 dark:text-white font-heading mb-4 flex items-center gap-2">
-                <Beaker className="w-5 h-5 text-blue-400" /> Mechanical &
+                <Beaker className="w-5 h-5 text-blue-600 dark:text-blue-400" /> Mechanical &
                 Physical Properties
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -284,7 +284,7 @@ export default function MaterialDetail() {
             {/* Thermal & Chemical Panel */}
             <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
               <h3 className="text-xl font-bold text-slate-900 dark:text-white font-heading mb-4 flex items-center gap-2">
-                <Beaker className="w-5 h-5 text-red-400" /> Thermal &
+                <Beaker className="w-5 h-5 text-red-600 dark:text-red-400" /> Thermal &
                 Environmental Properties
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -337,7 +337,7 @@ export default function MaterialDetail() {
             {/* Historical Price Tracking Graph */}
             <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
               <h3 className="text-xl font-bold text-slate-900 dark:text-white font-heading mb-6 flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-emerald-400" /> Historical
+                <TrendingUp className="w-5 h-5 text-emerald-600 dark:text-emerald-400" /> Historical
                 Price Tracking (12M)
               </h3>
               <p className="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400 mb-6 flex items-start gap-1.5">
@@ -347,7 +347,7 @@ export default function MaterialDetail() {
               {isPriceLocked ? (
                 <div className="p-5 h-48 mt-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-emerald-500/30 text-center relative overflow-hidden group flex flex-col items-center justify-center">
                   <div className="absolute inset-0 bg-gradient-to-t from-emerald-900/20 to-transparent"></div>
-                  <Lock className="w-8 h-8 text-emerald-400 mx-auto mb-3 relative z-10" />
+                  <Lock className="w-8 h-8 text-emerald-600 dark:text-emerald-400 mx-auto mb-3 relative z-10" />
                   <h4 className="font-bold text-slate-900 dark:text-white font-heading text-sm mb-1 relative z-10">
                     Pro Feature Locked
                   </h4>
@@ -455,13 +455,13 @@ export default function MaterialDetail() {
             {/* Find Similar AI */}
             <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
               <h3 className="text-xl font-bold text-slate-900 dark:text-white font-heading mb-4 flex items-center gap-2">
-                <SearchCode className="w-5 h-5 text-purple-400" /> Find Similar
+                <SearchCode className="w-5 h-5 text-purple-600 dark:text-purple-400" /> Find Similar
                 Materials
               </h3>
               {isSimilarLocked ? (
                 <div className="p-5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-purple-500/30 text-center relative overflow-hidden group">
                   <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 to-transparent"></div>
-                  <Lock className="w-8 h-8 text-purple-400 mx-auto mb-3 relative z-10" />
+                  <Lock className="w-8 h-8 text-purple-600 dark:text-purple-400 mx-auto mb-3 relative z-10" />
                   <h4 className="font-bold text-slate-900 dark:text-white font-heading text-sm mb-1 relative z-10">
                     Pro Feature Locked
                   </h4>
@@ -486,7 +486,7 @@ export default function MaterialDetail() {
                       </p>
                       <div className="flex justify-between text-xs text-slate-600 dark:text-slate-300 mt-1">
                         <span>{sim.category}</span>
-                        <span className="text-purple-400">View →</span>
+                        <span className="text-purple-600 dark:text-purple-400">View →</span>
                       </div>
                     </Link>
                   ))}
@@ -525,7 +525,7 @@ export default function MaterialDetail() {
                   <span className="text-slate-600 dark:text-slate-300 block text-xs">
                     Data Source
                   </span>
-                  <span className="text-emerald-400 font-medium">
+                  <span className="text-emerald-600 dark:text-emerald-400 font-medium">
                     {material.data_source || "Verified Internal Database"}
                   </span>
                 </div>

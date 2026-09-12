@@ -77,7 +77,7 @@ export function RiskAuditor() {
                 </div>
                 <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800">
                   <p className="text-xs text-slate-600 dark:text-slate-300 mb-1">Est. CBAM Carbon Tax</p>
-                  <p className="text-xl font-bold text-red-400">${result.annual_cbam_tax_usd.toLocaleString(undefined, { maximumFractionDigits: 0 })} <span className="text-sm font-normal text-slate-600 dark:text-slate-300">/ yr</span></p>
+                  <p className="text-xl font-bold text-red-600 dark:text-red-400">${result.annual_cbam_tax_usd.toLocaleString(undefined, { maximumFractionDigits: 0 })} <span className="text-sm font-normal text-slate-600 dark:text-slate-300">/ yr</span></p>
                 </div>
               </div>
             </motion.div>

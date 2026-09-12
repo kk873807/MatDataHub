@@ -82,7 +82,7 @@ export default function FeedbackCommunityPage() {
         <div className="lg:col-span-2 space-y-6">
           <div>
             <h1 className="text-3xl font-bold text-slate-900 dark:text-white font-heading flex items-center gap-3">
-              <MessageSquare className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+              <MessageSquare className="w-8 h-8 text-blue-600 dark:text-blue-600 dark:text-blue-400" />
               Community Feedback
             </h1>
             <p className="text-slate-600 dark:text-slate-300 mt-2">See what other engineers are requesting and vote on new features.</p>
@@ -101,7 +101,7 @@ export default function FeedbackCommunityPage() {
                   <div className="flex justify-between items-start mb-3">
                     <div>
                       <h4 className="font-bold text-slate-900 dark:text-white font-heading">{fb.name || 'Anonymous Engineer'}</h4>
-                      <span className="text-xs font-semibold px-2 py-0.5 bg-indigo-900/30 text-blue-600 dark:text-blue-400 rounded-full border border-indigo-700/50">{fb.category}</span>
+                      <span className="text-xs font-semibold px-2 py-0.5 bg-indigo-100 dark:bg-indigo-100 dark:bg-indigo-900/30 text-blue-600 dark:text-blue-600 dark:text-blue-400 rounded-full border border-indigo-200 dark:border-indigo-700/50">{fb.category}</span>
                     </div>
                     <span className="text-xs text-slate-500 dark:text-slate-400">{new Date(fb.created_at).toLocaleDateString('en-GB')}</span>
                   </div>
@@ -112,12 +112,12 @@ export default function FeedbackCommunityPage() {
                   )}
                   
                   <div className="flex items-center gap-4 border-t border-slate-200 dark:border-slate-800 pt-3">
-                    <button className="flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-emerald-400 transition-colors">
+                    <button className="flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:text-emerald-400 transition-colors">
                       <ThumbsUp className="w-4 h-4" /> {fb.helpful_votes || 0} Votes
                     </button>
                     <button 
                       onClick={() => setReplyToId(fb.id)}
-                      className="flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-blue-400 transition-colors"
+                      className="flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:text-blue-400 transition-colors"
                     >
                       <MessageSquare className="w-4 h-4" /> Reply
                     </button>
@@ -153,8 +153,8 @@ export default function FeedbackCommunityPage() {
           </p>
           
           {replyToId && (
-            <div className="mb-4 p-3 bg-blue-900/20 border border-blue-900/50 rounded-2xl flex justify-between items-center">
-              <span className="text-blue-400 text-xs">Replying to feedback #{replyToId}</span>
+            <div className="mb-4 p-3 bg-blue-100 dark:bg-blue-100 dark:bg-blue-900/20 border border-blue-900/50 rounded-2xl flex justify-between items-center">
+              <span className="text-blue-600 dark:text-blue-400 text-xs">Replying to feedback #{replyToId}</span>
               <button onClick={() => setReplyToId(null)} className="text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:text-slate-300 dark:hover:text-slate-600 dark:text-slate-300 text-xs">Cancel</button>
             </div>
           )}
@@ -192,7 +192,7 @@ export default function FeedbackCommunityPage() {
                   <ImageIcon className="w-4 h-4" /> Upload Image
                   <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
                 </label>
-                {image && <span className="text-xs text-emerald-400 flex items-center gap-1"><CheckCircle2 className="w-3 h-3"/> Attached</span>}
+                {image && <span className="text-xs text-emerald-600 dark:text-emerald-400 flex items-center gap-1"><CheckCircle2 className="w-3 h-3"/> Attached</span>}
               </div>
             </div>
             
@@ -209,7 +209,7 @@ export default function FeedbackCommunityPage() {
                 I understand that violating these Terms & Conditions will result in my account being blocked.
               </label>
             </div>
-            {tcError && <p className="text-red-400 text-xs font-semibold">{tcError}</p>}
+            {tcError && <p className="text-red-600 dark:text-red-400 text-xs font-semibold">{tcError}</p>}
             
             <button type="submit" disabled={submitting} className="w-full flex items-center justify-center gap-2 py-2.5 mt-4 bg-gradient-to-r from-blue-600 to-violet-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold rounded-2xl transition-colors">
               {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Send className="w-4 h-4"/> Post to Community</>}

@@ -175,7 +175,7 @@ function CompositeSynthesizerContent() {
             </div>
             
             <div>
-              <label className="block text-sm font-semibold text-teal-400 mb-2">Reinforcement Material (B)</label>
+              <label className="block text-sm font-semibold text-teal-600 dark:text-teal-400 mb-2">Reinforcement Material (B)</label>
               <MaterialSearchSelect
                 materials={allMaterials}
                 placeholder={matB ? allMaterials.find(m => m.id.toString() === matB)?.name || "Select Material..." : "Search reinforcement material..."}
@@ -221,7 +221,7 @@ function CompositeSynthesizerContent() {
                   </div>
                   <div className="p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-center">
                     <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Est. Cost</p>
-                    <p className="text-2xl font-bold text-emerald-400">₹{result.cost} <span className="text-sm font-normal text-emerald-600">/kg</span></p>
+                    <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">₹{result.cost} <span className="text-sm font-normal text-emerald-600">/kg</span></p>
                   </div>
                   <div className="p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-center">
                     <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Tensile Strength</p>

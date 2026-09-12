@@ -191,7 +191,7 @@ export default function ProjectWorkspace() {
   };
 
   if (loading) return <div className="flex items-center justify-center h-screen"><Loader2 className="w-8 h-8 animate-spin text-blue-500" /></div>;
-  if (!project) return <div className="p-20 text-center text-red-400">Project not found or access denied.</div>;
+  if (!project) return <div className="p-20 text-center text-red-600 dark:text-red-400">Project not found or access denied.</div>;
 
   // Enriched Items
   const enrichedItems = (project.items || []).map((item: any) => {
@@ -215,7 +215,7 @@ export default function ProjectWorkspace() {
     if (restrictedTools.includes(activeTool) && profile?.tier !== "advanced" && !profile?.is_admin) {
       return (
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-12 text-center space-y-4">
-          <div className="w-12 h-12 bg-amber-500/10 border border-amber-500/30 rounded-xl flex items-center justify-center mx-auto text-amber-400">
+          <div className="w-12 h-12 bg-amber-500/10 border border-amber-500/30 rounded-xl flex items-center justify-center mx-auto text-amber-600 dark:text-amber-400">
             <Lock className="w-6 h-6" />
           </div>
           <h3 className="text-xl font-bold text-slate-900 dark:text-white font-heading">Advanced Tier Locked</h3>
@@ -264,7 +264,7 @@ export default function ProjectWorkspace() {
                     {filteredMats.map(m => (
                       <div 
                         key={m.id} 
-                        className={`px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-colors ${matId === m.id.toString() ? 'bg-slate-100 dark:bg-slate-800 text-blue-400' : 'text-slate-600 dark:text-slate-300'}`}
+                        className={`px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-colors ${matId === m.id.toString() ? 'bg-slate-100 dark:bg-slate-800 text-blue-600 dark:text-blue-400' : 'text-slate-600 dark:text-slate-300'}`}
                         onClick={() => {
                           setMatId(m.id.toString());
                           setSearchMatQuery(m.name);
@@ -301,9 +301,9 @@ export default function ProjectWorkspace() {
 
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-xl">
             <div className="flex justify-between items-center p-4 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50">
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white font-heading flex items-center gap-2"><Component className="w-5 h-5 text-blue-600 dark:text-blue-400" /> Bill of Materials</h3>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white font-heading flex items-center gap-2"><Component className="w-5 h-5 text-blue-600 dark:text-blue-600 dark:text-blue-400" /> Bill of Materials</h3>
               <div className="flex gap-2">
-                <label className="flex items-center gap-2 text-xs font-semibold bg-indigo-900/30 hover:bg-indigo-900/50 text-indigo-300 py-1.5 px-3 rounded-2xl transition-colors cursor-pointer border border-indigo-700/50">
+                <label className="flex items-center gap-2 text-xs font-semibold bg-indigo-100 dark:bg-indigo-100 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-300 py-1.5 px-3 rounded-2xl transition-colors cursor-pointer border border-indigo-200 dark:border-indigo-700/50">
                   <FileText className="w-3 h-3" /> Smart Import
                   <input type="file" accept=".csv" className="hidden" onChange={(e) => {
                     if (e.target.files && e.target.files.length > 0) {
@@ -332,20 +332,20 @@ export default function ProjectWorkspace() {
                   {enrichedItems.map((item: any) => (
                     <tr key={item.id} className="hover:bg-slate-100 dark:hover:bg-slate-800/40 transition-colors group">
                       <td className="px-5 py-3 text-slate-900 dark:text-white font-medium">{item.part_name}</td>
-                      <td className="px-5 py-3 text-blue-400">
-                        <Link href={`/materials/${item.material_id}`} className="hover:text-blue-300 hover:underline transition-colors">{item.mat?.name || 'Unknown'}</Link>
+                      <td className="px-5 py-3 text-blue-600 dark:text-blue-400">
+                        <Link href={`/materials/${item.material_id}`} className="hover:text-blue-600 dark:text-blue-300 hover:underline transition-colors">{item.mat?.name || 'Unknown'}</Link>
                       </td>
                       <td className="px-5 py-3 text-slate-600 dark:text-slate-300 text-right">{item.volume_cm3}</td>
                       <td className="px-5 py-3 text-slate-600 dark:text-slate-300 text-right">{item.mass_kg.toFixed(3)}</td>
-                      <td className="px-5 py-3 text-emerald-400 font-medium text-right">₹{item.cost.toFixed(2)}</td>
+                      <td className="px-5 py-3 text-emerald-600 dark:text-emerald-400 font-medium text-right">₹{item.cost.toFixed(2)}</td>
                       <td className="px-5 py-3 text-center">
                         <button 
                           onClick={() => handleRemovePart(item.id, item.part_name)} 
                           disabled={removingId === item.id}
-                          className="text-slate-500 dark:text-slate-400 hover:text-red-400 hover:bg-red-950/30 p-1.5 rounded-md transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 disabled:opacity-100"
+                          className="text-slate-500 dark:text-slate-400 hover:text-red-600 dark:text-red-400 hover:bg-red-950/30 p-1.5 rounded-md transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 disabled:opacity-100"
                           title="Delete Part"
                         >
-                          {removingId === item.id ? <Loader2 className="w-4 h-4 animate-spin text-red-400" /> : <Trash2 className="w-4 h-4" />}
+                          {removingId === item.id ? <Loader2 className="w-4 h-4 animate-spin text-red-600 dark:text-red-400" /> : <Trash2 className="w-4 h-4" />}
                         </button>
                       </td>
                     </tr>
@@ -363,7 +363,7 @@ export default function ProjectWorkspace() {
             {enrichedItems.length > 0 && (
               <div className="bg-slate-50 dark:bg-slate-950 p-4 border-t border-slate-200 dark:border-slate-800 flex justify-between items-center">
                 <span className="text-sm font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">Total Assembly Cost</span>
-                <span className="text-xl font-bold text-emerald-400">₹{totalCost.toFixed(2)}</span>
+                <span className="text-xl font-bold text-emerald-600 dark:text-emerald-400">₹{totalCost.toFixed(2)}</span>
               </div>
             )}
           </div>
@@ -391,7 +391,7 @@ export default function ProjectWorkspace() {
             <div className="p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl flex items-center justify-between">
               <div>
                 <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">Target Material</p>
-                <p className="text-lg font-bold text-blue-400">{selectedItem.mat?.name}</p>
+                <p className="text-lg font-bold text-blue-600 dark:text-blue-400">{selectedItem.mat?.name}</p>
               </div>
               <div className="text-right">
                 <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">Yield Strength</p>
@@ -425,7 +425,7 @@ export default function ProjectWorkspace() {
 
             {activeTool === "blueprint" && (
               <div className="p-6 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-100 dark:bg-slate-800/50">
-                <h4 className="font-bold text-slate-900 dark:text-white font-heading mb-2 flex items-center gap-2"><Share2 className="w-5 h-5 text-blue-600 dark:text-blue-400"/>Project Blueprint Integration</h4>
+                <h4 className="font-bold text-slate-900 dark:text-white font-heading mb-2 flex items-center gap-2"><Share2 className="w-5 h-5 text-blue-600 dark:text-blue-600 dark:text-blue-400"/>Project Blueprint Integration</h4>
                 <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">Upload a blueprint to overwrite this assembly, or download the current assembly map. We support both JSON for API integrations and CSV for Excel/Engineering workflows.</p>
                 <div className="flex flex-wrap gap-4">
                   <label className="px-4 py-2 bg-gradient-to-r from-blue-600 to-violet-600 hover:bg-indigo-700 text-white rounded text-sm font-bold cursor-pointer transition-colors">
@@ -463,7 +463,7 @@ export default function ProjectWorkspace() {
                     a.href = url;
                     a.download = `${project.name.replace(/\s+/g, '_')}_bom.csv`;
                     a.click();
-                  }} className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-emerald-400 border border-emerald-900/50 rounded text-sm font-bold transition-colors">
+                  }} className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-emerald-600 dark:text-emerald-400 border border-emerald-900/50 rounded text-sm font-bold transition-colors">
                     Export CSV (Excel)
                   </button>
                 </div>
@@ -492,7 +492,7 @@ export default function ProjectWorkspace() {
       {/* Toast */}
       {toast && (
         <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3 bg-slate-100 dark:bg-slate-800 border border-emerald-500/50 rounded-2xl shadow-2xl text-slate-900 dark:text-white animate-in slide-in-from-bottom-5">
-          <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+          <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
           <span className="text-sm font-medium">{toast}</span>
         </div>
       )}
@@ -516,7 +516,7 @@ export default function ProjectWorkspace() {
           </div>
           <div className="text-right">
             <p className="text-[10px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold">Total Cost</p>
-            <p className="text-sm font-bold text-emerald-400">₹{totalCost.toFixed(2)}</p>
+            <p className="text-sm font-bold text-emerald-600 dark:text-emerald-400">₹{totalCost.toFixed(2)}</p>
           </div>
           <button
             onClick={() => {
@@ -828,27 +828,27 @@ export default function ProjectWorkspace() {
         {/* Sidebar Tools Menu */}
         <div className="w-64 border-r border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-4 flex flex-col gap-2 overflow-y-auto shrink-0">
           <div className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 ml-2">Builder</div>
-          <button onClick={()=>setActiveTool("bom")} className={`flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-medium transition-colors ${activeTool === 'bom' ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30' : 'text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-900 hover:text-white border border-transparent'}`}>
+          <button onClick={()=>setActiveTool("bom")} className={`flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-medium transition-colors ${activeTool === 'bom' ? 'bg-blue-600/20 text-blue-600 dark:text-blue-400 border border-blue-500/30' : 'text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-900 hover:text-white border border-transparent'}`}>
             <Component className="w-4 h-4" /> Standard BOM
           </button>
-          <button onClick={()=>setActiveTool("blueprint")} className={`flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-medium transition-colors ${activeTool === 'blueprint' ? 'bg-gradient-to-r from-blue-600 to-violet-600/20 text-blue-600 dark:text-blue-400 border border-indigo-500/30' : 'text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-900 hover:text-white border border-transparent'}`}>
+          <button onClick={()=>setActiveTool("blueprint")} className={`flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-medium transition-colors ${activeTool === 'blueprint' ? 'bg-gradient-to-r from-blue-600 to-violet-600/20 text-blue-600 dark:text-blue-600 dark:text-blue-400 border border-indigo-500/30' : 'text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-900 hover:text-white border border-transparent'}`}>
             <Share2 className="w-4 h-4" /> Blueprints (JSON)
           </button>
           
-          <div className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mt-6 mb-2 ml-2">Engineering Tools</div>          {profile?.tier !== "advanced" && !profile?.is_admin && <div className="ml-2 mb-2 px-2 py-1 bg-amber-900/30 text-amber-400 text-[10px] rounded border border-amber-900/50 uppercase tracking-wider font-bold">Advanced Tier Only</div>}
-          <button onClick={()=>setActiveTool("safety")} className={`flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-medium transition-colors ${activeTool === 'safety' ? 'bg-emerald-600/20 text-emerald-400 border border-emerald-500/30' : 'text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-900 hover:text-white border border-transparent'}`}>
+          <div className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mt-6 mb-2 ml-2">Engineering Tools</div>          {profile?.tier !== "advanced" && !profile?.is_admin && <div className="ml-2 mb-2 px-2 py-1 bg-amber-100 dark:bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 text-[10px] rounded border border-amber-900/50 uppercase tracking-wider font-bold">Advanced Tier Only</div>}
+          <button onClick={()=>setActiveTool("safety")} className={`flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-medium transition-colors ${activeTool === 'safety' ? 'bg-emerald-600/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30' : 'text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-900 hover:text-white border border-transparent'}`}>
             <Shield className="w-4 h-4" /> Safety Factor
           </button>
-          <button onClick={()=>setActiveTool("thermal")} className={`flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-medium transition-colors ${activeTool === 'thermal' ? 'bg-red-600/20 text-red-400 border border-red-500/30' : 'text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-900 hover:text-white border border-transparent'}`}>
+          <button onClick={()=>setActiveTool("thermal")} className={`flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-medium transition-colors ${activeTool === 'thermal' ? 'bg-red-600/20 text-red-600 dark:text-red-400 border border-red-500/30' : 'text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-900 hover:text-white border border-transparent'}`}>
             <Thermometer className="w-4 h-4" /> Thermal Expansion
           </button>
-          <button onClick={()=>setActiveTool("shock")} className={`flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-medium transition-colors ${activeTool === 'shock' ? 'bg-orange-600/20 text-orange-400 border border-orange-500/30' : 'text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-900 hover:text-white border border-transparent'}`}>
+          <button onClick={()=>setActiveTool("shock")} className={`flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-medium transition-colors ${activeTool === 'shock' ? 'bg-orange-600/20 text-orange-600 dark:text-orange-400 border border-orange-500/30' : 'text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-900 hover:text-white border border-transparent'}`}>
             <Flame className="w-4 h-4" /> Thermal Shock
           </button>
-          <button onClick={()=>setActiveTool("fatigue")} className={`flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-medium transition-colors ${activeTool === 'fatigue' ? 'bg-purple-600/20 text-purple-400 border border-purple-500/30' : 'text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-900 hover:text-white border border-transparent'}`}>
+          <button onClick={()=>setActiveTool("fatigue")} className={`flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-medium transition-colors ${activeTool === 'fatigue' ? 'bg-purple-600/20 text-purple-600 dark:text-purple-400 border border-purple-500/30' : 'text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-900 hover:text-white border border-transparent'}`}>
             <Activity className="w-4 h-4" /> Fatigue Life
           </button>
-          <button onClick={()=>setActiveTool("deflection")} className={`flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-medium transition-colors ${activeTool === 'deflection' ? 'bg-amber-600/20 text-amber-400 border border-amber-500/30' : 'text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-900 hover:text-white border border-transparent'}`}>
+          <button onClick={()=>setActiveTool("deflection")} className={`flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-medium transition-colors ${activeTool === 'deflection' ? 'bg-amber-600/20 text-amber-600 dark:text-amber-400 border border-amber-500/30' : 'text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-900 hover:text-white border border-transparent'}`}>
             <Wrench className="w-4 h-4" /> Beam Deflection
           </button>
           <button onClick={()=>setActiveTool("cost")} className={`flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-medium transition-colors ${activeTool === 'cost' ? 'bg-green-600/20 text-green-400 border border-green-500/30' : 'text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-900 hover:text-white border border-transparent'}`}>

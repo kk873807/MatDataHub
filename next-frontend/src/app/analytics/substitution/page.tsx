@@ -179,7 +179,7 @@ function SmartSubstitutionContent() {
 
         <div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white font-heading flex items-center gap-3">
-            <Replace className="w-8 h-8 text-purple-400" />
+            <Replace className="w-8 h-8 text-purple-600 dark:text-purple-400" />
             Smart AI Substitution
           </h1>
           <p className="text-slate-600 dark:text-slate-300 mt-2">Discover optimal alternative materials based on weighted design priorities.</p>
@@ -211,7 +211,7 @@ function SmartSubstitutionContent() {
                   {allMaterials.filter(m => m.name.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 50).map(m => (
                     <div 
                       key={m.id} 
-                      className={`px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer ${baseId === m.id.toString() ? 'bg-slate-100 dark:bg-slate-800 text-purple-400' : 'text-slate-600 dark:text-slate-300'}`}
+                      className={`px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer ${baseId === m.id.toString() ? 'bg-slate-100 dark:bg-slate-800 text-purple-600 dark:text-purple-400' : 'text-slate-600 dark:text-slate-300'}`}
                       onClick={() => {
                         setBaseId(m.id.toString());
                         setSearchQuery(m.name);
@@ -296,7 +296,7 @@ function SmartSubstitutionContent() {
                     <div className="flex justify-between items-start mb-3">
                       <div>
                         <h4 className="text-lg font-bold text-slate-900 dark:text-white font-heading">{res.name}</h4>
-                        <div className="text-sm text-purple-400 font-semibold">{Math.round(res.match_score)}% Match Score</div>
+                        <div className="text-sm text-purple-600 dark:text-purple-400 font-semibold">{Math.round(res.match_score)}% Match Score</div>
                       </div>
                       <Link href={`/materials/${res.id}`} className="px-3 py-1 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded text-xs text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:text-white transition-colors">
                         View Details

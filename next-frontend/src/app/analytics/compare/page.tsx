@@ -283,7 +283,7 @@ function CompareMaterialsContent() {
 
         <div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white font-heading flex items-center gap-3">
-            <Scale className="w-8 h-8 text-blue-400" />
+            <Scale className="w-8 h-8 text-blue-600 dark:text-blue-400" />
             Multi-Material Compare
           </h1>
           <p className="text-slate-600 dark:text-slate-300 mt-2">Evaluate properties visually across multiple materials (Pro: up to 5, Advanced: unlimited APIs).</p>
@@ -297,7 +297,7 @@ function CompareMaterialsContent() {
               return (
                 <div key={idx} className="flex items-center gap-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-full px-4 py-1.5 shadow-sm" style={{ borderLeft: `4px solid ${colors[idx % colors.length].hex}` }}>
                   <span className="text-sm font-bold text-slate-900 dark:text-white">{mat?.name || id}</span>
-                  <button onClick={() => handleRemove(idx)} className="text-slate-500 dark:text-slate-400 hover:text-red-400"><X className="w-3 h-3" /></button>
+                  <button onClick={() => handleRemove(idx)} className="text-slate-500 dark:text-slate-400 hover:text-red-600 dark:text-red-400"><X className="w-3 h-3" /></button>
                 </div>
               );
             })}
@@ -360,7 +360,7 @@ function CompareMaterialsContent() {
                         <tr key={prop.key}>
                           <td className="py-3 text-slate-600 dark:text-slate-300 whitespace-nowrap">{prop.label}</td>
                           {comparison.map((m, idx) => (
-                            <td key={idx} className={`py-3 px-2 font-medium ${idx === bestIdx ? 'text-emerald-400 font-bold' : 'text-slate-200'}`}>
+                            <td key={idx} className={`py-3 px-2 font-medium ${idx === bestIdx ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-200'}`}>
                               {m[prop.key] || '-'}
                               {idx === bestIdx && m[prop.key] && <span className="ml-1 text-[10px]">★</span>}
                             </td>
@@ -376,7 +376,7 @@ function CompareMaterialsContent() {
               {comparison.length >= 2 && (
                 <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl">
                   <h3 className="font-bold text-slate-900 dark:text-white font-heading flex items-center gap-2">
-                    <Info className="w-5 h-5 text-purple-400" />
+                    <Info className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                     Automated Insights & Key Takeaways
                   </h3>
                   {generateTakeaways()}

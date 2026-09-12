@@ -9,8 +9,8 @@ export default function AnalyticsDashboard() {
       title: "Side-by-Side Compare",
       description: "Compare properties, view radar fingerprints, and extract key takeaways between multiple materials.",
       icon: Scale,
-      color: "text-blue-400",
-      bg: "bg-blue-900/20",
+      color: "text-blue-600 dark:text-blue-400",
+      bg: "bg-blue-100 dark:bg-blue-100 dark:bg-blue-900/20",
       border: "hover:border-blue-500/50",
       href: "/analytics/compare",
       badge: "Free"
@@ -19,8 +19,8 @@ export default function AnalyticsDashboard() {
       title: "Smart AI Substitution",
       description: "Find alternative materials based on weighted parameters like cost, density, and carbon footprint.",
       icon: Replace,
-      color: "text-purple-400",
-      bg: "bg-purple-900/20",
+      color: "text-purple-600 dark:text-purple-400",
+      bg: "bg-purple-100 dark:bg-purple-100 dark:bg-purple-900/20",
       border: "hover:border-purple-500/50",
       href: "/analytics/substitution",
       badge: "Pro"
@@ -29,8 +29,8 @@ export default function AnalyticsDashboard() {
       title: "Supply Chain Risk & CBAM",
       description: "Upload your Bill of Materials (BOM) to automatically calculate ESG impact and obsolescence risk.",
       icon: Factory,
-      color: "text-amber-400",
-      bg: "bg-amber-900/20",
+      color: "text-amber-600 dark:text-amber-400",
+      bg: "bg-amber-100 dark:bg-amber-100 dark:bg-amber-900/20",
       border: "hover:border-amber-500/50",
       href: "/analytics/cbam",
       badge: "Enterprise"
@@ -52,7 +52,7 @@ export default function AnalyticsDashboard() {
       <div className="w-full max-w-5xl mx-auto space-y-8">
         <div>
           <h1 className="text-4xl font-bold text-slate-900 dark:text-white font-heading flex items-center gap-3">
-            <BarChart3 className="w-10 h-10 text-blue-600 dark:text-blue-400" />
+            <BarChart3 className="w-10 h-10 text-blue-600 dark:text-blue-600 dark:text-blue-400" />
             Advanced Analytics
           </h1>
           <p className="text-slate-600 dark:text-slate-300 mt-2 text-lg max-w-3xl">
@@ -73,20 +73,20 @@ export default function AnalyticsDashboard() {
                   <tool.icon className={`w-6 h-6 ${tool.color}`} />
                 </div>
                 
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white font-heading mb-2 group-hover:text-indigo-300 transition-colors">{tool.title}</h3>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white font-heading mb-2 group-hover:text-indigo-600 dark:text-indigo-300 transition-colors">{tool.title}</h3>
                 <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed mb-6">{tool.description}</p>
                 
                 <div className="absolute top-4 right-4">
                   <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border ${
                     tool.badge === 'Free' ? 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300' :
-                    tool.badge === 'Pro' ? 'bg-purple-900/30 border-purple-700/50 text-purple-400' :
-                    'bg-amber-900/30 border-amber-700/50 text-amber-400'
+                    tool.badge === 'Pro' ? 'bg-purple-100 dark:bg-purple-100 dark:bg-purple-900/30 border-purple-200 dark:border-purple-700/50 text-purple-600 dark:text-purple-400' :
+                    'bg-amber-100 dark:bg-amber-100 dark:bg-amber-900/30 border-amber-200 dark:border-amber-700/50 text-amber-600 dark:text-amber-400'
                   }`}>
                     {tool.badge}
                   </span>
                 </div>
                 
-                <div className="mt-auto flex items-center text-sm font-semibold text-blue-600 dark:text-blue-400 group-hover:text-indigo-300">
+                <div className="mt-auto flex items-center text-sm font-semibold text-blue-600 dark:text-blue-600 dark:text-blue-400 group-hover:text-indigo-600 dark:text-indigo-300">
                   Launch Tool →
                 </div>
               </Link>
@@ -97,8 +97,8 @@ export default function AnalyticsDashboard() {
         {/* Enterprise Data Trust Disclaimer */}
         <div className="mt-12 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left relative overflow-hidden">
           <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500"></div>
-          <div className="w-14 h-14 bg-indigo-900/30 rounded-full flex items-center justify-center shrink-0 border border-indigo-800/50">
-            <Shield className="w-7 h-7 text-blue-600 dark:text-blue-400" />
+          <div className="w-14 h-14 bg-indigo-100 dark:bg-indigo-100 dark:bg-indigo-900/30 rounded-full flex items-center justify-center shrink-0 border border-indigo-200 dark:border-indigo-800/50">
+            <Shield className="w-7 h-7 text-blue-600 dark:text-blue-600 dark:text-blue-400" />
           </div>
           <div>
             <h4 className="text-slate-900 dark:text-white font-heading font-bold text-base mb-1">Enterprise-Grade Algorithmic Trust</h4>

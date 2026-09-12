@@ -42,7 +42,7 @@ export function CostOptimizer() {
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="w-full">
       <div className="flex items-center gap-3 mb-4 border-b border-slate-200 dark:border-slate-700 pb-3">
-        <div className="p-2 bg-emerald-900/30 rounded-2xl text-emerald-400">
+        <div className="p-2 bg-emerald-100  dark:bg-emerald-900/30 rounded-2xl text-emerald-600 dark:text-emerald-400">
           <IndianRupee className="w-5 h-5" />
         </div>
         <div>
@@ -80,20 +80,20 @@ export function CostOptimizer() {
       </button>
 
       {result && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-4 p-4 rounded-xl bg-emerald-900/20 border border-emerald-900/50 space-y-2">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-4 p-4 rounded-xl bg-emerald-100  dark:bg-emerald-900/20 border border-emerald-900/50 space-y-2">
           <div className="flex justify-between items-center border-b border-emerald-900/30 pb-2">
             <span className="text-xs text-slate-600 dark:text-slate-300">Base Unit Cost</span>
             <span className="font-medium text-slate-600 dark:text-slate-300">₹{result.unit_cost.toFixed(2)}</span>
           </div>
           <div className="flex justify-between items-center">
-            <span className="text-xs text-emerald-400 font-bold">Optimized Unit Cost</span>
-            <span className="font-bold text-emerald-400">₹{result.optimized_unit_cost.toFixed(2)}</span>
+            <span className="text-xs text-emerald-600 dark:text-emerald-400 font-bold">Optimized Unit Cost</span>
+            <span className="font-bold text-emerald-600 dark:text-emerald-400">₹{result.optimized_unit_cost.toFixed(2)}</span>
           </div>
           <div className="flex justify-between items-center pt-1">
             <span className="text-xs text-slate-500 dark:text-slate-400">Total Batch Cost ({formData.batch_size} units)</span>
             <span className="font-bold text-slate-900 dark:text-white">₹{result.total_batch_cost.toFixed(2)}</span>
           </div>
-          <p className="text-[10px] text-emerald-300 pt-2 border-t border-emerald-900/50">Volume discount of {result.discount_applied}% applied based on batch size economies of scale.</p>
+          <p className="text-[10px] text-emerald-600 dark:text-emerald-300 pt-2 border-t border-emerald-900/50">Volume discount of {result.discount_applied}% applied based on batch size economies of scale.</p>
         </motion.div>
       )}
     </motion.div>

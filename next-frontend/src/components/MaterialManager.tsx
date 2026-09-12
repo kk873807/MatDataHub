@@ -133,14 +133,14 @@ export default function MaterialManager({ secret }: { secret: string }) {
           </div>
 
           {error && (
-            <div className="mt-4 p-3 bg-red-900/20 border border-red-500/50 rounded-2xl flex items-start gap-2 text-red-400 text-sm">
+            <div className="mt-4 p-3 bg-red-100 dark:bg-red-100 dark:bg-red-900/20 border border-red-500/50 rounded-2xl flex items-start gap-2 text-red-600 dark:text-red-400 text-sm">
               <AlertCircle className="w-5 h-5 shrink-0" />
               <p>{error}</p>
             </div>
           )}
 
           {message && (
-            <div className="mt-4 p-3 bg-emerald-900/20 border border-emerald-500/50 rounded-2xl flex items-start gap-2 text-emerald-400 text-sm">
+            <div className="mt-4 p-3 bg-emerald-100  dark:bg-emerald-900/20 border border-emerald-500/50 rounded-2xl flex items-start gap-2 text-emerald-600 dark:text-emerald-400 text-sm">
               <CheckCircle2 className="w-5 h-5 shrink-0" />
               <p>{message}</p>
             </div>
