@@ -9,12 +9,14 @@ import { LoginModal } from "@/components/LoginModal";
 export default function LandingPage() {
   const [feedbacks, setFeedbacks] = useState<any[]>([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
 
   useEffect(() => {
     // Check auth
     const token = localStorage.getItem("token");
     if (token) setIsLoggedIn(true);
+    setAuthChecked(true);
 
     // Check query params for ?login=true
     if (window.location.search.includes('login=true')) {
@@ -51,7 +53,7 @@ export default function LandingPage() {
             <Link href="#problem" className="text-sm font-medium hover:text-indigo-400 transition-colors hidden md:block">Problem</Link>
             <Link href="#solution" className="text-sm font-medium hover:text-indigo-400 transition-colors hidden md:block">Platform</Link>
             <Link href="#pricing" className="text-sm font-medium hover:text-indigo-400 transition-colors hidden md:block">Pricing</Link>
-            {isLoggedIn ? (
+            {!authChecked ? null : isLoggedIn ? (
               <Link href="/dashboard" className="text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-lg transition-all shadow-lg shadow-indigo-600/20">
                 Go to App Dashboard
               </Link>
@@ -80,7 +82,7 @@ export default function LandingPage() {
               A unified platform for mechanical properties, macroeconomic cost indices, and AI-driven substitution analysis. Designed for the rigor of modern R&D.
             </p>
                           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                {!isLoggedIn && (
+                {authChecked && !isLoggedIn && (
                   <button onClick={() => setShowLoginModal(true)} className="flex items-center gap-2 px-8 py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold transition-all shadow-xl shadow-indigo-600/20 w-full sm:w-auto justify-center">
                     Access Platform <ArrowRight className="w-4 h-4" />
                   </button>
@@ -179,7 +181,7 @@ export default function LandingPage() {
       {/* Featured Engineering Blog Banner */}
       <section className="py-12 px-6">
         <div className="max-w-5xl mx-auto">
-          <Link href="/resources" onClick={(e) => { e.preventDefault(); alert('Blog article coming soon in the next release!'); }} className="group relative block overflow-hidden rounded-3xl border border-indigo-500/30 bg-indigo-950/20 text-left transition-all hover:bg-indigo-900/40 hover:border-indigo-500/60 hover:shadow-[0_0_40px_-10px_rgba(99,102,241,0.2)] backdrop-blur-sm">
+          <Link href="/resources"  className="group relative block overflow-hidden rounded-3xl border border-indigo-500/30 bg-indigo-950/20 text-left transition-all hover:bg-indigo-900/40 hover:border-indigo-500/60 hover:shadow-[0_0_40px_-10px_rgba(99,102,241,0.2)] backdrop-blur-sm">
             <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-indigo-400 to-purple-500"></div>
             <div className="p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
               <div className="space-y-3 max-w-2xl">

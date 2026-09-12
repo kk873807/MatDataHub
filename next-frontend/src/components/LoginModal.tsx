@@ -55,7 +55,7 @@ export function LoginModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =
         
         <div className="p-8">
           <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-white mb-2">{isRegister ? "Create an Account" : "Welcome Back"}</h2>
+            <h2 className="text-2xl font-bold text-white mb-2">{isRegister ? "Create an Account" : "Welcome"}</h2>
             <p className="text-slate-400 text-sm">
               {isRegister ? "Start your engineering journey today." : "Sign in to access your workspaces."}
             </p>

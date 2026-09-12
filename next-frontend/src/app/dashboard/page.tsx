@@ -36,7 +36,7 @@ export default function AppDashboard() {
         <div>
           <h1 className="text-3xl font-bold text-white flex items-center gap-3">
             <LayoutDashboard className="w-8 h-8 text-indigo-400" />
-            Welcome back{profile?.username ? `, ${profile.username}` : ''}
+            Welcome{profile?.username ? `, ${profile.username}` : ''}
           </h1>
           <p className="text-slate-400 mt-1">Here is what's happening in your engineering workspace today.</p>
         </div>
