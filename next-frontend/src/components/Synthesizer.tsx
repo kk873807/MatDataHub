@@ -56,7 +56,7 @@ export function Synthesizer() {
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Material 1 */}
-        <div className="space-y-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800/50">
+        <div className="space-y-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800/50">
           <h3 className="text-lg font-medium text-slate-600 dark:text-slate-300">Material 1</h3>
           <div>
             <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Density (g/cm³)</label>
@@ -77,7 +77,7 @@ export function Synthesizer() {
         </div>
 
         {/* Material 2 */}
-        <div className="space-y-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800/50">
+        <div className="space-y-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800/50">
           <h3 className="text-lg font-medium text-slate-600 dark:text-slate-300">Material 2</h3>
           <div>
             <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Density (g/cm³)</label>

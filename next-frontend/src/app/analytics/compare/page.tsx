@@ -337,7 +337,7 @@ function CompareMaterialsContent() {
             <div className="lg:col-span-2 space-y-6">
               <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-x-auto">
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="font-bold text-slate-900 dark:text-slate-900 dark:text-white font-heading font-heading">Direct Comparison Matrix</h3>
+                  <h3 className="font-bold text-slate-900 dark:text-white font-heading">Direct Comparison Matrix</h3>
                   <button onClick={exportCSV} className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold rounded-2xl transition-colors border border-slate-200 dark:border-slate-700">
                     <Download className="w-3 h-3" /> Export CSV
                   </button>

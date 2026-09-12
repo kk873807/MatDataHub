@@ -37,7 +37,7 @@ export function SafetyFactor() {
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl w-full h-full flex flex-col">
-      <h2 className="text-xl font-bold mb-4 text-slate-900 dark:text-slate-900 dark:text-white font-heading">Safety Factor Analysis</h2>
+      <h2 className="text-xl font-bold mb-4 text-slate-900 dark:text-white font-heading">Safety Factor Analysis</h2>
       <div className="space-y-4 flex-grow">
         <div>
           <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Yield Strength (MPa)</label>

@@ -239,13 +239,13 @@ export default function CBAMAnalytics() {
           <div className="flex gap-4 mb-6 border-b border-slate-200 dark:border-slate-800 pb-4">
             <button
               onClick={() => setActiveTab("upload")}
-              className={`px-4 py-2 font-bold rounded-2xl transition-colors ${activeTab === "upload" ? "bg-amber-900/30 text-amber-400" : "text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:bg-slate-800 hover:text-slate-900 dark:text-white"}`}
+              className={`px-4 py-2 font-bold rounded-2xl transition-colors ${activeTab === "upload" ? "bg-amber-900/30 text-amber-400" : "text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white"}`}
             >
               Upload CSV
             </button>
             <button
               onClick={() => setActiveTab("manual")}
-              className={`px-4 py-2 font-bold rounded-2xl transition-colors ${activeTab === "manual" ? "bg-amber-900/30 text-amber-400" : "text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:bg-slate-800 hover:text-slate-900 dark:text-white"}`}
+              className={`px-4 py-2 font-bold rounded-2xl transition-colors ${activeTab === "manual" ? "bg-amber-900/30 text-amber-400" : "text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white"}`}
             >
               Manual Entry
             </button>
@@ -285,7 +285,7 @@ export default function CBAMAnalytics() {
                 onDragOver={e => e.preventDefault()}
                 onDrop={handleDrop}
                 onClick={() => fileInputRef.current?.click()}
-                className={`border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-colors ${file ? 'border-amber-500 bg-amber-900/10' : 'border-slate-200 dark:border-slate-700 hover:border-slate-500 hover:bg-slate-100 dark:bg-slate-800/50'}`}
+                className={`border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-colors ${file ? 'border-amber-500 bg-amber-900/10' : 'border-slate-200 dark:border-slate-700 hover:border-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800/50'}`}
               >
                 <input 
                   type="file" 
@@ -354,7 +354,7 @@ export default function CBAMAnalytics() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl flex flex-col justify-center">
                 <p className="text-slate-500 dark:text-slate-400 font-medium mb-1 flex items-center gap-2"><Factory className="w-4 h-4 text-emerald-400" /> Total Embodied Carbon</p>
-                <h3 className="text-3xl font-bold text-slate-900 dark:text-slate-900 dark:text-white font-heading font-heading">{totalCO2.toLocaleString(undefined, { maximumFractionDigits: 2 })} <span className="text-lg text-slate-500 font-normal">kg CO₂</span></h3>
+                <h3 className="text-3xl font-bold text-slate-900 dark:text-white font-heading">{totalCO2.toLocaleString(undefined, { maximumFractionDigits: 2 })} <span className="text-lg text-slate-500 font-normal">kg CO₂</span></h3>
               </div>
               <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl flex flex-col justify-center">
                 <p className="text-slate-500 dark:text-slate-400 font-medium mb-1 flex items-center gap-2"><FileText className="w-4 h-4 text-amber-400" /> Est. CBAM Tax Obligation</p>
@@ -363,7 +363,7 @@ export default function CBAMAnalytics() {
             </div>
 
             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden">
-              <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-50 dark:bg-slate-950/50">
+              <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950/50">
                 <h3 className="font-bold text-slate-900 dark:text-white font-heading flex items-center gap-2"><Table className="w-5 h-5 text-amber-500" /> Results Breakdown</h3>
                 <button onClick={downloadResults} className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-2xl transition-colors border border-slate-200 dark:border-slate-700">
                   <Download className="w-3 h-3" /> Export to CSV
@@ -380,7 +380,7 @@ export default function CBAMAnalytics() {
                   </thead>
                   <tbody className="divide-y divide-slate-800/50">
                     {resultsData.map((row, idx) => (
-                      <tr key={idx} className="hover:bg-slate-100 dark:bg-slate-800/30 transition-colors">
+                      <tr key={idx} className="hover:bg-slate-100 dark:hover:bg-slate-800/30 transition-colors">
                         {Object.keys(row).map((header) => (
                           <td key={`${idx}-${header}`} className="p-4 text-slate-600 dark:text-slate-300 whitespace-nowrap">
                             {row[header] || "-"}

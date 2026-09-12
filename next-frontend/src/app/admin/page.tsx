@@ -162,9 +162,9 @@ export default function AdminDashboard() {
             
             {/* Upgrade Requests */}
             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-              <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center gap-3 bg-slate-50 dark:bg-slate-50 dark:bg-slate-950/50">
+              <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center gap-3 bg-slate-50 dark:bg-slate-950/50">
                 <Users className="w-5 h-5 text-blue-400" />
-                <h2 className="text-xl font-bold text-slate-900 dark:text-slate-900 dark:text-white font-heading font-heading">Pending Upgrade Requests</h2>
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white font-heading">Pending Upgrade Requests</h2>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm">
@@ -179,7 +179,7 @@ export default function AdminDashboard() {
                   </thead>
                   <tbody className="divide-y divide-slate-800/50">
                     {requests.map((req) => (
-                      <tr key={req.id} className="hover:bg-slate-100 dark:bg-slate-800/30 transition-colors">
+                      <tr key={req.id} className="hover:bg-slate-100 dark:hover:bg-slate-800/30 transition-colors">
                         <td className="px-6 py-4">
                           <div className="font-bold text-slate-900 dark:text-white">{req.name}</div>
                           <div className="text-slate-500 text-xs">{req.email}</div>
@@ -207,9 +207,9 @@ export default function AdminDashboard() {
 
             {/* Feedback & Support */}
             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-              <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center gap-3 bg-slate-50 dark:bg-slate-50 dark:bg-slate-950/50">
+              <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center gap-3 bg-slate-50 dark:bg-slate-950/50">
                 <MessageSquare className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                <h2 className="text-xl font-bold text-slate-900 dark:text-slate-900 dark:text-white font-heading font-heading">System Feedback & Tickets</h2>
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white font-heading">System Feedback & Tickets</h2>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm">
@@ -224,7 +224,7 @@ export default function AdminDashboard() {
                   </thead>
                   <tbody className="divide-y divide-slate-800/50">
                     {feedback.map((fb) => (
-                      <tr key={fb.id} className="hover:bg-slate-100 dark:bg-slate-800/30 transition-colors">
+                      <tr key={fb.id} className="hover:bg-slate-100 dark:hover:bg-slate-800/30 transition-colors">
                         <td className="px-6 py-4 text-slate-600 dark:text-slate-300 font-medium capitalize">{fb.category}</td>
                         <td className="px-6 py-4 text-slate-500 dark:text-slate-400 max-w-md">
                           <p className="line-clamp-2">{fb.message}</p>

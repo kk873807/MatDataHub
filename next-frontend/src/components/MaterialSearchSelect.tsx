@@ -46,7 +46,7 @@ export default function MaterialSearchSelect({
 
       {isOpen && (
         <div className="absolute z-50 top-full left-0 mt-2 w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[300px]">
-          <div className="p-3 border-b border-slate-200 dark:border-slate-800 relative bg-slate-50 dark:bg-slate-50 dark:bg-slate-950/50">
+          <div className="p-3 border-b border-slate-200 dark:border-slate-800 relative bg-slate-50 dark:bg-slate-950/50">
             <Search className="w-4 h-4 absolute left-6 top-1/2 -translate-y-1/2 text-slate-500" />
             <input 
               autoFocus
@@ -69,7 +69,7 @@ export default function MaterialSearchSelect({
                     setIsOpen(false);
                     setSearch("");
                   }}
-                  className="w-full text-left px-3 py-2 rounded-2xl hover:bg-slate-100 dark:bg-slate-800 text-sm text-slate-600 dark:text-slate-300 transition-colors flex items-center justify-between group"
+                  className="w-full text-left px-3 py-2 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 text-sm text-slate-600 dark:text-slate-300 transition-colors flex items-center justify-between group"
                 >
                   <span className="truncate pr-4">{m.name}</span>
                   <span className="text-[10px] text-slate-500 uppercase font-bold px-2 py-0.5 bg-slate-50 dark:bg-slate-950 rounded hidden group-hover:block">{m.category}</span>

@@ -145,7 +145,7 @@ export default function ResourcesPage() {
             onClick={() => setActiveTab("blogs")} 
             className={`pb-3 font-semibold text-sm transition-colors relative ${activeTab === 'blogs' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400 hover:text-slate-200'}`}
           >
-            <span className="flex items-center gap-2"><BookOpen className="w-4 h-4" /> Engineering Blogs</span>
+            <span className="flex items-center gap-2"><BookOpen className="w-4 h-4" /> Blogs</span>
             {activeTab === 'blogs' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-500 rounded-t-full" />}
           </button>
           <button 
@@ -183,7 +183,7 @@ export default function ResourcesPage() {
                 <div key={i} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden transition-all">
                   <button 
                     onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                    className="w-full text-left p-4 flex justify-between items-center hover:bg-slate-100 dark:bg-slate-800/50"
+                    className="w-full text-left p-4 flex justify-between items-center hover:bg-slate-100 dark:hover:bg-slate-800/50"
                   >
                     <span className="font-semibold text-slate-200">{faq.q}</span>
                     <ChevronDown className={`w-5 h-5 text-slate-500 transition-transform ${openFaq === i ? 'rotate-180' : ''}`} />
@@ -233,15 +233,7 @@ export default function ResourcesPage() {
                   </div>
                 </div>
                 
-                <div className="prose prose-invert prose-indigo max-w-none 
-                  prose-headings:font-bold prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-h2:border-b prose-h2:border-slate-200 dark:border-slate-800 prose-h2:pb-2
-                  prose-p:text-slate-600 dark:text-slate-300 prose-p:leading-relaxed prose-p:mb-6
-                  prose-li:text-slate-600 dark:text-slate-300 prose-li:my-1
-                  prose-strong:text-white prose-strong:font-bold
-                  prose-table:w-full prose-table:text-sm prose-table:border-collapse prose-table:my-8
-                  prose-th:bg-slate-50 dark:bg-slate-950 prose-th:p-3 prose-th:border prose-th:border-slate-200 dark:border-slate-700 prose-th:text-slate-600 dark:text-slate-300
-                  prose-td:p-3 prose-td:border prose-td:border-slate-200 dark:border-slate-800 prose-td:text-slate-500 dark:text-slate-400
-                  prose-blockquote:border-l-4 prose-blockquote:border-indigo-500 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-slate-500 dark:text-slate-400">
+                <div className="prose prose-invert prose-indigo max-w-none prose-headings:font-bold prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-h2:border-b prose-h2:border-slate-200 dark:border-slate-800 prose-h2:pb-2 prose-p:text-slate-600 dark:text-slate-300 prose-p:leading-relaxed prose-p:mb-6 prose-li:text-slate-600 prose-li:my-1 prose-strong:text-white prose-strong:font-bold prose-table:w-full prose-table:text-sm prose-table:border-collapse prose-table:my-8 prose-th:bg-slate-50 dark:bg-slate-950 prose-th:p-3 prose-th:border prose-th:border-slate-200 dark:border-slate-700 prose-th:text-slate-600 prose-td:p-3 prose-td:border prose-td:border-slate-200 prose-td:text-slate-500 dark:text-slate-400 prose-blockquote:border-l-4 prose-blockquote:border-indigo-500 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-slate-500">
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>
                     {blogs[selectedBlog].content}
                   </ReactMarkdown>
@@ -311,7 +303,7 @@ export default function ResourcesPage() {
             {submitted ? (
               <div className="text-center space-y-4 py-10">
                 <CheckCircle2 className="w-16 h-16 text-emerald-500 mx-auto" />
-                <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-900 dark:text-white font-heading font-heading">Ticket Submitted</h2>
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-white font-heading">Ticket Submitted</h2>
                 <p className="text-slate-500 dark:text-slate-400">Our engineering team has received your request and will respond to {ticket.email || 'your account email'} within 24 hours.</p>
                 <button onClick={() => setSubmitted(false)} className="mt-4 px-6 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-700 text-white rounded-2xl text-sm font-semibold transition-colors">
                   Submit Another Ticket
@@ -364,7 +356,7 @@ export default function ResourcesPage() {
                   <div>
                     <label className="block text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2">Screenshot Attachment (Optional)</label>
                     <div className="flex items-center gap-3">
-                      <label className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:bg-slate-800 text-slate-200 text-sm font-medium rounded-2xl cursor-pointer transition-colors border border-slate-200 dark:border-slate-800">
+                      <label className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-200 text-sm font-medium rounded-2xl cursor-pointer transition-colors border border-slate-200 dark:border-slate-800">
                         <ImageIcon className="w-4 h-4" /> Upload Image
                         <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
                       </label>

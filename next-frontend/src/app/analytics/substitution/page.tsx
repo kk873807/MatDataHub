@@ -211,7 +211,7 @@ function SmartSubstitutionContent() {
                   {allMaterials.filter(m => m.name.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 50).map(m => (
                     <div 
                       key={m.id} 
-                      className={`px-4 py-2 hover:bg-slate-100 dark:bg-slate-800 cursor-pointer ${baseId === m.id.toString() ? 'bg-slate-100 dark:bg-slate-800 text-purple-400' : 'text-slate-600 dark:text-slate-300'}`}
+                      className={`px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer ${baseId === m.id.toString() ? 'bg-slate-100 dark:bg-slate-800 text-purple-400' : 'text-slate-600 dark:text-slate-300'}`}
                       onClick={() => {
                         setBaseId(m.id.toString());
                         setSearchQuery(m.name);
@@ -289,13 +289,13 @@ function SmartSubstitutionContent() {
               </div>
             ) : results.length > 0 ? (
               <div className="space-y-4">
-                <h3 className="font-bold text-slate-900 dark:text-slate-900 dark:text-white font-heading font-heading">Top Alternative Recommendations</h3>
+                <h3 className="font-bold text-slate-900 dark:text-white font-heading">Top Alternative Recommendations</h3>
                 {results.map((res, i) => (
                   <div key={res.id} className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 relative overflow-hidden">
                     {i === 0 && <div className="absolute top-0 right-0 bg-purple-600 text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg">BEST MATCH</div>}
                     <div className="flex justify-between items-start mb-3">
                       <div>
-                        <h4 className="text-lg font-bold text-slate-900 dark:text-slate-900 dark:text-white font-heading font-heading">{res.name}</h4>
+                        <h4 className="text-lg font-bold text-slate-900 dark:text-white font-heading">{res.name}</h4>
                         <div className="text-sm text-purple-400 font-semibold">{Math.round(res.match_score)}% Match Score</div>
                       </div>
                       <Link href={`/materials/${res.id}`} className="px-3 py-1 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded text-xs text-slate-600 dark:text-slate-300 hover:text-white transition-colors">

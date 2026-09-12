@@ -57,7 +57,7 @@ export default function LandingPage() {
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 text-xs font-semibold uppercase tracking-widest mb-6">
               <BookOpen className="w-3.5 h-3.5" /> Academic-Grade Materials Intelligence
             </div>
-            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-6 font-heading leading-tight font-heading ">
+            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-6 font-heading leading-tight">
               Engineering decisions, <br />
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-cyan-400">backed by physics.</span>
             </h1>
@@ -76,11 +76,11 @@ export default function LandingPage() {
       </section>
 
       {/* Problem Section */}
-      <section id="problem" className="py-24 bg-white dark:bg-slate-50 dark:bg-slate-50 dark:bg-slate-900/50 border-y border-slate-200 dark:border-slate-200 dark:border-slate-800/50">
+      <section id="problem" className="py-24 bg-white dark:bg-slate-50 dark:bg-slate-900/50 border-y border-slate-200 dark:border-slate-200 dark:border-slate-800/50">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <div>
-              <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-6 font-heading font-heading ">The Data Fragmentation Problem</h2>
+              <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-6 font-heading">The Data Fragmentation Problem</h2>
               <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
                 Engineers and material scientists spend countless hours cross-referencing isolated databases to find mechanical limits, pricing estimates, and ESG compliance factors (like CBAM).
               </p>
@@ -94,7 +94,7 @@ export default function LandingPage() {
               </ul>
             </div>
             
-            <div className="bg-white dark:bg-white dark:bg-slate-950 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl relative overflow-hidden group">
+            <div className="bg-white dark:bg-slate-950 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 blur-[50px]"></div>
               
               <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4 mb-6 relative z-10">
@@ -116,16 +116,16 @@ export default function LandingPage() {
 
               <div className="space-y-4 relative z-10 opacity-70 group-hover:opacity-100 transition-opacity">
                 <div className="flex gap-4">
-                  <div className="flex-1 h-24 bg-slate-50 dark:bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-4">
+                  <div className="flex-1 h-24 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-4">
                     <div className="h-2 w-1/3 bg-slate-700 rounded mb-4"></div>
                     <div className="h-8 w-2/3 bg-indigo-500/20 rounded"></div>
                   </div>
-                  <div className="flex-1 h-24 bg-slate-50 dark:bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-4">
+                  <div className="flex-1 h-24 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-4">
                     <div className="h-2 w-1/3 bg-slate-700 rounded mb-4"></div>
                     <div className="h-8 w-2/3 bg-emerald-500/20 rounded"></div>
                   </div>
                 </div>
-                <div className="h-32 w-full bg-slate-50 dark:bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-4 flex items-end gap-2">
+                <div className="h-32 w-full bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-4 flex items-end gap-2">
                   {[40, 70, 45, 90, 65, 80, 50, 100, 75, 85].map((h, i) => (
                     <div key={i} className="flex-1 bg-indigo-500/40 rounded-t-sm" style={{ height: `${h}%` }}></div>
                   ))}
@@ -140,7 +140,7 @@ export default function LandingPage() {
       {/* Solution Section */}
       <section id="solution" className="py-24 px-6">
         <div className="max-w-7xl mx-auto text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 font-heading ">A Unified Academic & Industrial Solution</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 font-heading">A Unified Academic & Industrial Solution</h2>
           <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">MatDataHub bridges the gap between theoretical material science and practical engineering economics.</p>
         </div>
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -152,19 +152,19 @@ export default function LandingPage() {
             { title: "Engineering Workspaces", desc: "Calculate beam deflection, thermal shock, and safety factors directly in your browser.", icon: Cpu, color: "text-rose-400" },
             { title: "Composite Synthesizer", desc: "Blend theoretical materials using Rule of Mixtures to predict hybrid properties.", icon: TestTube2, color: "text-cyan-400" },
           ].map((feat, i) => (
-            <div key={i} className="bg-slate-50 dark:bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 p-8 rounded-2xl hover:bg-slate-100 dark:bg-slate-100 dark:bg-slate-800/40 transition-colors">
+            <div key={i} className="bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 p-8 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-100 dark:hover:bg-slate-800/40 transition-colors">
               <feat.icon className={`w-8 h-8 ${feat.color} mb-5`} />
-              <h3 className="text-xl font-bold text-white mb-2 font-heading ">{feat.title}</h3>
+              <h3 className="text-xl font-bold text-white mb-2 font-heading">{feat.title}</h3>
               <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">{feat.desc}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Featured Engineering Blog Banner */}
+      {/* Featured Blog Banner */}
       <section id="blog" className="py-12 px-6">
         <div className="max-w-5xl mx-auto">
-          <Link href="/resources"  className="group relative block overflow-hidden rounded-3xl border border-indigo-500/30 bg-white dark:bg-indigo-950/20 text-left transition-all hover:shadow-2xl shadow-lg border border-slate-200 dark:border-indigo-500/30 hover:border-indigo-500/60 hover:shadow-[0_0_40px_-10px_rgba(99,102,241,0.2)] backdrop-blur-sm">
+          <Link href="/resources"  className="group relative block overflow-hidden rounded-3xl border border-indigo-500/30 bg-white dark:bg-indigo-950/20 text-left transition-all hover:shadow-2xl shadow-lg border-slate-200 dark:border-indigo-500/30 hover:border-indigo-500/60 hover:shadow-[0_0_40px_-10px_rgba(99,102,241,0.2)] backdrop-blur-sm">
             <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-indigo-400 to-purple-500"></div>
             <div className="p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
               <div className="space-y-3 max-w-2xl">
@@ -172,7 +172,7 @@ export default function LandingPage() {
                   <span className="px-2.5 py-1 text-[10px] font-black uppercase tracking-widest bg-indigo-500 text-white rounded-md shadow-lg">New Research</span>
                   <span className="text-xs font-bold text-slate-600 dark:text-slate-400">Sept 4, 2026 • 8 min read</span>
                 </div>
-                <h2 className="text-xl md:text-2xl font-bold text-white group-hover:text-indigo-700 dark:text-indigo-300 transition-colors leading-tight font-heading ">Modeling Thermal Expansion in Aerospace Alloys</h2>
+                <h2 className="text-xl md:text-2xl font-bold text-white group-hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors leading-tight font-heading">Modeling Thermal Expansion in Aerospace Alloys</h2>
                 <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed max-w-xl">
                   A deep dive into how our new predictive modeling engine handles extreme temperature deltas in titanium composites compared to legacy FEM solvers.
                 </p>
@@ -188,9 +188,9 @@ export default function LandingPage() {
 
 
       {/* Testimonials / Community Feedback */}
-      <section className="py-24 bg-white dark:bg-slate-50 dark:bg-slate-50 dark:bg-slate-900/50 border-y border-slate-200 dark:border-slate-200 dark:border-slate-800/50">
+      <section className="py-24 bg-white dark:bg-slate-50 dark:bg-slate-900/50 border-y border-slate-200 dark:border-slate-200 dark:border-slate-800/50">
         <div className="max-w-7xl mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold text-white mb-4 font-heading ">Live Community Feedback</h2>
+          <h2 className="text-3xl font-bold text-white mb-4 font-heading">Live Community Feedback</h2>
           <p className="text-slate-600 dark:text-slate-400 mb-12 max-w-2xl mx-auto">See what our community of engineers and scientists are saying directly from our platform.</p>
           
           <div className="grid md:grid-cols-3 gap-8 text-left">
@@ -244,14 +244,14 @@ export default function LandingPage() {
       <section id="pricing" className="py-24 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-white mb-4 font-heading ">Transparent Pricing Models</h2>
+            <h2 className="text-3xl font-bold text-white mb-4 font-heading">Transparent Pricing Models</h2>
             <p className="text-slate-600 dark:text-slate-400">Select the tier that fits your research and engineering needs.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             
             {/* Free */}
-            <div className="bg-slate-50 dark:bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl p-8 flex flex-col">
-              <h3 className="text-xl font-bold text-white mb-2 font-heading ">Academic Free</h3>
+            <div className="bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl p-8 flex flex-col">
+              <h3 className="text-xl font-bold text-white mb-2 font-heading">Academic Free</h3>
               <p className="text-slate-600 dark:text-slate-400 text-sm mb-6 h-10">Perfect for students and open research.</p>
               <div className="text-4xl font-extrabold text-white mb-8">&#8377;0<span className="text-lg font-medium text-slate-500">/mo</span></div>
               <ul className="space-y-3 mb-8 flex-1">
@@ -265,9 +265,9 @@ export default function LandingPage() {
             </div>
 
             {/* Pro */}
-            <div className="bg-slate-50 dark:bg-slate-50 dark:bg-slate-900 border-2 border-indigo-500 rounded-2xl p-8 flex flex-col relative transform md:-translate-y-4 shadow-2xl shadow-indigo-900/20">
+            <div className="bg-slate-50 dark:bg-slate-900 border-2 border-indigo-500 rounded-2xl p-8 flex flex-col relative transform md:-translate-y-4 shadow-2xl shadow-indigo-900/20">
               <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-indigo-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Most Popular</div>
-              <h3 className="text-xl font-bold text-white mb-2 font-heading ">Professional</h3>
+              <h3 className="text-xl font-bold text-white mb-2 font-heading">Professional</h3>
               <p className="text-slate-600 dark:text-slate-400 text-sm mb-6 h-10">For independent engineers and small firms.</p>
               <div className="text-4xl font-extrabold text-white mb-8">&#8377;499<span className="text-lg font-medium text-slate-500">/mo</span></div>
               <ul className="space-y-3 mb-8 flex-1">
@@ -281,8 +281,8 @@ export default function LandingPage() {
             </div>
 
             {/* Advanced */}
-            <div className="bg-slate-50 dark:bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl p-8 flex flex-col">
-              <h3 className="text-xl font-bold text-white mb-2 font-heading ">Advanced Enterprise</h3>
+            <div className="bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl p-8 flex flex-col">
+              <h3 className="text-xl font-bold text-white mb-2 font-heading">Advanced Enterprise</h3>
               <p className="text-slate-600 dark:text-slate-400 text-sm mb-6 h-10">Full financial & physics capabilities.</p>
               <div className="text-4xl font-extrabold text-white mb-8">&#8377;19,999<span className="text-lg font-medium text-slate-500">/mo</span></div>
               <ul className="space-y-3 mb-8 flex-1">

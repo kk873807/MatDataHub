@@ -100,7 +100,7 @@ export function TopNav() {
                 <Link href="#problem" className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Problem</Link>
                 <Link href="#solution" className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Platform</Link>
                 <Link href="#pricing" className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Pricing</Link>
-                <Link href="#blog" className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Engineering Blog</Link>
+                <Link href="#blog" className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Blog</Link>
               </div>
             )}
 
@@ -150,7 +150,7 @@ export function TopNav() {
                 <Link href="#problem" onClick={() => setMobileMenuOpen(false)} className="font-medium text-slate-700 dark:text-slate-200">Problem</Link>
                 <Link href="#solution" onClick={() => setMobileMenuOpen(false)} className="font-medium text-slate-700 dark:text-slate-200">Platform</Link>
                 <Link href="#pricing" onClick={() => setMobileMenuOpen(false)} className="font-medium text-slate-700 dark:text-slate-200">Pricing</Link>
-                <Link href="#blog" onClick={() => setMobileMenuOpen(false)} className="font-medium text-slate-700 dark:text-slate-200">Engineering Blog</Link>
+                <Link href="#blog" onClick={() => setMobileMenuOpen(false)} className="font-medium text-slate-700 dark:text-slate-200">Blog</Link>
               </div>
             ) : (
               appNavItems.map(item => (

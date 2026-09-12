@@ -150,10 +150,10 @@ function AccountDashboardInner() {
           Settings
         </h1>
         
-        <button onClick={() => setActiveTab('account')} className={`text-left px-4 py-3 rounded-2xl font-medium transition-colors ${activeTab === 'account' ? 'bg-blue-600 text-white' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:bg-slate-800 hover:text-slate-900 dark:text-white'}`}>Account Management</button>
-        <button onClick={() => setActiveTab('billing')} className={`text-left px-4 py-3 rounded-2xl font-medium transition-colors ${activeTab === 'billing' ? 'bg-blue-600 text-white' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:bg-slate-800 hover:text-slate-900 dark:text-white'}`}>Transaction & Billing</button>
-        <button onClick={() => setActiveTab('help')} className={`text-left px-4 py-3 rounded-2xl font-medium transition-colors ${activeTab === 'help' ? 'bg-blue-600 text-white' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:bg-slate-800 hover:text-slate-900 dark:text-white'}`}>Help Center & Legal</button>
-        <button onClick={() => setActiveTab('shortcuts')} className={`text-left px-4 py-3 rounded-2xl font-medium transition-colors ${activeTab === 'shortcuts' ? 'bg-blue-600 text-white' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:bg-slate-800 hover:text-slate-900 dark:text-white'}`}>Keyboard Shortcuts</button>
+        <button onClick={() => setActiveTab('account')} className={`text-left px-4 py-3 rounded-2xl font-medium transition-colors ${activeTab === 'account' ? 'bg-blue-600 text-white' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'}`}>Account Management</button>
+        <button onClick={() => setActiveTab('billing')} className={`text-left px-4 py-3 rounded-2xl font-medium transition-colors ${activeTab === 'billing' ? 'bg-blue-600 text-white' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'}`}>Transaction & Billing</button>
+        <button onClick={() => setActiveTab('help')} className={`text-left px-4 py-3 rounded-2xl font-medium transition-colors ${activeTab === 'help' ? 'bg-blue-600 text-white' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'}`}>Help Center & Legal</button>
+        <button onClick={() => setActiveTab('shortcuts')} className={`text-left px-4 py-3 rounded-2xl font-medium transition-colors ${activeTab === 'shortcuts' ? 'bg-blue-600 text-white' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'}`}>Keyboard Shortcuts</button>
       </div>
 
       {/* Main Content Area */}

@@ -27,7 +27,7 @@ export function RiskAuditor() {
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl w-full col-span-1 md:col-span-2 lg:col-span-3">
-      <h2 className="text-xl font-bold mb-6 text-slate-900 dark:text-slate-900 dark:text-white font-heading">Supply Chain & ESG Risk Auditor</h2>
+      <h2 className="text-xl font-bold mb-6 text-slate-900 dark:text-white font-heading">Supply Chain & ESG Risk Auditor</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="space-y-4">
           <div>
@@ -71,11 +71,11 @@ export function RiskAuditor() {
               </div>
 
               <div className="mt-4 grid grid-cols-2 gap-4">
-                <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800">
+                <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800">
                   <p className="text-xs text-slate-600 dark:text-slate-300 mb-1">Total Carbon Footprint</p>
                   <p className="text-xl font-bold text-slate-900 dark:text-white">{result.total_carbon_tons.toLocaleString()} <span className="text-sm font-normal text-slate-600 dark:text-slate-300">Tons CO2e</span></p>
                 </div>
-                <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800">
+                <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800">
                   <p className="text-xs text-slate-600 dark:text-slate-300 mb-1">Est. CBAM Carbon Tax</p>
                   <p className="text-xl font-bold text-red-400">${result.annual_cbam_tax_usd.toLocaleString(undefined, { maximumFractionDigits: 0 })} <span className="text-sm font-normal text-slate-600 dark:text-slate-300">/ yr</span></p>
                 </div>

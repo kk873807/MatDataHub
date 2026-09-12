@@ -27,7 +27,7 @@ export function BeamDeflection() {
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl w-full h-full flex flex-col">
-      <h2 className="text-xl font-bold mb-4 text-slate-900 dark:text-slate-900 dark:text-white font-heading">Beam Deflection</h2>
+      <h2 className="text-xl font-bold mb-4 text-slate-900 dark:text-white font-heading">Beam Deflection</h2>
       <div className="space-y-4 flex-grow">
         <div className="grid grid-cols-2 gap-3">
           <div>

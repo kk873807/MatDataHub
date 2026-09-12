@@ -161,7 +161,7 @@ export default function WorkspacesPage() {
         </div>
 
         <div className="flex justify-between items-center">
-          <h2 className="text-xl font-bold text-slate-900 dark:text-slate-900 dark:text-white font-heading font-heading">Your Projects</h2>
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white font-heading">Your Projects</h2>
           <button 
             onClick={() => setIsModalOpen(true)}
             className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-sm font-semibold transition-colors shadow-lg shadow-blue-900/50"
@@ -233,7 +233,7 @@ export default function WorkspacesPage() {
       {isModalOpen && (
         <div className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-slate-50 dark:bg-slate-950/80 backdrop-blur-sm">
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 w-full max-w-md shadow-2xl relative">
-            <button onClick={() => setIsModalOpen(false)} className="absolute top-4 right-4 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white">
+            <button onClick={() => setIsModalOpen(false)} className="absolute top-4 right-4 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
               <X className="w-5 h-5" />
             </button>
             <h2 className="text-xl font-bold text-slate-900 dark:text-white font-heading mb-6">Create New Workspace</h2>

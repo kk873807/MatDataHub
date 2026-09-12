@@ -35,10 +35,10 @@ export default function BlogEditor({ secret }: { secret: string }) {
 
   return (
     <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-      <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-50 dark:bg-slate-950/50">
+      <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-950/50">
         <div className="flex items-center gap-3">
           <FileText className="w-5 h-5 text-emerald-400" />
-          <h2 className="text-xl font-bold text-slate-900 dark:text-slate-900 dark:text-white font-heading">Content Management</h2>
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white font-heading">Content Management</h2>
         </div>
         <button onClick={() => setIsOpen(!isOpen)} className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-2xl transition-colors text-sm flex items-center gap-2">
           <Plus className="w-4 h-4" /> {isOpen ? "Close Editor" : "Post New Blog"}
