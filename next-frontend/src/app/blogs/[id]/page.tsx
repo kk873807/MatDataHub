@@ -1,5 +1,5 @@
 "use client";
-import { ArrowLeft, Clock, Share2 } from "lucide-react";
+import { ArrowLeft, Clock, Share2, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useParams, notFound } from "next/navigation";
 import { HARDCODED_POSTS } from "@/lib/blogs";
@@ -15,6 +15,22 @@ export default function BlogPost() {
   }
   
   const blog = HARDCODED_POSTS[id];
+  
+  const handleShare = async () => {
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: blog.title,
+          url: window.location.href,
+        });
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        alert('Link copied to clipboard!');
+      }
+    } catch (err) {
+      console.error('Error sharing:', err);
+    }
+  };
   
   return (
     <main className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-24 pb-24 relative overflow-hidden">
@@ -61,7 +77,7 @@ export default function BlogPost() {
               
               <div className="flex items-center gap-3">
                 <span className="text-sm font-semibold text-slate-500 dark:text-slate-400 mr-2">Share article</span>
-                <button className="w-10 h-10 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 dark:hover:bg-indigo-900/30 dark:hover:text-indigo-400 transition-colors border border-slate-200 dark:border-slate-700">
+                <button onClick={handleShare} className="w-10 h-10 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 dark:hover:bg-indigo-900/30 dark:hover:text-indigo-400 transition-colors border border-slate-200 dark:border-slate-700">
                   <Share2 className="w-4 h-4" />
                 </button>
               </div>
@@ -80,6 +96,14 @@ export default function BlogPost() {
               <ReactMarkdown remarkPlugins={[remarkGfm]}>
                 {blog.content}
               </ReactMarkdown>
+            </div>
+            
+            {/* Feature Call To Action */}
+            <div className="mt-16 pt-12 border-t border-slate-100 dark:border-slate-800 text-center">
+              <h4 className="text-xl md:text-2xl text-slate-900 dark:text-white font-heading font-bold mb-6">Ready to apply these engineering insights?</h4>
+              <Link href={(blog as any).featureLink || '/analytics'} className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-bold rounded-2xl transition-all shadow-lg hover:shadow-indigo-500/25 transform hover:-translate-y-1">
+                {(blog as any).featureName || 'Try MatDataHub Analytics'} <ArrowRight className="w-5 h-5" />
+              </Link>
             </div>
           </div>
           
