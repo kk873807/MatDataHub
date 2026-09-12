@@ -17,7 +17,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
     }
 
     // Check for token on protected routes
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token") || new URLSearchParams(window.location.search).get("t");
     if (!token) {
       router.replace("/?login=true");
     } else {
