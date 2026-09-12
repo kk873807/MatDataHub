@@ -51,7 +51,7 @@ function AccountDashboardInner() {
         setProfile(data);
       } else {
         setError("Session expired. Please log in again.");
-        localStorage.removeItem("token");
+        localStorage.removeItem("token"); window.location.href = "/?login=true";
       }
     } catch (err) {
       setError("Network error fetching profile.");
@@ -140,7 +140,7 @@ function AccountDashboardInner() {
     }
   };
 
-  if (loading) return <div className="p-12 text-center text-slate-400">Loading profile...</div>;
+  if (loading || !profile) return <div className="flex justify-center items-center h-[50vh] text-slate-400">Authenticating...</div>;
   return (
     <main className="flex flex-col md:flex-row p-6 lg:p-10 w-full min-h-screen gap-8">
       {/* Sidebar */}
@@ -197,7 +197,7 @@ function AccountDashboardInner() {
                 </div>
                 <button 
                   onClick={() => {
-                    localStorage.removeItem("token");
+                    localStorage.removeItem("token"); window.location.href = "/?login=true";
                     setProfile(null);
                     setIsLogin(true);
                   }}
