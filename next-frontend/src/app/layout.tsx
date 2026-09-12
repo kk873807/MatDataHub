@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { Geist, Geist_Mono, Red_Hat_Display } from "next/font/google";
 import "./globals.css";
 import { TopNav } from "@/components/TopNav";
@@ -16,11 +16,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${redHat.variable} h-full antialiased`} suppressHydrationWarning>
-      <body suppressHydrationWarning className="min-h-full flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white overflow-hidden transition-colors duration-300">
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${redHat.variable} min-h-screen antialiased`} suppressHydrationWarning>
+      <body suppressHydrationWarning className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white transition-colors duration-300">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <TopNav />
-          <div className="flex-1 min-w-0 flex flex-col h-full overflow-y-auto relative print-scroll-visible">
+          <div className="flex-1 w-full flex flex-col relative print-scroll-visible">
             <AuthGuard>{children}</AuthGuard>
           </div>
         </ThemeProvider>
