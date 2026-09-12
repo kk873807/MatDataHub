@@ -79,17 +79,13 @@ export default function LandingPage() {
             <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed font-light">
               A unified platform for mechanical properties, macroeconomic cost indices, and AI-driven substitution analysis. Designed for the rigor of modern R&D.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              {isLoggedIn ? (
-                <Link href="/dashboard" className="flex items-center gap-2 px-8 py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold transition-all shadow-xl shadow-indigo-600/20 w-full sm:w-auto justify-center">
-                  Access Platform <ArrowRight className="w-4 h-4" />
-                </Link>
-              ) : (
-                <button onClick={() => setShowLoginModal(true)} className="flex items-center gap-2 px-8 py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold transition-all shadow-xl shadow-indigo-600/20 w-full sm:w-auto justify-center">
-                  Access Platform <ArrowRight className="w-4 h-4" />
-                </button>
-              )}
-            </div>
+                          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                {!isLoggedIn && (
+                  <button onClick={() => setShowLoginModal(true)} className="flex items-center gap-2 px-8 py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold transition-all shadow-xl shadow-indigo-600/20 w-full sm:w-auto justify-center">
+                    Access Platform <ArrowRight className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
           </motion.div>
         </div>
       </section>
@@ -179,6 +175,32 @@ export default function LandingPage() {
           ))}
         </div>
       </section>
+
+      {/* Featured Engineering Blog Banner */}
+      <section className="py-12 px-6">
+        <div className="max-w-5xl mx-auto">
+          <Link href="/resources" onClick={(e) => { e.preventDefault(); alert('Blog article coming soon in the next release!'); }} className="group relative block overflow-hidden rounded-3xl border border-indigo-500/30 bg-indigo-950/20 text-left transition-all hover:bg-indigo-900/40 hover:border-indigo-500/60 hover:shadow-[0_0_40px_-10px_rgba(99,102,241,0.2)] backdrop-blur-sm">
+            <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-indigo-400 to-purple-500"></div>
+            <div className="p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+              <div className="space-y-3 max-w-2xl">
+                <div className="flex items-center gap-3">
+                  <span className="px-2.5 py-1 text-[10px] font-black uppercase tracking-widest bg-indigo-500 text-white rounded-md shadow-lg">New Research</span>
+                  <span className="text-xs font-bold text-slate-400">Sept 4, 2026 • 8 min read</span>
+                </div>
+                <h2 className="text-xl md:text-2xl font-bold text-white group-hover:text-indigo-300 transition-colors leading-tight">Modeling Thermal Expansion in Aerospace Alloys</h2>
+                <p className="text-slate-400 text-sm leading-relaxed max-w-xl">
+                  A deep dive into how our new predictive modeling engine handles extreme temperature deltas in titanium composites compared to legacy FEM solvers.
+                </p>
+              </div>
+              <div className="shrink-0 flex items-center justify-center w-12 h-12 rounded-full bg-indigo-500/20 text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-all">
+                <ArrowRight className="w-5 h-5" />
+              </div>
+            </div>
+          </Link>
+        </div>
+      </section>
+
+
 
       {/* Testimonials / Community Feedback */}
       <section className="py-24 bg-slate-900/50 border-y border-slate-800/50">
