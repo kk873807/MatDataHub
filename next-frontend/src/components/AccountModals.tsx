@@ -138,7 +138,7 @@ export function AccountModals({ activeModal, setActiveModal, userInfo }: Account
                       <Key className="w-5 h-5 text-emerald-600 dark:text-emerald-400" /> Programmatic API Access
                     </h2>
                     <p className="text-slate-600 dark:text-slate-300 text-sm mb-6">
-                      As an Advanced tier member, you are eligible for programmatic REST API access.
+                      As an Advanced tier member, you are eligible for programmatic REST API access to query our materials database. API credentials are provisioned securely by our team upon request.
                     </p>
                     
                     {profile.api_key ? (
@@ -146,7 +146,7 @@ export function AccountModals({ activeModal, setActiveModal, userInfo }: Account
                         <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
                         <div>
                           <p className="text-emerald-600 dark:text-emerald-400 font-bold text-sm">API Access Granted</p>
-                          <p className="text-slate-500 dark:text-slate-400 text-xs mt-1">Your API credentials have been provisioned.</p>
+                          <p className="text-slate-500 dark:text-slate-400 text-xs mt-1">Your API credentials have been provisioned. Contact support at <strong>support@matdatahub.com</strong> to receive your keys securely.</p>
                         </div>
                       </div>
                     ) : (
