@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Plus, Trash2, Download, Component, FileText, Wrench, Shield, Thermometer, Activity, IndianRupee, Share2, Flame, Loader2, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Lock, Plus, Trash2, Download, Component, FileText, Wrench, Shield, Thermometer, Activity, IndianRupee, Share2, Flame, Loader2, CheckCircle2 } from "lucide-react";
 import { SafetyFactor } from "@/components/SafetyFactor";
 import { ThermalExpansion } from "@/components/ThermalExpansion";
 import { FatigueLife } from "@/components/FatigueLife";
@@ -211,6 +211,24 @@ export default function ProjectWorkspace() {
 
   // Tool rendering logic
   const renderTool = () => {
+    const restrictedTools = ["safety", "thermal", "fatigue", "deflection", "shock", "cost"];
+    if (restrictedTools.includes(activeTool) && profile?.tier !== "advanced" && !profile?.is_admin) {
+      return (
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-12 text-center space-y-4">
+          <div className="w-12 h-12 bg-amber-500/10 border border-amber-500/30 rounded-xl flex items-center justify-center mx-auto text-amber-400">
+            <Lock className="w-6 h-6" />
+          </div>
+          <h3 className="text-xl font-bold text-white">Advanced Tier Locked</h3>
+          <p className="text-slate-400 text-sm max-w-md mx-auto">
+            Engineering analysis tools (Safety Factor, Thermal Expansion, Fatigue Life, Beam Deflection, Cost Optimizer) require an Advanced subscription.
+          </p>
+          <Link href="/account" className="inline-block bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-2.5 rounded-lg text-sm transition-all">
+            Upgrade to Advanced
+          </Link>
+        </div>
+      );
+    }
+
     if (activeTool === "bom") {
       return (
         <div className="space-y-6">
@@ -817,7 +835,7 @@ export default function ProjectWorkspace() {
             <Share2 className="w-4 h-4" /> Blueprints (JSON)
           </button>
           
-          <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mt-6 mb-2 ml-2">Engineering Tools</div>`n          {profile?.tier !== "advanced" && !profile?.is_admin && <div className="ml-2 mb-2 px-2 py-1 bg-amber-900/30 text-amber-400 text-[10px] rounded border border-amber-900/50 uppercase tracking-wider font-bold">Advanced Tier Only</div>}
+          <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mt-6 mb-2 ml-2">Engineering Tools</div>          {profile?.tier !== "advanced" && !profile?.is_admin && <div className="ml-2 mb-2 px-2 py-1 bg-amber-900/30 text-amber-400 text-[10px] rounded border border-amber-900/50 uppercase tracking-wider font-bold">Advanced Tier Only</div>}
           <button onClick={()=>setActiveTool("safety")} className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTool === 'safety' ? 'bg-emerald-600/20 text-emerald-400 border border-emerald-500/30' : 'text-slate-400 hover:bg-slate-900 hover:text-white border border-transparent'}`}>
             <Shield className="w-4 h-4" /> Safety Factor
           </button>
