@@ -147,7 +147,7 @@ def get_current_user(
         )
     # Single-session enforcement: check JWT session token matches DB
     jwt_sid = payload.get("sid", "")
-    if jwt_sid and user.session_token and jwt_sid != user.session_token:
+    if user.session_token and jwt_sid != user.session_token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Session expired. You have been logged in from another device or browser.",
