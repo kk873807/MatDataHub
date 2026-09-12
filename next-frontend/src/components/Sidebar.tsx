@@ -7,7 +7,6 @@ import { API } from "@/lib/api";
 
 const navItems = [
   { name: "App Dashboard", href: "/dashboard", icon: Home },
-  { name: "Website Home", href: "/", icon: Globe },
   { name: "Browse Materials", href: "/materials", icon: Database },
   { name: "Analytics", href: "/analytics", icon: BarChart3 },
   { name: "Ask AI Adviser", href: "/ai", icon: Bot },
@@ -55,13 +54,22 @@ export function Sidebar() {
             MatDataHub
           </h1>
         )}
-        <button 
-          onClick={() => setCollapsed(!collapsed)} 
-          className={`p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors ${collapsed ? 'mx-auto' : ''}`}
-          title="Toggle Sidebar"
-        >
-          {collapsed ? <PanelRightClose className="w-5 h-5" /> : <PanelLeftClose className="w-5 h-5" />}
-        </button>
+        <div className={`flex items-center gap-1 ${collapsed ? 'mx-auto flex-col' : ''}`}>
+          <Link 
+            href="/" 
+            className="p-2 rounded-lg text-slate-400 hover:text-indigo-400 hover:bg-slate-800 transition-colors"
+            title="Go to Website Home"
+          >
+            <Globe className="w-5 h-5" />
+          </Link>
+          <button 
+            onClick={() => setCollapsed(!collapsed)} 
+            className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            title="Toggle Sidebar"
+          >
+            {collapsed ? <PanelRightClose className="w-5 h-5" /> : <PanelLeftClose className="w-5 h-5" />}
+          </button>
+        </div>
       </div>
       <nav className="flex-1 p-3 space-y-1 overflow-y-auto overflow-x-hidden">
         {navItems.map((item) => {

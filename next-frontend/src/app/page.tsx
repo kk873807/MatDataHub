@@ -223,9 +223,9 @@ export default function LandingPage() {
             <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 flex flex-col">
               <h3 className="text-xl font-bold text-white mb-2">Academic Free</h3>
               <p className="text-slate-400 text-sm mb-6 h-10">Perfect for students and open research.</p>
-              <div className="text-4xl font-extrabold text-white mb-8">₹0<span className="text-lg font-medium text-slate-500">/mo</span></div>
+              <div className="text-4xl font-extrabold text-white mb-8">&#8377;0<span className="text-lg font-medium text-slate-500">/mo</span></div>
               <ul className="space-y-3 mb-8 flex-1">
-                {["Search 100+ basic materials", "View mechanical properties", "Standard AI Adviser access", "Up to 2 Workspaces"].map((f, i) => (
+                {["Search limited basic materials", "View mechanical properties", "Basic AI Adviser", "Community Support"].map((f, i) => (
                   <li key={i} className="flex items-center gap-2 text-sm text-slate-300">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500" /> {f}
                   </li>
@@ -239,9 +239,9 @@ export default function LandingPage() {
               <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-indigo-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Most Popular</div>
               <h3 className="text-xl font-bold text-white mb-2">Professional</h3>
               <p className="text-slate-400 text-sm mb-6 h-10">For independent engineers and small firms.</p>
-              <div className="text-4xl font-extrabold text-white mb-8">₹499<span className="text-lg font-medium text-slate-500">/mo</span></div>
+              <div className="text-4xl font-extrabold text-white mb-8">&#8377;499<span className="text-lg font-medium text-slate-500">/mo</span></div>
               <ul className="space-y-3 mb-8 flex-1">
-                {["Full 1000+ material database", "Export detailed PDFs", "AI Material Substitution", "Unlimited Workspaces"].map((f, i) => (
+                {["Full 1000+ material database", "Export detailed PDFs", "Advanced AI Adviser", "Unlimited Workspaces"].map((f, i) => (
                   <li key={i} className="flex items-center gap-2 text-sm text-slate-300">
                     <CheckCircle2 className="w-4 h-4 text-indigo-400" /> {f}
                   </li>
@@ -254,9 +254,9 @@ export default function LandingPage() {
             <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 flex flex-col">
               <h3 className="text-xl font-bold text-white mb-2">Advanced Enterprise</h3>
               <p className="text-slate-400 text-sm mb-6 h-10">Full financial & physics capabilities.</p>
-              <div className="text-4xl font-extrabold text-white mb-8">₹19,999<span className="text-lg font-medium text-slate-500">/mo</span></div>
+              <div className="text-4xl font-extrabold text-white mb-8">&#8377;19,999<span className="text-lg font-medium text-slate-500">/mo</span></div>
               <ul className="space-y-3 mb-8 flex-1">
-                {["Macroeconomic Proxy Pricing", "CBAM Emissions Calculator", "Engineering Physics Tools (Safety, Fatigue)", "Composite Synthesizer", "Priority API Access"].map((f, i) => (
+                {["Macroeconomic Proxy Pricing", "CBAM Emissions Calculator", "Engineering Physics Tools", "Composite Synthesizer", "Priority API Access"].map((f, i) => (
                   <li key={i} className="flex items-center gap-2 text-sm text-slate-300">
                     <CheckCircle2 className="w-4 h-4 text-amber-500" /> {f}
                   </li>
