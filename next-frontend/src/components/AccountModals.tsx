@@ -240,7 +240,7 @@ export function AccountModals({ activeModal, setActiveModal, userInfo }: Account
           {activeModal === 'billing' && profile && (
             <div className="space-y-6">
               <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 text-white shadow-xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-4 opacity-10"><Zap className="w-32 h-32"/></div>
+                <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none"><Zap className="w-32 h-32"/></div>
                 <p className="text-sm text-slate-300 font-medium uppercase tracking-wider mb-2">Current Plan</p>
                 <div className="flex items-end gap-3 mb-6">
                   <h4 className="text-4xl font-black capitalize tracking-tight">{profile.tier || "Free"}</h4>
