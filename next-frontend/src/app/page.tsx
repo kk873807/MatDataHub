@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -165,7 +165,7 @@ export default function LandingPage() {
       {/* Featured Blog Banner */}
       <section id="blog" className="py-12 px-6">
         <div className="max-w-5xl mx-auto">
-          <Link href="/resources"  className="group relative block overflow-hidden rounded-3xl border border-indigo-500/30 bg-white dark:bg-indigo-950/20 text-left transition-all hover:shadow-2xl shadow-lg border-slate-200 dark:border-indigo-500/30 hover:border-indigo-500/60 hover:shadow-[0_0_40px_-10px_rgba(99,102,241,0.2)] backdrop-blur-sm">
+          <Link href="/blogs/1"  className="group relative block overflow-hidden rounded-3xl border border-indigo-500/30 bg-white dark:bg-indigo-950/20 text-left transition-all hover:shadow-2xl shadow-lg border-slate-200 dark:border-indigo-500/30 hover:border-indigo-500/60 hover:shadow-[0_0_40px_-10px_rgba(99,102,241,0.2)] backdrop-blur-sm">
             <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-indigo-400 to-purple-500"></div>
             <div className="p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
               <div className="space-y-3 max-w-2xl">
@@ -312,6 +312,7 @@ export default function LandingPage() {
             <Link href="/terms" className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-900 dark:text-white transition-colors">Terms & Conditions</Link>
             <Link href="/privacy" className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-900 dark:text-white transition-colors">Privacy Policy</Link>
             <Link href="/contact" className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-900 dark:text-white transition-colors">Contact</Link>
+            <Link href="/admin" className="text-sm text-amber-600 dark:text-amber-500 hover:text-amber-700 dark:hover:text-amber-400 transition-colors font-bold">Admin Login</Link>
           </div>
         </div>
       </footer>
