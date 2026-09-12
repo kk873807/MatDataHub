@@ -214,7 +214,7 @@ export default function MaterialDetail() {
               </p>
               {priceHistory.length > 0 && (
                 <div className="flex items-center justify-end gap-1.5 text-xs font-semibold text-emerald-500 bg-emerald-950/40 px-2 py-1 rounded inline-flex self-end">
-                  <TrendingUp className="w-3.5 h-3.5" /> Live Data
+                  <TrendingUp className="w-3.5 h-3.5" /> Market Trend
                 </div>
               )}
             </div>

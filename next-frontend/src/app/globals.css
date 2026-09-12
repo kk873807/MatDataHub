@@ -19,7 +19,7 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-@media print { html, body, main, div { overflow: visible !important; height: auto !important; }
+@media print { html, body, main { overflow: visible !important; height: auto !important; }
   body { background-color: white !important; color: black !important; }
   aside, nav, button, a[href^="/analytics"] { display: none !important; }
   main { margin: 0 !important; padding: 0 !important; }
