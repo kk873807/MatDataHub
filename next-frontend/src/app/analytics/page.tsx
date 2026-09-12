@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { BarChart3, Scale, Replace, Factory, Layers, Shield } from "lucide-react";
+import { BarChart3, Scale, Replace, Info, Factory, Layers, Shield } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function AnalyticsDashboard() {
@@ -103,7 +103,7 @@ export default function AnalyticsDashboard() {
           <div>
             <h4 className="text-white font-bold text-base mb-1">Enterprise-Grade Algorithmic Trust</h4>
             <p className="text-sm text-slate-400 leading-relaxed max-w-4xl">
-              Calculations performed in MatDataHub analytics—including CBAM emissions forecasting, multi-objective substitution mapping, and synthetic material design—are rigorously based on verified physics, recognized thermodynamic equations, and vetted industry constants (e.g., EU CBAM reference prices, ICE DB carbon factors). We ensure absolute reliability for enterprise compliance and engineering decisions.
+              Calculations performed in MatDataHub analytics—including CBAM emissions forecasting, multi-objective substitution mapping, and synthetic material design—are rigorously based on verified physics, recognized thermodynamic equations, and vetted industry constants (e.g., EU CBAM reference prices, ICE DB carbon factors). While our models use industry constants (e.g., ICE DB factors) to establish highly reliable baseline trends, please note that our pricing and supply chain outputs are macroeconomic estimates, not live spot-market quotes. Always verify final figures with your raw material suppliers for exact commercial procurement.
             </p>
           </div>
         </div>
