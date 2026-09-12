@@ -267,6 +267,12 @@ def login(req: LoginRequest, request: Request, db: Session = Depends(get_db)):
     """
     user = db.query(User).filter(User.email == req.email.lower().strip()).first()
 
+    if user and user.auth_provider == "google" and user.hashed_password == "OAUTH_USER_NO_PASSWORD":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="This account was created with Google. Please use 'Continue with Google' to sign in.",
+        )
+
     if not user or not verify_password(req.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
