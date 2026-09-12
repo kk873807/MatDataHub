@@ -4,9 +4,23 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, BookOpen, Database, Target, BrainCircuit, ShieldCheck, Cpu, TestTube2, CheckCircle2, MessageSquare, ThumbsUp } from "lucide-react";
 import { API } from "@/lib/api";
+import { LoginModal } from "@/components/LoginModal";
 
 export default function LandingPage() {
   const [feedbacks, setFeedbacks] = useState<any[]>([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
+  useEffect(() => {
+    // Check auth
+    const token = localStorage.getItem("token");
+    if (token) setIsLoggedIn(true);
+
+    // Check query params for ?login=true
+    if (window.location.search.includes('login=true')) {
+      setShowLoginModal(true);
+    }
+  }, []);
 
   useEffect(() => {
     fetch(`${API}/feedback/public`)
@@ -37,12 +51,15 @@ export default function LandingPage() {
             <Link href="#problem" className="text-sm font-medium hover:text-indigo-400 transition-colors hidden md:block">Problem</Link>
             <Link href="#solution" className="text-sm font-medium hover:text-indigo-400 transition-colors hidden md:block">Platform</Link>
             <Link href="#pricing" className="text-sm font-medium hover:text-indigo-400 transition-colors hidden md:block">Pricing</Link>
-            <Link href="/account" className="text-sm font-semibold text-white bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg transition-all border border-slate-700">
-              Sign In
-            </Link>
-            <Link href="/dashboard" className="text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-lg transition-all shadow-lg shadow-indigo-600/20 hidden sm:block">
-              Go to Dashboard
-            </Link>
+            {isLoggedIn ? (
+              <Link href="/dashboard" className="text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-lg transition-all shadow-lg shadow-indigo-600/20">
+                Go to App Dashboard
+              </Link>
+            ) : (
+              <button onClick={() => setShowLoginModal(true)} className="text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 px-5 py-2 rounded-lg transition-all shadow-lg shadow-indigo-600/20">
+                Sign In
+              </button>
+            )}
           </div>
         </div>
       </nav>
@@ -63,9 +80,15 @@ export default function LandingPage() {
               A unified platform for mechanical properties, macroeconomic cost indices, and AI-driven substitution analysis. Designed for the rigor of modern R&D.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href="/account" className="flex items-center gap-2 px-8 py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold transition-all shadow-xl shadow-indigo-600/20 w-full sm:w-auto justify-center">
-                Access Platform <ArrowRight className="w-4 h-4" />
-              </Link>
+              {isLoggedIn ? (
+                <Link href="/dashboard" className="flex items-center gap-2 px-8 py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold transition-all shadow-xl shadow-indigo-600/20 w-full sm:w-auto justify-center">
+                  Access Platform <ArrowRight className="w-4 h-4" />
+                </Link>
+              ) : (
+                <button onClick={() => setShowLoginModal(true)} className="flex items-center gap-2 px-8 py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold transition-all shadow-xl shadow-indigo-600/20 w-full sm:w-auto justify-center">
+                  Access Platform <ArrowRight className="w-4 h-4" />
+                </button>
+              )}
             </div>
           </motion.div>
         </div>
@@ -231,7 +254,7 @@ export default function LandingPage() {
                   </li>
                 ))}
               </ul>
-              <Link href="/account" className="block text-center w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold transition-colors">Start Free</Link>
+              <button onClick={() => setShowLoginModal(true)} className="block text-center w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold transition-colors">Start Free</button>
             </div>
 
             {/* Pro */}
@@ -247,7 +270,7 @@ export default function LandingPage() {
                   </li>
                 ))}
               </ul>
-              <Link href="/account" className="block text-center w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold transition-colors">Upgrade to Pro</Link>
+              <button onClick={() => setShowLoginModal(true)} className="block text-center w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold transition-colors">Upgrade to Pro</button>
             </div>
 
             {/* Advanced */}
@@ -262,7 +285,7 @@ export default function LandingPage() {
                   </li>
                 ))}
               </ul>
-              <Link href="/account" className="block text-center w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold transition-colors">Get Advanced</Link>
+              <button onClick={() => setShowLoginModal(true)} className="block text-center w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold transition-colors">Get Advanced</button>
             </div>
 
           </div>
@@ -284,6 +307,7 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
+      <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
     </div>
   );
 }
