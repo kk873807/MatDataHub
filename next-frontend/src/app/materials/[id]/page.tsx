@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import {
-  ArrowLeft,
+  ArrowLeft, Info,
   TrendingUp,
   SearchCode,
   Beaker,
@@ -212,6 +212,7 @@ export default function MaterialDetail() {
                 ₹{material.cost_per_kg_min}
                 <span className="text-xl text-slate-500 font-medium">/kg</span>
               </p>
+              <p className="text-[10px] text-slate-500 mb-2 mt-[-4px] uppercase tracking-wide font-bold">Estimated Baseline</p>
               {priceHistory.length > 0 && (
                 <div className="flex items-center justify-end gap-1.5 text-xs font-semibold text-emerald-500 bg-emerald-950/40 px-2 py-1 rounded inline-flex self-end">
                   <TrendingUp className="w-3.5 h-3.5" /> Market Trend
@@ -339,6 +340,9 @@ export default function MaterialDetail() {
                 <TrendingUp className="w-5 h-5 text-emerald-400" /> Historical
                 Price Tracking (12M)
               </h3>
+              <p className="text-[11px] leading-relaxed text-slate-400 mb-6 flex items-start gap-1.5">
+                <Info className="w-4 h-4 shrink-0 mt-0.5" /> Data is generated via macroeconomic proxy indexing for trend analysis. It is not a live spot-price. Please consult a supplier for exact procurement pricing.
+              </p>
 
               {isPriceLocked ? (
                 <div className="p-5 h-48 mt-4 rounded-xl bg-slate-950 border border-emerald-500/30 text-center relative overflow-hidden group flex flex-col items-center justify-center">

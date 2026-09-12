@@ -48,6 +48,7 @@ export function CostOptimizer() {
         <div>
           <h3 className="font-bold text-white leading-tight">Cost Optimizer</h3>
           <p className="text-xs text-slate-400">Estimate volume discounting and batch costs</p>
+          <p className="text-[10px] text-amber-500/80 mt-1 uppercase tracking-wider font-semibold">Estimated Calculation - Not a Live Quote</p>
         </div>
       </div>
 
