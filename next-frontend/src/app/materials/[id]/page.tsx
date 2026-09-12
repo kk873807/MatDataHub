@@ -214,7 +214,7 @@ export default function MaterialDetail() {
               </p>
               <p className="text-[10px] text-slate-500 dark:text-slate-400 mb-2 mt-[-4px] uppercase tracking-wide font-bold">Estimated Baseline</p>
               {priceHistory.length > 0 && (
-                <div className="flex items-center justify-end gap-1.5 text-xs font-semibold text-emerald-500 bg-emerald-950/40 px-2 py-1 rounded inline-flex self-end">
+                <div className="flex items-center justify-end gap-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-500 bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-500 px-2 py-1 rounded inline-flex self-end">
                   <TrendingUp className="w-3.5 h-3.5" /> Market Trend
                 </div>
               )}

@@ -4,6 +4,7 @@ import "./globals.css";
 import { TopNav } from "@/components/TopNav";
 import { AuthGuard } from "@/components/AuthGuard";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { AiChatWidget } from "@/components/AiChatWidget";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
@@ -24,6 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <AuthGuard>{children}</AuthGuard>
           </div>
         </ThemeProvider>
+        <AiChatWidget />
       </body>
     </html>
   );
