@@ -4,14 +4,12 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, BookOpen, Database, Target, BrainCircuit, ShieldCheck, Cpu, TestTube2, CheckCircle2, MessageSquare, ThumbsUp } from "lucide-react";
 import { API } from "@/lib/api";
-import { LoginModal } from "@/components/LoginModal";
 
 export default function LandingPage() {
   const [feedbacks, setFeedbacks] = useState<any[]>([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [authChecked, setAuthChecked] = useState(false);
-  const [showLoginModal, setShowLoginModal] = useState(false);
-
+  
   useEffect(() => {
     // Capture Google OAuth token if present
     const urlParams = new URLSearchParams(window.location.search);
@@ -28,7 +26,7 @@ export default function LandingPage() {
 
     // Check query params for ?login=true
     if (window.location.search.includes('login=true')) {
-      setShowLoginModal(true);
+      window.dispatchEvent(new Event("openLoginModal"));
     }
   }, []);
 
@@ -46,44 +44,20 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 selection:bg-indigo-500/30 overflow-x-hidden font-sans">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-200 transition-colors duration-300 selection:bg-indigo-500/30 overflow-x-hidden font-sans">
       
       {/* Navbar */}
-      <nav className="fixed top-0 w-full border-b border-slate-800/50 bg-slate-950/80 backdrop-blur-lg z-50">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-              <Database className="w-4 h-4 text-white" />
-            </div>
-            <span className="font-bold text-xl tracking-tight text-white">MatDataHub</span>
-          </div>
-          <div className="flex items-center gap-6">
-            <Link href="#problem" className="text-sm font-medium hover:text-indigo-400 transition-colors hidden md:block">Problem</Link>
-            <Link href="#solution" className="text-sm font-medium hover:text-indigo-400 transition-colors hidden md:block">Platform</Link>
-            <Link href="#pricing" className="text-sm font-medium hover:text-indigo-400 transition-colors hidden md:block">Pricing</Link>
-            <Link href="#blog" className="text-sm font-medium hover:text-indigo-400 transition-colors hidden md:block">Engineering Blog</Link>
-            {!authChecked ? null : isLoggedIn ? (
-              <Link href="/dashboard" className="text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-lg transition-all shadow-lg shadow-indigo-600/20">
-                Go to App Dashboard
-              </Link>
-            ) : (
-              <button onClick={() => setShowLoginModal(true)} className="text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 px-5 py-2 rounded-lg transition-all shadow-lg shadow-indigo-600/20">
-                Sign In
-              </button>
-            )}
-          </div>
-        </div>
-      </nav>
+      
 
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 px-6">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-400/20 dark:bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none"></div>
         <div className="max-w-5xl mx-auto text-center relative z-10">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 text-xs font-semibold uppercase tracking-widest mb-6">
               <BookOpen className="w-3.5 h-3.5" /> Academic-Grade Materials Intelligence
             </div>
-            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-white mb-6 leading-tight">
+            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-6 font-heading leading-tight font-heading ">
               Engineering decisions, <br />
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-cyan-400">backed by physics.</span>
             </h1>
@@ -92,7 +66,7 @@ export default function LandingPage() {
             </p>
                           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 {authChecked && !isLoggedIn && (
-                  <button onClick={() => setShowLoginModal(true)} className="flex items-center gap-2 px-8 py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold transition-all shadow-xl shadow-indigo-600/20 w-full sm:w-auto justify-center">
+                  <button onClick={() => window.dispatchEvent(new Event("openLoginModal"))} className="flex items-center gap-2 px-8 py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold transition-all shadow-xl shadow-indigo-600/20 w-full sm:w-auto justify-center">
                     Access Platform <ArrowRight className="w-4 h-4" />
                   </button>
                 )}
@@ -102,11 +76,11 @@ export default function LandingPage() {
       </section>
 
       {/* Problem Section */}
-      <section id="problem" className="py-24 bg-slate-900/50 border-y border-slate-800/50">
+      <section id="problem" className="py-24 bg-white dark:bg-slate-900/50 border-y border-slate-200 dark:border-slate-800/50">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <div>
-              <h2 className="text-3xl font-bold text-white mb-6">The Data Fragmentation Problem</h2>
+              <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-6 font-heading font-heading ">The Data Fragmentation Problem</h2>
               <p className="text-slate-400 leading-relaxed mb-6">
                 Engineers and material scientists spend countless hours cross-referencing isolated databases to find mechanical limits, pricing estimates, and ESG compliance factors (like CBAM).
               </p>
@@ -166,7 +140,7 @@ export default function LandingPage() {
       {/* Solution Section */}
       <section id="solution" className="py-24 px-6">
         <div className="max-w-7xl mx-auto text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">A Unified Academic & Industrial Solution</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 font-heading ">A Unified Academic & Industrial Solution</h2>
           <p className="text-slate-400 max-w-2xl mx-auto">MatDataHub bridges the gap between theoretical material science and practical engineering economics.</p>
         </div>
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -180,7 +154,7 @@ export default function LandingPage() {
           ].map((feat, i) => (
             <div key={i} className="bg-slate-900/40 border border-slate-800 p-8 rounded-2xl hover:bg-slate-800/40 transition-colors">
               <feat.icon className={`w-8 h-8 ${feat.color} mb-5`} />
-              <h3 className="text-xl font-bold text-white mb-2">{feat.title}</h3>
+              <h3 className="text-xl font-bold text-white mb-2 font-heading ">{feat.title}</h3>
               <p className="text-slate-400 text-sm leading-relaxed">{feat.desc}</p>
             </div>
           ))}
@@ -190,7 +164,7 @@ export default function LandingPage() {
       {/* Featured Engineering Blog Banner */}
       <section id="blog" className="py-12 px-6">
         <div className="max-w-5xl mx-auto">
-          <Link href="/resources"  className="group relative block overflow-hidden rounded-3xl border border-indigo-500/30 bg-indigo-950/20 text-left transition-all hover:bg-indigo-900/40 hover:border-indigo-500/60 hover:shadow-[0_0_40px_-10px_rgba(99,102,241,0.2)] backdrop-blur-sm">
+          <Link href="/resources"  className="group relative block overflow-hidden rounded-3xl border border-indigo-500/30 bg-white dark:bg-indigo-950/20 text-left transition-all hover:shadow-2xl shadow-lg border border-slate-200 dark:border-indigo-500/30 hover:border-indigo-500/60 hover:shadow-[0_0_40px_-10px_rgba(99,102,241,0.2)] backdrop-blur-sm">
             <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-indigo-400 to-purple-500"></div>
             <div className="p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
               <div className="space-y-3 max-w-2xl">
@@ -198,7 +172,7 @@ export default function LandingPage() {
                   <span className="px-2.5 py-1 text-[10px] font-black uppercase tracking-widest bg-indigo-500 text-white rounded-md shadow-lg">New Research</span>
                   <span className="text-xs font-bold text-slate-400">Sept 4, 2026 • 8 min read</span>
                 </div>
-                <h2 className="text-xl md:text-2xl font-bold text-white group-hover:text-indigo-300 transition-colors leading-tight">Modeling Thermal Expansion in Aerospace Alloys</h2>
+                <h2 className="text-xl md:text-2xl font-bold text-white group-hover:text-indigo-300 transition-colors leading-tight font-heading ">Modeling Thermal Expansion in Aerospace Alloys</h2>
                 <p className="text-slate-400 text-sm leading-relaxed max-w-xl">
                   A deep dive into how our new predictive modeling engine handles extreme temperature deltas in titanium composites compared to legacy FEM solvers.
                 </p>
@@ -214,9 +188,9 @@ export default function LandingPage() {
 
 
       {/* Testimonials / Community Feedback */}
-      <section className="py-24 bg-slate-900/50 border-y border-slate-800/50">
+      <section className="py-24 bg-white dark:bg-slate-900/50 border-y border-slate-200 dark:border-slate-800/50">
         <div className="max-w-7xl mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">Live Community Feedback</h2>
+          <h2 className="text-3xl font-bold text-white mb-4 font-heading ">Live Community Feedback</h2>
           <p className="text-slate-400 mb-12 max-w-2xl mx-auto">See what our community of engineers and scientists are saying directly from our platform.</p>
           
           <div className="grid md:grid-cols-3 gap-8 text-left">
@@ -270,14 +244,14 @@ export default function LandingPage() {
       <section id="pricing" className="py-24 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-white mb-4">Transparent Pricing Models</h2>
+            <h2 className="text-3xl font-bold text-white mb-4 font-heading ">Transparent Pricing Models</h2>
             <p className="text-slate-400">Select the tier that fits your research and engineering needs.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             
             {/* Free */}
             <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 flex flex-col">
-              <h3 className="text-xl font-bold text-white mb-2">Academic Free</h3>
+              <h3 className="text-xl font-bold text-white mb-2 font-heading ">Academic Free</h3>
               <p className="text-slate-400 text-sm mb-6 h-10">Perfect for students and open research.</p>
               <div className="text-4xl font-extrabold text-white mb-8">&#8377;0<span className="text-lg font-medium text-slate-500">/mo</span></div>
               <ul className="space-y-3 mb-8 flex-1">
@@ -287,13 +261,13 @@ export default function LandingPage() {
                   </li>
                 ))}
               </ul>
-              <button onClick={() => setShowLoginModal(true)} className="block text-center w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold transition-colors">Start Free</button>
+              <button onClick={() => window.dispatchEvent(new Event("openLoginModal"))} className="block text-center w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold transition-colors">Start Free</button>
             </div>
 
             {/* Pro */}
             <div className="bg-slate-900 border-2 border-indigo-500 rounded-2xl p-8 flex flex-col relative transform md:-translate-y-4 shadow-2xl shadow-indigo-900/20">
               <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-indigo-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Most Popular</div>
-              <h3 className="text-xl font-bold text-white mb-2">Professional</h3>
+              <h3 className="text-xl font-bold text-white mb-2 font-heading ">Professional</h3>
               <p className="text-slate-400 text-sm mb-6 h-10">For independent engineers and small firms.</p>
               <div className="text-4xl font-extrabold text-white mb-8">&#8377;499<span className="text-lg font-medium text-slate-500">/mo</span></div>
               <ul className="space-y-3 mb-8 flex-1">
@@ -303,12 +277,12 @@ export default function LandingPage() {
                   </li>
                 ))}
               </ul>
-              <button onClick={() => setShowLoginModal(true)} className="block text-center w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold transition-colors">Upgrade to Pro</button>
+              <button onClick={() => window.dispatchEvent(new Event("openLoginModal"))} className="block text-center w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold transition-colors">Upgrade to Pro</button>
             </div>
 
             {/* Advanced */}
             <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 flex flex-col">
-              <h3 className="text-xl font-bold text-white mb-2">Advanced Enterprise</h3>
+              <h3 className="text-xl font-bold text-white mb-2 font-heading ">Advanced Enterprise</h3>
               <p className="text-slate-400 text-sm mb-6 h-10">Full financial & physics capabilities.</p>
               <div className="text-4xl font-extrabold text-white mb-8">&#8377;19,999<span className="text-lg font-medium text-slate-500">/mo</span></div>
               <ul className="space-y-3 mb-8 flex-1">
@@ -318,7 +292,7 @@ export default function LandingPage() {
                   </li>
                 ))}
               </ul>
-              <button onClick={() => setShowLoginModal(true)} className="block text-center w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold transition-colors">Get Advanced</button>
+              <button onClick={() => window.dispatchEvent(new Event("openLoginModal"))} className="block text-center w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold transition-colors">Get Advanced</button>
             </div>
 
           </div>
@@ -340,7 +314,7 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
-      <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
+      
     </div>
   );
 }

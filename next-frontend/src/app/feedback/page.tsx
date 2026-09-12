@@ -81,43 +81,43 @@ export default function FeedbackCommunityPage() {
         {/* Left Col: Wall */}
         <div className="lg:col-span-2 space-y-6">
           <div>
-            <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-              <MessageSquare className="w-8 h-8 text-indigo-400" />
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-white font-heading flex items-center gap-3">
+              <MessageSquare className="w-8 h-8 text-blue-600 dark:text-blue-400" />
               Community Feedback
             </h1>
-            <p className="text-slate-300 mt-2">See what other engineers are requesting and vote on new features.</p>
+            <p className="text-slate-600 dark:text-slate-300 mt-2">See what other engineers are requesting and vote on new features.</p>
           </div>
           
           <div className="space-y-4 pt-4">
             {loading ? (
               <div className="flex justify-center p-10"><Loader2 className="w-8 h-8 animate-spin text-indigo-500" /></div>
             ) : feedbacks.length === 0 ? (
-              <div className="text-center p-12 bg-slate-900 border border-slate-800 rounded-2xl">
+              <div className="text-center p-12 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl">
                 <p className="text-slate-500">No feedback yet. Be the first to start the conversation!</p>
               </div>
             ) : (
               feedbacks.filter(fb => !fb.parent_id).map((fb) => (
-                <div key={fb.id} className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl relative group">
+                <div key={fb.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xl relative group">
                   <div className="flex justify-between items-start mb-3">
                     <div>
-                      <h4 className="font-bold text-white">{fb.name || 'Anonymous Engineer'}</h4>
-                      <span className="text-xs font-semibold px-2 py-0.5 bg-indigo-900/30 text-indigo-400 rounded-full border border-indigo-700/50">{fb.category}</span>
+                      <h4 className="font-bold text-slate-900 dark:text-slate-900 dark:text-white font-heading font-heading">{fb.name || 'Anonymous Engineer'}</h4>
+                      <span className="text-xs font-semibold px-2 py-0.5 bg-indigo-900/30 text-blue-600 dark:text-blue-400 rounded-full border border-indigo-700/50">{fb.category}</span>
                     </div>
                     <span className="text-xs text-slate-500">{new Date(fb.created_at).toLocaleDateString('en-GB')}</span>
                   </div>
-                  <p className="text-slate-300 text-sm mb-4 leading-relaxed">{fb.message}</p>
+                  <p className="text-slate-600 dark:text-slate-300 text-sm mb-4 leading-relaxed">{fb.message}</p>
                   
                   {fb.image_data && (
-                    <img src={fb.image_data} alt="Attached screenshot" className="max-w-xs rounded-lg border border-slate-700 mb-4 opacity-80 hover:opacity-100 transition-opacity" />
+                    <img src={fb.image_data} alt="Attached screenshot" className="max-w-xs rounded-2xl border border-slate-200 dark:border-slate-700 mb-4 opacity-80 hover:opacity-100 transition-opacity" />
                   )}
                   
-                  <div className="flex items-center gap-4 border-t border-slate-800 pt-3">
-                    <button className="flex items-center gap-1.5 text-xs font-medium text-slate-400 hover:text-emerald-400 transition-colors">
+                  <div className="flex items-center gap-4 border-t border-slate-200 dark:border-slate-800 pt-3">
+                    <button className="flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-emerald-400 transition-colors">
                       <ThumbsUp className="w-4 h-4" /> {fb.helpful_votes || 0} Votes
                     </button>
                     <button 
                       onClick={() => setReplyToId(fb.id)}
-                      className="flex items-center gap-1.5 text-xs font-medium text-slate-400 hover:text-blue-400 transition-colors"
+                      className="flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-blue-400 transition-colors"
                     >
                       <MessageSquare className="w-4 h-4" /> Reply
                     </button>
@@ -130,12 +130,12 @@ export default function FeedbackCommunityPage() {
                   
                   {/* Nested Replies (very basic for now, filtering the flat list) */}
                   {feedbacks.filter(r => r.parent_id === fb.id).map(reply => (
-                    <div key={reply.id} className="mt-4 pl-4 border-l-2 border-slate-700 bg-slate-800/30 p-3 rounded-r-lg">
+                    <div key={reply.id} className="mt-4 pl-4 border-l-2 border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800/30 p-3 rounded-r-lg">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="font-bold text-white text-xs">{reply.name || "User"}</span>
                         <span className="text-slate-500 text-[10px]">{new Date(reply.created_at).toLocaleDateString('en-GB')}</span>
                       </div>
-                      <p className="text-slate-300 text-xs">{reply.message}</p>
+                      <p className="text-slate-600 dark:text-slate-300 text-xs">{reply.message}</p>
                     </div>
                   ))}
                   
@@ -146,33 +146,33 @@ export default function FeedbackCommunityPage() {
         </div>
 
         {/* Right Col: Form */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 h-fit sticky top-6">
-          <h2 className="text-xl font-bold text-white mb-2">{replyToId ? "Reply to Thread" : "Submit Feedback"}</h2>
-          <p className="text-slate-400 text-sm mb-6">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 h-fit sticky top-6">
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white font-heading mb-2">{replyToId ? "Reply to Thread" : "Submit Feedback"}</h2>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">
             {replyToId ? "Join the conversation and share your thoughts." : "Have an idea or found a bug? Attach a screenshot and let us know."}
           </p>
           
           {replyToId && (
-            <div className="mb-4 p-3 bg-blue-900/20 border border-blue-900/50 rounded-lg flex justify-between items-center">
+            <div className="mb-4 p-3 bg-blue-900/20 border border-blue-900/50 rounded-2xl flex justify-between items-center">
               <span className="text-blue-400 text-xs">Replying to feedback #{replyToId}</span>
-              <button onClick={() => setReplyToId(null)} className="text-slate-500 hover:text-slate-300 text-xs">Cancel</button>
+              <button onClick={() => setReplyToId(null)} className="text-slate-500 hover:text-slate-600 dark:text-slate-300 text-xs">Cancel</button>
             </div>
           )}
           
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1 uppercase tracking-wider">Your Name (Optional)</label>
-              <input type="text" value={form.name} onChange={e=>setForm({...form, name: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-white outline-none focus:border-indigo-500 text-sm" />
+              <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1 uppercase tracking-wider">Your Name (Optional)</label>
+              <input type="text" value={form.name} onChange={e=>setForm({...form, name: e.target.value})} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-3 py-2 text-white outline-none focus:border-indigo-500 text-sm" />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1 uppercase tracking-wider">Email (Required for spam prevention)</label>
-              <input type="email" required value={form.email} onChange={e=>setForm({...form, email: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-white outline-none focus:border-indigo-500 text-sm" />
+              <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1 uppercase tracking-wider">Email (Required for spam prevention)</label>
+              <input type="email" required value={form.email} onChange={e=>setForm({...form, email: e.target.value})} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-3 py-2 text-white outline-none focus:border-indigo-500 text-sm" />
             </div>
             
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1 uppercase tracking-wider">Category</label>
-              <select value={form.category} onChange={e=>setForm({...form, category: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-white outline-none focus:border-indigo-500 text-sm">
+              <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1 uppercase tracking-wider">Category</label>
+              <select value={form.category} onChange={e=>setForm({...form, category: e.target.value})} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-3 py-2 text-white outline-none focus:border-indigo-500 text-sm">
                 <option>Feature Request</option>
                 <option>Bug Report</option>
                 <option>Data Correction</option>
@@ -181,14 +181,14 @@ export default function FeedbackCommunityPage() {
             </div>
             
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1 uppercase tracking-wider">Message</label>
-              <textarea required minLength={10} value={form.message} onChange={e=>setForm({...form, message: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-white outline-none focus:border-indigo-500 min-h-[100px] text-sm" />
+              <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1 uppercase tracking-wider">Message</label>
+              <textarea required minLength={10} value={form.message} onChange={e=>setForm({...form, message: e.target.value})} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-3 py-2 text-white outline-none focus:border-indigo-500 min-h-[100px] text-sm" />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-2 uppercase tracking-wider">Screenshot Attachment</label>
+              <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-2 uppercase tracking-wider">Screenshot Attachment</label>
               <div className="flex items-center gap-3">
-                <label className="flex items-center gap-2 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium rounded cursor-pointer transition-colors border border-slate-700">
+                <label className="flex items-center gap-2 px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium rounded cursor-pointer transition-colors border border-slate-200 dark:border-slate-700">
                   <ImageIcon className="w-4 h-4" /> Upload Image
                   <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
                 </label>
@@ -196,7 +196,7 @@ export default function FeedbackCommunityPage() {
               </div>
             </div>
             
-            <div className="flex items-start gap-3 mt-4 pt-4 border-t border-slate-800">
+            <div className="flex items-start gap-3 mt-4 pt-4 border-t border-slate-200 dark:border-slate-800">
               <input 
                 type="checkbox" 
                 id="tc" 
@@ -204,14 +204,14 @@ export default function FeedbackCommunityPage() {
                 onChange={e => setAcceptedTc(e.target.checked)} 
                 className="mt-1"
               />
-              <label htmlFor="tc" className="text-xs text-slate-400 leading-relaxed cursor-pointer">
+              <label htmlFor="tc" className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed cursor-pointer">
                 I agree to be polite, friendly, non-violent, non-sexual, and non-vulgar in my comments. 
                 I understand that violating these Terms & Conditions will result in my account being blocked.
               </label>
             </div>
             {tcError && <p className="text-red-400 text-xs font-semibold">{tcError}</p>}
             
-            <button type="submit" disabled={submitting} className="w-full flex items-center justify-center gap-2 py-2.5 mt-4 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold rounded-lg transition-colors">
+            <button type="submit" disabled={submitting} className="w-full flex items-center justify-center gap-2 py-2.5 mt-4 bg-gradient-to-r from-blue-600 to-violet-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold rounded-2xl transition-colors">
               {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Send className="w-4 h-4"/> Post to Community</>}
             </button>
           </form>

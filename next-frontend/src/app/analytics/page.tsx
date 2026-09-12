@@ -51,11 +51,11 @@ export default function AnalyticsDashboard() {
     <main className="flex flex-col p-6 lg:p-10 w-full h-full overflow-y-auto">
       <div className="w-full max-w-5xl mx-auto space-y-8">
         <div>
-          <h1 className="text-4xl font-bold text-white flex items-center gap-3">
-            <BarChart3 className="w-10 h-10 text-indigo-400" />
+          <h1 className="text-4xl font-bold text-slate-900 dark:text-white font-heading flex items-center gap-3">
+            <BarChart3 className="w-10 h-10 text-blue-600 dark:text-blue-400" />
             Advanced Analytics
           </h1>
-          <p className="text-slate-300 mt-2 text-lg max-w-3xl">
+          <p className="text-slate-600 dark:text-slate-300 mt-2 text-lg max-w-3xl">
             Leverage enterprise-grade tools to benchmark materials, run AI substitutions, and calculate supply chain emissions.
           </p>
         </div>
@@ -68,17 +68,17 @@ export default function AnalyticsDashboard() {
               transition={{ delay: i * 0.1 }}
               key={tool.title}
             >
-              <Link href={tool.href} className={`block h-full p-6 rounded-2xl bg-slate-900 border border-slate-800 ${tool.border} transition-all group relative overflow-hidden`}>
+              <Link href={tool.href} className={`block h-full p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 ${tool.border} transition-all group relative overflow-hidden`}>
                 <div className={`w-12 h-12 rounded-xl ${tool.bg} flex items-center justify-center mb-4`}>
                   <tool.icon className={`w-6 h-6 ${tool.color}`} />
                 </div>
                 
-                <h3 className="text-xl font-bold text-white mb-2 group-hover:text-indigo-300 transition-colors">{tool.title}</h3>
-                <p className="text-slate-400 text-sm leading-relaxed mb-6">{tool.description}</p>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white font-heading mb-2 group-hover:text-indigo-300 transition-colors">{tool.title}</h3>
+                <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed mb-6">{tool.description}</p>
                 
                 <div className="absolute top-4 right-4">
                   <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border ${
-                    tool.badge === 'Free' ? 'bg-slate-800 border-slate-700 text-slate-300' :
+                    tool.badge === 'Free' ? 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300' :
                     tool.badge === 'Pro' ? 'bg-purple-900/30 border-purple-700/50 text-purple-400' :
                     'bg-amber-900/30 border-amber-700/50 text-amber-400'
                   }`}>
@@ -86,7 +86,7 @@ export default function AnalyticsDashboard() {
                   </span>
                 </div>
                 
-                <div className="mt-auto flex items-center text-sm font-semibold text-indigo-400 group-hover:text-indigo-300">
+                <div className="mt-auto flex items-center text-sm font-semibold text-blue-600 dark:text-blue-400 group-hover:text-indigo-300">
                   Launch Tool →
                 </div>
               </Link>
@@ -95,14 +95,14 @@ export default function AnalyticsDashboard() {
         </div>
 
         {/* Enterprise Data Trust Disclaimer */}
-        <div className="mt-12 p-6 rounded-2xl border border-slate-800 bg-slate-900/40 flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left relative overflow-hidden">
+        <div className="mt-12 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left relative overflow-hidden">
           <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500"></div>
           <div className="w-14 h-14 bg-indigo-900/30 rounded-full flex items-center justify-center shrink-0 border border-indigo-800/50">
-            <Shield className="w-7 h-7 text-indigo-400" />
+            <Shield className="w-7 h-7 text-blue-600 dark:text-blue-400" />
           </div>
           <div>
-            <h4 className="text-white font-bold text-base mb-1">Enterprise-Grade Algorithmic Trust</h4>
-            <p className="text-sm text-slate-400 leading-relaxed max-w-4xl">
+            <h4 className="text-slate-900 dark:text-white font-heading font-bold text-base mb-1">Enterprise-Grade Algorithmic Trust</h4>
+            <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed max-w-4xl">
               Calculations performed in MatDataHub analytics—including CBAM emissions forecasting, multi-objective substitution mapping, and synthetic material design—are rigorously based on verified physics, recognized thermodynamic equations, and vetted industry constants (e.g., EU CBAM reference prices, ICE DB carbon factors). While our models use industry constants (e.g., ICE DB factors) to establish highly reliable baseline trends, please note that our pricing and supply chain outputs are macroeconomic estimates, not live spot-market quotes. Always verify final figures with your raw material suppliers for exact commercial procurement.
             </p>
           </div>

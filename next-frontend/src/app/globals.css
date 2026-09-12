@@ -36,3 +36,10 @@ body {
 button, a, [role="button"] {
   cursor: pointer !important;
 }
+
+@layer utilities {
+  .font-heading {
+    font-family: var(--font-red-hat), sans-serif;
+  }
+}
+

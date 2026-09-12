@@ -41,13 +41,13 @@ export function CostOptimizer() {
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="w-full">
-      <div className="flex items-center gap-3 mb-4 border-b border-slate-700 pb-3">
-        <div className="p-2 bg-emerald-900/30 rounded-lg text-emerald-400">
+      <div className="flex items-center gap-3 mb-4 border-b border-slate-200 dark:border-slate-700 pb-3">
+        <div className="p-2 bg-emerald-900/30 rounded-2xl text-emerald-400">
           <IndianRupee className="w-5 h-5" />
         </div>
         <div>
-          <h3 className="font-bold text-white leading-tight">Cost Optimizer</h3>
-          <p className="text-xs text-slate-400">Estimate volume discounting and batch costs</p>
+          <h3 className="font-bold text-slate-900 dark:text-white font-heading leading-tight">Cost Optimizer</h3>
+          <p className="text-xs text-slate-500 dark:text-slate-400">Estimate volume discounting and batch costs</p>
           <p className="text-[10px] text-amber-500/80 mt-1 uppercase tracking-wider font-semibold">Estimated Calculation - Not a Live Quote</p>
         </div>
       </div>
@@ -55,22 +55,22 @@ export function CostOptimizer() {
       <div className="space-y-3">
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs text-slate-300 mb-1">Cost (₹/kg)</label>
-            <input type="number" name="cost_per_kg" value={formData.cost_per_kg} onChange={handleChange} className="w-full bg-slate-800 rounded px-3 py-2 text-sm text-white outline-none focus:ring-1 focus:ring-emerald-500" />
+            <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Cost (₹/kg)</label>
+            <input type="number" name="cost_per_kg" value={formData.cost_per_kg} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white outline-none focus:ring-1 focus:ring-emerald-500" />
           </div>
           <div>
-            <label className="block text-xs text-slate-300 mb-1">Volume (cm³)</label>
-            <input type="number" name="volume_cm3" value={formData.volume_cm3} onChange={handleChange} className="w-full bg-slate-800 rounded px-3 py-2 text-sm text-white outline-none focus:ring-1 focus:ring-emerald-500" />
+            <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Volume (cm³)</label>
+            <input type="number" name="volume_cm3" value={formData.volume_cm3} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white outline-none focus:ring-1 focus:ring-emerald-500" />
           </div>
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs text-slate-300 mb-1">Density (g/cm³)</label>
-            <input type="number" name="density_gcm3" value={formData.density_gcm3} onChange={handleChange} className="w-full bg-slate-800 rounded px-3 py-2 text-sm text-white outline-none focus:ring-1 focus:ring-emerald-500" />
+            <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Density (g/cm³)</label>
+            <input type="number" name="density_gcm3" value={formData.density_gcm3} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white outline-none focus:ring-1 focus:ring-emerald-500" />
           </div>
           <div>
-            <label className="block text-xs text-slate-300 mb-1">Batch Size</label>
-            <input type="number" name="batch_size" value={formData.batch_size} onChange={handleChange} className="w-full bg-slate-800 rounded px-3 py-2 text-sm text-white outline-none focus:ring-1 focus:ring-emerald-500" />
+            <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Batch Size</label>
+            <input type="number" name="batch_size" value={formData.batch_size} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white outline-none focus:ring-1 focus:ring-emerald-500" />
           </div>
         </div>
       </div>
@@ -82,16 +82,16 @@ export function CostOptimizer() {
       {result && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-4 p-4 rounded-xl bg-emerald-900/20 border border-emerald-900/50 space-y-2">
           <div className="flex justify-between items-center border-b border-emerald-900/30 pb-2">
-            <span className="text-xs text-slate-300">Base Unit Cost</span>
-            <span className="font-medium text-slate-300">₹{result.unit_cost.toFixed(2)}</span>
+            <span className="text-xs text-slate-600 dark:text-slate-300">Base Unit Cost</span>
+            <span className="font-medium text-slate-600 dark:text-slate-300">₹{result.unit_cost.toFixed(2)}</span>
           </div>
           <div className="flex justify-between items-center">
             <span className="text-xs text-emerald-400 font-bold">Optimized Unit Cost</span>
             <span className="font-bold text-emerald-400">₹{result.optimized_unit_cost.toFixed(2)}</span>
           </div>
           <div className="flex justify-between items-center pt-1">
-            <span className="text-xs text-slate-400">Total Batch Cost ({formData.batch_size} units)</span>
-            <span className="font-bold text-white">₹{result.total_batch_cost.toFixed(2)}</span>
+            <span className="text-xs text-slate-500 dark:text-slate-400">Total Batch Cost ({formData.batch_size} units)</span>
+            <span className="font-bold text-slate-900 dark:text-white">₹{result.total_batch_cost.toFixed(2)}</span>
           </div>
           <p className="text-[10px] text-emerald-300 pt-2 border-t border-emerald-900/50">Volume discount of {result.discount_applied}% applied based on batch size economies of scale.</p>
         </motion.div>

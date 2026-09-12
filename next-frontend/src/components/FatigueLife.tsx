@@ -26,23 +26,23 @@ export function FatigueLife() {
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl w-full h-full flex flex-col">
-      <h2 className="text-xl font-bold mb-4 text-white">Fatigue Life Estimation</h2>
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl w-full h-full flex flex-col">
+      <h2 className="text-xl font-bold mb-4 text-slate-900 dark:text-slate-900 dark:text-white font-heading">Fatigue Life Estimation</h2>
       <div className="space-y-4 flex-grow">
         <div>
-          <label className="block text-xs text-slate-300 mb-1">Material Name</label>
-          <input type="text" name="material_name" value={formData.material_name} onChange={handleChange} className="w-full bg-slate-800 rounded px-3 py-2 text-sm text-white focus:ring-2 focus:ring-cyan-500 outline-none" />
+          <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Material Name</label>
+          <input type="text" name="material_name" value={formData.material_name} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white focus:ring-2 focus:ring-cyan-500 outline-none" />
         </div>
         <div>
-          <label className="block text-xs text-slate-300 mb-1">Category</label>
-          <input type="text" name="category" value={formData.category} onChange={handleChange} className="w-full bg-slate-800 rounded px-3 py-2 text-sm text-white focus:ring-2 focus:ring-cyan-500 outline-none" />
+          <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Category</label>
+          <input type="text" name="category" value={formData.category} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white focus:ring-2 focus:ring-cyan-500 outline-none" />
         </div>
         <div>
-          <label className="block text-xs text-slate-300 mb-1">Ultimate Tensile Strength (MPa)</label>
-          <input type="number" name="tensile_strength" value={formData.tensile_strength} onChange={handleChange} className="w-full bg-slate-800 rounded px-3 py-2 text-sm text-white outline-none" />
+          <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Ultimate Tensile Strength (MPa)</label>
+          <input type="number" name="tensile_strength" value={formData.tensile_strength} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white outline-none" />
         </div>
       </div>
-      <button onClick={handleCalculate} disabled={loading} className="mt-6 w-full py-2.5 rounded-lg bg-cyan-600 hover:bg-cyan-700 text-white font-medium flex justify-center items-center">
+      <button onClick={handleCalculate} disabled={loading} className="mt-6 w-full py-2.5 rounded-2xl bg-cyan-600 hover:bg-cyan-700 text-white font-medium flex justify-center items-center">
         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Estimate Endurance"}
       </button>
       {result && (

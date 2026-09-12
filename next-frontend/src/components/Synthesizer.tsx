@@ -48,52 +48,52 @@ export function Synthesizer() {
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl max-w-2xl w-full mx-auto"
+      className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl max-w-2xl w-full mx-auto"
     >
-      <h2 className="text-2xl font-bold mb-6 text-white flex items-center gap-2">
+      <h2 className="text-2xl font-bold mb-6 text-slate-900 dark:text-white font-heading flex items-center gap-2">
         Composite Synthesizer
       </h2>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Material 1 */}
-        <div className="space-y-4 p-4 rounded-xl bg-slate-950/50 border border-slate-800/50">
-          <h3 className="text-lg font-medium text-slate-300">Material 1</h3>
+        <div className="space-y-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800/50">
+          <h3 className="text-lg font-medium text-slate-600 dark:text-slate-300">Material 1</h3>
           <div>
-            <label className="block text-xs text-slate-300 mb-1">Density (g/cm³)</label>
-            <input type="number" name="mat1_density" value={formData.mat1_density} onChange={handleChange} className="w-full bg-slate-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Density (g/cm³)</label>
+            <input type="number" name="mat1_density" value={formData.mat1_density} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
           <div>
-            <label className="block text-xs text-slate-300 mb-1">Tensile Strength (MPa)</label>
-            <input type="number" name="mat1_tensile" value={formData.mat1_tensile} onChange={handleChange} className="w-full bg-slate-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Tensile Strength (MPa)</label>
+            <input type="number" name="mat1_tensile" value={formData.mat1_tensile} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
           <div>
-            <label className="block text-xs text-slate-300 mb-1">Cost ($/kg)</label>
-            <input type="number" name="mat1_cost_min" value={formData.mat1_cost_min} onChange={handleChange} className="w-full bg-slate-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Cost ($/kg)</label>
+            <input type="number" name="mat1_cost_min" value={formData.mat1_cost_min} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
           <div>
-            <label className="block text-xs text-slate-300 mb-1">Volume %</label>
-            <input type="number" name="mat1_vol_percent" value={formData.mat1_vol_percent} onChange={handleChange} className="w-full bg-slate-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Volume %</label>
+            <input type="number" name="mat1_vol_percent" value={formData.mat1_vol_percent} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
         </div>
 
         {/* Material 2 */}
-        <div className="space-y-4 p-4 rounded-xl bg-slate-950/50 border border-slate-800/50">
-          <h3 className="text-lg font-medium text-slate-300">Material 2</h3>
+        <div className="space-y-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800/50">
+          <h3 className="text-lg font-medium text-slate-600 dark:text-slate-300">Material 2</h3>
           <div>
-            <label className="block text-xs text-slate-300 mb-1">Density (g/cm³)</label>
-            <input type="number" name="mat2_density" value={formData.mat2_density} onChange={handleChange} className="w-full bg-slate-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Density (g/cm³)</label>
+            <input type="number" name="mat2_density" value={formData.mat2_density} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
           <div>
-            <label className="block text-xs text-slate-300 mb-1">Tensile Strength (MPa)</label>
-            <input type="number" name="mat2_tensile" value={formData.mat2_tensile} onChange={handleChange} className="w-full bg-slate-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Tensile Strength (MPa)</label>
+            <input type="number" name="mat2_tensile" value={formData.mat2_tensile} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
           <div>
-            <label className="block text-xs text-slate-300 mb-1">Cost ($/kg)</label>
-            <input type="number" name="mat2_cost_min" value={formData.mat2_cost_min} onChange={handleChange} className="w-full bg-slate-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Cost ($/kg)</label>
+            <input type="number" name="mat2_cost_min" value={formData.mat2_cost_min} onChange={handleChange} className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
           <div>
-            <label className="block text-xs text-slate-300 mb-1">Volume %</label>
-            <div className="w-full bg-slate-800 rounded px-3 py-2 text-sm text-slate-300 cursor-not-allowed">
+            <label className="block text-xs text-slate-600 dark:text-slate-300 mb-1">Volume %</label>
+            <div className="w-full bg-slate-100 dark:bg-slate-800 rounded px-3 py-2 text-sm text-slate-600 dark:text-slate-300 cursor-not-allowed">
               {100 - formData.mat1_vol_percent}% (Auto)
             </div>
           </div>
@@ -104,7 +104,7 @@ export function Synthesizer() {
         <button 
           onClick={handleCalculate}
           disabled={loading}
-          className="w-full py-3 rounded-lg bg-blue-600 hover:bg-blue-700 transition-colors text-white font-medium flex items-center justify-center gap-2"
+          className="w-full py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 transition-colors text-white font-medium flex items-center justify-center gap-2"
         >
           {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Calculate Blend Properties"}
         </button>
@@ -120,15 +120,15 @@ export function Synthesizer() {
           <div className="grid grid-cols-3 gap-4">
             <div>
               <p className="text-xs text-slate-200">Density</p>
-              <p className="text-lg font-semibold text-white">{result.blend_density.toFixed(2)} <span className="text-sm font-normal text-slate-300">g/cm³</span></p>
+              <p className="text-lg font-semibold text-slate-900 dark:text-white">{result.blend_density.toFixed(2)} <span className="text-sm font-normal text-slate-600 dark:text-slate-300">g/cm³</span></p>
             </div>
             <div>
               <p className="text-xs text-slate-200">Tensile Strength</p>
-              <p className="text-lg font-semibold text-white">{result.blend_tensile.toFixed(0)} <span className="text-sm font-normal text-slate-300">MPa</span></p>
+              <p className="text-lg font-semibold text-slate-900 dark:text-white">{result.blend_tensile.toFixed(0)} <span className="text-sm font-normal text-slate-600 dark:text-slate-300">MPa</span></p>
             </div>
             <div>
               <p className="text-xs text-slate-200">Cost</p>
-              <p className="text-lg font-semibold text-white">${result.blend_cost.toFixed(2)} <span className="text-sm font-normal text-slate-300">/kg</span></p>
+              <p className="text-lg font-semibold text-slate-900 dark:text-white">${result.blend_cost.toFixed(2)} <span className="text-sm font-normal text-slate-600 dark:text-slate-300">/kg</span></p>
             </div>
           </div>
         </motion.div>

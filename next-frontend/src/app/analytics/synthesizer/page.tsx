@@ -93,18 +93,18 @@ function CompositeSynthesizerContent() {
     return (
       <main className="flex flex-col p-6 lg:p-10 w-full h-full">
         <div className="w-full max-w-4xl mx-auto space-y-6">
-          <Link href="/analytics" className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors">
+          <Link href="/analytics" className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-white transition-colors">
             <ArrowLeft className="w-4 h-4" /> Back to Analytics
           </Link>
           
-          <div className="p-10 mt-10 rounded-3xl bg-slate-900 border border-cyan-500/30 text-center relative overflow-hidden flex flex-col items-center justify-center">
+          <div className="p-10 mt-10 rounded-3xl bg-white dark:bg-slate-900 border border-cyan-500/30 text-center relative overflow-hidden flex flex-col items-center justify-center">
             <div className="absolute inset-0 bg-gradient-to-br from-cyan-900/20 to-transparent"></div>
             <div className="w-20 h-20 bg-cyan-950 rounded-full flex items-center justify-center mb-6 relative z-10 border border-cyan-500/50">
               <Lock className="w-10 h-10 text-cyan-500" />
             </div>
             
-            <h2 className="text-3xl font-bold text-white mb-4 relative z-10">Sign In Required</h2>
-            <p className="text-slate-300 relative z-10 max-w-2xl mx-auto mb-8 text-lg">
+            <h2 className="text-3xl font-bold text-slate-900 dark:text-white font-heading mb-4 relative z-10">Sign In Required</h2>
+            <p className="text-slate-600 dark:text-slate-300 relative z-10 max-w-2xl mx-auto mb-8 text-lg">
               You must be signed in to use the Composite Material Synthesizer.
             </p>
             
@@ -122,18 +122,18 @@ function CompositeSynthesizerContent() {
     return (
       <main className="flex flex-col p-6 lg:p-10 w-full h-full">
         <div className="w-full max-w-4xl mx-auto space-y-6">
-          <Link href="/analytics" className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors">
+          <Link href="/analytics" className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-white transition-colors">
             <ArrowLeft className="w-4 h-4" /> Back to Analytics
           </Link>
           
-          <div className="p-10 mt-10 rounded-3xl bg-slate-900 border border-yellow-500/30 text-center relative overflow-hidden flex flex-col items-center justify-center">
+          <div className="p-10 mt-10 rounded-3xl bg-white dark:bg-slate-900 border border-yellow-500/30 text-center relative overflow-hidden flex flex-col items-center justify-center">
             <div className="absolute inset-0 bg-gradient-to-br from-yellow-900/20 to-transparent"></div>
             <div className="w-20 h-20 bg-yellow-950 rounded-full flex items-center justify-center mb-6 relative z-10 border border-yellow-500/50">
               <Lock className="w-10 h-10 text-yellow-500" />
             </div>
             
-            <h2 className="text-3xl font-bold text-white mb-4 relative z-10">Upgrade Required</h2>
-            <p className="text-slate-300 relative z-10 max-w-2xl mx-auto mb-8 text-lg">
+            <h2 className="text-3xl font-bold text-slate-900 dark:text-white font-heading mb-4 relative z-10">Upgrade Required</h2>
+            <p className="text-slate-600 dark:text-slate-300 relative z-10 max-w-2xl mx-auto mb-8 text-lg">
               The Composite Material Synthesizer is a Pro feature. Upgrade your account to unlock this tool.
             </p>
             
@@ -150,21 +150,21 @@ function CompositeSynthesizerContent() {
     <main className="flex flex-col p-6 lg:p-10 w-full h-full overflow-y-auto">
       <div className="w-full max-w-4xl mx-auto space-y-8">
         
-        <Link href="/analytics" className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors">
+        <Link href="/analytics" className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-white transition-colors">
           <ArrowLeft className="w-4 h-4" /> Back to Analytics
         </Link>
 
         <div>
-          <h1 className="text-3xl font-bold text-white flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white font-heading flex items-center gap-3">
             <Layers className="w-8 h-8 text-cyan-400" />
             Composite Material Synthesizer
           </h1>
-          <p className="text-slate-300 mt-2">Blend two materials using the Rule of Mixtures to predict hybrid mechanical properties.</p>
+          <p className="text-slate-600 dark:text-slate-300 mt-2">Blend two materials using the Rule of Mixtures to predict hybrid mechanical properties.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Controls */}
-          <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-6">
+          <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-6">
             <div>
               <label className="block text-sm font-semibold text-cyan-400 mb-2">Matrix Material (A)</label>
               <MaterialSearchSelect
@@ -184,7 +184,7 @@ function CompositeSynthesizerContent() {
             </div>
 
             <div>
-              <div className="flex justify-between text-sm text-slate-300 mb-2">
+              <div className="flex justify-between text-sm text-slate-600 dark:text-slate-300 mb-2">
                 <span>Volume Fraction (Matrix A)</span>
                 <span className="font-bold text-cyan-400">{volFractionA}%</span>
               </div>
@@ -198,7 +198,7 @@ function CompositeSynthesizerContent() {
             <button 
               onClick={handleSynthesize}
               disabled={!matA || !matB || loading}
-              className="w-full py-3 bg-cyan-600 hover:bg-cyan-700 disabled:opacity-50 text-white font-bold rounded-lg transition-colors flex items-center justify-center gap-2"
+              className="w-full py-3 bg-cyan-600 hover:bg-cyan-700 disabled:opacity-50 text-white font-bold rounded-2xl transition-colors flex items-center justify-center gap-2"
             >
               {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Beaker className="w-5 h-5" />}
               Synthesize Composite
@@ -206,30 +206,30 @@ function CompositeSynthesizerContent() {
           </div>
 
           {/* Results */}
-          <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 flex flex-col justify-center min-h-[300px]">
+          <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-col justify-center min-h-[300px]">
             {result ? (
               <div className="space-y-6">
                 <div className="text-center">
-                  <h3 className="text-sm text-slate-400 uppercase tracking-wider font-bold mb-1">Generated Hybrid</h3>
+                  <h3 className="text-sm text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold mb-1">Generated Hybrid</h3>
                   <p className="text-lg font-bold text-white leading-tight">{result.name}</p>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 bg-slate-950 border border-slate-800 rounded-xl text-center">
-                    <p className="text-xs text-slate-400 uppercase tracking-wider mb-1">Density</p>
-                    <p className="text-2xl font-bold text-white">{result.density} <span className="text-sm font-normal text-slate-500">g/cm³</span></p>
+                  <div className="p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-center">
+                    <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Density</p>
+                    <p className="text-2xl font-bold text-slate-900 dark:text-white">{result.density} <span className="text-sm font-normal text-slate-500">g/cm³</span></p>
                   </div>
-                  <div className="p-4 bg-slate-950 border border-slate-800 rounded-xl text-center">
-                    <p className="text-xs text-slate-400 uppercase tracking-wider mb-1">Est. Cost</p>
+                  <div className="p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-center">
+                    <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Est. Cost</p>
                     <p className="text-2xl font-bold text-emerald-400">₹{result.cost} <span className="text-sm font-normal text-emerald-600">/kg</span></p>
                   </div>
-                  <div className="p-4 bg-slate-950 border border-slate-800 rounded-xl text-center">
-                    <p className="text-xs text-slate-400 uppercase tracking-wider mb-1">Tensile Strength</p>
-                    <p className="text-2xl font-bold text-white">{result.tensile} <span className="text-sm font-normal text-slate-500">MPa</span></p>
+                  <div className="p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-center">
+                    <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Tensile Strength</p>
+                    <p className="text-2xl font-bold text-slate-900 dark:text-white">{result.tensile} <span className="text-sm font-normal text-slate-500">MPa</span></p>
                   </div>
-                  <div className="p-4 bg-slate-950 border border-slate-800 rounded-xl text-center">
-                    <p className="text-xs text-slate-400 uppercase tracking-wider mb-1">Elastic Modulus</p>
-                    <p className="text-2xl font-bold text-white">{result.elastic_modulus} <span className="text-sm font-normal text-slate-500">GPa</span></p>
+                  <div className="p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-center">
+                    <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Elastic Modulus</p>
+                    <p className="text-2xl font-bold text-slate-900 dark:text-white">{result.elastic_modulus} <span className="text-sm font-normal text-slate-500">GPa</span></p>
                   </div>
                 </div>
               </div>
@@ -248,7 +248,7 @@ function CompositeSynthesizerContent() {
 
 export default function CompositeSynthesizer() {
   return (
-    <Suspense fallback={<div className="p-12 text-center text-slate-400">Loading...</div>}>
+    <Suspense fallback={<div className="p-12 text-center text-slate-500 dark:text-slate-400">Loading...</div>}>
       <CompositeSynthesizerContent />
     </Suspense>
   );

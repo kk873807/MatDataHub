@@ -138,7 +138,7 @@ function CompareMaterialsContent() {
     if (eco && eco.embodied_carbon) takeaways.push(`${eco.name} has the lowest embodied carbon footprint.`);
 
     return (
-      <ul className="list-disc pl-5 space-y-2 text-slate-300 text-sm mt-4">
+      <ul className="list-disc pl-5 space-y-2 text-slate-600 dark:text-slate-300 text-sm mt-4">
         {takeaways.map((t, i) => <li key={i}>{t}</li>)}
       </ul>
     );
@@ -250,17 +250,17 @@ function CompareMaterialsContent() {
     return (
       <main className="flex flex-col p-6 lg:p-10 w-full h-full">
         <div className="w-full max-w-5xl mx-auto space-y-6">
-          <Link href="/analytics" className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors">
+          <Link href="/analytics" className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-white transition-colors">
             <ArrowLeft className="w-4 h-4" /> Back to Analytics
           </Link>
           
-          <div className="p-10 mt-10 rounded-3xl bg-slate-900 border border-blue-500/30 text-center relative overflow-hidden flex flex-col items-center justify-center">
+          <div className="p-10 mt-10 rounded-3xl bg-white dark:bg-slate-900 border border-blue-500/30 text-center relative overflow-hidden flex flex-col items-center justify-center">
             <div className="w-20 h-20 bg-blue-950 rounded-full flex items-center justify-center mb-6 relative z-10 border border-blue-500/50">
               <Lock className="w-10 h-10 text-blue-500" />
             </div>
             
-            <h2 className="text-3xl font-bold text-white mb-4 relative z-10">Sign In Required</h2>
-            <p className="text-slate-300 relative z-10 max-w-2xl mx-auto mb-8 text-lg">
+            <h2 className="text-3xl font-bold text-slate-900 dark:text-white font-heading mb-4 relative z-10">Sign In Required</h2>
+            <p className="text-slate-600 dark:text-slate-300 relative z-10 max-w-2xl mx-auto mb-8 text-lg">
               You must be signed in to use the Multi-Material Compare tool. 
             </p>
             
@@ -277,26 +277,26 @@ function CompareMaterialsContent() {
     <main className="flex flex-col p-6 lg:p-10 w-full h-full overflow-y-auto">
       <div className="w-full max-w-6xl mx-auto space-y-8">
         
-        <Link href="/analytics" className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors">
+        <Link href="/analytics" className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-white transition-colors">
           <ArrowLeft className="w-4 h-4" /> Back to Analytics
         </Link>
 
         <div>
-          <h1 className="text-3xl font-bold text-white flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white font-heading flex items-center gap-3">
             <Scale className="w-8 h-8 text-blue-400" />
             Multi-Material Compare
           </h1>
-          <p className="text-slate-300 mt-2">Evaluate properties visually across multiple materials (Pro: up to 5, Advanced: unlimited APIs).</p>
+          <p className="text-slate-600 dark:text-slate-300 mt-2">Evaluate properties visually across multiple materials (Pro: up to 5, Advanced: unlimited APIs).</p>
         </div>
 
         {/* Dynamic Selectors */}
-        <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-4">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4">
           <div className="flex flex-wrap gap-3 mb-2">
             {selectedIds.map((id, idx) => {
               const mat = allMaterials.find(m => m.id.toString() === id);
               return (
-                <div key={idx} className="flex items-center gap-2 bg-slate-950 border border-slate-700 rounded-full px-4 py-1.5 shadow-sm" style={{ borderLeft: `4px solid ${colors[idx % colors.length].hex}` }}>
-                  <span className="text-sm font-bold text-white">{mat?.name || id}</span>
+                <div key={idx} className="flex items-center gap-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-full px-4 py-1.5 shadow-sm" style={{ borderLeft: `4px solid ${colors[idx % colors.length].hex}` }}>
+                  <span className="text-sm font-bold text-slate-900 dark:text-white">{mat?.name || id}</span>
                   <button onClick={() => handleRemove(idx)} className="text-slate-500 hover:text-red-400"><X className="w-3 h-3" /></button>
                 </div>
               );
@@ -326,8 +326,8 @@ function CompareMaterialsContent() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
             {/* Radar Fingerprint */}
-            <div className="p-6 bg-slate-900 border border-slate-800 rounded-2xl flex flex-col">
-              <h3 className="font-bold text-white mb-4 text-center">Property Fingerprint</h3>
+            <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl flex flex-col">
+              <h3 className="font-bold text-slate-900 dark:text-white font-heading mb-4 text-center">Property Fingerprint</h3>
               <div className="flex-1 flex items-center justify-center py-6">
                 {renderRadar()}
               </div>
@@ -335,17 +335,17 @@ function CompareMaterialsContent() {
 
             {/* Properties Table */}
             <div className="lg:col-span-2 space-y-6">
-              <div className="p-6 bg-slate-900 border border-slate-800 rounded-2xl overflow-x-auto">
+              <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-x-auto">
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="font-bold text-white">Direct Comparison Matrix</h3>
-                  <button onClick={exportCSV} className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-lg transition-colors border border-slate-700">
+                  <h3 className="font-bold text-slate-900 dark:text-slate-900 dark:text-white font-heading font-heading">Direct Comparison Matrix</h3>
+                  <button onClick={exportCSV} className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold rounded-2xl transition-colors border border-slate-200 dark:border-slate-700">
                     <Download className="w-3 h-3" /> Export CSV
                   </button>
                 </div>
                 <table className="w-full text-left text-sm">
                   <thead>
-                    <tr className="border-b border-slate-800">
-                      <th className="pb-3 text-slate-400 font-medium whitespace-nowrap">Property</th>
+                    <tr className="border-b border-slate-200 dark:border-slate-800">
+                      <th className="pb-3 text-slate-500 dark:text-slate-400 font-medium whitespace-nowrap">Property</th>
                       {comparison.map((m, idx) => (
                         <th key={idx} className="pb-3 font-bold px-2 whitespace-nowrap" style={{ color: colors[idx % colors.length].hex }}>
                           {m.name}
@@ -358,7 +358,7 @@ function CompareMaterialsContent() {
                       const bestIdx = getBestIndex(prop);
                       return (
                         <tr key={prop.key}>
-                          <td className="py-3 text-slate-300 whitespace-nowrap">{prop.label}</td>
+                          <td className="py-3 text-slate-600 dark:text-slate-300 whitespace-nowrap">{prop.label}</td>
                           {comparison.map((m, idx) => (
                             <td key={idx} className={`py-3 px-2 font-medium ${idx === bestIdx ? 'text-emerald-400 font-bold' : 'text-slate-200'}`}>
                               {m[prop.key] || '-'}
@@ -374,8 +374,8 @@ function CompareMaterialsContent() {
 
               {/* Key Takeaways */}
               {comparison.length >= 2 && (
-                <div className="p-6 bg-slate-900 border border-slate-800 rounded-2xl">
-                  <h3 className="font-bold text-white flex items-center gap-2">
+                <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl">
+                  <h3 className="font-bold text-slate-900 dark:text-white font-heading flex items-center gap-2">
                     <Info className="w-5 h-5 text-purple-400" />
                     Automated Insights & Key Takeaways
                   </h3>
@@ -385,7 +385,7 @@ function CompareMaterialsContent() {
             </div>
           </div>
         ) : (
-          <div className="text-center py-20 text-slate-500 bg-slate-900/30 rounded-2xl border border-slate-800 border-dashed">
+          <div className="text-center py-20 text-slate-500 bg-white dark:bg-slate-900/30 rounded-2xl border border-slate-200 dark:border-slate-800 border-dashed">
             Select materials above to generate the comparison matrix and radar fingerprint.
           </div>
         )}
@@ -394,4 +394,4 @@ function CompareMaterialsContent() {
   );
 }
 
-export default function CompareMaterials() { return <Suspense fallback={<div className='p-12 text-center text-slate-400'>Loading...</div>}><CompareMaterialsContent /></Suspense>; }
+export default function CompareMaterials() { return <Suspense fallback={<div className='p-12 text-center text-slate-500 dark:text-slate-400'>Loading...</div>}><CompareMaterialsContent /></Suspense>; }

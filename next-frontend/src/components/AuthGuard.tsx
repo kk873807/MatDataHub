@@ -26,7 +26,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
   }, [pathname, router]);
 
   if (isAuthorized === null && !PUBLIC_ROUTES.includes(pathname)) {
-    return <div className="flex h-screen items-center justify-center bg-slate-950 text-slate-500">Authenticating...</div>;
+    return <div className="flex h-screen items-center justify-center bg-slate-50 dark:bg-slate-950 text-slate-500">Authenticating...</div>;
   }
 
   return <>{children}</>;

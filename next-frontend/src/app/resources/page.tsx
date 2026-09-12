@@ -132,32 +132,32 @@ export default function ResourcesPage() {
     <main className="flex flex-col p-6 lg:p-10 w-full h-full overflow-y-auto relative">
       <div className="w-full max-w-5xl mx-auto space-y-8">
         <div>
-          <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-            <BookOpen className="w-8 h-8 text-indigo-400" />
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white font-heading flex items-center gap-3">
+            <BookOpen className="w-8 h-8 text-blue-600 dark:text-blue-400" />
             Learning & Resources
           </h1>
-          <p className="text-slate-300 mt-2">Get help, read documentation, and explore advanced engineering mathematics.</p>
+          <p className="text-slate-600 dark:text-slate-300 mt-2">Get help, read documentation, and explore advanced engineering mathematics.</p>
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-slate-800 gap-6">
+        <div className="flex border-b border-slate-200 dark:border-slate-800 gap-6">
           <button 
             onClick={() => setActiveTab("blogs")} 
-            className={`pb-3 font-semibold text-sm transition-colors relative ${activeTab === 'blogs' ? 'text-indigo-400' : 'text-slate-400 hover:text-slate-200'}`}
+            className={`pb-3 font-semibold text-sm transition-colors relative ${activeTab === 'blogs' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400 hover:text-slate-200'}`}
           >
             <span className="flex items-center gap-2"><BookOpen className="w-4 h-4" /> Engineering Blogs</span>
             {activeTab === 'blogs' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-500 rounded-t-full" />}
           </button>
           <button 
             onClick={() => setActiveTab("faqs")} 
-            className={`pb-3 font-semibold text-sm transition-colors relative ${activeTab === 'faqs' ? 'text-indigo-400' : 'text-slate-400 hover:text-slate-200'}`}
+            className={`pb-3 font-semibold text-sm transition-colors relative ${activeTab === 'faqs' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400 hover:text-slate-200'}`}
           >
             <span className="flex items-center gap-2"><HelpCircle className="w-4 h-4" /> FAQs</span>
             {activeTab === 'faqs' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-500 rounded-t-full" />}
           </button>
           <button 
             onClick={() => setActiveTab("support")} 
-            className={`pb-3 font-semibold text-sm transition-colors relative ${activeTab === 'support' ? 'text-indigo-400' : 'text-slate-400 hover:text-slate-200'}`}
+            className={`pb-3 font-semibold text-sm transition-colors relative ${activeTab === 'support' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400 hover:text-slate-200'}`}
           >
             <span className="flex items-center gap-2"><LifeBuoy className="w-4 h-4" /> Support Centre</span>
             {activeTab === 'support' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-500 rounded-t-full" />}
@@ -174,22 +174,22 @@ export default function ResourcesPage() {
                 placeholder="Search documentation and FAQs..." 
                 value={faqSearch}
                 onChange={e => setFaqSearch(e.target.value)}
-                className="w-full bg-slate-900 border border-slate-800 rounded-xl pl-12 pr-4 py-4 text-white outline-none focus:border-indigo-500 transition-colors"
+                className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl pl-12 pr-4 py-4 text-white outline-none focus:border-indigo-500 transition-colors"
               />
             </div>
             
             <div className="space-y-3">
               {filteredFaqs.map((faq, i) => (
-                <div key={i} className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden transition-all">
+                <div key={i} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden transition-all">
                   <button 
                     onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                    className="w-full text-left p-4 flex justify-between items-center hover:bg-slate-800/50"
+                    className="w-full text-left p-4 flex justify-between items-center hover:bg-slate-100 dark:bg-slate-800/50"
                   >
                     <span className="font-semibold text-slate-200">{faq.q}</span>
                     <ChevronDown className={`w-5 h-5 text-slate-500 transition-transform ${openFaq === i ? 'rotate-180' : ''}`} />
                   </button>
                   {openFaq === i && (
-                    <div className="p-4 pt-0 text-slate-400 text-sm leading-relaxed border-t border-slate-800/50 mt-2 pt-4 bg-slate-950/30">
+                    <div className="p-4 pt-0 text-slate-500 dark:text-slate-400 text-sm leading-relaxed border-t border-slate-200 dark:border-slate-800/50 mt-2 pt-4 bg-slate-50 dark:bg-slate-950/30">
                       {faq.a}
                     </div>
                   )}
@@ -206,50 +206,50 @@ export default function ResourcesPage() {
         {activeTab === "blogs" && (
           <div>
             {selectedBlog !== null ? (
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 lg:p-12 overflow-hidden relative">
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 lg:p-12 overflow-hidden relative">
                 <button 
                   onClick={() => setSelectedBlog(null)}
-                  className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm font-semibold mb-8"
+                  className="flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-white transition-colors text-sm font-semibold mb-8"
                 >
                   <ArrowLeft className="w-4 h-4" /> Back to all articles
                 </button>
                 
                 <div className="flex flex-wrap gap-3 items-center mb-6">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-400 bg-indigo-900/30 border border-indigo-800/50 px-2 py-1 rounded">{blogs[selectedBlog].tag}</span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 bg-indigo-900/30 border border-indigo-800/50 px-2 py-1 rounded">{blogs[selectedBlog].tag}</span>
                   <span className="text-sm text-slate-500 font-medium flex items-center gap-1"><Clock className="w-4 h-4"/> {blogs[selectedBlog].readTime} read</span>
                   <span className="text-sm text-slate-500 font-medium">·</span>
                   <span className="text-sm text-slate-500 font-medium">{blogs[selectedBlog].date}</span>
                 </div>
                 
-                <h2 className="text-3xl lg:text-4xl font-bold text-white mb-6 leading-tight">{blogs[selectedBlog].title}</h2>
+                <h2 className="text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white font-heading mb-6 leading-tight">{blogs[selectedBlog].title}</h2>
                 
-                <div className="flex items-center gap-3 border-b border-slate-800 pb-8 mb-8">
-                  <div className="w-10 h-10 rounded-full bg-indigo-900/50 flex items-center justify-center text-indigo-400 font-bold border border-indigo-500/30">
+                <div className="flex items-center gap-3 border-b border-slate-200 dark:border-slate-800 pb-8 mb-8">
+                  <div className="w-10 h-10 rounded-full bg-indigo-900/50 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold border border-indigo-500/30">
                     {blogs[selectedBlog].author.charAt(0)}
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-white">{blogs[selectedBlog].author}</p>
+                    <p className="text-sm font-bold text-slate-900 dark:text-white">{blogs[selectedBlog].author}</p>
                     <p className="text-xs text-slate-500">MatDataHub Engineering</p>
                   </div>
                 </div>
                 
                 <div className="prose prose-invert prose-indigo max-w-none 
-                  prose-headings:font-bold prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-h2:border-b prose-h2:border-slate-800 prose-h2:pb-2
-                  prose-p:text-slate-300 prose-p:leading-relaxed prose-p:mb-6
-                  prose-li:text-slate-300 prose-li:my-1
+                  prose-headings:font-bold prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-h2:border-b prose-h2:border-slate-200 dark:border-slate-800 prose-h2:pb-2
+                  prose-p:text-slate-600 dark:text-slate-300 prose-p:leading-relaxed prose-p:mb-6
+                  prose-li:text-slate-600 dark:text-slate-300 prose-li:my-1
                   prose-strong:text-white prose-strong:font-bold
                   prose-table:w-full prose-table:text-sm prose-table:border-collapse prose-table:my-8
-                  prose-th:bg-slate-950 prose-th:p-3 prose-th:border prose-th:border-slate-700 prose-th:text-slate-300
-                  prose-td:p-3 prose-td:border prose-td:border-slate-800 prose-td:text-slate-400
-                  prose-blockquote:border-l-4 prose-blockquote:border-indigo-500 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-slate-400">
+                  prose-th:bg-slate-50 dark:bg-slate-950 prose-th:p-3 prose-th:border prose-th:border-slate-200 dark:border-slate-700 prose-th:text-slate-600 dark:text-slate-300
+                  prose-td:p-3 prose-td:border prose-td:border-slate-200 dark:border-slate-800 prose-td:text-slate-500 dark:text-slate-400
+                  prose-blockquote:border-l-4 prose-blockquote:border-indigo-500 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-slate-500 dark:text-slate-400">
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>
                     {blogs[selectedBlog].content}
                   </ReactMarkdown>
                 </div>
                 
-                <div className="mt-12 pt-8 border-t border-slate-800 text-center">
-                  <h4 className="text-white font-bold mb-4">Start optimizing your supply chain today.</h4>
-                  <button onClick={() => window.location.href='/analytics'} className="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-colors">
+                <div className="mt-12 pt-8 border-t border-slate-200 dark:border-slate-800 text-center">
+                  <h4 className="text-slate-900 dark:text-white font-heading font-bold mb-4">Start optimizing your supply chain today.</h4>
+                  <button onClick={() => window.location.href='/analytics'} className="px-6 py-3 bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 text-white font-bold rounded-xl transition-colors">
                     Try MatDataHub Analytics
                   </button>
                 </div>
@@ -264,8 +264,8 @@ export default function ResourcesPage() {
                       onClick={() => setBlogFilter(tag)}
                       className={`px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors border ${
                         blogFilter === tag 
-                          ? 'bg-indigo-600 border-indigo-500 text-white' 
-                          : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white hover:border-slate-600'
+                          ? 'bg-gradient-to-r from-blue-600 to-violet-600 border-indigo-500 text-slate-900 dark:text-white' 
+                          : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:text-white hover:border-slate-600'
                       }`}
                     >
                       {tag}
@@ -278,12 +278,12 @@ export default function ResourcesPage() {
                     <div 
                       onClick={() => setSelectedBlog(blogs.findIndex(b => b.title === blog.title))} 
                       key={i} 
-                      className={`bg-slate-900 border ${blog.featured ? 'border-indigo-500/50 shadow-[0_0_15px_rgba(99,102,241,0.1)]' : 'border-slate-800 hover:border-slate-600'} p-6 rounded-2xl transition-all group cursor-pointer flex flex-col h-full relative overflow-hidden`}
+                      className={`bg-white dark:bg-slate-900 border ${blog.featured ? 'border-indigo-500/50 shadow-[0_0_15px_rgba(99,102,241,0.1)]' : 'border-slate-200 dark:border-slate-800 hover:border-slate-600'} p-6 rounded-2xl transition-all group cursor-pointer flex flex-col h-full relative overflow-hidden`}
                     >
                       {blog.featured && <div className="absolute top-0 right-0 w-16 h-16 bg-indigo-500/10 rounded-bl-full blur-xl"></div>}
                       
                       <div className="flex justify-between items-start mb-4">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-400 bg-indigo-900/30 border border-indigo-800/50 px-2 py-1 rounded flex items-center gap-1">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 bg-indigo-900/30 border border-indigo-800/50 px-2 py-1 rounded flex items-center gap-1">
                           {blog.featured && <Star className="w-3 h-3 text-amber-400" fill="currentColor" />}
                           {blog.tag}
                         </span>
@@ -291,11 +291,11 @@ export default function ResourcesPage() {
                           <Clock className="w-3 h-3" /> {blog.readTime}
                         </div>
                       </div>
-                      <h3 className="text-xl font-bold text-white mb-3 group-hover:text-indigo-300 transition-colors leading-tight">{blog.title}</h3>
-                      <p className="text-sm text-slate-400 mb-6 flex-1 line-clamp-3 leading-relaxed">{blog.excerpt}</p>
-                      <div className="flex justify-between items-center border-t border-slate-800/50 pt-4 mt-auto">
+                      <h3 className="text-xl font-bold text-slate-900 dark:text-white font-heading mb-3 group-hover:text-indigo-300 transition-colors leading-tight">{blog.title}</h3>
+                      <p className="text-sm text-slate-500 dark:text-slate-400 mb-6 flex-1 line-clamp-3 leading-relaxed">{blog.excerpt}</p>
+                      <div className="flex justify-between items-center border-t border-slate-200 dark:border-slate-800/50 pt-4 mt-auto">
                         <span className="text-xs text-slate-500 font-medium">By {blog.author}</span>
-                        <span className="text-sm font-semibold text-indigo-400 flex items-center gap-1 group-hover:gap-2 transition-all">Read <ArrowRight className="w-4 h-4"/></span>
+                        <span className="text-sm font-semibold text-blue-600 dark:text-blue-400 flex items-center gap-1 group-hover:gap-2 transition-all">Read <ArrowRight className="w-4 h-4"/></span>
                       </div>
                     </div>
                   ))}
@@ -307,44 +307,44 @@ export default function ResourcesPage() {
 
         {/* Support Section */}
         {activeTab === "support" && (
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-10 max-w-2xl mx-auto">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 md:p-10 max-w-2xl mx-auto">
             {submitted ? (
               <div className="text-center space-y-4 py-10">
                 <CheckCircle2 className="w-16 h-16 text-emerald-500 mx-auto" />
-                <h2 className="text-2xl font-bold text-white">Ticket Submitted</h2>
-                <p className="text-slate-400">Our engineering team has received your request and will respond to {ticket.email || 'your account email'} within 24 hours.</p>
-                <button onClick={() => setSubmitted(false)} className="mt-4 px-6 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-sm font-semibold transition-colors">
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-900 dark:text-white font-heading font-heading">Ticket Submitted</h2>
+                <p className="text-slate-500 dark:text-slate-400">Our engineering team has received your request and will respond to {ticket.email || 'your account email'} within 24 hours.</p>
+                <button onClick={() => setSubmitted(false)} className="mt-4 px-6 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-700 text-white rounded-2xl text-sm font-semibold transition-colors">
                   Submit Another Ticket
                 </button>
               </div>
             ) : (
               <>
-                <h2 className="text-xl font-bold text-white mb-2">Open a Support Ticket</h2>
-                <p className="text-slate-400 text-sm mb-6">Need help with custom physics integration or experiencing a bug? Let us know.</p>
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white font-heading mb-2">Open a Support Ticket</h2>
+                <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Need help with custom physics integration or experiencing a bug? Let us know.</p>
                 <form onSubmit={handleSupportSubmit} className="space-y-5">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
-                      <label className="block text-sm font-semibold text-slate-300 mb-1">Name</label>
+                      <label className="block text-sm font-semibold text-slate-600 dark:text-slate-300 mb-1">Name</label>
                       <input 
                         type="text" required
                         value={ticket.name} onChange={e => setTicket({...ticket, name: e.target.value})}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2 text-white outline-none focus:border-indigo-500"
+                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2 text-white outline-none focus:border-indigo-500"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-slate-300 mb-1">Email Address</label>
+                      <label className="block text-sm font-semibold text-slate-600 dark:text-slate-300 mb-1">Email Address</label>
                       <input 
                         type="email" required
                         value={ticket.email} onChange={e => setTicket({...ticket, email: e.target.value})}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2 text-white outline-none focus:border-indigo-500"
+                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2 text-white outline-none focus:border-indigo-500"
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-slate-300 mb-1">Category</label>
+                    <label className="block text-sm font-semibold text-slate-600 dark:text-slate-300 mb-1">Category</label>
                     <select 
                       value={ticket.category} onChange={e => setTicket({...ticket, category: e.target.value})}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2 text-white outline-none focus:border-indigo-500"
+                      className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2 text-white outline-none focus:border-indigo-500"
                     >
                       <option>Technical Support</option>
                       <option>Billing & Enterprise Upgrades</option>
@@ -353,18 +353,18 @@ export default function ResourcesPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-slate-300 mb-1">Message</label>
+                    <label className="block text-sm font-semibold text-slate-600 dark:text-slate-300 mb-1">Message</label>
                     <textarea 
                       required minLength={10}
                       value={ticket.message} onChange={e => setTicket({...ticket, message: e.target.value})}
                       placeholder="Describe your issue or question in detail..."
-                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white outline-none focus:border-indigo-500 min-h-[120px]"
+                      className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-3 text-white outline-none focus:border-indigo-500 min-h-[120px]"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-slate-300 mb-2">Screenshot Attachment (Optional)</label>
+                    <label className="block text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2">Screenshot Attachment (Optional)</label>
                     <div className="flex items-center gap-3">
-                      <label className="flex items-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-slate-200 text-sm font-medium rounded-lg cursor-pointer transition-colors border border-slate-800">
+                      <label className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:bg-slate-800 text-slate-200 text-sm font-medium rounded-2xl cursor-pointer transition-colors border border-slate-200 dark:border-slate-800">
                         <ImageIcon className="w-4 h-4" /> Upload Image
                         <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
                       </label>
@@ -373,7 +373,7 @@ export default function ResourcesPage() {
                   </div>
                   <button 
                     type="submit" disabled={submitting}
-                    className="w-full flex items-center justify-center gap-2 py-3 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold rounded-lg transition-colors"
+                    className="w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-blue-600 to-violet-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold rounded-2xl transition-colors"
                   >
                     {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Send className="w-4 h-4"/> Submit Ticket</>}
                   </button>

@@ -34,36 +34,36 @@ export default function BlogEditor({ secret }: { secret: string }) {
   };
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-      <div className="p-6 border-b border-slate-800 flex items-center justify-between bg-slate-950/50">
+    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+      <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-50 dark:bg-slate-950/50">
         <div className="flex items-center gap-3">
           <FileText className="w-5 h-5 text-emerald-400" />
-          <h2 className="text-xl font-bold text-white">Content Management</h2>
+          <h2 className="text-xl font-bold text-slate-900 dark:text-slate-900 dark:text-white font-heading">Content Management</h2>
         </div>
-        <button onClick={() => setIsOpen(!isOpen)} className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg transition-colors text-sm flex items-center gap-2">
+        <button onClick={() => setIsOpen(!isOpen)} className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-2xl transition-colors text-sm flex items-center gap-2">
           <Plus className="w-4 h-4" /> {isOpen ? "Close Editor" : "Post New Blog"}
         </button>
       </div>
       {message && <div className="p-4 text-emerald-400 bg-emerald-900/20 text-center">{message}</div>}
       {isOpen ? (
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <input type="text" name="title" required placeholder="Blog Title" className="w-full bg-slate-950 border border-slate-800 rounded px-4 py-2 text-white" />
+          <input type="text" name="title" required placeholder="Blog Title" className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded px-4 py-2 text-slate-900 dark:text-white" />
           <div className="grid grid-cols-3 gap-4">
-            <input type="text" name="author" required placeholder="Author" className="bg-slate-950 border border-slate-800 rounded px-4 py-2 text-white" />
-            <input type="text" name="readTime" required placeholder="Read Time (e.g. 5 min)" className="bg-slate-950 border border-slate-800 rounded px-4 py-2 text-white" />
-            <input type="text" name="tag" required placeholder="Category Tag" className="bg-slate-950 border border-slate-800 rounded px-4 py-2 text-white" />
+            <input type="text" name="author" required placeholder="Author" className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded px-4 py-2 text-slate-900 dark:text-white" />
+            <input type="text" name="readTime" required placeholder="Read Time (e.g. 5 min)" className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded px-4 py-2 text-slate-900 dark:text-white" />
+            <input type="text" name="tag" required placeholder="Category Tag" className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded px-4 py-2 text-slate-900 dark:text-white" />
           </div>
-          <label className="flex items-center gap-2 text-slate-300">
+          <label className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
             <input type="checkbox" name="featured" value="true" /> Featured Blog?
           </label>
-          <textarea name="excerpt" required placeholder="Short Excerpt" rows={2} className="w-full bg-slate-950 border border-slate-800 rounded px-4 py-2 text-white"></textarea>
-          <textarea name="content" required placeholder="Markdown Content..." rows={10} className="w-full bg-slate-950 border border-slate-800 rounded px-4 py-2 text-white font-mono text-sm"></textarea>
-          <button type="submit" disabled={loading} className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg">
+          <textarea name="excerpt" required placeholder="Short Excerpt" rows={2} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded px-4 py-2 text-slate-900 dark:text-white"></textarea>
+          <textarea name="content" required placeholder="Markdown Content..." rows={10} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded px-4 py-2 text-white font-mono text-sm"></textarea>
+          <button type="submit" disabled={loading} className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-2xl">
             {loading ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : "Publish Blog"}
           </button>
         </form>
       ) : (
-        <div className="p-6 text-center text-slate-400">
+        <div className="p-6 text-center text-slate-500 dark:text-slate-400">
           <p>Click "Post New Blog" to write a Markdown article.</p>
         </div>
       )}

@@ -136,7 +136,7 @@ export default function MaterialDetail() {
     <main className="flex flex-col p-6 lg:p-10 w-full relative">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3 bg-slate-800 border border-emerald-500/50 rounded-lg shadow-2xl text-white animate-in slide-in-from-bottom-5">
+        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3 bg-slate-100 dark:bg-slate-800 border border-emerald-500/50 rounded-2xl shadow-2xl text-white animate-in slide-in-from-bottom-5">
           <CheckCircle2 className="w-5 h-5 text-emerald-400" />
           <span className="text-sm font-medium">{toastMessage}</span>
         </div>
@@ -145,7 +145,7 @@ export default function MaterialDetail() {
       <div className="w-full max-w-7xl mx-auto space-y-6">
         
         {/* Breadcrumbs */}
-        <nav className="flex items-center gap-2 text-sm text-slate-400 mb-2">
+        <nav className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-2">
           <Link href="/materials" className="hover:text-emerald-400 transition-colors flex items-center gap-1">
             <ArrowLeft className="w-3.5 h-3.5" /> Database
           </Link>
@@ -162,16 +162,16 @@ export default function MaterialDetail() {
         </nav>
 
         {/* Header */}
-        <div className="p-8 rounded-2xl bg-slate-900 border border-slate-800 shadow-lg">
+        <div className="p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-lg">
           <div className="flex flex-col xl:flex-row justify-between items-start gap-6">
             <div className="flex-1">
               <div className="inline-block px-3 py-1 bg-emerald-900/30 text-emerald-400 text-xs font-bold rounded-full mb-3 uppercase tracking-wider border border-emerald-800/50">
                 {material.category} • {material.subcategory}
               </div>
-              <h1 className="text-4xl font-bold text-white mb-3">
+              <h1 className="text-4xl font-bold text-slate-900 dark:text-white font-heading mb-3">
                 {material.name}
               </h1>
-              <p className="text-slate-300 text-lg max-w-3xl leading-relaxed">
+              <p className="text-slate-600 dark:text-slate-300 text-lg max-w-3xl leading-relaxed">
                 {material.description || "No description available for this material."}
               </p>
               
@@ -179,33 +179,33 @@ export default function MaterialDetail() {
               <div className="flex flex-wrap gap-3 mt-6">
                 <Link 
                   href={`/analytics/compare?add=${id}`}
-                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-bold transition-all shadow-lg shadow-blue-900/20"
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-sm font-bold transition-all shadow-lg shadow-blue-900/20"
                 >
                   <GitCompare className="w-4 h-4" /> Add to Compare
                 </Link>
                 <Link 
                   href={`/analytics/substitution?base=${id}`}
-                  className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-bold transition-all shadow-lg shadow-purple-900/20"
+                  className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-2xl text-sm font-bold transition-all shadow-lg shadow-purple-900/20"
                 >
                   <SearchCode className="w-4 h-4" /> Find Substitution
                 </Link>
                 <Link 
                   href={`/analytics/synthesizer?matA=${id}`}
-                  className="flex items-center gap-2 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg text-sm font-bold transition-all shadow-lg shadow-cyan-900/20"
+                  className="flex items-center gap-2 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-2xl text-sm font-bold transition-all shadow-lg shadow-cyan-900/20"
                 >
                   <Beaker className="w-4 h-4" /> Use in Synthesizer
                 </Link>
                 <button 
                   onClick={() => window.print()}
-                  className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 rounded-lg text-sm font-semibold transition-all"
+                  className="flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-700 text-white border border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-semibold transition-all"
                 >
-                  <Download className="w-4 h-4 text-slate-300" /> Export PDF
+                  <Download className="w-4 h-4 text-slate-600 dark:text-slate-300" /> Export PDF
                 </button>
               </div>
             </div>
             
-            <div className="bg-slate-950 p-6 rounded-xl border border-slate-800 text-right min-w-[220px] shadow-inner self-stretch flex flex-col justify-center">
-              <p className="text-slate-400 text-sm mb-1 uppercase tracking-wider font-semibold">
+            <div className="bg-slate-50 dark:bg-slate-950 p-6 rounded-xl border border-slate-200 dark:border-slate-800 text-right min-w-[220px] shadow-inner self-stretch flex flex-col justify-center">
+              <p className="text-slate-500 dark:text-slate-400 text-sm mb-1 uppercase tracking-wider font-semibold">
                 Market Price
               </p>
               <p className="text-4xl font-bold text-emerald-400 mb-2">
@@ -226,106 +226,106 @@ export default function MaterialDetail() {
           {/* Main Column */}
           <div className="lg:col-span-2 space-y-6">
             {/* Mechanical Properties Panel */}
-            <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800">
-              <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+            <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white font-heading mb-4 flex items-center gap-2">
                 <Beaker className="w-5 h-5 text-blue-400" /> Mechanical &
                 Physical Properties
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                  <p className="text-xs text-slate-300">Yield Strength</p>
-                  <p className="text-lg font-semibold text-white">
+                <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+                  <p className="text-xs text-slate-600 dark:text-slate-300">Yield Strength</p>
+                  <p className="text-lg font-semibold text-slate-900 dark:text-white">
                     {material.yield_strength_min} -{" "}
                     {material.yield_strength_max}{" "}
-                    <span className="text-xs text-slate-300">MPa</span>
+                    <span className="text-xs text-slate-600 dark:text-slate-300">MPa</span>
                   </p>
                 </div>
-                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                  <p className="text-xs text-slate-300">Tensile Strength</p>
-                  <p className="text-lg font-semibold text-white">
+                <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+                  <p className="text-xs text-slate-600 dark:text-slate-300">Tensile Strength</p>
+                  <p className="text-lg font-semibold text-slate-900 dark:text-white">
                     {material.tensile_strength_min} -{" "}
                     {material.tensile_strength_max}{" "}
-                    <span className="text-xs text-slate-300">MPa</span>
+                    <span className="text-xs text-slate-600 dark:text-slate-300">MPa</span>
                   </p>
                 </div>
-                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                  <p className="text-xs text-slate-300">Elastic Modulus</p>
-                  <p className="text-lg font-semibold text-white">
+                <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+                  <p className="text-xs text-slate-600 dark:text-slate-300">Elastic Modulus</p>
+                  <p className="text-lg font-semibold text-slate-900 dark:text-white">
                     {material.elastic_modulus}{" "}
-                    <span className="text-xs text-slate-300">GPa</span>
+                    <span className="text-xs text-slate-600 dark:text-slate-300">GPa</span>
                   </p>
                 </div>
-                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                  <p className="text-xs text-slate-300">Density</p>
-                  <p className="text-lg font-semibold text-white">
+                <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+                  <p className="text-xs text-slate-600 dark:text-slate-300">Density</p>
+                  <p className="text-lg font-semibold text-slate-900 dark:text-white">
                     {material.density}{" "}
-                    <span className="text-xs text-slate-300">g/cm³</span>
+                    <span className="text-xs text-slate-600 dark:text-slate-300">g/cm³</span>
                   </p>
                 </div>
-                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                  <p className="text-xs text-slate-300">Hardness</p>
-                  <p className="text-lg font-semibold text-white">
+                <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+                  <p className="text-xs text-slate-600 dark:text-slate-300">Hardness</p>
+                  <p className="text-lg font-semibold text-slate-900 dark:text-white">
                     {material.hardness_value || "-"}{" "}
-                    <span className="text-xs text-slate-300">
+                    <span className="text-xs text-slate-600 dark:text-slate-300">
                       {material.hardness_scale}
                     </span>
                   </p>
                 </div>
-                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                  <p className="text-xs text-slate-300">Max Temp</p>
-                  <p className="text-lg font-semibold text-white">
+                <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+                  <p className="text-xs text-slate-600 dark:text-slate-300">Max Temp</p>
+                  <p className="text-lg font-semibold text-slate-900 dark:text-white">
                     {material.max_service_temp}{" "}
-                    <span className="text-xs text-slate-300">°C</span>
+                    <span className="text-xs text-slate-600 dark:text-slate-300">°C</span>
                   </p>
                 </div>
               </div>
             </div>
 
             {/* Thermal & Chemical Panel */}
-            <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800">
-              <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+            <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white font-heading mb-4 flex items-center gap-2">
                 <Beaker className="w-5 h-5 text-red-400" /> Thermal &
                 Environmental Properties
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                  <p className="text-xs text-slate-300">Thermal Conductivity</p>
-                  <p className="text-lg font-semibold text-white">
+                <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+                  <p className="text-xs text-slate-600 dark:text-slate-300">Thermal Conductivity</p>
+                  <p className="text-lg font-semibold text-slate-900 dark:text-white">
                     {material.thermal_conductivity || "-"}{" "}
-                    <span className="text-xs text-slate-300">W/mK</span>
+                    <span className="text-xs text-slate-600 dark:text-slate-300">W/mK</span>
                   </p>
                 </div>
-                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                  <p className="text-xs text-slate-300">Specific Heat</p>
-                  <p className="text-lg font-semibold text-white">
+                <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+                  <p className="text-xs text-slate-600 dark:text-slate-300">Specific Heat</p>
+                  <p className="text-lg font-semibold text-slate-900 dark:text-white">
                     {material.specific_heat || "-"}{" "}
-                    <span className="text-xs text-slate-300">J/kgK</span>
+                    <span className="text-xs text-slate-600 dark:text-slate-300">J/kgK</span>
                   </p>
                 </div>
-                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                  <p className="text-xs text-slate-300">Melting Point</p>
-                  <p className="text-lg font-semibold text-white">
+                <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+                  <p className="text-xs text-slate-600 dark:text-slate-300">Melting Point</p>
+                  <p className="text-lg font-semibold text-slate-900 dark:text-white">
                     {material.melting_point || "-"}{" "}
-                    <span className="text-xs text-slate-300">°C</span>
+                    <span className="text-xs text-slate-600 dark:text-slate-300">°C</span>
                   </p>
                 </div>
-                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                  <p className="text-xs text-slate-300">Embodied Carbon</p>
-                  <p className="text-lg font-semibold text-white">
+                <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+                  <p className="text-xs text-slate-600 dark:text-slate-300">Embodied Carbon</p>
+                  <p className="text-lg font-semibold text-slate-900 dark:text-white">
                     {material.embodied_carbon || "-"}{" "}
-                    <span className="text-xs text-slate-300">kg CO2/kg</span>
+                    <span className="text-xs text-slate-600 dark:text-slate-300">kg CO2/kg</span>
                   </p>
                 </div>
-                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                  <p className="text-xs text-slate-300">Water Usage</p>
-                  <p className="text-lg font-semibold text-white">
+                <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+                  <p className="text-xs text-slate-600 dark:text-slate-300">Water Usage</p>
+                  <p className="text-lg font-semibold text-slate-900 dark:text-white">
                     {material.water_usage || "-"}{" "}
-                    <span className="text-xs text-slate-300">L/kg</span>
+                    <span className="text-xs text-slate-600 dark:text-slate-300">L/kg</span>
                   </p>
                 </div>
-                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                  <p className="text-xs text-slate-300">Recyclability</p>
-                  <p className="text-lg font-semibold text-white">
+                <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+                  <p className="text-xs text-slate-600 dark:text-slate-300">Recyclability</p>
+                  <p className="text-lg font-semibold text-slate-900 dark:text-white">
                     {material.recyclability_fraction
                       ? (material.recyclability_fraction * 100).toFixed(0) + "%"
                       : "-"}
@@ -335,32 +335,32 @@ export default function MaterialDetail() {
             </div>
 
             {/* Historical Price Tracking Graph */}
-            <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800">
-              <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+            <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white font-heading mb-6 flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-emerald-400" /> Historical
                 Price Tracking (12M)
               </h3>
-              <p className="text-[11px] leading-relaxed text-slate-400 mb-6 flex items-start gap-1.5">
+              <p className="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400 mb-6 flex items-start gap-1.5">
                 <Info className="w-4 h-4 shrink-0 mt-0.5" /> Data is generated via macroeconomic proxy indexing for trend analysis. It is not a live spot-price. Please consult a supplier for exact procurement pricing.
               </p>
 
               {isPriceLocked ? (
-                <div className="p-5 h-48 mt-4 rounded-xl bg-slate-950 border border-emerald-500/30 text-center relative overflow-hidden group flex flex-col items-center justify-center">
+                <div className="p-5 h-48 mt-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-emerald-500/30 text-center relative overflow-hidden group flex flex-col items-center justify-center">
                   <div className="absolute inset-0 bg-gradient-to-t from-emerald-900/20 to-transparent"></div>
                   <Lock className="w-8 h-8 text-emerald-400 mx-auto mb-3 relative z-10" />
-                  <h4 className="font-bold text-white text-sm mb-1 relative z-10">
+                  <h4 className="font-bold text-slate-900 dark:text-white font-heading text-sm mb-1 relative z-10">
                     Pro Feature Locked
                   </h4>
-                  <p className="text-xs text-slate-400 relative z-10 mb-4 max-w-sm">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 relative z-10 mb-4 max-w-sm">
                     Upgrade to Pro to unlock 12-month historical price trends
                     and market forecasting.
                   </p>
-                  <button className="relative z-10 px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-colors">
+                  <button className="relative z-10 px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-xs font-bold transition-colors">
                     Upgrade to Pro
                   </button>
                 </div>
               ) : priceHistory.length > 0 ? (
-                <div className="relative h-56 mt-4 pt-4 border-t border-slate-800">
+                <div className="relative h-56 mt-4 pt-4 border-t border-slate-200 dark:border-slate-800">
                   {/* SVG Line Chart */}
                   <div className="absolute inset-x-0 bottom-6 top-4 left-4 right-4">
                     <svg
@@ -401,10 +401,10 @@ export default function MaterialDetail() {
                   </div>
 
                   {/* Y-Axis Min/Max Labels */}
-                  <div className="absolute top-0 left-0 text-[10px] text-slate-400">
+                  <div className="absolute top-0 left-0 text-[10px] text-slate-500 dark:text-slate-400">
                     ₹{maxPrice.toFixed(0)}
                   </div>
-                  <div className="absolute bottom-5 left-0 text-[10px] text-slate-400">
+                  <div className="absolute bottom-5 left-0 text-[10px] text-slate-500 dark:text-slate-400">
                     ₹{minPrice.toFixed(0)}
                   </div>
 
@@ -420,12 +420,12 @@ export default function MaterialDetail() {
                           <div className="absolute inset-0 z-20 hover:bg-emerald-500/10 transition-colors cursor-crosshair"></div>
 
                           {/* Tooltip */}
-                          <div className="absolute top-0 opacity-0 group-hover:opacity-100 bg-slate-800 text-white text-xs py-1 px-2 rounded pointer-events-none transition-opacity z-30 whitespace-nowrap shadow-lg border border-slate-700">
+                          <div className="absolute top-0 opacity-0 group-hover:opacity-100 bg-slate-100 dark:bg-slate-800 text-white text-xs py-1 px-2 rounded pointer-events-none transition-opacity z-30 whitespace-nowrap shadow-lg border border-slate-200 dark:border-slate-700">
                             ₹{ph.cost_per_kg.toFixed(2)}
                           </div>
 
                           {/* X Axis Label */}
-                          <div className="absolute -bottom-5 text-[10px] text-slate-400 w-full text-center truncate">
+                          <div className="absolute -bottom-5 text-[10px] text-slate-500 dark:text-slate-400 w-full text-center truncate">
                             {new Date(ph.recorded_date).toLocaleString(
                               "default",
                               { month: "short" },
@@ -437,9 +437,9 @@ export default function MaterialDetail() {
                   </div>
                 </div>
               ) : (
-                <div className="h-48 mt-4 pt-4 border-t border-slate-800 flex flex-col items-center justify-center text-center">
+                <div className="h-48 mt-4 pt-4 border-t border-slate-200 dark:border-slate-800 flex flex-col items-center justify-center text-center">
                   <TrendingUp className="w-8 h-8 text-slate-700 mb-2" />
-                  <p className="text-slate-400 text-sm">
+                  <p className="text-slate-500 dark:text-slate-400 text-sm">
                     No historical pricing data available.
                   </p>
                   <p className="text-slate-500 text-xs mt-1">
@@ -453,23 +453,23 @@ export default function MaterialDetail() {
           {/* Sidebar Panel */}
           <div className="space-y-6">
             {/* Find Similar AI */}
-            <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800">
-              <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+            <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white font-heading mb-4 flex items-center gap-2">
                 <SearchCode className="w-5 h-5 text-purple-400" /> Find Similar
                 Materials
               </h3>
               {isSimilarLocked ? (
-                <div className="p-5 rounded-xl bg-slate-950 border border-purple-500/30 text-center relative overflow-hidden group">
+                <div className="p-5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-purple-500/30 text-center relative overflow-hidden group">
                   <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 to-transparent"></div>
                   <Lock className="w-8 h-8 text-purple-400 mx-auto mb-3 relative z-10" />
-                  <h4 className="font-bold text-white text-sm mb-1 relative z-10">
+                  <h4 className="font-bold text-slate-900 dark:text-white font-heading text-sm mb-1 relative z-10">
                     Pro Feature Locked
                   </h4>
-                  <p className="text-xs text-slate-400 relative z-10 mb-4">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 relative z-10 mb-4">
                     Upgrade to automatically discover physically similar
                     materials.
                   </p>
-                  <button className="relative z-10 w-full py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-bold transition-colors">
+                  <button className="relative z-10 w-full py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-2xl text-xs font-bold transition-colors">
                     Upgrade to Pro
                   </button>
                 </div>
@@ -479,12 +479,12 @@ export default function MaterialDetail() {
                     <Link
                       href={`/materials/${sim.id}`}
                       key={sim.id}
-                      className="block p-3 rounded-lg bg-slate-950 border border-slate-800 hover:border-purple-500/50 transition-colors"
+                      className="block p-3 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 hover:border-purple-500/50 transition-colors"
                     >
                       <p className="font-semibold text-white text-sm">
                         {sim.name}
                       </p>
-                      <div className="flex justify-between text-xs text-slate-300 mt-1">
+                      <div className="flex justify-between text-xs text-slate-600 dark:text-slate-300 mt-1">
                         <span>{sim.category}</span>
                         <span className="text-purple-400">View →</span>
                       </div>
@@ -492,7 +492,7 @@ export default function MaterialDetail() {
                   ))}
                 </div>
               ) : (
-                <div className="p-4 rounded-lg bg-slate-950 border border-slate-800 text-sm text-slate-400 text-center">
+                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-sm text-slate-500 dark:text-slate-400 text-center">
                   <ShieldAlert className="w-6 h-6 text-slate-600 mx-auto mb-2" />
                   No similar materials found in database.
                 </div>
@@ -500,29 +500,29 @@ export default function MaterialDetail() {
             </div>
 
             {/* Metadata */}
-            <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 text-sm">
-              <h3 className="font-bold text-white mb-4 border-b border-slate-800 pb-2">
+            <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-sm">
+              <h3 className="font-bold text-slate-900 dark:text-white font-heading mb-4 border-b border-slate-200 dark:border-slate-800 pb-2">
                 Standards & Identifiers
               </h3>
               <div className="space-y-3">
                 <div>
-                  <span className="text-slate-300 block text-xs">Standard</span>
-                  <span className="text-white">{material.standard || "-"}</span>
+                  <span className="text-slate-600 dark:text-slate-300 block text-xs">Standard</span>
+                  <span className="text-slate-900 dark:text-white">{material.standard || "-"}</span>
                 </div>
                 <div>
-                  <span className="text-slate-300 block text-xs">Grade</span>
-                  <span className="text-white">{material.grade || "-"}</span>
+                  <span className="text-slate-600 dark:text-slate-300 block text-xs">Grade</span>
+                  <span className="text-slate-900 dark:text-white">{material.grade || "-"}</span>
                 </div>
                 <div>
-                  <span className="text-slate-300 block text-xs">
+                  <span className="text-slate-600 dark:text-slate-300 block text-xs">
                     Equivalent Grades
                   </span>
-                  <span className="text-white">
+                  <span className="text-slate-900 dark:text-white">
                     {material.equivalent_grades || "-"}
                   </span>
                 </div>
-                <div className="pt-2 border-t border-slate-800">
-                  <span className="text-slate-300 block text-xs">
+                <div className="pt-2 border-t border-slate-200 dark:border-slate-800">
+                  <span className="text-slate-600 dark:text-slate-300 block text-xs">
                     Data Source
                   </span>
                   <span className="text-emerald-400 font-medium">

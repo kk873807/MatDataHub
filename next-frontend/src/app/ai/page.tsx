@@ -128,15 +128,15 @@ export default function AskAIPage() {
 
   return (
     <main className="flex flex-col h-[calc(100vh-2rem)] p-6 lg:p-10 w-full">
-      <div className="w-full max-w-4xl mx-auto flex flex-col h-full bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl relative">
+      <div className="w-full max-w-4xl mx-auto flex flex-col h-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-2xl relative">
 
-        <div className="p-6 border-b border-slate-800 bg-slate-950/50 flex items-center gap-4 flex-wrap">          <div className="w-full flex justify-end gap-2 mb-2 order-first md:order-last md:mb-0 md:w-auto md:ml-auto">            {messages.length > 0 && <button onClick={() => { setMessages([]); localStorage.removeItem("ai_chat_history"); }} className="px-3 py-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-xs font-bold rounded-full transition-colors">Clear Chat</button>}            {messages.length > 0 && <button onClick={() => { const text = messages.map(m => (m.role === "user" ? "USER: " : "AI: ") + m.content).join("\n\n"); const blob = new Blob([text], { type: "text/plain" }); const url = window.URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = "Chat_History.txt"; a.click(); }} className="px-3 py-1 bg-blue-900/30 hover:bg-blue-800/50 border border-blue-700/50 text-blue-400 text-xs font-bold rounded-full transition-colors">Export Chat</button>}          </div>
+        <div className="p-6 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-50 dark:bg-slate-950/50 flex items-center gap-4 flex-wrap">          <div className="w-full flex justify-end gap-2 mb-2 order-first md:order-last md:mb-0 md:w-auto md:ml-auto">            {messages.length > 0 && <button onClick={() => { setMessages([]); localStorage.removeItem("ai_chat_history"); }} className="px-3 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold rounded-full transition-colors">Clear Chat</button>}            {messages.length > 0 && <button onClick={() => { const text = messages.map(m => (m.role === "user" ? "USER: " : "AI: ") + m.content).join("\n\n"); const blob = new Blob([text], { type: "text/plain" }); const url = window.URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = "Chat_History.txt"; a.click(); }} className="px-3 py-1 bg-blue-900/30 hover:bg-blue-800/50 border border-blue-700/50 text-blue-400 text-xs font-bold rounded-full transition-colors">Export Chat</button>}          </div>
           <div className="w-12 h-12 rounded-xl bg-blue-600/20 flex items-center justify-center border border-blue-500/30">
             <Bot className="w-6 h-6 text-blue-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-white">AI Materials Adviser</h1>
-            <p className="text-sm text-slate-400">Describe your requirements and I will recommend the best materials.</p>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-900 dark:text-white font-heading font-heading">AI Materials Adviser</h1>
+            <p className="text-sm text-slate-500 dark:text-slate-400">Describe your requirements and I will recommend the best materials.</p>
           </div>
           {tier && tier !== "free" && (
             <span className="px-3 py-1 bg-emerald-900/30 border border-emerald-700/50 text-emerald-400 text-xs font-bold rounded-full uppercase tracking-wider">
@@ -144,18 +144,18 @@ export default function AskAIPage() {
             </span>
           )}
           {tier && getDailyLimit() !== Infinity && (
-            <span className={`${tier !== "free" ? "" : "ml-auto"} px-3 py-1 ${isLimitReached ? "bg-red-900/30 border-red-700/50 text-red-400" : "bg-slate-800 border-slate-700 text-slate-400"} border text-xs font-bold rounded-full`}>
+            <span className={`${tier !== "free" ? "" : "ml-auto"} px-3 py-1 ${isLimitReached ? "bg-red-900/30 border-red-700/50 text-red-400" : "bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400"} border text-xs font-bold rounded-full`}>
               {getDailyCount()}/{getDailyLimit()} today
             </span>
           )}
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-900">
+        <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-white dark:bg-slate-900">
           <div className="flex gap-4">
             <div className="w-8 h-8 rounded-full bg-blue-600/20 flex items-center justify-center border border-blue-500/30 shrink-0 mt-1">
               <Bot className="w-4 h-4 text-blue-400" />
             </div>
-            <div className="bg-slate-800 p-4 rounded-2xl rounded-tl-none text-slate-200 text-sm max-w-[85%] space-y-3">
+            <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl rounded-tl-none text-slate-200 text-sm max-w-[85%] space-y-3">
               <p>Hello! I am your AI Materials Adviser. Describe your engineering constraints and I will recommend the best materials from our database.</p>
               {messages.length === 0 && (
                 <div className="flex flex-wrap gap-2 pt-2">
@@ -163,7 +163,7 @@ export default function AskAIPage() {
                     <button
                       key={chip}
                       onClick={() => handleSubmit(null, chip)}
-                      className="flex items-center gap-1 px-3 py-1.5 bg-slate-700 hover:bg-blue-900/50 hover:border-blue-700 border border-slate-600 text-slate-300 text-xs rounded-full transition-all"
+                      className="flex items-center gap-1 px-3 py-1.5 bg-slate-700 hover:bg-blue-900/50 hover:border-blue-700 border border-slate-600 text-slate-600 dark:text-slate-300 text-xs rounded-full transition-all"
                     >
                       <ChevronRight className="w-3 h-3" />
                       {chip}
@@ -188,19 +188,19 @@ export default function AskAIPage() {
                 {msg.content === "__UPGRADE__" ? (
                   <div className="bg-amber-900/20 border border-amber-700/50 p-5 rounded-2xl rounded-tl-none max-w-[85%] space-y-3">
                     <div className="flex items-center gap-2 text-amber-400 font-bold"><Lock className="w-4 h-4" /> Pro Feature Required</div>
-                    <p className="text-slate-300 text-sm">The AI Adviser is available to <strong>Pro</strong> and <strong>Advanced</strong> members. Upgrade your account to unlock AI-powered recommendations.</p>
-                    <Link href="/account" className="inline-flex items-center gap-1 px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white text-sm font-bold rounded-lg transition-colors">
+                    <p className="text-slate-600 dark:text-slate-300 text-sm">The AI Adviser is available to <strong>Pro</strong> and <strong>Advanced</strong> members. Upgrade your account to unlock AI-powered recommendations.</p>
+                    <Link href="/account" className="inline-flex items-center gap-1 px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white text-sm font-bold rounded-2xl transition-colors">
                       Upgrade Now <ArrowUpRight className="w-4 h-4" />
                     </Link>
                   </div>
                 ) : (
-                  <div className={`p-4 rounded-2xl text-sm max-w-[85%] space-y-4 ${msg.role === "user" ? "bg-emerald-900/40 border border-emerald-900 rounded-tr-none text-white" : "bg-slate-800 rounded-tl-none text-slate-200"}`}>
+                  <div className={`p-4 rounded-2xl text-sm max-w-[85%] space-y-4 ${msg.role === "user" ? "bg-emerald-900/40 border border-emerald-900 rounded-tr-none text-slate-900 dark:text-white" : "bg-slate-100 dark:bg-slate-800 rounded-tl-none text-slate-200"}`}>
                     <div className="prose prose-invert prose-sm max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
                       <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
                         components={{
-                          h1: ({children}) => <h3 className="text-lg font-bold text-white mt-4 mb-2">{children}</h3>,
-                          h2: ({children}) => <h4 className="text-base font-bold text-white mt-3 mb-2">{children}</h4>,
+                          h1: ({children}) => <h3 className="text-lg font-bold text-slate-900 dark:text-white font-heading mt-4 mb-2">{children}</h3>,
+                          h2: ({children}) => <h4 className="text-base font-bold text-slate-900 dark:text-white font-heading mt-3 mb-2">{children}</h4>,
                           h3: ({children}) => <h5 className="text-sm font-bold text-blue-300 mt-3 mb-1">{children}</h5>,
                           p: ({children}) => <p className="text-slate-200 leading-relaxed mb-2">{children}</p>,
                           strong: ({children}) => <strong className="text-white font-bold">{children}</strong>,
@@ -210,31 +210,31 @@ export default function AskAIPage() {
                           code: ({className, children}) => {
                             const isBlock = className?.includes("language-");
                             return isBlock
-                              ? <pre className="bg-slate-900 border border-slate-700 rounded-lg p-3 overflow-x-auto my-2"><code className="text-emerald-400 text-xs">{children}</code></pre>
-                              : <code className="bg-slate-900 text-emerald-400 px-1.5 py-0.5 rounded text-xs">{children}</code>;
+                              ? <pre className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl p-3 overflow-x-auto my-2"><code className="text-emerald-400 text-xs">{children}</code></pre>
+                              : <code className="bg-white dark:bg-slate-900 text-emerald-400 px-1.5 py-0.5 rounded text-xs">{children}</code>;
                           },
-                          table: ({children}) => <div className="overflow-x-auto my-3 rounded-lg border border-slate-700"><table className="w-full text-left text-xs">{children}</table></div>,
-                          thead: ({children}) => <thead className="bg-slate-900 text-slate-400 uppercase text-xs">{children}</thead>,
+                          table: ({children}) => <div className="overflow-x-auto my-3 rounded-2xl border border-slate-200 dark:border-slate-700"><table className="w-full text-left text-xs">{children}</table></div>,
+                          thead: ({children}) => <thead className="bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 uppercase text-xs">{children}</thead>,
                           tbody: ({children}) => <tbody className="divide-y divide-slate-700/50">{children}</tbody>,
                           tr: ({children}) => <tr className="hover:bg-slate-700/30 transition-colors">{children}</tr>,
                           th: ({children}) => <th className="px-3 py-2 font-semibold whitespace-nowrap">{children}</th>,
-                          td: ({children}) => <td className="px-3 py-2 text-slate-300 whitespace-nowrap">{children}</td>,
-                          blockquote: ({children}) => <blockquote className="border-l-2 border-blue-500 pl-3 my-2 text-slate-400 italic">{children}</blockquote>,
-                          hr: () => <hr className="border-slate-700 my-3" />,
+                          td: ({children}) => <td className="px-3 py-2 text-slate-600 dark:text-slate-300 whitespace-nowrap">{children}</td>,
+                          blockquote: ({children}) => <blockquote className="border-l-2 border-blue-500 pl-3 my-2 text-slate-500 dark:text-slate-400 italic">{children}</blockquote>,
+                          hr: () => <hr className="border-slate-200 dark:border-slate-700 my-3" />,
                         }}
                       >
                         {msg.content}
                       </ReactMarkdown>
                     </div>
                     {msg.materials && msg.materials.length > 0 && (
-                      <div className="mt-4 pt-4 border-t border-slate-700">
+                      <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
                         <h4 className="font-bold flex items-center gap-2 mb-3 text-blue-300"><Sparkles className="w-4 h-4" /> Top Database Matches</h4>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           {msg.materials.map((m: any, j: number) => (
-                            <div key={j} className="p-3 bg-slate-900 border border-slate-700 rounded-lg">
+                            <div key={j} className="p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl">
                               <p className="font-bold text-white text-sm">{m.name}</p>
-                              <p className="text-xs text-slate-400 mt-1">{m.category} · {m.cost}</p>
-                              <p className="text-xs text-slate-400">Tensile: {m.tensile_strength}</p>
+                              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{m.category} · {m.cost}</p>
+                              <p className="text-xs text-slate-500 dark:text-slate-400">Tensile: {m.tensile_strength}</p>
                             </div>
                           ))}
                         </div>
@@ -251,16 +251,16 @@ export default function AskAIPage() {
               <div className="w-8 h-8 rounded-full bg-blue-600/20 flex items-center justify-center border border-blue-500/30 shrink-0 mt-1">
                 <Bot className="w-4 h-4 text-blue-400" />
               </div>
-              <div className="bg-slate-800 p-4 rounded-2xl rounded-tl-none flex items-center gap-3">
+              <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl rounded-tl-none flex items-center gap-3">
                 <Loader2 className="w-4 h-4 animate-spin text-blue-400" />
-                <span className="text-slate-400 text-sm">Analyzing constraints and querying database...</span>
+                <span className="text-slate-500 dark:text-slate-400 text-sm">Analyzing constraints and querying database...</span>
               </div>
             </div>
           )}
           <div ref={bottomRef} />
         </div>
 
-        <div className="p-4 border-t border-slate-800 bg-slate-950">
+        <div className="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950">
           <form onSubmit={handleSubmit} className="relative flex items-center">
             <input
               type="text"
@@ -268,9 +268,9 @@ export default function AskAIPage() {
               onChange={(e) => setPrompt(e.target.value)}
               placeholder="Describe your material requirements..."
               disabled={loading}
-              className="w-full bg-slate-900 border border-slate-800 rounded-xl pl-4 pr-14 py-4 text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+              className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl pl-4 pr-14 py-4 text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
             />
-            <button type="submit" disabled={loading || !prompt.trim()} className="absolute right-2 p-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-40">
+            <button type="submit" disabled={loading || !prompt.trim()} className="absolute right-2 p-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl transition-colors disabled:opacity-40">
               <Send className="w-4 h-4" />
             </button>
           </form>
