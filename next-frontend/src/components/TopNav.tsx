@@ -15,7 +15,6 @@ const appNavItems = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
   { name: "Materials", href: "/materials", icon: Database },
   { name: "Analytics", href: "/analytics", icon: BarChart3 },
-  { name: "AI Adviser", href: "/ai", icon: Bot },
   { name: "Workspaces", href: "/projects", icon: Workflow },
 ];
 
