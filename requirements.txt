@@ -23,7 +23,8 @@ plotly>=5.22
 # Utilities
 pydantic>=2.10
 razorpay>=1.4.1
-google-generativeai>=0.5.2
+google-generativeai
+google-api-core==2.23.0>=0.5.2
 groq>=0.9.0
 
 streamlit-cookies-controller>=0.0.3

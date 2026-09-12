@@ -21,79 +21,6 @@ from app.database import get_db   # <-- added payments
 # Create tables on startup (safe to call multiple times)
 Base.metadata.create_all(bind=engine)
 
-# Quick and dirty auto-migration for MVP
-from sqlalchemy import text
-with engine.connect() as conn:
-    try:
-        conn.execute(text("ALTER TABLE users ADD COLUMN is_blocked BOOLEAN DEFAULT FALSE;"))
-        conn.commit()
-    except Exception:
-        conn.rollback() # Clear the aborted transaction state
-        
-    try:
-        conn.execute(text("ALTER TABLE projects ADD COLUMN blueprint_data TEXT;"))
-        conn.commit()
-    except Exception:
-        conn.rollback()
-        
-    try:
-        conn.execute(text("ALTER TABLE feedback ADD COLUMN helpful_votes INTEGER DEFAULT 0;"))
-        conn.commit()
-    except Exception:
-        conn.rollback()
-        
-    try:
-        conn.execute(text("ALTER TABLE feedback ADD COLUMN parent_id INTEGER REFERENCES feedback(id);"))
-        conn.commit()
-    except Exception:
-        conn.rollback()
-
-    try:
-        conn.execute(text("ALTER TABLE users ADD COLUMN auth_provider VARCHAR(50) DEFAULT 'email' NOT NULL;"))
-        conn.commit()
-    except Exception:
-        conn.rollback()
-
-    try:
-        conn.execute(text("ALTER TABLE users ADD COLUMN provider_id VARCHAR(255);"))
-        conn.commit()
-    except Exception:
-        conn.rollback()
-
-    try:
-        conn.execute(text("ALTER TABLE users ADD COLUMN session_token VARCHAR(64);"))
-        conn.commit()
-    except Exception:
-        conn.rollback()
-
-    try:
-        conn.execute(text("ALTER TABLE users ADD COLUMN is_admin BOOLEAN DEFAULT FALSE;"))
-        conn.commit()
-    except Exception:
-        conn.rollback()
-
-    try:
-        # Create transactions table manually if Base.metadata.create_all doesn't catch it
-        conn.execute(text("""
-        CREATE TABLE IF NOT EXISTS transactions (
-            id SERIAL PRIMARY KEY,
-            user_id INTEGER NOT NULL,
-            amount FLOAT NOT NULL,
-            currency VARCHAR(10) DEFAULT 'INR',
-            tier_purchased VARCHAR(50) NOT NULL,
-            status VARCHAR(20) DEFAULT 'completed',
-            payment_id VARCHAR(100),
-            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-        );
-        """))
-        conn.commit()
-    except Exception as e:
-        print(f"Transaction migration skipped/failed: {e}")
-        conn.rollback()
-
-
-
-
 app = FastAPI(
     title="MatDataHub API",
     description="Engineering Material Data API - Search, filter, and compare 1000+ engineering materials.",
@@ -162,3 +89,10 @@ def seed_demo_data():
 
 from app.routers import blogs
 app.include_router(blogs.router, prefix="/api/v1")
+
+
+if __name__ == "__main__":
+    import uvicorn
+    import os
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run("app.main:app", host="0.0.0.0", port=port)
