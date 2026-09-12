@@ -129,7 +129,7 @@ export default function MaterialManager({ secret }: { secret: string }) {
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileUp className="w-4 h-4" />}
               {loading ? "Processing..." : "Select File"}
             </label>
-            <span className="text-sm text-slate-500">Supported: .csv, .xlsx</span>
+            <span className="text-sm text-slate-500 dark:text-slate-400">Supported: .csv, .xlsx</span>
           </div>
 
           {error && (

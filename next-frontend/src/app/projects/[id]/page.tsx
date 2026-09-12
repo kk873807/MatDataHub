@@ -251,7 +251,7 @@ export default function ProjectWorkspace() {
                 <input 
                   type="text" 
                   placeholder="Search material..." 
-                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-3 py-2.5 text-slate-900 dark:text-white text-sm outline-none focus:border-blue-500 transition-colors placeholder:text-slate-500"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-3 py-2.5 text-slate-900 dark:text-white text-sm outline-none focus:border-blue-500 transition-colors placeholder:text-slate-500 dark:text-slate-400"
                   value={searchMatQuery}
                   onChange={(e) => {
                     setSearchMatQuery(e.target.value);
@@ -342,7 +342,7 @@ export default function ProjectWorkspace() {
                         <button 
                           onClick={() => handleRemovePart(item.id, item.part_name)} 
                           disabled={removingId === item.id}
-                          className="text-slate-500 hover:text-red-400 hover:bg-red-950/30 p-1.5 rounded-md transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 disabled:opacity-100"
+                          className="text-slate-500 dark:text-slate-400 hover:text-red-400 hover:bg-red-950/30 p-1.5 rounded-md transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 disabled:opacity-100"
                           title="Delete Part"
                         >
                           {removingId === item.id ? <Loader2 className="w-4 h-4 animate-spin text-red-400" /> : <Trash2 className="w-4 h-4" />}
@@ -352,7 +352,7 @@ export default function ProjectWorkspace() {
                   ))}
                   {enrichedItems.length === 0 && (
                     <tr>
-                      <td colSpan={6} className="px-5 py-12 text-center text-slate-500 bg-slate-50 dark:bg-slate-950/30">
+                      <td colSpan={6} className="px-5 py-12 text-center text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-950/30">
                         No parts added to this assembly yet.
                       </td>
                     </tr>
@@ -385,7 +385,7 @@ export default function ProjectWorkspace() {
         </div>
 
         {!selectedItem ? (
-          <div className="text-center py-20 text-slate-500">Please select a part from your assembly to run advanced engineering tools.</div>
+          <div className="text-center py-20 text-slate-500 dark:text-slate-400">Please select a part from your assembly to run advanced engineering tools.</div>
         ) : (
           <div className="space-y-6">
             <div className="p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl flex items-center justify-between">
@@ -511,11 +511,11 @@ export default function ProjectWorkspace() {
         
         <div className="flex gap-6">
           <div className="text-right">
-            <p className="text-[10px] uppercase tracking-wider text-slate-500 font-bold">Total Mass</p>
+            <p className="text-[10px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold">Total Mass</p>
             <p className="text-sm font-bold text-slate-900 dark:text-white">{totalMass.toFixed(2)} kg</p>
           </div>
           <div className="text-right">
-            <p className="text-[10px] uppercase tracking-wider text-slate-500 font-bold">Total Cost</p>
+            <p className="text-[10px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold">Total Cost</p>
             <p className="text-sm font-bold text-emerald-400">₹{totalCost.toFixed(2)}</p>
           </div>
           <button
@@ -827,7 +827,7 @@ export default function ProjectWorkspace() {
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar Tools Menu */}
         <div className="w-64 border-r border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-4 flex flex-col gap-2 overflow-y-auto shrink-0">
-          <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-2">Builder</div>
+          <div className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 ml-2">Builder</div>
           <button onClick={()=>setActiveTool("bom")} className={`flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-medium transition-colors ${activeTool === 'bom' ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30' : 'text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-900 hover:text-white border border-transparent'}`}>
             <Component className="w-4 h-4" /> Standard BOM
           </button>
@@ -835,7 +835,7 @@ export default function ProjectWorkspace() {
             <Share2 className="w-4 h-4" /> Blueprints (JSON)
           </button>
           
-          <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mt-6 mb-2 ml-2">Engineering Tools</div>          {profile?.tier !== "advanced" && !profile?.is_admin && <div className="ml-2 mb-2 px-2 py-1 bg-amber-900/30 text-amber-400 text-[10px] rounded border border-amber-900/50 uppercase tracking-wider font-bold">Advanced Tier Only</div>}
+          <div className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mt-6 mb-2 ml-2">Engineering Tools</div>          {profile?.tier !== "advanced" && !profile?.is_admin && <div className="ml-2 mb-2 px-2 py-1 bg-amber-900/30 text-amber-400 text-[10px] rounded border border-amber-900/50 uppercase tracking-wider font-bold">Advanced Tier Only</div>}
           <button onClick={()=>setActiveTool("safety")} className={`flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-medium transition-colors ${activeTool === 'safety' ? 'bg-emerald-600/20 text-emerald-400 border border-emerald-500/30' : 'text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-900 hover:text-white border border-transparent'}`}>
             <Shield className="w-4 h-4" /> Safety Factor
           </button>

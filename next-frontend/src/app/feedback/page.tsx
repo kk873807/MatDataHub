@@ -93,7 +93,7 @@ export default function FeedbackCommunityPage() {
               <div className="flex justify-center p-10"><Loader2 className="w-8 h-8 animate-spin text-indigo-500" /></div>
             ) : feedbacks.length === 0 ? (
               <div className="text-center p-12 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl">
-                <p className="text-slate-500">No feedback yet. Be the first to start the conversation!</p>
+                <p className="text-slate-500 dark:text-slate-400">No feedback yet. Be the first to start the conversation!</p>
               </div>
             ) : (
               feedbacks.filter(fb => !fb.parent_id).map((fb) => (
@@ -103,7 +103,7 @@ export default function FeedbackCommunityPage() {
                       <h4 className="font-bold text-slate-900 dark:text-white font-heading">{fb.name || 'Anonymous Engineer'}</h4>
                       <span className="text-xs font-semibold px-2 py-0.5 bg-indigo-900/30 text-blue-600 dark:text-blue-400 rounded-full border border-indigo-700/50">{fb.category}</span>
                     </div>
-                    <span className="text-xs text-slate-500">{new Date(fb.created_at).toLocaleDateString('en-GB')}</span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400">{new Date(fb.created_at).toLocaleDateString('en-GB')}</span>
                   </div>
                   <p className="text-slate-600 dark:text-slate-300 text-sm mb-4 leading-relaxed">{fb.message}</p>
                   
@@ -133,7 +133,7 @@ export default function FeedbackCommunityPage() {
                     <div key={reply.id} className="mt-4 pl-4 border-l-2 border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800/30 p-3 rounded-r-lg">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="font-bold text-slate-900 dark:text-white text-xs">{reply.name || "User"}</span>
-                        <span className="text-slate-500 text-[10px]">{new Date(reply.created_at).toLocaleDateString('en-GB')}</span>
+                        <span className="text-slate-500 dark:text-slate-400 text-[10px]">{new Date(reply.created_at).toLocaleDateString('en-GB')}</span>
                       </div>
                       <p className="text-slate-600 dark:text-slate-300 text-xs">{reply.message}</p>
                     </div>
@@ -155,7 +155,7 @@ export default function FeedbackCommunityPage() {
           {replyToId && (
             <div className="mb-4 p-3 bg-blue-900/20 border border-blue-900/50 rounded-2xl flex justify-between items-center">
               <span className="text-blue-400 text-xs">Replying to feedback #{replyToId}</span>
-              <button onClick={() => setReplyToId(null)} className="text-slate-500 hover:text-slate-600 dark:hover:text-slate-600 dark:text-slate-300 text-xs">Cancel</button>
+              <button onClick={() => setReplyToId(null)} className="text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:text-slate-300 dark:hover:text-slate-600 dark:text-slate-300 text-xs">Cancel</button>
             </div>
           )}
           

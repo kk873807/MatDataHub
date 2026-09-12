@@ -149,15 +149,15 @@ export default function MaterialDetail() {
           <Link href="/materials" className="hover:text-emerald-400 transition-colors flex items-center gap-1">
             <ArrowLeft className="w-3.5 h-3.5" /> Database
           </Link>
-          <ChevronRight className="w-4 h-4 text-slate-600" />
+          <ChevronRight className="w-4 h-4 text-slate-600 dark:text-slate-300" />
           <span>{material.category}</span>
           {material.subcategory && (
             <>
-              <ChevronRight className="w-4 h-4 text-slate-600" />
+              <ChevronRight className="w-4 h-4 text-slate-600 dark:text-slate-300" />
               <span>{material.subcategory}</span>
             </>
           )}
-          <ChevronRight className="w-4 h-4 text-slate-600" />
+          <ChevronRight className="w-4 h-4 text-slate-600 dark:text-slate-300" />
           <span className="text-slate-200 font-medium truncate max-w-[200px]">{material.name}</span>
         </nav>
 
@@ -210,9 +210,9 @@ export default function MaterialDetail() {
               </p>
               <p className="text-4xl font-bold text-emerald-400 mb-2">
                 ₹{material.cost_per_kg_min}
-                <span className="text-xl text-slate-500 font-medium">/kg</span>
+                <span className="text-xl text-slate-500 dark:text-slate-400 font-medium">/kg</span>
               </p>
-              <p className="text-[10px] text-slate-500 mb-2 mt-[-4px] uppercase tracking-wide font-bold">Estimated Baseline</p>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 mb-2 mt-[-4px] uppercase tracking-wide font-bold">Estimated Baseline</p>
               {priceHistory.length > 0 && (
                 <div className="flex items-center justify-end gap-1.5 text-xs font-semibold text-emerald-500 bg-emerald-950/40 px-2 py-1 rounded inline-flex self-end">
                   <TrendingUp className="w-3.5 h-3.5" /> Market Trend
@@ -438,11 +438,11 @@ export default function MaterialDetail() {
                 </div>
               ) : (
                 <div className="h-48 mt-4 pt-4 border-t border-slate-200 dark:border-slate-800 flex flex-col items-center justify-center text-center">
-                  <TrendingUp className="w-8 h-8 text-slate-700 mb-2" />
+                  <TrendingUp className="w-8 h-8 text-slate-700 dark:text-slate-200 mb-2" />
                   <p className="text-slate-500 dark:text-slate-400 text-sm">
                     No historical pricing data available.
                   </p>
-                  <p className="text-slate-500 text-xs mt-1">
+                  <p className="text-slate-500 dark:text-slate-400 text-xs mt-1">
                     This material lacks baseline cost data in our database.
                   </p>
                 </div>
@@ -493,7 +493,7 @@ export default function MaterialDetail() {
                 </div>
               ) : (
                 <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-sm text-slate-500 dark:text-slate-400 text-center">
-                  <ShieldAlert className="w-6 h-6 text-slate-600 mx-auto mb-2" />
+                  <ShieldAlert className="w-6 h-6 text-slate-600 dark:text-slate-300 mx-auto mb-2" />
                   No similar materials found in database.
                 </div>
               )}

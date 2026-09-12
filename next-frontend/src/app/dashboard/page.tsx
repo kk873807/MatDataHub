@@ -57,22 +57,22 @@ export default function AppDashboard() {
           <Link href="/materials" className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:border-slate-200 dark:hover:border-slate-700 transition-all group">
             <Database className="w-6 h-6 text-blue-400 mb-3 group-hover:scale-110 transition-transform" />
             <h3 className="font-bold text-slate-900 dark:text-white font-heading text-sm mb-1">Material Search</h3>
-            <p className="text-slate-500 text-xs">Access 1000+ verified materials.</p>
+            <p className="text-slate-500 dark:text-slate-400 text-xs">Access 1000+ verified materials.</p>
           </Link>
           <Link href="/analytics/cbam" className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:border-slate-200 dark:hover:border-slate-700 transition-all group">
             <Calculator className="w-6 h-6 text-amber-400 mb-3 group-hover:scale-110 transition-transform" />
             <h3 className="font-bold text-slate-900 dark:text-white font-heading text-sm mb-1">CBAM Calculator</h3>
-            <p className="text-slate-500 text-xs">Estimate carbon tax emissions.</p>
+            <p className="text-slate-500 dark:text-slate-400 text-xs">Estimate carbon tax emissions.</p>
           </Link>
           <Link href="/ai" className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:border-slate-200 dark:hover:border-slate-700 transition-all group">
             <Bot className="w-6 h-6 text-emerald-400 mb-3 group-hover:scale-110 transition-transform" />
             <h3 className="font-bold text-slate-900 dark:text-white font-heading text-sm mb-1">AI Adviser</h3>
-            <p className="text-slate-500 text-xs">Chat with our engineering AI.</p>
+            <p className="text-slate-500 dark:text-slate-400 text-xs">Chat with our engineering AI.</p>
           </Link>
           <Link href="/analytics/compare" className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:border-slate-200 dark:hover:border-slate-700 transition-all group">
             <BarChart3 className="w-6 h-6 text-purple-400 mb-3 group-hover:scale-110 transition-transform" />
             <h3 className="font-bold text-slate-900 dark:text-white font-heading text-sm mb-1">Compare Materials</h3>
-            <p className="text-slate-500 text-xs">Side-by-side radar analysis.</p>
+            <p className="text-slate-500 dark:text-slate-400 text-xs">Side-by-side radar analysis.</p>
           </Link>
         </div>
       </div>
@@ -87,7 +87,7 @@ export default function AppDashboard() {
         </div>
         <div className="bg-white dark:bg-slate-900/30 border border-slate-200 dark:border-slate-800 rounded-2xl p-6">
           <div className="text-center py-8">
-            <Workflow className="w-10 h-10 text-slate-700 mx-auto mb-3" />
+            <Workflow className="w-10 h-10 text-slate-700 dark:text-slate-200 mx-auto mb-3" />
             <p className="text-slate-500 dark:text-slate-400 text-sm">You haven't created any engineering workspaces recently.</p>
             <Link href="/projects" className="inline-block mt-4 text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-700 text-slate-900 dark:text-white px-4 py-2 rounded-2xl transition-colors">
               Go to Workspaces

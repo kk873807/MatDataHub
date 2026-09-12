@@ -44,7 +44,7 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-white dark:bg-slate-950 text-white dark:text-slate-200 transition-colors duration-300 selection:bg-indigo-500/30 overflow-x-hidden font-sans">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-200 transition-colors duration-300 selection:bg-indigo-500/30 overflow-x-hidden font-sans">
       
       {/* Navbar */}
       
@@ -76,7 +76,7 @@ export default function LandingPage() {
       </section>
 
       {/* Problem Section */}
-      <section id="problem" className="py-24 bg-white dark:bg-slate-50 dark:bg-slate-900/50 border-y border-slate-200 dark:border-slate-200 dark:border-slate-800/50">
+      <section id="problem" className="py-24 bg-white dark:bg-slate-900/50 border-y border-slate-200 dark:border-slate-800/50">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <div>
@@ -188,7 +188,7 @@ export default function LandingPage() {
 
 
       {/* Testimonials / Community Feedback */}
-      <section className="py-24 bg-white dark:bg-slate-50 dark:bg-slate-900/50 border-y border-slate-200 dark:border-slate-200 dark:border-slate-800/50">
+      <section className="py-24 bg-white dark:bg-slate-900/50 border-y border-slate-200 dark:border-slate-800/50">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4 font-heading">Live Community Feedback</h2>
           <p className="text-slate-600 dark:text-slate-400 mb-12 max-w-2xl mx-auto">See what our community of engineers and scientists are saying directly from our platform.</p>
@@ -205,7 +205,7 @@ export default function LandingPage() {
                   <div className="flex justify-between items-end border-t border-slate-200 dark:border-slate-800 pt-4 mt-auto">
                     <div>
                       <p className="text-slate-900 dark:text-white font-bold text-sm">{fb.name || 'Anonymous Engineer'}</p>
-                      <p className="text-slate-500 text-[10px]">{new Date(fb.created_at).toLocaleDateString()}</p>
+                      <p className="text-slate-500 dark:text-slate-400 text-[10px]">{new Date(fb.created_at).toLocaleDateString()}</p>
                     </div>
                     <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400">
                       <ThumbsUp className="w-3.5 h-3.5" /> {fb.helpful_votes || 0}
@@ -225,7 +225,7 @@ export default function LandingPage() {
                   <p className="text-slate-600 dark:text-slate-300 relative z-10 mb-6 text-sm leading-relaxed italic flex-1">"{test.quote}"</p>
                   <div>
                     <p className="text-slate-900 dark:text-white font-bold text-sm">{test.author}</p>
-                    <p className="text-slate-500 text-xs">{test.role}</p>
+                    <p className="text-slate-500 dark:text-slate-400 text-xs">{test.role}</p>
                   </div>
                 </div>
               ))
@@ -253,7 +253,7 @@ export default function LandingPage() {
             <div className="bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl p-8 flex flex-col">
               <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2 font-heading">Academic Free</h3>
               <p className="text-slate-600 dark:text-slate-400 text-sm mb-6 h-10">Perfect for students and open research.</p>
-              <div className="text-4xl font-extrabold text-slate-900 dark:text-white mb-8">&#8377;0<span className="text-lg font-medium text-slate-500">/mo</span></div>
+              <div className="text-4xl font-extrabold text-slate-900 dark:text-white mb-8">&#8377;0<span className="text-lg font-medium text-slate-500 dark:text-slate-400">/mo</span></div>
               <ul className="space-y-3 mb-8 flex-1">
                 {["Search limited basic materials", "View mechanical properties", "Basic AI Adviser", "Community Support"].map((f, i) => (
                   <li key={i} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
@@ -269,7 +269,7 @@ export default function LandingPage() {
               <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-indigo-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Most Popular</div>
               <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2 font-heading">Professional</h3>
               <p className="text-slate-600 dark:text-slate-400 text-sm mb-6 h-10">For independent engineers and small firms.</p>
-              <div className="text-4xl font-extrabold text-slate-900 dark:text-white mb-8">&#8377;499<span className="text-lg font-medium text-slate-500">/mo</span></div>
+              <div className="text-4xl font-extrabold text-slate-900 dark:text-white mb-8">&#8377;499<span className="text-lg font-medium text-slate-500 dark:text-slate-400">/mo</span></div>
               <ul className="space-y-3 mb-8 flex-1">
                 {["Full 1000+ material database", "Export detailed PDFs", "Advanced AI Adviser", "Unlimited Workspaces"].map((f, i) => (
                   <li key={i} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
@@ -284,7 +284,7 @@ export default function LandingPage() {
             <div className="bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl p-8 flex flex-col">
               <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2 font-heading">Advanced Enterprise</h3>
               <p className="text-slate-600 dark:text-slate-400 text-sm mb-6 h-10">Full financial & physics capabilities.</p>
-              <div className="text-4xl font-extrabold text-slate-900 dark:text-white mb-8">&#8377;19,999<span className="text-lg font-medium text-slate-500">/mo</span></div>
+              <div className="text-4xl font-extrabold text-slate-900 dark:text-white mb-8">&#8377;19,999<span className="text-lg font-medium text-slate-500 dark:text-slate-400">/mo</span></div>
               <ul className="space-y-3 mb-8 flex-1">
                 {["Macroeconomic Proxy Pricing", "CBAM Emissions Calculator", "Engineering Physics Tools", "Composite Synthesizer", "Priority API Access"].map((f, i) => (
                   <li key={i} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
@@ -306,7 +306,7 @@ export default function LandingPage() {
             <Database className="w-5 h-5 text-indigo-500" />
             <span className="font-bold text-slate-900 dark:text-white">MatDataHub</span>
           </div>
-          <p className="text-slate-500 text-sm">© 2026 MatDataHub. Empowering material intelligence.</p>
+          <p className="text-slate-500 dark:text-slate-400 text-sm">© 2026 MatDataHub. Empowering material intelligence.</p>
           <div className="flex gap-6">
             <Link href="/terms" className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-900 dark:text-white transition-colors">Terms & Conditions</Link>
             <Link href="/privacy" className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-900 dark:text-white transition-colors">Privacy Policy</Link>

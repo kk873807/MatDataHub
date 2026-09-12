@@ -172,7 +172,7 @@ export default function WorkspacesPage() {
 
         {/* Search Bar */}
         <div className="relative">
-          <Search className="absolute left-3 top-3 w-5 h-5 text-slate-500" />
+          <Search className="absolute left-3 top-3 w-5 h-5 text-slate-500 dark:text-slate-400" />
           <input
             type="text"
             placeholder="Search your projects..."
@@ -185,8 +185,8 @@ export default function WorkspacesPage() {
         {loading ? (
           <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-blue-500" /></div>
         ) : projects.filter(p => p.name.toLowerCase().includes(projectSearch.toLowerCase())).length === 0 ? (
-          <div className="text-center py-20 text-slate-500 bg-white dark:bg-slate-900/30 rounded-2xl border border-slate-200 dark:border-slate-800 border-dashed flex flex-col items-center">
-            <FolderKanban className="w-12 h-12 mb-4 text-slate-600" />
+          <div className="text-center py-20 text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900/30 rounded-2xl border border-slate-200 dark:border-slate-800 border-dashed flex flex-col items-center">
+            <FolderKanban className="w-12 h-12 mb-4 text-slate-600 dark:text-slate-300" />
             <p className="font-semibold text-slate-500 dark:text-slate-400">{projectSearch ? "No projects match your search." : "No projects found."}</p>
             <p className="text-sm">{projectSearch ? "Try a different keyword." : "Create your first workspace to start mapping assemblies."}</p>
           </div>
@@ -199,7 +199,7 @@ export default function WorkspacesPage() {
                   {/* Delete Button */}
                   <button 
                     onClick={(e) => handleDelete(e, proj.id)}
-                    className="absolute top-4 right-4 p-2 text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800"
+                    className="absolute top-4 right-4 p-2 text-slate-600 dark:text-slate-300 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800"
                     title="Delete Project"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -213,7 +213,7 @@ export default function WorkspacesPage() {
                     <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-emerald-900/30 text-emerald-400 border border-emerald-800/50 rounded-full">Active</span>
                   </div>
                   <p className="text-sm text-slate-500 dark:text-slate-400 mb-6 flex-1 line-clamp-2">{proj.description}</p>
-                  <div className="flex justify-between items-center text-xs text-slate-500 mt-auto pt-4 border-t border-slate-200 dark:border-slate-800">
+                  <div className="flex justify-between items-center text-xs text-slate-500 dark:text-slate-400 mt-auto pt-4 border-t border-slate-200 dark:border-slate-800">
                     <span className="flex items-center gap-1">
                       <Clock className="w-3 h-3" />
                       {proj.created_at ? new Date(proj.created_at).toLocaleDateString('en-GB') : "Recently"}

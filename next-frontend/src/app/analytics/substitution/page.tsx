@@ -197,7 +197,7 @@ function SmartSubstitutionContent() {
                 <input 
                   type="text" 
                   placeholder="Search material to replace..." 
-                  className="bg-transparent border-none outline-none w-full text-slate-900 dark:text-white placeholder:text-slate-500"
+                  className="bg-transparent border-none outline-none w-full text-slate-900 dark:text-white placeholder:text-slate-500 dark:text-slate-400"
                   value={searchQuery}
                   onChange={(e) => {
                     setSearchQuery(e.target.value);
@@ -222,7 +222,7 @@ function SmartSubstitutionContent() {
                     </div>
                   ))}
                   {allMaterials.filter(m => m.name.toLowerCase().includes(searchQuery.toLowerCase())).length === 0 && (
-                    <div className="px-4 py-2 text-slate-500 text-sm">No materials found.</div>
+                    <div className="px-4 py-2 text-slate-500 dark:text-slate-400 text-sm">No materials found.</div>
                   )}
                 </div>
               )}
@@ -325,9 +325,9 @@ function SmartSubstitutionContent() {
               </div>
             ) : (
               <div className="p-8 h-full rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex flex-col items-center justify-center text-center">
-                <ShieldAlert className="w-10 h-10 text-slate-700 mb-4" />
+                <ShieldAlert className="w-10 h-10 text-slate-700 dark:text-slate-200 mb-4" />
                 <h3 className="text-lg font-bold text-slate-500 dark:text-slate-400">Ready to Analyze</h3>
-                <p className="text-sm text-slate-500 mt-2 max-w-sm">
+                <p className="text-sm text-slate-500 dark:text-slate-400 mt-2 max-w-sm">
                   Select a base material and configure your design priorities to discover optimal engineering alternatives.
                 </p>
               </div>

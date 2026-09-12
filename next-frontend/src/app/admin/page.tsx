@@ -182,11 +182,11 @@ export default function AdminDashboard() {
                       <tr key={req.id} className="hover:bg-slate-100 dark:hover:bg-slate-800/30 transition-colors">
                         <td className="px-6 py-4">
                           <div className="font-bold text-slate-900 dark:text-white">{req.name}</div>
-                          <div className="text-slate-500 text-xs">{req.email}</div>
+                          <div className="text-slate-500 dark:text-slate-400 text-xs">{req.email}</div>
                         </td>
                         <td className="px-6 py-4 text-slate-600 dark:text-slate-300 uppercase text-xs">{req.current_tier}</td>
                         <td className="px-6 py-4 font-bold text-amber-400 uppercase text-xs">{req.requested_tier}</td>
-                        <td className="px-6 py-4 text-slate-500 text-xs">{new Date(req.requested_at).toLocaleString('en-GB')}</td>
+                        <td className="px-6 py-4 text-slate-500 dark:text-slate-400 text-xs">{new Date(req.requested_at).toLocaleString('en-GB')}</td>
                         <td className="px-6 py-4 text-right space-x-2">
                           <button onClick={() => handleAction(req.id, "reject")} className="bg-red-900/30 hover:bg-red-900/50 text-red-400 px-3 py-1.5 rounded-2xl transition-colors inline-flex items-center gap-1">
                             <X className="w-3 h-3" /> Reject
@@ -198,7 +198,7 @@ export default function AdminDashboard() {
                       </tr>
                     ))}
                     {requests.length === 0 && (
-                      <tr><td colSpan={5} className="px-6 py-12 text-center text-slate-500">No pending requests.</td></tr>
+                      <tr><td colSpan={5} className="px-6 py-12 text-center text-slate-500 dark:text-slate-400">No pending requests.</td></tr>
                     )}
                   </tbody>
                 </table>
@@ -230,13 +230,13 @@ export default function AdminDashboard() {
                           <p className="line-clamp-2">{fb.message}</p>
                           {fb.admin_reply && <p className="text-xs text-blue-400 mt-1">Admin Reply: {fb.admin_reply}</p>}
                         </td>
-                        <td className="px-6 py-4 text-slate-500 text-xs">
+                        <td className="px-6 py-4 text-slate-500 dark:text-slate-400 text-xs">
                           {fb.email || fb.name || "Anonymous"}
                           {fb.user_id && (
                             <button onClick={() => handleBlockUser(fb.user_id)} className="block text-red-500 hover:underline mt-1">Block User</button>
                           )}
                         </td>
-                        <td className="px-6 py-4 text-slate-500 text-xs">
+                        <td className="px-6 py-4 text-slate-500 dark:text-slate-400 text-xs">
                           {fb.status === "hidden" ? <span className="text-red-400">Hidden</span> : <span className="text-emerald-400">Visible</span>}
                         </td>
                         <td className="px-6 py-4 text-right space-x-2 space-y-1">
@@ -247,7 +247,7 @@ export default function AdminDashboard() {
                       </tr>
                     ))}
                     {feedback.length === 0 && (
-                      <tr><td colSpan={5} className="px-6 py-12 text-center text-slate-500">No feedback entries found.</td></tr>
+                      <tr><td colSpan={5} className="px-6 py-12 text-center text-slate-500 dark:text-slate-400">No feedback entries found.</td></tr>
                     )}
                   </tbody>
                 </table>

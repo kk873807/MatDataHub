@@ -274,7 +274,7 @@ export default function AskAIPage() {
               <Send className="w-4 h-4" />
             </button>
           </form>
-          <p className="text-xs text-slate-600 mt-2 text-center">AI Adviser available for Pro and Advanced users only.</p>
+          <p className="text-xs text-slate-600 dark:text-slate-300 mt-2 text-center">AI Adviser available for Pro and Advanced users only.</p>
         </div>
       </div>
     </main>

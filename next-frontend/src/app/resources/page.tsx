@@ -168,7 +168,7 @@ export default function ResourcesPage() {
         {activeTab === "faqs" && (
           <div className="space-y-6">
             <div className="relative">
-              <Search className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+              <Search className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400" />
               <input 
                 type="text" 
                 placeholder="Search documentation and FAQs..." 
@@ -186,7 +186,7 @@ export default function ResourcesPage() {
                     className="w-full text-left p-4 flex justify-between items-center hover:bg-slate-100 dark:hover:bg-slate-800/50"
                   >
                     <span className="font-semibold text-slate-200">{faq.q}</span>
-                    <ChevronDown className={`w-5 h-5 text-slate-500 transition-transform ${openFaq === i ? 'rotate-180' : ''}`} />
+                    <ChevronDown className={`w-5 h-5 text-slate-500 dark:text-slate-400 transition-transform ${openFaq === i ? 'rotate-180' : ''}`} />
                   </button>
                   {openFaq === i && (
                     <div className="p-4 pt-0 text-slate-500 dark:text-slate-400 text-sm leading-relaxed border-t border-slate-200 dark:border-slate-800/50 mt-2 pt-4 bg-slate-50 dark:bg-slate-950/30">
@@ -196,7 +196,7 @@ export default function ResourcesPage() {
                 </div>
               ))}
               {filteredFaqs.length === 0 && (
-                <div className="text-center p-10 text-slate-500">No results found for "{faqSearch}". Please check the Support Centre.</div>
+                <div className="text-center p-10 text-slate-500 dark:text-slate-400">No results found for "{faqSearch}". Please check the Support Centre.</div>
               )}
             </div>
           </div>
@@ -216,9 +216,9 @@ export default function ResourcesPage() {
                 
                 <div className="flex flex-wrap gap-3 items-center mb-6">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 bg-indigo-900/30 border border-indigo-800/50 px-2 py-1 rounded">{blogs[selectedBlog].tag}</span>
-                  <span className="text-sm text-slate-500 font-medium flex items-center gap-1"><Clock className="w-4 h-4"/> {blogs[selectedBlog].readTime} read</span>
-                  <span className="text-sm text-slate-500 font-medium">·</span>
-                  <span className="text-sm text-slate-500 font-medium">{blogs[selectedBlog].date}</span>
+                  <span className="text-sm text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1"><Clock className="w-4 h-4"/> {blogs[selectedBlog].readTime} read</span>
+                  <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">·</span>
+                  <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">{blogs[selectedBlog].date}</span>
                 </div>
                 
                 <h2 className="text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white font-heading mb-6 leading-tight">{blogs[selectedBlog].title}</h2>
@@ -229,11 +229,11 @@ export default function ResourcesPage() {
                   </div>
                   <div>
                     <p className="text-sm font-bold text-slate-900 dark:text-white">{blogs[selectedBlog].author}</p>
-                    <p className="text-xs text-slate-500">MatDataHub Engineering</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">MatDataHub Engineering</p>
                   </div>
                 </div>
                 
-                <div className="prose prose-invert prose-indigo max-w-none prose-headings:font-bold prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-h2:border-b prose-h2:border-slate-200 dark:border-slate-800 prose-h2:pb-2 prose-p:text-slate-600 dark:text-slate-300 prose-p:leading-relaxed prose-p:mb-6 prose-li:text-slate-600 prose-li:my-1 prose-strong:text-slate-900 dark:text-white prose-strong:font-bold prose-table:w-full prose-table:text-sm prose-table:border-collapse prose-table:my-8 prose-th:bg-slate-50 dark:bg-slate-950 prose-th:p-3 prose-th:border prose-th:border-slate-200 dark:border-slate-700 prose-th:text-slate-600 prose-td:p-3 prose-td:border prose-td:border-slate-200 prose-td:text-slate-500 dark:text-slate-400 prose-blockquote:border-l-4 prose-blockquote:border-indigo-500 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-slate-500">
+                <div className="prose prose-invert prose-indigo max-w-none prose-headings:font-bold prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-h2:border-b prose-h2:border-slate-200 dark:border-slate-800 prose-h2:pb-2 prose-p:text-slate-600 dark:text-slate-300 prose-p:leading-relaxed prose-p:mb-6 prose-li:text-slate-600 dark:text-slate-300 prose-li:my-1 prose-strong:text-slate-900 dark:text-white prose-strong:font-bold prose-table:w-full prose-table:text-sm prose-table:border-collapse prose-table:my-8 prose-th:bg-slate-50 dark:bg-slate-950 prose-th:p-3 prose-th:border prose-th:border-slate-200 dark:border-slate-700 prose-th:text-slate-600 dark:text-slate-300 prose-td:p-3 prose-td:border prose-td:border-slate-200 prose-td:text-slate-500 dark:text-slate-400 prose-blockquote:border-l-4 prose-blockquote:border-indigo-500 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-slate-500 dark:text-slate-400">
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>
                     {blogs[selectedBlog].content}
                   </ReactMarkdown>
@@ -279,14 +279,14 @@ export default function ResourcesPage() {
                           {blog.featured && <Star className="w-3 h-3 text-amber-400" fill="currentColor" />}
                           {blog.tag}
                         </span>
-                        <div className="flex items-center gap-1 text-slate-500 text-xs font-medium">
+                        <div className="flex items-center gap-1 text-slate-500 dark:text-slate-400 text-xs font-medium">
                           <Clock className="w-3 h-3" /> {blog.readTime}
                         </div>
                       </div>
                       <h3 className="text-xl font-bold text-slate-900 dark:text-white font-heading mb-3 group-hover:text-indigo-300 transition-colors leading-tight">{blog.title}</h3>
                       <p className="text-sm text-slate-500 dark:text-slate-400 mb-6 flex-1 line-clamp-3 leading-relaxed">{blog.excerpt}</p>
                       <div className="flex justify-between items-center border-t border-slate-200 dark:border-slate-800/50 pt-4 mt-auto">
-                        <span className="text-xs text-slate-500 font-medium">By {blog.author}</span>
+                        <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">By {blog.author}</span>
                         <span className="text-sm font-semibold text-blue-600 dark:text-blue-400 flex items-center gap-1 group-hover:gap-2 transition-all">Read <ArrowRight className="w-4 h-4"/></span>
                       </div>
                     </div>

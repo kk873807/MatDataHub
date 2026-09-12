@@ -138,7 +138,7 @@ export default function MaterialsPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 onFocus={() => setShowSuggestions(suggestions.length > 0)}
-                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl pl-12 pr-4 py-3 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all placeholder:text-slate-500"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl pl-12 pr-4 py-3 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all placeholder:text-slate-500 dark:text-slate-400"
               />
               <AnimatePresence>
                 {showSuggestions && suggestions.length > 0 && (
@@ -182,7 +182,7 @@ export default function MaterialsPage() {
                   <option value="tensile_desc">Tensile (High-Low)</option>
                   <option value="density_asc">Density (Low-High)</option>
                 </select>
-                <ArrowDownAZ className="w-4 h-4 text-slate-500 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <ArrowDownAZ className="w-4 h-4 text-slate-500 dark:text-slate-400 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
               </div>
 
               <button 
@@ -270,7 +270,7 @@ export default function MaterialsPage() {
           {/* Active Filter Tags */}
           {activeFiltersCount > 0 && (
             <div className="flex flex-wrap gap-2 pt-3 border-t border-slate-200 dark:border-slate-800/50 mt-1">
-              <span className="text-xs font-semibold text-slate-500 flex items-center mr-2">Active:</span>
+              <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 flex items-center mr-2">Active:</span>
               {category && (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-900/30 text-emerald-400 border border-emerald-800/50 rounded-full text-xs font-medium">
                   {category}
@@ -319,7 +319,7 @@ export default function MaterialsPage() {
         ) : sortedMaterials.length === 0 ? (
           <div className="text-center py-24 bg-white dark:bg-slate-900/40 rounded-2xl border border-slate-200 dark:border-slate-800/60 border-dashed flex flex-col items-center justify-center">
             <div className="w-20 h-20 bg-slate-100 dark:bg-slate-800/50 rounded-full flex items-center justify-center mb-6">
-              <FileBox className="w-10 h-10 text-slate-500" />
+              <FileBox className="w-10 h-10 text-slate-500 dark:text-slate-400" />
             </div>
             <h3 className="text-xl font-bold text-slate-900 dark:text-white font-heading mb-2">No materials found</h3>
             <p className="text-slate-500 dark:text-slate-400 max-w-md mx-auto mb-6">We couldn't find any materials matching your specific filters and search criteria.</p>

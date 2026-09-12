@@ -189,7 +189,7 @@ function CompositeSynthesizerContent() {
                 <span className="font-bold text-cyan-400">{volFractionA}%</span>
               </div>
               <input type="range" min="0" max="100" value={volFractionA} onChange={e => setVolFractionA(parseInt(e.target.value))} className="w-full accent-cyan-500" />
-              <div className="flex justify-between text-xs text-slate-500 mt-1">
+              <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400 mt-1">
                 <span>0% (All B)</span>
                 <span>100% (All A)</span>
               </div>
@@ -217,7 +217,7 @@ function CompositeSynthesizerContent() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-center">
                     <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Density</p>
-                    <p className="text-2xl font-bold text-slate-900 dark:text-white">{result.density} <span className="text-sm font-normal text-slate-500">g/cm³</span></p>
+                    <p className="text-2xl font-bold text-slate-900 dark:text-white">{result.density} <span className="text-sm font-normal text-slate-500 dark:text-slate-400">g/cm³</span></p>
                   </div>
                   <div className="p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-center">
                     <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Est. Cost</p>
@@ -225,17 +225,17 @@ function CompositeSynthesizerContent() {
                   </div>
                   <div className="p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-center">
                     <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Tensile Strength</p>
-                    <p className="text-2xl font-bold text-slate-900 dark:text-white">{result.tensile} <span className="text-sm font-normal text-slate-500">MPa</span></p>
+                    <p className="text-2xl font-bold text-slate-900 dark:text-white">{result.tensile} <span className="text-sm font-normal text-slate-500 dark:text-slate-400">MPa</span></p>
                   </div>
                   <div className="p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-center">
                     <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Elastic Modulus</p>
-                    <p className="text-2xl font-bold text-slate-900 dark:text-white">{result.elastic_modulus} <span className="text-sm font-normal text-slate-500">GPa</span></p>
+                    <p className="text-2xl font-bold text-slate-900 dark:text-white">{result.elastic_modulus} <span className="text-sm font-normal text-slate-500 dark:text-slate-400">GPa</span></p>
                   </div>
                 </div>
               </div>
             ) : (
-              <div className="text-center text-slate-500">
-                <Layers className="w-12 h-12 mx-auto mb-4 text-slate-700" />
+              <div className="text-center text-slate-500 dark:text-slate-400">
+                <Layers className="w-12 h-12 mx-auto mb-4 text-slate-700 dark:text-slate-200" />
                 <p>Select two materials and adjust the volume fraction to calculate hybrid properties.</p>
               </div>
             )}

@@ -302,7 +302,7 @@ export default function CBAMAnalytics() {
                   </div>
                 ) : (
                   <div className="flex flex-col items-center">
-                    <UploadCloud className="w-12 h-12 text-slate-500 mb-3" />
+                    <UploadCloud className="w-12 h-12 text-slate-500 dark:text-slate-400 mb-3" />
                     <p className="font-bold text-slate-900 dark:text-white text-lg">Click or drag BOM CSV file here</p>
                     <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Must contain material and weight columns</p>
                   </div>
@@ -354,11 +354,11 @@ export default function CBAMAnalytics() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl flex flex-col justify-center">
                 <p className="text-slate-500 dark:text-slate-400 font-medium mb-1 flex items-center gap-2"><Factory className="w-4 h-4 text-emerald-400" /> Total Embodied Carbon</p>
-                <h3 className="text-3xl font-bold text-slate-900 dark:text-white font-heading">{totalCO2.toLocaleString(undefined, { maximumFractionDigits: 2 })} <span className="text-lg text-slate-500 font-normal">kg CO₂</span></h3>
+                <h3 className="text-3xl font-bold text-slate-900 dark:text-white font-heading">{totalCO2.toLocaleString(undefined, { maximumFractionDigits: 2 })} <span className="text-lg text-slate-500 dark:text-slate-400 font-normal">kg CO₂</span></h3>
               </div>
               <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl flex flex-col justify-center">
                 <p className="text-slate-500 dark:text-slate-400 font-medium mb-1 flex items-center gap-2"><FileText className="w-4 h-4 text-amber-400" /> Est. CBAM Tax Obligation</p>
-                <h3 className="text-3xl font-bold text-amber-500">€{estimatedTaxEUR.toLocaleString(undefined, { maximumFractionDigits: 2 })} <span className="text-lg text-slate-500 font-normal">(@ €75/tCO₂e)</span></h3>
+                <h3 className="text-3xl font-bold text-amber-500">€{estimatedTaxEUR.toLocaleString(undefined, { maximumFractionDigits: 2 })} <span className="text-lg text-slate-500 dark:text-slate-400 font-normal">(@ €75/tCO₂e)</span></h3>
               </div>
             </div>
 

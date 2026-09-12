@@ -297,7 +297,7 @@ function CompareMaterialsContent() {
               return (
                 <div key={idx} className="flex items-center gap-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-full px-4 py-1.5 shadow-sm" style={{ borderLeft: `4px solid ${colors[idx % colors.length].hex}` }}>
                   <span className="text-sm font-bold text-slate-900 dark:text-white">{mat?.name || id}</span>
-                  <button onClick={() => handleRemove(idx)} className="text-slate-500 hover:text-red-400"><X className="w-3 h-3" /></button>
+                  <button onClick={() => handleRemove(idx)} className="text-slate-500 dark:text-slate-400 hover:text-red-400"><X className="w-3 h-3" /></button>
                 </div>
               );
             })}
@@ -385,7 +385,7 @@ function CompareMaterialsContent() {
             </div>
           </div>
         ) : (
-          <div className="text-center py-20 text-slate-500 bg-white dark:bg-slate-900/30 rounded-2xl border border-slate-200 dark:border-slate-800 border-dashed">
+          <div className="text-center py-20 text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900/30 rounded-2xl border border-slate-200 dark:border-slate-800 border-dashed">
             Select materials above to generate the comparison matrix and radar fingerprint.
           </div>
         )}

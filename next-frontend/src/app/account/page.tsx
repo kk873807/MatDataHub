@@ -378,13 +378,13 @@ function AccountDashboardInner() {
                 </thead>
                 <tbody>
                   <tr>
-                    <td colSpan={4} className="px-6 py-12 text-center text-slate-500">
+                    <td colSpan={4} className="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
                       <div className="flex flex-col items-center gap-3">
                         <div className="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center">
-                          <FileText className="w-6 h-6 text-slate-600" />
+                          <FileText className="w-6 h-6 text-slate-600 dark:text-slate-300" />
                         </div>
                         <p className="font-medium">No transactions yet</p>
-                        <p className="text-sm text-slate-600 max-w-sm">Your payment history will appear here after your first purchase or subscription upgrade.</p>
+                        <p className="text-sm text-slate-600 dark:text-slate-300 max-w-sm">Your payment history will appear here after your first purchase or subscription upgrade.</p>
                       </div>
                     </td>
                   </tr>
