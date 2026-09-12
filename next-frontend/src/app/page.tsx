@@ -1,9 +1,26 @@
 "use client";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, BookOpen, Database, Target, BrainCircuit, ShieldCheck, Cpu, TestTube2, CheckCircle2 } from "lucide-react";
+import { ArrowRight, BookOpen, Database, Target, BrainCircuit, ShieldCheck, Cpu, TestTube2, CheckCircle2, MessageSquare, ThumbsUp } from "lucide-react";
+import { API } from "@/lib/api";
 
 export default function LandingPage() {
+  const [feedbacks, setFeedbacks] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch(`${API}/feedback/public`)
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          // get top 3 most helpful feedbacks or just latest 3
+          const sorted = data.filter(f => !f.parent_id).sort((a, b) => (b.helpful_votes || 0) - (a.helpful_votes || 0)).slice(0, 3);
+          setFeedbacks(sorted);
+        }
+      })
+      .catch(console.error);
+  }, []);
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 selection:bg-indigo-500/30 overflow-x-hidden font-sans">
       
@@ -72,15 +89,46 @@ export default function LandingPage() {
                 ))}
               </ul>
             </div>
-            <div className="bg-slate-950 p-8 rounded-2xl border border-slate-800 shadow-2xl relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/10 blur-[50px]"></div>
-              <div className="space-y-4 relative z-10 opacity-70 grayscale">
-                <div className="h-4 bg-slate-800 rounded w-3/4"></div>
-                <div className="h-4 bg-slate-800 rounded w-full"></div>
-                <div className="h-4 bg-slate-800 rounded w-5/6"></div>
-                <div className="h-4 bg-rose-900/30 border border-rose-800/50 rounded w-full mt-8 p-3 text-xs text-rose-400 font-mono">Error: Property mismatch across datasets.</div>
+            
+            <div className="bg-slate-950 p-6 rounded-2xl border border-slate-800 shadow-2xl relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 blur-[50px]"></div>
+              
+              <div className="flex items-center justify-between border-b border-slate-800 pb-4 mb-6 relative z-10">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-indigo-900/30 flex items-center justify-center border border-indigo-500/20">
+                    <Database className="w-5 h-5 text-indigo-400" />
+                  </div>
+                  <div>
+                    <div className="h-2.5 w-24 bg-slate-700 rounded mb-1.5"></div>
+                    <div className="h-2 w-16 bg-slate-800 rounded"></div>
+                  </div>
+                </div>
+                <div className="flex gap-1.5">
+                  <div className="w-2.5 h-2.5 rounded-full bg-slate-700"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-slate-700"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-slate-700"></div>
+                </div>
+              </div>
+
+              <div className="space-y-4 relative z-10 opacity-70 group-hover:opacity-100 transition-opacity">
+                <div className="flex gap-4">
+                  <div className="flex-1 h-24 bg-slate-900 rounded-xl border border-slate-800 p-4">
+                    <div className="h-2 w-1/3 bg-slate-700 rounded mb-4"></div>
+                    <div className="h-8 w-2/3 bg-indigo-500/20 rounded"></div>
+                  </div>
+                  <div className="flex-1 h-24 bg-slate-900 rounded-xl border border-slate-800 p-4">
+                    <div className="h-2 w-1/3 bg-slate-700 rounded mb-4"></div>
+                    <div className="h-8 w-2/3 bg-emerald-500/20 rounded"></div>
+                  </div>
+                </div>
+                <div className="h-32 w-full bg-slate-900 rounded-xl border border-slate-800 p-4 flex items-end gap-2">
+                  {[40, 70, 45, 90, 65, 80, 50, 100, 75, 85].map((h, i) => (
+                    <div key={i} className="flex-1 bg-indigo-500/40 rounded-t-sm" style={{ height: `${h}%` }}></div>
+                  ))}
+                </div>
               </div>
             </div>
+
           </div>
         </div>
       </section>
@@ -109,25 +157,55 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Testimonials */}
+      {/* Testimonials / Community Feedback */}
       <section className="py-24 bg-slate-900/50 border-y border-slate-800/50">
         <div className="max-w-7xl mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold text-white mb-12">Trusted by Researchers & Engineers</h2>
+          <h2 className="text-3xl font-bold text-white mb-4">Live Community Feedback</h2>
+          <p className="text-slate-400 mb-12 max-w-2xl mx-auto">See what our community of engineers and scientists are saying directly from our platform.</p>
+          
           <div className="grid md:grid-cols-3 gap-8 text-left">
-            {[
-              { quote: "MatDataHub completely changed how we estimate aerospace BOM costs. The multi-objective substitution tool saved us months of R&D.", author: "Dr. Sarah Jenkins", role: "Lead Materials Scientist" },
-              { quote: "Finally, a platform that understands both the physics and the economics of materials. The CBAM calculator is a lifesaver for EU imports.", author: "Marcus Thorne", role: "Supply Chain Director" },
-              { quote: "The clean, academic interface makes it a joy to use. It feels like having an expert metallurgist sitting right next to you.", author: "Elena Rodriguez", role: "Mechanical Engineer" }
-            ].map((test, i) => (
-              <div key={i} className="p-8 bg-slate-950 border border-slate-800 rounded-2xl shadow-xl relative">
-                <div className="text-4xl text-indigo-500/20 absolute top-4 left-4 font-serif">"</div>
-                <p className="text-slate-300 relative z-10 mb-6 text-sm leading-relaxed italic">"{test.quote}"</p>
-                <div>
-                  <p className="text-white font-bold text-sm">{test.author}</p>
-                  <p className="text-slate-500 text-xs">{test.role}</p>
+            {feedbacks.length > 0 ? (
+              feedbacks.map((fb, i) => (
+                <div key={i} className="p-8 bg-slate-950 border border-slate-800 rounded-2xl shadow-xl flex flex-col relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500/50"></div>
+                  <div className="flex items-center gap-2 mb-4">
+                    <span className="text-xs font-semibold px-2 py-0.5 bg-indigo-900/30 text-indigo-400 rounded-full border border-indigo-700/50">{fb.category}</span>
+                  </div>
+                  <p className="text-slate-300 relative z-10 mb-6 text-sm leading-relaxed italic flex-1">"{fb.message}"</p>
+                  <div className="flex justify-between items-end border-t border-slate-800 pt-4 mt-auto">
+                    <div>
+                      <p className="text-white font-bold text-sm">{fb.name || 'Anonymous Engineer'}</p>
+                      <p className="text-slate-500 text-[10px]">{new Date(fb.created_at).toLocaleDateString()}</p>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-xs text-slate-400">
+                      <ThumbsUp className="w-3.5 h-3.5" /> {fb.helpful_votes || 0}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              // Fallback if no feedbacks loaded yet
+              [
+                { quote: "MatDataHub completely changed how we estimate aerospace BOM costs. The multi-objective substitution tool saved us months of R&D.", author: "Dr. Sarah Jenkins", role: "Lead Materials Scientist" },
+                { quote: "Finally, a platform that understands both the physics and the economics of materials. The CBAM calculator is a lifesaver for EU imports.", author: "Marcus Thorne", role: "Supply Chain Director" },
+                { quote: "The clean, academic interface makes it a joy to use. It feels like having an expert metallurgist sitting right next to you.", author: "Elena Rodriguez", role: "Mechanical Engineer" }
+              ].map((test, i) => (
+                <div key={i} className="p-8 bg-slate-950 border border-slate-800 rounded-2xl shadow-xl relative">
+                  <div className="text-4xl text-indigo-500/20 absolute top-4 left-4 font-serif">"</div>
+                  <p className="text-slate-300 relative z-10 mb-6 text-sm leading-relaxed italic flex-1">"{test.quote}"</p>
+                  <div>
+                    <p className="text-white font-bold text-sm">{test.author}</p>
+                    <p className="text-slate-500 text-xs">{test.role}</p>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+          
+          <div className="mt-12">
+             <Link href="/feedback" className="inline-flex items-center gap-2 px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-white rounded-xl font-medium transition-colors text-sm border border-slate-700">
+               <MessageSquare className="w-4 h-4" /> View All Community Discussions
+             </Link>
           </div>
         </div>
       </section>
