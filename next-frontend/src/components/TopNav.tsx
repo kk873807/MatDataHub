@@ -22,7 +22,7 @@ const appNavItems: NavItem[] = [
   { name: "Materials", href: "/materials", icon: Database },
   { name: "Analytics", href: "/analytics", icon: BarChart3 },
   { name: "Workspaces", href: "/projects", icon: Workflow },
-  { name: "Blog", href: "/blogs", icon: FileText },
+  { name: "Blogs", href: "/blogs", icon: FileText },
   { 
     name: "Help & Support", 
     icon: HelpCircle,
@@ -140,7 +140,7 @@ export function TopNav() {
                 <Link href="#problem" className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-600 dark:text-blue-400 transition-colors">Problem</Link>
                 <Link href="#solution" className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-600 dark:text-blue-400 transition-colors">Platform</Link>
                 <Link href="#pricing" className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-600 dark:text-blue-400 transition-colors">Pricing</Link>
-                <Link href="#blog" className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-600 dark:text-blue-400 transition-colors">Blog</Link>
+                <Link href="#blog" className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-600 dark:text-blue-400 transition-colors">Blogs</Link>
               </div>
             )}
 
@@ -152,7 +152,7 @@ export function TopNav() {
                   {!isLanding && (
                     <div className="hidden md:flex items-center gap-3">
                       
-                      {userInfo?.is_admin && <Link href="/admin" className="p-2 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Admin"><ShieldAlert className="w-5 h-5" /></Link>}
+
                     </div>
                   )}
                   {isLanding ? (
@@ -179,6 +179,11 @@ export function TopNav() {
                         <Link href="/account" className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white rounded-xl transition-colors">
                           <Settings className="w-4 h-4" /> Account Management
                         </Link>
+                        {userInfo?.is_admin && (
+                          <Link href="/admin" className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-amber-600 dark:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-700 dark:hover:text-amber-400 rounded-xl transition-colors">
+                            <ShieldAlert className="w-4 h-4" /> Admin Dashboard
+                          </Link>
+                        )}
                         <Link href="/account?tab=billing" className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white rounded-xl transition-colors">
                           <CreditCard className="w-4 h-4" /> Transactions & Billing
                         </Link>
@@ -216,7 +221,7 @@ export function TopNav() {
                 <Link href="#problem" onClick={() => setMobileMenuOpen(false)} className="font-medium text-slate-700 dark:text-slate-200">Problem</Link>
                 <Link href="#solution" onClick={() => setMobileMenuOpen(false)} className="font-medium text-slate-700 dark:text-slate-200">Platform</Link>
                 <Link href="#pricing" onClick={() => setMobileMenuOpen(false)} className="font-medium text-slate-700 dark:text-slate-200">Pricing</Link>
-                <Link href="#blog" onClick={() => setMobileMenuOpen(false)} className="font-medium text-slate-700 dark:text-slate-200">Blog</Link>
+                <Link href="#blog" onClick={() => setMobileMenuOpen(false)} className="font-medium text-slate-700 dark:text-slate-200">Blogs</Link>
               </div>
             ) : (
               appNavItems.map(item => {
