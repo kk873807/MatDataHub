@@ -187,20 +187,7 @@ export default function MaterialsPage() {
                 <ArrowDownAZ className="w-4 h-4 text-slate-500 dark:text-slate-400 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
               </div>
 
-              <div className="flex bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-1">
-                <button 
-                  onClick={() => setViewMode('grid')}
-                  className={`p-2 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}`}
-                >
-                  <LayoutGrid className="w-5 h-5" />
-                </button>
-                <button 
-                  onClick={() => setViewMode('table')}
-                  className={`p-2 rounded-lg transition-all ${viewMode === 'table' ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}`}
-                >
-                  <List className="w-5 h-5" />
-                </button>
-              </div>
+              
 
               <button 
                 onClick={() => setShowFilters(!showFilters)}
