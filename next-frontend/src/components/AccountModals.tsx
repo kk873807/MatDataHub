@@ -146,7 +146,7 @@ export function AccountModals({ activeModal, setActiveModal, userInfo }: Account
                         <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
                         <div>
                           <p className="text-emerald-600 dark:text-emerald-400 font-bold text-sm">API Access Granted</p>
-                          <p className="text-slate-500 dark:text-slate-400 text-xs mt-1">Your API credentials have been provisioned. Contact support at <strong>support@matdatahub.com</strong> to receive your keys securely.</p>
+                          <p className="text-slate-500 dark:text-slate-400 text-xs mt-1">Your API credentials have been provisioned. Contact support at <strong>matdatahub.support@gmail.com</strong> to receive your keys securely.</p>
                         </div>
                       </div>
                     ) : (
@@ -249,7 +249,7 @@ export function AccountModals({ activeModal, setActiveModal, userInfo }: Account
                 <div className="flex items-center justify-between text-sm font-medium text-slate-300 border-t border-slate-700 pt-4">
                   <span>Next billing date: {profile.tier === 'free' ? 'N/A (Free Plan)' : (profile.next_billing_date ? new Date(profile.next_billing_date).toLocaleDateString() : 'Active Subscription')}</span>
                   {profile.tier !== 'free' && (
-                    <a href="mailto:billing@matdatahub.com?subject=Manage%20Subscription%20Plan" className="px-4 py-1.5 bg-white text-slate-900 rounded-lg hover:bg-slate-200 transition-colors font-bold inline-block">Manage Plan</a>
+                    <a href="mailto:matdatahub.support@gmail.com?subject=Manage%20Subscription%20Plan" className="px-4 py-1.5 bg-white text-slate-900 rounded-lg hover:bg-slate-200 transition-colors font-bold inline-block">Manage Plan</a>
                   )}
                   {profile.tier === 'free' && (
                     <button onClick={() => setActiveModal('account')} className="px-4 py-1.5 bg-white text-slate-900 rounded-lg hover:bg-slate-200 transition-colors font-bold">Upgrade Now</button>
@@ -294,7 +294,7 @@ export function AccountModals({ activeModal, setActiveModal, userInfo }: Account
                 <LifeBuoy className="w-12 h-12 text-amber-500 mx-auto mb-4"/>
                 <h4 className="text-xl font-bold text-slate-900 dark:text-white mb-2">How can we help?</h4>
                 <p className="text-sm text-slate-600 dark:text-slate-400 mb-6 max-w-sm mx-auto">Our engineering support team is available 24/7 to assist with your technical inquiries.</p>
-                <a href="mailto:support@matdatahub.com" className="inline-block px-6 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-sm font-bold transition-colors shadow-lg shadow-amber-500/20">
+                <a href="mailto:matdatahub.support@gmail.com" className="inline-block px-6 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-sm font-bold transition-colors shadow-lg shadow-amber-500/20">
                   Contact Support
                 </a>
               </div>

@@ -226,7 +226,7 @@ function AccountDashboardInner() {
                       <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
                       <div>
                         <p className="text-emerald-600 dark:text-emerald-400 font-bold text-sm">API Access Granted</p>
-                        <p className="text-slate-500 dark:text-slate-400 text-xs mt-1">Your API credentials have been provisioned. Contact support at <strong>support@matdatahub.com</strong> to receive your keys securely.</p>
+                        <p className="text-slate-500 dark:text-slate-400 text-xs mt-1">Your API credentials have been provisioned. Contact support at <strong>matdatahub.support@gmail.com</strong> to receive your keys securely.</p>
                       </div>
                     </div>
                   ) : (

@@ -44,7 +44,7 @@ export default function ContactPage() {
             </div>
             <h3 className="text-xl font-bold text-slate-900 dark:text-white font-heading mb-2">Email Support</h3>
             <p className="text-slate-500 dark:text-slate-400 text-sm mb-6 flex-1">Drop us an email and we'll get back to you within 24 hours.</p>
-            <a href="mailto:support@matdatahub.com" className="font-bold text-blue-600 dark:text-blue-400 hover:underline">support@matdatahub.com</a>
+            <a href="mailto:matdatahub.support@gmail.com" className="font-bold text-blue-600 dark:text-blue-400 hover:underline">matdatahub.support@gmail.com</a>
           </div>
 
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-3xl hover:shadow-xl hover:shadow-blue-900/5 transition-all text-center flex flex-col items-center">
