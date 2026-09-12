@@ -129,6 +129,19 @@ export function TopNav() {
                     </Link>
                   );
                 })}
+                {userInfo?.is_admin && (
+                  <Link
+                    href="/admin"
+                    className={`flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium transition-all ${
+                      pathname?.startsWith("/admin")
+                        ? "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400" 
+                        : "text-amber-600 dark:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/20"
+                    }`}
+                  >
+                    <ShieldAlert className="w-4 h-4" />
+                    Admin Portal
+                  </Link>
+                )}
               </div>
             )}
           </div>
@@ -151,7 +164,7 @@ export function TopNav() {
                 <div className="flex items-center gap-3">
                   {!isLanding && (
                     <div className="hidden md:flex items-center gap-3">
-                      {userInfo?.is_admin && <Link href="/admin" className="p-2 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Admin"><ShieldAlert className="w-5 h-5" /></Link>}
+                      
                     </div>
                   )}
                   {isLanding ? (
@@ -256,6 +269,31 @@ export function TopNav() {
                   </Link>
                 );
               })
+            )}
+            
+            {!isLanding && isLoggedIn && (
+              <div className="pt-2 mt-2 border-t border-slate-200 dark:border-slate-800">
+                {userInfo?.is_admin && (
+                  <Link 
+                    href="/admin" 
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 font-medium text-amber-600 dark:text-amber-500"
+                  >
+                    <ShieldAlert className="w-5 h-5" />
+                    Admin Dashboard
+                  </Link>
+                )}
+                <button 
+                  onClick={() => {
+                    handleLogout();
+                    setMobileMenuOpen(false);
+                  }}
+                  className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 font-medium text-red-600 dark:text-red-400 text-left"
+                >
+                  <LogOut className="w-5 h-5" />
+                  Sign Out
+                </button>
+              </div>
             )}
           </div>
         )}
