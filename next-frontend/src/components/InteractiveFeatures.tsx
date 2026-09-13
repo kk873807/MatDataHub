@@ -85,7 +85,7 @@ export function InteractiveFeatures() {
     return () => clearInterval(timer);
   }, []);
 
-  const activeFeat = features.find(f => f.id === activeTab)!;
+  const activeFeat = features.find(f => f.id === activeTab) || features[0];
 
   return (
     <section id="solution" className="py-24 px-6 bg-slate-50 dark:bg-slate-900/50 relative overflow-hidden">
