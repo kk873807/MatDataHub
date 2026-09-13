@@ -1,4 +1,6 @@
-"use client";
+const fs = require('fs');
+
+const content = `"use client";
 import { useState, useEffect } from "react";
 import { 
   Database, Workflow, Target, Bot, 
@@ -18,7 +20,7 @@ const features = [
     color: "bg-blue-500",
     tools: [
       { name: "Global Search", desc: "Instantly lookup materials verified by ASTM, ISO, and DIN standards.", icon: Search, use: "Type a material name or grade to view its complete mechanical, thermal, and electrical properties." },
-      { name: "Advanced Filtering", desc: "Filter materials by exact property thresholds.", icon: SlidersHorizontal, use: "Use sliders to restrict results (e.g., Density < 3.0 g/cmï¿½, Yield Strength > 400 MPa)." },
+      { name: "Advanced Filtering", desc: "Filter materials by exact property thresholds.", icon: SlidersHorizontal, use: "Use sliders to restrict results (e.g., Density < 3.0 g/cm³, Yield Strength > 400 MPa)." },
       { name: "Export & Share", desc: "Download datasheets for offline analysis.", icon: Share2, use: "Export any material profile to CSV or share its unique secure link with your engineering team." }
     ]
   },
@@ -99,21 +101,21 @@ export function InteractiveFeatures() {
               <button
                 key={feat.id}
                 onClick={() => setActiveTab(feat.id)}
-                className={`text-left p-6 rounded-2xl transition-all duration-300 border-2 ${
+                className={\`text-left p-6 rounded-2xl transition-all duration-300 border-2 \${
                   activeTab === feat.id
                     ? "bg-white dark:bg-slate-800 border-blue-500 shadow-xl scale-[1.02]"
                     : "bg-transparent border-transparent hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:border-slate-200 dark:hover:border-slate-700"
-                }`}
+                }\`}
               >
                 <div className="flex items-center gap-4 mb-3">
-                  <div className={`p-2.5 rounded-xl text-white ${feat.color} ${activeTab === feat.id ? "shadow-lg" : ""}`}>
+                  <div className={\`p-2.5 rounded-xl text-white \${feat.color} \${activeTab === feat.id ? "shadow-lg" : ""}\`}>
                     <feat.icon className="w-6 h-6" />
                   </div>
-                  <h3 className={`text-xl font-bold font-heading ${activeTab === feat.id ? "text-slate-900 dark:text-white" : "text-slate-700 dark:text-slate-300"}`}>
+                  <h3 className={\`text-xl font-bold font-heading \${activeTab === feat.id ? "text-slate-900 dark:text-white" : "text-slate-700 dark:text-slate-300"}\`}>
                     {feat.title}
                   </h3>
                 </div>
-                <p className={`text-sm ${activeTab === feat.id ? "text-slate-600 dark:text-slate-300" : "text-slate-500"}`}>
+                <p className={\`text-sm \${activeTab === feat.id ? "text-slate-600 dark:text-slate-300" : "text-slate-500"}\`}>
                   {feat.desc}
                 </p>
               </button>
@@ -136,7 +138,7 @@ export function InteractiveFeatures() {
                       transition={{ duration: 0.2 }}
                       className="flex items-center gap-4"
                     >
-                       <div className={`p-3 rounded-2xl text-white ${feat.color}`}>
+                       <div className={\`p-3 rounded-2xl text-white \${feat.color}\`}>
                          <feat.icon className="w-8 h-8" />
                        </div>
                        <div>
@@ -188,3 +190,7 @@ export function InteractiveFeatures() {
     </section>
   );
 }
+`;
+
+fs.writeFileSync('src/components/InteractiveFeatures.tsx', content);
+console.log('Fixed InteractiveFeatures.tsx');
