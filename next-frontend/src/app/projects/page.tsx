@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Workflow, Plus, FolderKanban, HardDrive, Play, Loader2, X, Trash2, Search, Clock, Lock } from "lucide-react";
 import { API } from "@/lib/api";
+import { PageDemo } from "@/components/demos/PageDemo";
+import { SimulatedWorkspaceDemo } from "@/components/demos/SimulatedWorkspaceDemo";
 
 export default function WorkspacesPage() {
   const [projects, setProjects] = useState<any[]>([]);
@@ -158,6 +160,11 @@ export default function WorkspacesPage() {
             Engineering Workspaces
           </h1>
           <p className="text-slate-600 dark:text-slate-300 mt-2">Manage your multi-part assemblies and interactive blueprints.</p>
+          </div>
+          <PageDemo pageKey="workspaces" title="See how Engineering Workspaces work">
+            <SimulatedWorkspaceDemo />
+          </PageDemo>
+          <div>
         </div>
 
         <div className="flex justify-between items-center">

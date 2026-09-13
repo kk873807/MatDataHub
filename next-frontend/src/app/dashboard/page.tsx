@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Database, Calculator, Workflow, Bot, BarChart3, Plus, ArrowRight, LayoutDashboard, Search } from "lucide-react";
 import { API } from "@/lib/api";
+import { PageDemo } from "@/components/demos/PageDemo";
+import { SimulatedDashboardDemo } from "@/components/demos/SimulatedDashboardDemo";
 
 export default function AppDashboard() {
   const [profile, setProfile] = useState<any>(null);
@@ -50,7 +52,12 @@ export default function AppDashboard() {
         </div>
       </div>
 
-      {/* Quick Actions Grid */}
+      {/* Interactive Demo */}
+        <PageDemo pageKey="dashboard" title="See how your Dashboard works">
+          <SimulatedDashboardDemo />
+        </PageDemo>
+
+        {/* Quick Actions Grid */}
       <div>
         <h2 className="text-lg font-bold text-slate-900 dark:text-white font-heading mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

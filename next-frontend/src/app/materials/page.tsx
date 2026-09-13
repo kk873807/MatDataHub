@@ -4,6 +4,8 @@ import Link from "next/link";
 import { LayoutGrid, List, Search, ArrowLeft, Filter, Loader2, Database, SlidersHorizontal, X, ArrowDownAZ, TrendingUp, Scale, Zap, Beaker, FileBox, Lock, Shield } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { API } from "@/lib/api";
+import { PageDemo } from "@/components/demos/PageDemo";
+import { SimulatedMaterialsDemo } from "@/components/demos/SimulatedMaterialsDemo";
 
 const FREE_BROWSE_LIMIT = 40;
 
@@ -128,6 +130,11 @@ export default function MaterialsPage() {
             <p className="text-slate-600 dark:text-slate-300">Search and filter verified engineering materials.</p>
           </div>
         </div>
+
+        {/* Interactive Demo */}
+        <PageDemo pageKey="materials" title="See how Material Search works">
+          <SimulatedMaterialsDemo />
+        </PageDemo>
 
         {/* Search & Top Filters */}
         <div className="flex flex-col bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 gap-5 shadow-lg">
