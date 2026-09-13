@@ -53,7 +53,7 @@ export default function AppDashboard() {
       {/* Quick Actions Grid */}
       <div>
         <h2 className="text-lg font-bold text-slate-900 dark:text-white font-heading mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Link href="/materials" className="bg-white shadow-sm dark:shadow-none dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl hover:shadow-md hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:border-slate-300 dark:hover:border-slate-700 transition-all group">
             <Database className="w-6 h-6 text-blue-600 dark:text-blue-400 mb-3 group-hover:scale-110 transition-transform" />
             <h3 className="font-bold text-slate-900 dark:text-white font-heading text-sm mb-1">Material Search</h3>
@@ -64,11 +64,7 @@ export default function AppDashboard() {
             <h3 className="font-bold text-slate-900 dark:text-white font-heading text-sm mb-1">CBAM Calculator</h3>
             <p className="text-slate-500 dark:text-slate-400 text-xs">Estimate carbon tax emissions.</p>
           </Link>
-          <Link href="/ai" className="bg-white shadow-sm dark:shadow-none dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl hover:shadow-md hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:border-slate-300 dark:hover:border-slate-700 transition-all group">
-            <Bot className="w-6 h-6 text-emerald-600 dark:text-emerald-400 mb-3 group-hover:scale-110 transition-transform" />
-            <h3 className="font-bold text-slate-900 dark:text-white font-heading text-sm mb-1">AI Adviser</h3>
-            <p className="text-slate-500 dark:text-slate-400 text-xs">Chat with our engineering AI.</p>
-          </Link>
+          
           <Link href="/analytics/compare" className="bg-white shadow-sm dark:shadow-none dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl hover:shadow-md hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:border-slate-300 dark:hover:border-slate-700 transition-all group">
             <BarChart3 className="w-6 h-6 text-purple-600 dark:text-purple-400 mb-3 group-hover:scale-110 transition-transform" />
             <h3 className="font-bold text-slate-900 dark:text-white font-heading text-sm mb-1">Compare Materials</h3>
