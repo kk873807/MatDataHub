@@ -3,52 +3,48 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MousePointer2, Scale, Replace, Factory, Layers, Search, BarChart3, Info, Upload, Download } from "lucide-react";
 
-interface Step { label: string; cursor: { x: number; y: number }; duration: number; click?: boolean; }
+interface Step { label: string; cursor: { x: number; y: number }; duration: number; click?: boolean; scroll?: number; }
 
 const STEPS: Step[] = [
-  // ===== COMPARE (steps 0-10) =====
-  { label: "Open Side-by-Side Compare tool", cursor: { x: 120, y: 90 }, duration: 6000, click: true },
-  { label: "Search for the first material...", cursor: { x: 120, y: 155 }, duration: 5000, click: true },
-  { label: "Typing 'Titanium'...", cursor: { x: 120, y: 155 }, duration: 4000 },
-  { label: "Select Ti-6Al-4V Grade 5", cursor: { x: 140, y: 195 }, duration: 5000, click: true },
-  { label: "Search and select second material: Al 7075-T6", cursor: { x: 340, y: 155 }, duration: 6000, click: true },
-  { label: "Click 'Run Comparison'", cursor: { x: 240, y: 230 }, duration: 5000, click: true },
-  // Radar chart
+  // ===== COMPARE =====
+  { label: "Open Side-by-Side Compare tool", cursor: { x: 120, y: 90 }, duration: 3000, click: true },
+  { label: "Search for the first material...", cursor: { x: 120, y: 155 }, duration: 2500, click: true },
+  { label: "Typing 'Titanium'...", cursor: { x: 120, y: 155 }, duration: 2000 },
+  { label: "Select Ti-6Al-4V Grade 5", cursor: { x: 140, y: 195 }, duration: 2500, click: true },
+  { label: "Search and select second material: Al 7075-T6", cursor: { x: 340, y: 155 }, duration: 3000, click: true },
+  { label: "Click 'Run Comparison'", cursor: { x: 240, y: 230 }, duration: 2500, click: true },
   { label: "Property Fingerprint — radar chart overlays all properties", cursor: { x: 100, y: 310 }, duration: 5000 },
-  // Comparison matrix
   { label: "Direct Comparison Matrix — property-by-property table with best values highlighted in green", cursor: { x: 280, y: 310 }, duration: 5500 },
-  // Takeaways
-  { label: "AI Key Takeaways — automatically generated insights", cursor: { x: 240, y: 390 }, duration: 5500 },
-  // Export
-  { label: "Export comparison to CSV for offline analysis", cursor: { x: 400, y: 280 }, duration: 6000, click: true },
+  { label: "AI Key Takeaways — automatically generated insights", cursor: { x: 240, y: 400 }, duration: 5500, scroll: -100 },
+  { label: "Export comparison to CSV for offline analysis", cursor: { x: 400, y: 280 }, duration: 3000, click: true, scroll: -100 },
 
-  // ===== SUBSTITUTION (steps 10-15) =====
-  { label: "Open Smart AI Substitution tool", cursor: { x: 360, y: 90 }, duration: 6000, click: true },
-  { label: "Select baseline material: ASTM A36 Steel", cursor: { x: 240, y: 160 }, duration: 6000, click: true },
-  { label: "Set optimization weights: Cost 40%, Density 30%, Carbon 30%", cursor: { x: 240, y: 210 }, duration: 4500 },
-  { label: "Click 'Find Alternatives' — AI ranks all matches by fitness", cursor: { x: 240, y: 260 }, duration: 6000, click: true },
-  { label: "Results: ranked alternatives with weighted fitness scores!", cursor: { x: 280, y: 340 }, duration: 5000 },
+  // ===== SUBSTITUTION =====
+  { label: "Open Smart AI Substitution tool", cursor: { x: 360, y: 90 }, duration: 3000, click: true, scroll: 0 },
+  { label: "Select baseline material: ASTM A36 Steel", cursor: { x: 240, y: 160 }, duration: 3000, click: true, scroll: 0 },
+  { label: "Set optimization weights: Cost 40%, Density 30%, Carbon 30%", cursor: { x: 240, y: 210 }, duration: 4500, scroll: 0 },
+  { label: "Click 'Find Alternatives' — AI ranks all matches by fitness", cursor: { x: 240, y: 260 }, duration: 3000, click: true, scroll: 0 },
+  { label: "Results: ranked alternatives with weighted fitness scores!", cursor: { x: 280, y: 340 }, duration: 5000, scroll: 0 },
 
-  // ===== CBAM (steps 15-23) =====
-  { label: "Open Supply Chain Risk & CBAM tool", cursor: { x: 120, y: 420 }, duration: 6000, click: true },
-  { label: "Choose input method: Upload CSV or Manual Entry", cursor: { x: 240, y: 160 }, duration: 3500 },
-  { label: "Upload BOM — drag CSV file with Material & Weight columns", cursor: { x: 150, y: 200 }, duration: 4500, click: true },
-  { label: "Or use Manual Entry — type material name and weight in kg", cursor: { x: 340, y: 200 }, duration: 4500, click: true },
-  { label: "Enter: Steel 304L, 500 kg", cursor: { x: 240, y: 250 }, duration: 6000 },
-  { label: "Click 'Calculate CBAM & ESG'", cursor: { x: 240, y: 290 }, duration: 5000, click: true },
-  { label: "Total Embodied Carbon: 925 kg CO2 — with per-material breakdown", cursor: { x: 240, y: 340 }, duration: 5500 },
-  { label: "Results Breakdown table — emission factors, risk scores, obsolescence", cursor: { x: 240, y: 390 }, duration: 5000 },
+  // ===== CBAM =====
+  { label: "Open Supply Chain Risk & CBAM tool", cursor: { x: 120, y: 420 }, duration: 3000, click: true, scroll: -100 },
+  { label: "Choose input method: Upload CSV or Manual Entry", cursor: { x: 240, y: 160 }, duration: 3500, scroll: 0 },
+  { label: "Upload BOM — drag CSV file with Material & Weight columns", cursor: { x: 150, y: 200 }, duration: 4500, click: true, scroll: 0 },
+  { label: "Or use Manual Entry — type material name and weight in kg", cursor: { x: 340, y: 200 }, duration: 4500, click: true, scroll: 0 },
+  { label: "Enter: Steel 304L, 500 kg", cursor: { x: 240, y: 250 }, duration: 3000, scroll: 0 },
+  { label: "Click 'Calculate CBAM & ESG'", cursor: { x: 240, y: 290 }, duration: 2500, click: true, scroll: 0 },
+  { label: "Total Embodied Carbon: 925 kg CO2 — with per-material breakdown", cursor: { x: 240, y: 340 }, duration: 5500, scroll: 0 },
+  { label: "Results Breakdown table — emission factors, risk scores, obsolescence", cursor: { x: 240, y: 390 }, duration: 5000, scroll: -50 },
 
-  // ===== SYNTHESIZER (steps 23-30) =====
-  { label: "Open Composite Synthesizer tool", cursor: { x: 360, y: 420 }, duration: 6000, click: true },
-  { label: "Select Matrix Material (A): Epoxy Resin", cursor: { x: 200, y: 170 }, duration: 3500, click: true },
-  { label: "Select Reinforcement Material (B): Carbon Fiber T300", cursor: { x: 200, y: 210 }, duration: 3500, click: true },
-  { label: "Adjust Volume Fraction slider — Matrix 40% / Reinforcement 60%", cursor: { x: 240, y: 250 }, duration: 4500 },
-  { label: "Click 'Blend' — Rule of Mixtures calculates hybrid properties", cursor: { x: 240, y: 290 }, duration: 6000, click: true },
-  { label: "Composite result: Density, Elastic Modulus, Tensile Strength, Thermal K", cursor: { x: 240, y: 360 }, duration: 5500 },
+  // ===== SYNTHESIZER =====
+  { label: "Open Composite Synthesizer tool", cursor: { x: 360, y: 420 }, duration: 3000, click: true, scroll: -100 },
+  { label: "Select Matrix Material (A): Epoxy Resin", cursor: { x: 200, y: 170 }, duration: 3500, click: true, scroll: 0 },
+  { label: "Select Reinforcement Material (B): Carbon Fiber T300", cursor: { x: 200, y: 210 }, duration: 3500, click: true, scroll: 0 },
+  { label: "Adjust Volume Fraction slider — Matrix 40% / Reinforcement 60%", cursor: { x: 240, y: 250 }, duration: 4500, scroll: 0 },
+  { label: "Click 'Blend' — Rule of Mixtures calculates hybrid properties", cursor: { x: 240, y: 290 }, duration: 3000, click: true, scroll: 0 },
+  { label: "Composite result: Density, Elastic Modulus, Tensile Strength, Thermal K", cursor: { x: 240, y: 360 }, duration: 5500, scroll: 0 },
 
   // Reset
-  { label: "", cursor: { x: 460, y: 460 }, duration: 600 },
+  { label: "", cursor: { x: 460, y: 400 }, duration: 1000, scroll: 0 },
 ];
 
 export function SimulatedCompareDemo() {
@@ -65,16 +61,19 @@ export function SimulatedCompareDemo() {
   const phase = step <= 9 ? "compare" : step <= 14 ? "substitution" : step <= 22 ? "cbam" : step <= 28 ? "synthesizer" : "none";
 
   return (
-    <div className="w-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 relative min-h-[480px]">
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] rounded-3xl overflow-hidden pointer-events-none"></div>
+    <div className="w-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-4 sm:p-6 relative">
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] rounded-3xl pointer-events-none"></div>
 
-      <div className="relative z-10 w-full max-w-lg mx-auto">
-        <div className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl overflow-hidden">
-          <div className="px-5 py-3 border-b border-slate-100 dark:border-slate-800 flex items-center gap-2">
-            <BarChart3 className="w-4 h-4 text-blue-500" />
-            <span className="text-sm font-bold text-slate-900 dark:text-white">Advanced Analytics</span>
-          </div>
+      <div className="relative z-10 w-full max-w-lg mx-auto bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl h-[420px] overflow-hidden flex flex-col">
+        
+        {/* Header - Fixed */}
+        <div className="px-5 py-3 border-b border-slate-100 dark:border-slate-800 flex items-center gap-2 bg-white dark:bg-slate-950 z-20 shrink-0">
+          <BarChart3 className="w-4 h-4 text-blue-500" />
+          <span className="text-sm font-bold text-slate-900 dark:text-white">Advanced Analytics</span>
+        </div>
 
+        {/* Content - Scrolls via y-offset */}
+        <motion.div className="flex-1 w-full relative" animate={{ y: s.scroll || 0 }} transition={{ type: "spring", stiffness: 100, damping: 20 }}>
           {/* Tool selector */}
           <div className="p-3 grid grid-cols-2 gap-2 border-b border-slate-100 dark:border-slate-800">
             {[
@@ -90,12 +89,11 @@ export function SimulatedCompareDemo() {
             ))}
           </div>
 
-          <div className="p-5 min-h-[280px]">
+          <div className="p-5">
             <AnimatePresence mode="wait">
               {/* ===== COMPARE ===== */}
               {phase === "compare" && (
-                <motion.div key="compare" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-3">
-                  {/* Material selectors */}
+                <motion.div key="compare" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-3 pb-8">
                   <div className="flex gap-3">
                     <div className={`flex-1 border rounded-xl p-2 flex items-center gap-1.5 transition-all ${step >= 1 && step <= 3 ? "border-blue-400 ring-1 ring-blue-200" : "border-slate-200 dark:border-slate-700"}`}>
                       <Search className="w-3 h-3 text-slate-400" />
@@ -108,30 +106,23 @@ export function SimulatedCompareDemo() {
                   </div>
                   <button className={`w-full py-2 rounded-xl text-xs font-bold text-white ${step >= 5 ? "bg-blue-600 shadow-lg" : "bg-slate-300 dark:bg-slate-700"}`}>{step >= 6 ? "Analysis Complete" : "Run Comparison"}</button>
 
-                  {/* Results */}
                   {step >= 6 && (
                     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
                       <div className="grid grid-cols-2 gap-3">
-                        {/* Radar */}
                         <div className={`p-3 rounded-xl border transition-all ${step === 6 ? "border-blue-400 ring-2 ring-blue-200 shadow-lg" : "border-slate-200 dark:border-slate-700"}`}>
                           <p className="text-[9px] font-bold text-slate-500 uppercase mb-2 text-center">Property Fingerprint</p>
                           <svg viewBox="0 0 120 120" className="w-full h-24 mx-auto">
-                            {/* Grid circles */}
                             <circle cx="60" cy="60" r="45" fill="none" stroke="currentColor" className="text-slate-200 dark:text-slate-700" strokeWidth="0.5"/>
                             <circle cx="60" cy="60" r="30" fill="none" stroke="currentColor" className="text-slate-200 dark:text-slate-700" strokeWidth="0.5"/>
                             <circle cx="60" cy="60" r="15" fill="none" stroke="currentColor" className="text-slate-200 dark:text-slate-700" strokeWidth="0.5"/>
-                            {/* Axes */}
                             {[0,60,120,180,240,300].map(a => { const r=45; const x=60+r*Math.cos((a-90)*Math.PI/180); const y=60+r*Math.sin((a-90)*Math.PI/180); return <line key={a} x1="60" y1="60" x2={x} y2={y} stroke="currentColor" className="text-slate-200 dark:text-slate-700" strokeWidth="0.5"/>; })}
-                            {/* Labels */}
                             <text x="60" y="8" textAnchor="middle" className="fill-slate-500 text-[6px]">UTS</text>
                             <text x="105" y="35" textAnchor="start" className="fill-slate-500 text-[6px]">Yield</text>
                             <text x="105" y="90" textAnchor="start" className="fill-slate-500 text-[6px]">Cost</text>
                             <text x="60" y="115" textAnchor="middle" className="fill-slate-500 text-[6px]">Density</text>
                             <text x="10" y="90" textAnchor="end" className="fill-slate-500 text-[6px]">Carbon</text>
                             <text x="10" y="35" textAnchor="end" className="fill-slate-500 text-[6px]">Th.K</text>
-                            {/* Ti polygon */}
                             <polygon points="60,18 95,40 90,85 60,95 25,80 30,38" fill="rgba(59,130,246,0.15)" stroke="#3b82f6" strokeWidth="1.5"/>
-                            {/* Al polygon */}
                             <polygon points="60,25 85,35 98,75 60,100 20,85 22,42" fill="rgba(168,85,247,0.15)" stroke="#a855f7" strokeWidth="1.5"/>
                           </svg>
                           <div className="flex justify-center gap-3 mt-1">
@@ -140,7 +131,6 @@ export function SimulatedCompareDemo() {
                           </div>
                         </div>
 
-                        {/* Comparison matrix */}
                         <div className={`p-3 rounded-xl border transition-all ${step === 7 ? "border-blue-400 ring-2 ring-blue-200 shadow-lg" : "border-slate-200 dark:border-slate-700"}`}>
                           <p className="text-[9px] font-bold text-slate-500 uppercase mb-2">Comparison Matrix</p>
                           <table className="w-full text-[9px]">
@@ -159,14 +149,13 @@ export function SimulatedCompareDemo() {
                               ))}
                             </tbody>
                           </table>
-                          <div className={`mt-1.5 flex items-center gap-1 transition-all ${step === 9 ? "ring-1 ring-blue-300 rounded p-0.5" : ""}`}>
+                          <div className={`mt-1.5 flex items-center gap-1 transition-all ${step === 9 ? "ring-1 ring-blue-300 rounded p-0.5 bg-blue-50 dark:bg-blue-900/20" : ""}`}>
                             <Download className="w-3 h-3 text-slate-400" />
                             <span className="text-[8px] text-slate-400">Export CSV</span>
                           </div>
                         </div>
                       </div>
 
-                      {/* Key Takeaways */}
                       <div className={`p-3 rounded-xl border transition-all ${step === 8 ? "border-purple-400 ring-2 ring-purple-200 shadow-lg" : "border-slate-200 dark:border-slate-700"}`}>
                         <p className="text-[9px] font-bold text-slate-500 uppercase mb-2 flex items-center gap-1"><Info className="w-3 h-3 text-purple-500" /> Automated Insights & Key Takeaways</p>
                         <ul className="space-y-1 text-[10px] text-slate-600 dark:text-slate-400">
@@ -212,8 +201,7 @@ export function SimulatedCompareDemo() {
 
               {/* ===== CBAM ===== */}
               {phase === "cbam" && (
-                <motion.div key="cbam" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-3">
-                  {/* Input method tabs */}
+                <motion.div key="cbam" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-3 pb-8">
                   <div className={`flex gap-2 transition-all ${step===16?"ring-1 ring-amber-300 rounded-xl p-0.5":""}`}>
                     <div className={`flex-1 p-2 rounded-lg border text-center text-[10px] font-bold transition-all ${step===17?"border-amber-400 bg-amber-50 dark:bg-amber-900/20 ring-1 ring-amber-300 shadow-md":"border-slate-200 dark:border-slate-700 text-slate-500"}`}>
                       <Upload className="w-3 h-3 mx-auto mb-0.5" /> Upload CSV
@@ -223,7 +211,6 @@ export function SimulatedCompareDemo() {
                     </div>
                   </div>
 
-                  {/* Upload area */}
                   {step === 17 && (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-4 border-2 border-dashed border-amber-300 rounded-xl text-center bg-amber-50/50 dark:bg-amber-900/10">
                       <Upload className="w-5 h-5 text-amber-500 mx-auto mb-1" />
@@ -232,7 +219,6 @@ export function SimulatedCompareDemo() {
                     </motion.div>
                   )}
 
-                  {/* Manual entry */}
                   {step >= 18 && step <= 20 && (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-2">
                       <div className={`border rounded-xl p-2 transition-all ${step===19?"border-amber-400 ring-1 ring-amber-200":"border-slate-200 dark:border-slate-700"}`}>
@@ -248,7 +234,6 @@ export function SimulatedCompareDemo() {
 
                   {step >= 19 && <button className={`w-full py-2 rounded-xl text-xs font-bold text-white flex items-center justify-center gap-2 ${step>=20?"bg-amber-600 shadow-lg":"bg-slate-300 dark:bg-slate-700"}`}><Factory className="w-3 h-3" /> {step>=21?"Analysis Complete":"Calculate CBAM & ESG"}</button>}
 
-                  {/* Results */}
                   {step >= 21 && (
                     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-2">
                       <div className={`p-3 rounded-xl border transition-all ${step===21?"border-amber-400 ring-2 ring-amber-200 shadow-lg":"border-slate-200 dark:border-slate-700"}`}>
@@ -318,26 +303,26 @@ export function SimulatedCompareDemo() {
                 </motion.div>
               )}
             </AnimatePresence>
+
+            <motion.div className="absolute z-50 pointer-events-none" animate={{ x: s.cursor.x, y: s.cursor.y }} transition={{ type: "tween", ease: "easeInOut", duration: 0.5 }}>
+              <MousePointer2 className="w-7 h-7 text-black fill-white drop-shadow-xl -rotate-12" />
+              {s.click && <motion.div key={step} initial={{ scale: 0, opacity: 0.6 }} animate={{ scale: 2.5, opacity: 0 }} transition={{ duration: 0.5 }} className="absolute top-0 left-0 w-4 h-4 rounded-full bg-blue-500/50" />}
+            </motion.div>
+
           </div>
-        </div>
+        </motion.div>
       </div>
 
-      {/* Label - Sticky to viewport */}
-      <div className="sticky bottom-6 z-40 flex justify-center pointer-events-none mt-4 h-0 overflow-visible">
+      {/* FIXED CAPTION LABEL */}
+      <div className="mt-6 flex justify-center z-40 relative h-16">
         <AnimatePresence mode="wait">
           {s.label && (
-            <motion.div key={step} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: -40 }} exit={{ opacity: 0 }}
-              className="bg-slate-900 dark:bg-slate-800 text-white text-xs sm:text-sm font-semibold px-5 py-3 rounded-xl shadow-2xl max-w-md text-center border border-slate-700"
+            <motion.div key={step} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+              className="bg-slate-900 dark:bg-slate-800 text-white text-sm sm:text-base font-semibold px-6 py-3 rounded-2xl shadow-xl max-w-md text-center border border-slate-800"
             >{s.label}</motion.div>
           )}
         </AnimatePresence>
       </div>
-
-      {/* Cursor */}
-      <motion.div className="absolute z-50 pointer-events-none" animate={{ x: s.cursor.x, y: s.cursor.y }} transition={{ type: "tween", ease: "easeInOut", duration: 0.5 }}>
-        <MousePointer2 className="w-7 h-7 text-black fill-white drop-shadow-xl -rotate-12" />
-        {s.click && <motion.div key={step} initial={{ scale: 0, opacity: 0.6 }} animate={{ scale: 2.5, opacity: 0 }} transition={{ duration: 0.5 }} className="absolute top-0 left-0 w-4 h-4 rounded-full bg-blue-500/50" />}
-      </motion.div>
     </div>
   );
 }
