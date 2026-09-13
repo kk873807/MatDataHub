@@ -7,37 +7,37 @@ interface Step { label: string; cursor: { x: number; y: number }; duration: numb
 
 const STEPS: Step[] = [
   // === MATERIALS LIST VIEW (steps 0-5) ===
-  { label: "Materials page — browse 1000+ verified engineering materials", cursor: { x: 240, y: 60 }, duration: 2000 },
-  { label: "Material cards show name, category, key properties & cost at a glance", cursor: { x: 130, y: 150 }, duration: 2200 },
-  { label: "Each card shows Density, Tensile Strength, Thermal K & Cost/kg", cursor: { x: 370, y: 150 }, duration: 2200 },
-  { label: "Toggle between Grid view and Table view", cursor: { x: 420, y: 60 }, duration: 1800, click: true },
-  { label: "Use Category filter: Metal, Polymer, Ceramic, Composite", cursor: { x: 100, y: 95 }, duration: 2000, click: true },
-  { label: "Sort by Name, Cost, Tensile Strength, or Density", cursor: { x: 350, y: 95 }, duration: 1800, click: true },
+  { label: "Materials page — browse 1000+ verified engineering materials", cursor: { x: 240, y: 60 }, duration: 4000 },
+  { label: "Material cards show name, category, key properties & cost at a glance", cursor: { x: 130, y: 150 }, duration: 4500 },
+  { label: "Each card shows Density, Tensile Strength, Thermal K & Cost/kg", cursor: { x: 370, y: 150 }, duration: 4500 },
+  { label: "Toggle between Grid view and Table view", cursor: { x: 420, y: 60 }, duration: 3500, click: true },
+  { label: "Use Category filter: Metal, Polymer, Ceramic, Composite", cursor: { x: 100, y: 95 }, duration: 4000, click: true },
+  { label: "Sort by Name, Cost, Tensile Strength, or Density", cursor: { x: 350, y: 95 }, duration: 3500, click: true },
 
   // === SEARCH FLOW (steps 6-9) ===
-  { label: "Search by material name, grade, or standard...", cursor: { x: 200, y: 55 }, duration: 1500, click: true },
-  { label: "Typing 'Gold'... autocomplete suggestions appear", cursor: { x: 200, y: 55 }, duration: 1500 },
-  { label: "Click a result to open its full detail view", cursor: { x: 200, y: 140 }, duration: 1200, click: true },
+  { label: "Search by material name, grade, or standard...", cursor: { x: 200, y: 55 }, duration: 6000, click: true },
+  { label: "Typing 'Gold'... autocomplete suggestions appear", cursor: { x: 200, y: 55 }, duration: 6000 },
+  { label: "Click a result to open its full detail view", cursor: { x: 200, y: 140 }, duration: 5000, click: true },
 
   // === DETAIL VIEW (steps 9-18) ===
-  { label: "Material header: category badge, name, description & applications", cursor: { x: 240, y: 80 }, duration: 2500 },
-  { label: "'Add to Compare' — send to radar chart analysis", cursor: { x: 80, y: 168 }, duration: 1800, click: true },
-  { label: "'Find Substitution' — AI multi-objective alternative finder", cursor: { x: 190, y: 168 }, duration: 1800, click: true },
-  { label: "'Use in Synthesizer' — blend as matrix or reinforcement", cursor: { x: 300, y: 168 }, duration: 1800, click: true },
-  { label: "'Export PDF' — download full material datasheet", cursor: { x: 400, y: 168 }, duration: 1500, click: true },
-  { label: "Market Price — real-time cost with trend indicator", cursor: { x: 130, y: 225 }, duration: 2200 },
-  { label: "Standards & Identifiers — ASTM/ISO, Grade, Equivalents, Data Source", cursor: { x: 370, y: 225 }, duration: 2500 },
-  { label: "Full properties: Density, Yield, UTS, Modulus, Thermal K, Hardness", cursor: { x: 240, y: 305 }, duration: 2500 },
+  { label: "Material header: category badge, name, description & applications", cursor: { x: 240, y: 80 }, duration: 5000 },
+  { label: "'Add to Compare' — send to radar chart analysis", cursor: { x: 80, y: 168 }, duration: 3500, click: true },
+  { label: "'Find Substitution' — AI multi-objective alternative finder", cursor: { x: 190, y: 168 }, duration: 3500, click: true },
+  { label: "'Use in Synthesizer' — blend as matrix or reinforcement", cursor: { x: 300, y: 168 }, duration: 3500, click: true },
+  { label: "'Export PDF' — download full material datasheet", cursor: { x: 400, y: 168 }, duration: 6000, click: true },
+  { label: "Market Price — real-time cost with trend indicator", cursor: { x: 130, y: 225 }, duration: 4500 },
+  { label: "Standards & Identifiers — ASTM/ISO, Grade, Equivalents, Data Source", cursor: { x: 370, y: 225 }, duration: 5000 },
+  { label: "Full properties: Density, Yield, UTS, Modulus, Thermal K, Hardness", cursor: { x: 240, y: 305 }, duration: 5000 },
 
   // === HISTORICAL PRICE CHART (step 17) ===
-  { label: "Historical Price Tracking (12M) — SVG area chart showing cost trends over time", cursor: { x: 240, y: 380 }, duration: 3000 },
+  { label: "Historical Price Tracking (12M) — SVG area chart showing cost trends over time", cursor: { x: 240, y: 380 }, duration: 6000 },
 
   // === SIMILAR MATERIALS (step 18) ===
-  { label: "Similar Materials — discover related alloys and alternatives", cursor: { x: 240, y: 445 }, duration: 2200 },
+  { label: "Similar Materials — discover related alloys and alternatives", cursor: { x: 240, y: 445 }, duration: 4500 },
 
   // === ADVANCED FILTERS (steps 19-21) ===
-  { label: "Advanced Filters — set min tensile, max cost, min thermal conductivity", cursor: { x: 130, y: 480 }, duration: 2200, click: true },
-  { label: "Export material datasheet to CSV or share via link", cursor: { x: 370, y: 480 }, duration: 1800, click: true },
+  { label: "Advanced Filters — set min tensile, max cost, min thermal conductivity", cursor: { x: 130, y: 480 }, duration: 4500, click: true },
+  { label: "Export material datasheet to CSV or share via link", cursor: { x: 370, y: 480 }, duration: 3500, click: true },
 
   // Reset
   { label: "", cursor: { x: 460, y: 500 }, duration: 600 },
@@ -59,8 +59,8 @@ export function SimulatedMaterialsDemo() {
   const showDetail = step >= 9 && step <= 20;
 
   return (
-    <div className="w-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 relative overflow-hidden min-h-[530px]">
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+    <div className="w-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 relative min-h-[530px]">
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] rounded-3xl overflow-hidden pointer-events-none"></div>
 
       <div className="relative z-10 w-full max-w-lg mx-auto">
         <div className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl overflow-hidden">
@@ -274,14 +274,16 @@ export function SimulatedMaterialsDemo() {
         </div>
       </div>
 
-      {/* Label */}
-      <AnimatePresence mode="wait">
-        {s.label && (
-          <motion.div key={step} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-            className="absolute bottom-4 left-1/2 -translate-x-1/2 z-40 bg-slate-900 text-white text-xs font-semibold px-4 py-2 rounded-xl shadow-xl max-w-sm text-center pointer-events-none"
-          >{s.label}</motion.div>
-        )}
-      </AnimatePresence>
+      {/* Label - Sticky to viewport */}
+      <div className="sticky bottom-6 z-40 flex justify-center pointer-events-none mt-4 h-0 overflow-visible">
+        <AnimatePresence mode="wait">
+          {s.label && (
+            <motion.div key={step} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: -40 }} exit={{ opacity: 0 }}
+              className="bg-slate-900 dark:bg-slate-800 text-white text-xs sm:text-sm font-semibold px-5 py-3 rounded-xl shadow-2xl max-w-md text-center border border-slate-700"
+            >{s.label}</motion.div>
+          )}
+        </AnimatePresence>
+      </div>
 
       {/* Cursor */}
       <motion.div className="absolute z-50 pointer-events-none" animate={{ x: s.cursor.x, y: s.cursor.y }} transition={{ type: "tween", ease: "easeInOut", duration: 0.5 }}>

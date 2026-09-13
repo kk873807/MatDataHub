@@ -7,45 +7,45 @@ interface Step { label: string; cursor: { x: number; y: number }; duration: numb
 
 const STEPS: Step[] = [
   // ===== COMPARE (steps 0-10) =====
-  { label: "Open Side-by-Side Compare tool", cursor: { x: 120, y: 90 }, duration: 1500, click: true },
-  { label: "Search for the first material...", cursor: { x: 120, y: 155 }, duration: 1200, click: true },
-  { label: "Typing 'Titanium'...", cursor: { x: 120, y: 155 }, duration: 1000 },
-  { label: "Select Ti-6Al-4V Grade 5", cursor: { x: 140, y: 195 }, duration: 1200, click: true },
-  { label: "Search and select second material: Al 7075-T6", cursor: { x: 340, y: 155 }, duration: 1500, click: true },
-  { label: "Click 'Run Comparison'", cursor: { x: 240, y: 230 }, duration: 1200, click: true },
+  { label: "Open Side-by-Side Compare tool", cursor: { x: 120, y: 90 }, duration: 6000, click: true },
+  { label: "Search for the first material...", cursor: { x: 120, y: 155 }, duration: 5000, click: true },
+  { label: "Typing 'Titanium'...", cursor: { x: 120, y: 155 }, duration: 4000 },
+  { label: "Select Ti-6Al-4V Grade 5", cursor: { x: 140, y: 195 }, duration: 5000, click: true },
+  { label: "Search and select second material: Al 7075-T6", cursor: { x: 340, y: 155 }, duration: 6000, click: true },
+  { label: "Click 'Run Comparison'", cursor: { x: 240, y: 230 }, duration: 5000, click: true },
   // Radar chart
-  { label: "Property Fingerprint — radar chart overlays all properties", cursor: { x: 100, y: 310 }, duration: 2500 },
+  { label: "Property Fingerprint — radar chart overlays all properties", cursor: { x: 100, y: 310 }, duration: 5000 },
   // Comparison matrix
-  { label: "Direct Comparison Matrix — property-by-property table with best values highlighted in green", cursor: { x: 280, y: 310 }, duration: 2800 },
+  { label: "Direct Comparison Matrix — property-by-property table with best values highlighted in green", cursor: { x: 280, y: 310 }, duration: 5500 },
   // Takeaways
-  { label: "AI Key Takeaways — automatically generated insights", cursor: { x: 240, y: 390 }, duration: 2800 },
+  { label: "AI Key Takeaways — automatically generated insights", cursor: { x: 240, y: 390 }, duration: 5500 },
   // Export
-  { label: "Export comparison to CSV for offline analysis", cursor: { x: 400, y: 280 }, duration: 1500, click: true },
+  { label: "Export comparison to CSV for offline analysis", cursor: { x: 400, y: 280 }, duration: 6000, click: true },
 
   // ===== SUBSTITUTION (steps 10-15) =====
-  { label: "Open Smart AI Substitution tool", cursor: { x: 360, y: 90 }, duration: 1500, click: true },
-  { label: "Select baseline material: ASTM A36 Steel", cursor: { x: 240, y: 160 }, duration: 1500, click: true },
-  { label: "Set optimization weights: Cost 40%, Density 30%, Carbon 30%", cursor: { x: 240, y: 210 }, duration: 2200 },
-  { label: "Click 'Find Alternatives' — AI ranks all matches by fitness", cursor: { x: 240, y: 260 }, duration: 1500, click: true },
-  { label: "Results: ranked alternatives with weighted fitness scores!", cursor: { x: 280, y: 340 }, duration: 2500 },
+  { label: "Open Smart AI Substitution tool", cursor: { x: 360, y: 90 }, duration: 6000, click: true },
+  { label: "Select baseline material: ASTM A36 Steel", cursor: { x: 240, y: 160 }, duration: 6000, click: true },
+  { label: "Set optimization weights: Cost 40%, Density 30%, Carbon 30%", cursor: { x: 240, y: 210 }, duration: 4500 },
+  { label: "Click 'Find Alternatives' — AI ranks all matches by fitness", cursor: { x: 240, y: 260 }, duration: 6000, click: true },
+  { label: "Results: ranked alternatives with weighted fitness scores!", cursor: { x: 280, y: 340 }, duration: 5000 },
 
   // ===== CBAM (steps 15-23) =====
-  { label: "Open Supply Chain Risk & CBAM tool", cursor: { x: 120, y: 420 }, duration: 1500, click: true },
-  { label: "Choose input method: Upload CSV or Manual Entry", cursor: { x: 240, y: 160 }, duration: 1800 },
-  { label: "Upload BOM — drag CSV file with Material & Weight columns", cursor: { x: 150, y: 200 }, duration: 2200, click: true },
-  { label: "Or use Manual Entry — type material name and weight in kg", cursor: { x: 340, y: 200 }, duration: 2200, click: true },
-  { label: "Enter: Steel 304L, 500 kg", cursor: { x: 240, y: 250 }, duration: 1500 },
-  { label: "Click 'Calculate CBAM & ESG'", cursor: { x: 240, y: 290 }, duration: 1200, click: true },
-  { label: "Total Embodied Carbon: 925 kg CO2 — with per-material breakdown", cursor: { x: 240, y: 340 }, duration: 2800 },
-  { label: "Results Breakdown table — emission factors, risk scores, obsolescence", cursor: { x: 240, y: 390 }, duration: 2500 },
+  { label: "Open Supply Chain Risk & CBAM tool", cursor: { x: 120, y: 420 }, duration: 6000, click: true },
+  { label: "Choose input method: Upload CSV or Manual Entry", cursor: { x: 240, y: 160 }, duration: 3500 },
+  { label: "Upload BOM — drag CSV file with Material & Weight columns", cursor: { x: 150, y: 200 }, duration: 4500, click: true },
+  { label: "Or use Manual Entry — type material name and weight in kg", cursor: { x: 340, y: 200 }, duration: 4500, click: true },
+  { label: "Enter: Steel 304L, 500 kg", cursor: { x: 240, y: 250 }, duration: 6000 },
+  { label: "Click 'Calculate CBAM & ESG'", cursor: { x: 240, y: 290 }, duration: 5000, click: true },
+  { label: "Total Embodied Carbon: 925 kg CO2 — with per-material breakdown", cursor: { x: 240, y: 340 }, duration: 5500 },
+  { label: "Results Breakdown table — emission factors, risk scores, obsolescence", cursor: { x: 240, y: 390 }, duration: 5000 },
 
   // ===== SYNTHESIZER (steps 23-30) =====
-  { label: "Open Composite Synthesizer tool", cursor: { x: 360, y: 420 }, duration: 1500, click: true },
-  { label: "Select Matrix Material (A): Epoxy Resin", cursor: { x: 200, y: 170 }, duration: 1800, click: true },
-  { label: "Select Reinforcement Material (B): Carbon Fiber T300", cursor: { x: 200, y: 210 }, duration: 1800, click: true },
-  { label: "Adjust Volume Fraction slider — Matrix 40% / Reinforcement 60%", cursor: { x: 240, y: 250 }, duration: 2200 },
-  { label: "Click 'Blend' — Rule of Mixtures calculates hybrid properties", cursor: { x: 240, y: 290 }, duration: 1500, click: true },
-  { label: "Composite result: Density, Elastic Modulus, Tensile Strength, Thermal K", cursor: { x: 240, y: 360 }, duration: 2800 },
+  { label: "Open Composite Synthesizer tool", cursor: { x: 360, y: 420 }, duration: 6000, click: true },
+  { label: "Select Matrix Material (A): Epoxy Resin", cursor: { x: 200, y: 170 }, duration: 3500, click: true },
+  { label: "Select Reinforcement Material (B): Carbon Fiber T300", cursor: { x: 200, y: 210 }, duration: 3500, click: true },
+  { label: "Adjust Volume Fraction slider — Matrix 40% / Reinforcement 60%", cursor: { x: 240, y: 250 }, duration: 4500 },
+  { label: "Click 'Blend' — Rule of Mixtures calculates hybrid properties", cursor: { x: 240, y: 290 }, duration: 6000, click: true },
+  { label: "Composite result: Density, Elastic Modulus, Tensile Strength, Thermal K", cursor: { x: 240, y: 360 }, duration: 5500 },
 
   // Reset
   { label: "", cursor: { x: 460, y: 460 }, duration: 600 },
@@ -65,8 +65,8 @@ export function SimulatedCompareDemo() {
   const phase = step <= 9 ? "compare" : step <= 14 ? "substitution" : step <= 22 ? "cbam" : step <= 28 ? "synthesizer" : "none";
 
   return (
-    <div className="w-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 relative overflow-hidden min-h-[480px]">
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+    <div className="w-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 relative min-h-[480px]">
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] rounded-3xl overflow-hidden pointer-events-none"></div>
 
       <div className="relative z-10 w-full max-w-lg mx-auto">
         <div className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl overflow-hidden">
@@ -322,14 +322,16 @@ export function SimulatedCompareDemo() {
         </div>
       </div>
 
-      {/* Label */}
-      <AnimatePresence mode="wait">
-        {s.label && (
-          <motion.div key={step} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-            className="absolute bottom-4 left-1/2 -translate-x-1/2 z-40 bg-slate-900 text-white text-xs font-semibold px-4 py-2 rounded-xl shadow-xl max-w-sm text-center pointer-events-none"
-          >{s.label}</motion.div>
-        )}
-      </AnimatePresence>
+      {/* Label - Sticky to viewport */}
+      <div className="sticky bottom-6 z-40 flex justify-center pointer-events-none mt-4 h-0 overflow-visible">
+        <AnimatePresence mode="wait">
+          {s.label && (
+            <motion.div key={step} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: -40 }} exit={{ opacity: 0 }}
+              className="bg-slate-900 dark:bg-slate-800 text-white text-xs sm:text-sm font-semibold px-5 py-3 rounded-xl shadow-2xl max-w-md text-center border border-slate-700"
+            >{s.label}</motion.div>
+          )}
+        </AnimatePresence>
+      </div>
 
       {/* Cursor */}
       <motion.div className="absolute z-50 pointer-events-none" animate={{ x: s.cursor.x, y: s.cursor.y }} transition={{ type: "tween", ease: "easeInOut", duration: 0.5 }}>
