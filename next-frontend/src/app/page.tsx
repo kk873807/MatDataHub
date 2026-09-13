@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, BookOpen, Database, Target, BrainCircuit, ShieldCheck, Cpu, TestTube2, CheckCircle2, MessageSquare, ThumbsUp } from "lucide-react";
 import { API } from "@/lib/api";
+import { InteractiveFeatures } from "@/components/InteractiveFeatures";
 
 export default function LandingPage() {
   const [feedbacks, setFeedbacks] = useState<any[]>([]);
@@ -139,28 +140,7 @@ export default function LandingPage() {
       </section>
 
       {/* Solution Section */}
-      <section id="solution" className="py-24 px-6">
-        <div className="max-w-7xl mx-auto text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4 font-heading">A Unified Academic & Industrial Solution</h2>
-          <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">MatDataHub bridges the gap between theoretical material science and practical engineering economics.</p>
-        </div>
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-          {[
-            { title: "Parametric Database", desc: "Search thousands of materials with verified mechanical, thermal, and electrical properties.", icon: Database, color: "text-blue-600 dark:text-blue-400" },
-            { title: "Macroeconomic Pricing", desc: "Analyze supply chain risks and cost-per-kg trends mapped via trailing global indices.", icon: ShieldCheck, color: "text-emerald-600 dark:text-emerald-600 dark:text-emerald-400" },
-            { title: "AI Substitution", desc: "Use advanced algorithms to discover alternative materials based on multi-objective constraints.", icon: BrainCircuit, color: "text-purple-600 dark:text-purple-400" },
-            { title: "CBAM Emissions", desc: "Calculate predictive Carbon Border Adjustment Mechanism taxes for EU procurement.", icon: Target, color: "text-amber-600 dark:text-amber-400" },
-            { title: "Engineering Workspaces", desc: "Calculate beam deflection, thermal shock, and safety factors directly in your browser.", icon: Cpu, color: "text-rose-600 dark:text-rose-400" },
-            { title: "Composite Synthesizer", desc: "Blend theoretical materials using Rule of Mixtures to predict hybrid properties.", icon: TestTube2, color: "text-cyan-400" },
-          ].map((feat, i) => (
-            <div key={i} className="bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 p-8 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-100 dark:hover:bg-slate-800/40 transition-colors">
-              <feat.icon className={`w-8 h-8 ${feat.color} mb-5`} />
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2 font-heading">{feat.title}</h3>
-              <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">{feat.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      <InteractiveFeatures />
 
       {/* Featured Blog Banner */}
       <section id="blog" className="py-12 px-6">
