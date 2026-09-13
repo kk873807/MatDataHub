@@ -18,7 +18,7 @@ const features = [
     color: "bg-blue-500",
     tools: [
       { name: "Global Search", desc: "Instantly lookup materials verified by ASTM, ISO, and DIN standards.", icon: Search, use: "Type a material name or grade to view its complete mechanical, thermal, and electrical properties." },
-      { name: "Advanced Filtering", desc: "Filter materials by exact property thresholds.", icon: SlidersHorizontal, use: "Use sliders to restrict results (e.g., Density < 3.0 g/cm�, Yield Strength > 400 MPa)." },
+      { name: "Advanced Filtering", desc: "Filter materials by exact property thresholds.", icon: SlidersHorizontal, use: "Use sliders to restrict results (e.g., Density < 3.0 g/cm3, Yield Strength > 400 MPa)." },
       { name: "Export & Share", desc: "Download datasheets for offline analysis.", icon: Share2, use: "Export any material profile to CSV or share its unique secure link with your engineering team." }
     ]
   },

@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { BarChart3, Scale, Replace, Info, Factory, Layers, Shield } from "lucide-react";
 import { motion } from "framer-motion";
+import { SimulatedCompareDemo } from "@/components/demos/SimulatedCompareDemo";
 
 export default function AnalyticsDashboard() {
   const tools = [
@@ -60,7 +61,11 @@ export default function AnalyticsDashboard() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
+        <div className="mb-12">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white font-heading mb-6 flex items-center gap-2"><Scale className="w-6 h-6 text-indigo-500" /> See it in action</h2>
+            <SimulatedCompareDemo />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
           {tools.map((tool, i) => (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
