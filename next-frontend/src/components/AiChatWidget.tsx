@@ -162,7 +162,7 @@ export function AiChatWidget() {
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: isOpen ? 0 : 1, opacity: isOpen ? 0 : 1 }}
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-12 left-6 lg:left-8 z-50 p-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full shadow-2xl shadow-emerald-600/30 transition-all hover:scale-110 flex items-center justify-center pointer-events-auto"
+        className="tour-ai-widget fixed bottom-12 left-6 lg:left-8 z-50 p-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full shadow-2xl shadow-emerald-600/30 transition-all hover:scale-110 flex items-center justify-center pointer-events-auto"
       >
         <Bot className="w-7 h-7" />
       </motion.button>

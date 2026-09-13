@@ -16,13 +16,14 @@ type NavItem = {
   href?: string;
   icon: any;
   subItems?: { name: string; href: string }[];
+  tourClass?: string;
 };
 
 const appNavItems: NavItem[] = [
-  { name: "Dashboard", href: "/dashboard", icon: Home },
-  { name: "Materials", href: "/materials", icon: Database },
-  { name: "Analytics", href: "/analytics", icon: BarChart3 },
-  { name: "Workspaces", href: "/projects", icon: Workflow },
+  { name: "Dashboard", href: "/dashboard", icon: Home, tourClass: "tour-dashboard" },
+  { name: "Materials", href: "/materials", icon: Database, tourClass: "tour-materials" },
+  { name: "Analytics", href: "/analytics", icon: BarChart3, tourClass: "tour-analytics" },
+  { name: "Workspaces", href: "/projects", icon: Workflow, tourClass: "tour-projects" },
   { name: "Blogs", href: "/blogs", icon: FileText },
   { 
     name: "Help & Support", 

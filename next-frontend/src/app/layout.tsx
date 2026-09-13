@@ -5,6 +5,7 @@ import { TopNav } from "@/components/TopNav";
 import { AuthGuard } from "@/components/AuthGuard";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AiChatWidget } from "@/components/AiChatWidget";
+import { OnboardingTour } from "@/components/OnboardingTour";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
@@ -26,6 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </div>
         </ThemeProvider>
         <AiChatWidget />
+        <OnboardingTour />
       </body>
     </html>
   );
