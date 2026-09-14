@@ -37,23 +37,23 @@ const STEPS: DemoStep[] = [
   { label: "Select baseline material: ASTM A36 Steel", cursor: { x: 240, y: 160 }, duration: 3000, click: true, scroll: 0, phaseIndex: 1 },
   { label: "Set optimization weights: Cost 40%, Density 30%, Carbon 30%", cursor: { x: 240, y: 220 }, duration: 4500, scroll: 0, phaseIndex: 1 },
   { label: "Click 'Find Alternatives' — AI ranks all matches by fitness", cursor: { x: 240, y: 275 }, duration: 3000, click: true, scroll: 0, phaseIndex: 1 },
-  { label: "Results: ranked alternatives with weighted fitness scores", cursor: { x: 280, y: 350 }, duration: 5000, scroll: -60, phaseIndex: 1 },
+  { label: "Results: ranked alternatives with weighted fitness scores", cursor: { x: 280, y: 350 }, duration: 5000, scroll: -140, phaseIndex: 1 },
 
   // ===== CBAM ===== (phase 2) — steps 13–18
   { label: "Open Supply Chain Risk & CBAM tool", cursor: { x: 120, y: 120 }, duration: 3000, click: true, scroll: 0, phaseIndex: 2 },
   { label: "Choose input method: Upload CSV or Manual Entry", cursor: { x: 240, y: 160 }, duration: 3500, scroll: 0, phaseIndex: 2 },
   { label: "Enter: Steel 304L, 500 kg", cursor: { x: 240, y: 220 }, duration: 3500, scroll: 0, phaseIndex: 2 },
   { label: "Click 'Calculate CBAM & ESG'", cursor: { x: 240, y: 275 }, duration: 2500, click: true, scroll: 0, phaseIndex: 2 },
-  { label: "Total Embodied Carbon: 925 kg CO2 — with per-material breakdown", cursor: { x: 240, y: 320 }, duration: 5500, scroll: -40, phaseIndex: 2 },
-  { label: "Results Breakdown — emission factors, risk scores, obsolescence", cursor: { x: 240, y: 380 }, duration: 5000, scroll: -100, phaseIndex: 2 },
+  { label: "Total Embodied Carbon: 925 kg CO2 — with per-material breakdown", cursor: { x: 240, y: 320 }, duration: 5500, scroll: -100, phaseIndex: 2 },
+  { label: "Results Breakdown — emission factors, risk scores, obsolescence", cursor: { x: 240, y: 380 }, duration: 5000, scroll: -180, phaseIndex: 2 },
 
   // ===== SYNTHESIZER ===== (phase 3) — steps 19–25
   { label: "Open Composite Synthesizer tool", cursor: { x: 360, y: 120 }, duration: 3000, click: true, scroll: 0, phaseIndex: 3 },
   { label: "Select Matrix Material (A): Epoxy Resin", cursor: { x: 200, y: 165 }, duration: 3500, click: true, scroll: 0, phaseIndex: 3 },
   { label: "Select Reinforcement Material (B): Carbon Fiber T300", cursor: { x: 200, y: 210 }, duration: 3500, click: true, scroll: 0, phaseIndex: 3 },
   { label: "Adjust Volume Fraction slider — Matrix 40% / Reinforcement 60%", cursor: { x: 240, y: 260 }, duration: 4500, scroll: 0, phaseIndex: 3 },
-  { label: "Click 'Blend' — Rule of Mixtures calculates hybrid properties", cursor: { x: 240, y: 300 }, duration: 3000, click: true, scroll: 0, phaseIndex: 3 },
-  { label: "Composite result: Density, Elastic Modulus, Tensile Strength, Thermal K", cursor: { x: 240, y: 365 }, duration: 5500, scroll: -60, phaseIndex: 3 },
+  { label: "Click 'Synthesize Composite' — Rule of Mixtures calculates hybrid properties", cursor: { x: 240, y: 300 }, duration: 3000, click: true, scroll: 0, phaseIndex: 3 },
+  { label: "Composite result: Density, Elastic Modulus, Tensile Strength, Thermal K", cursor: { x: 240, y: 365 }, duration: 5500, scroll: -140, phaseIndex: 3 },
 
   // Reset
   { label: "", cursor: { x: 460, y: 400 }, duration: 1000, scroll: 0, phaseIndex: 3 },
@@ -328,7 +328,7 @@ function CompareContent({ step }: { step: number }) {
                   <span>100% (All Matrix)</span>
                 </div>
               </div>
-              <button className={`w-full py-2 rounded-xl text-xs font-bold text-white transition-all ${step>=23?"bg-cyan-600 shadow-lg":"bg-slate-300 dark:bg-slate-700"}`}>{step>=24?"Composite Generated":"Blend Materials"}</button>
+              <button className={`w-full py-2 rounded-xl text-xs font-bold text-white transition-all ${step>=23?"bg-cyan-600 shadow-lg":"bg-slate-300 dark:bg-slate-700"}`}>{step>=24?"Composite Generated":"Synthesize Composite"}</button>
               {step >= 24 && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-2 gap-2">
                   {[{l:"Density",v:"1.58 g/cm³"},{l:"Elastic Modulus",v:"142 GPa"},{l:"Tensile Strength",v:"1,240 MPa"},{l:"Thermal K",v:"7.2 W/mK"}].map(p => (
