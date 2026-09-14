@@ -4,20 +4,19 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Play, X, RotateCcw } from "lucide-react";
 
 interface PageDemoProps {
-  pageKey: string;        // unique key for localStorage, e.g. "analytics", "materials"
-  title: string;          // e.g. "See how Compare works"
-  children: React.ReactNode; // the actual demo component
+  pageKey: string;
+  title: string;
+  children: React.ReactNode;
 }
 
 export function PageDemo({ pageKey, title, children }: PageDemoProps) {
   const storageKey = `demo_dismissed_${pageKey}`;
   const [show, setShow] = useState(false);
-  const [dismissed, setDismissed] = useState(true); // start hidden until we check
+  const [dismissed, setDismissed] = useState(true);
 
   useEffect(() => {
     const wasDismissed = localStorage.getItem(storageKey);
     if (!wasDismissed) {
-      // First visit — auto-show the demo
       setShow(true);
       setDismissed(false);
     } else {
@@ -38,15 +37,17 @@ export function PageDemo({ pageKey, title, children }: PageDemoProps) {
 
   return (
     <>
-      {/* Replay button — always visible when demo is dismissed */}
+      {/* Replay button */}
       {dismissed && !show && (
         <motion.button
-          initial={{ opacity: 0, y: -10 }}
+          initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
           onClick={handleReplay}
-          className="flex items-center gap-2 px-4 py-2 mb-4 text-sm font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/40 border border-blue-200 dark:border-blue-800 rounded-xl transition-all"
+          className="group inline-flex items-center gap-2 px-4 py-2 mb-4 text-[13px] font-medium rounded-lg transition-all duration-200 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:border-blue-300 dark:hover:border-blue-700 hover:text-blue-600 dark:hover:text-blue-400 hover:shadow-sm"
         >
-          <Play className="w-4 h-4" /> {title}
+          <Play className="w-3.5 h-3.5" />
+          {title}
         </motion.button>
       )}
 
@@ -57,29 +58,30 @@ export function PageDemo({ pageKey, title, children }: PageDemoProps) {
             initial={{ opacity: 0, height: 0, marginBottom: 0 }}
             animate={{ opacity: 1, height: "auto", marginBottom: 24 }}
             exit={{ opacity: 0, height: 0, marginBottom: 0 }}
-            transition={{ duration: 0.4, ease: "easeInOut" }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
             className="overflow-hidden"
           >
             <div className="relative">
               {/* Header */}
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                  <Play className="w-4 h-4 text-blue-500" /> {title}
+                <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                  <Play className="w-3.5 h-3.5 text-blue-500" />
+                  {title}
                 </h3>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
                   <button
-                    onClick={() => { setShow(false); setTimeout(() => setShow(true), 100); }}
-                    className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                    onClick={() => { setShow(false); setTimeout(() => setShow(true), 150); }}
+                    className="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
                     title="Replay"
                   >
-                    <RotateCcw className="w-4 h-4" />
+                    <RotateCcw className="w-3.5 h-3.5" />
                   </button>
                   <button
                     onClick={handleDismiss}
-                    className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
-                    title="Dismiss"
+                    className="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                    title="Close"
                   >
-                    <X className="w-4 h-4" />
+                    <X className="w-3.5 h-3.5" />
                   </button>
                 </div>
               </div>
@@ -91,9 +93,9 @@ export function PageDemo({ pageKey, title, children }: PageDemoProps) {
               <div className="flex justify-end mt-3">
                 <button
                   onClick={handleDismiss}
-                  className="text-xs font-semibold text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
+                  className="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors px-2 py-1 rounded hover:bg-slate-50 dark:hover:bg-slate-800/50"
                 >
-                  Got it, don't show again
+                  Dismiss
                 </button>
               </div>
             </div>
