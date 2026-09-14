@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MousePointer2, Workflow, Plus, FolderKanban, ShieldAlert, Thermometer, Activity, AlignEndVertical, IndianRupee, Flame, Wrench, CheckCircle2, Component, Share2, FileText, Lock } from "lucide-react";
+import { MousePointer2, Workflow, Plus, FolderKanban, ShieldAlert, Thermometer, Activity, AlignEndVertical, IndianRupee, Flame, Wrench, CheckCircle2, Box, Share2, FileText, Lock } from "lucide-react";
 
 interface Step { label: string; cursor: { x: number; y: number }; duration: number; click?: boolean; scroll?: number; }
 
@@ -153,7 +153,7 @@ export function SimulatedWorkspaceDemo() {
                     <p className="text-[9px] uppercase tracking-wider text-slate-400 font-bold mb-2">Builder</p>
                     <div className="space-y-1 mb-4">
                       <div className={`flex items-center gap-1.5 p-2 rounded-lg text-[10px] font-medium transition-all ${activeTool==="bom"?"bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-800":"text-slate-500 border border-transparent"}`}>
-                        <Component className="w-3.5 h-3.5" /> Standard BOM
+                        <Box className="w-3.5 h-3.5" /> Standard BOM
                       </div>
                       <div className={`flex items-center gap-1.5 p-2 rounded-lg text-[10px] font-medium transition-all ${activeTool==="blueprint"?"ring-1 ring-violet-300 bg-violet-50 dark:bg-violet-900/20 text-violet-700 dark:text-violet-400":"text-slate-500 border border-transparent"}`}>
                         <Share2 className="w-3.5 h-3.5" /> Blueprints
