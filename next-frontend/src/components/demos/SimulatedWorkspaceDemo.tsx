@@ -295,7 +295,7 @@ export function SimulatedWorkspaceDemo() {
       </div>
 
       {/* FIXED CAPTION LABEL */}
-      <div className="mt-6 flex justify-center z-40 relative h-16">
+      <div className="mt-6 flex justify-center z-40 relative min-h-[80px]">
         <AnimatePresence mode="wait">
           {s.label && (
             <motion.div key={step} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
