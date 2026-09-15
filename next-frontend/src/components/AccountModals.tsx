@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Settings, CreditCard, LifeBuoy, X, Download, Shield, Key, FileText, Zap, CheckCircle2, ArrowUpRight, LogOut, AlertCircle } from 'lucide-react';
+import { Settings, CreditCard, LifeBuoy, X, Download, Shield, Key, FileText, Zap, CheckCircle2, ArrowUpRight, LogOut, AlertCircle, Trash2 } from 'lucide-react';
 import AdvancedMaterialManager from "@/components/AdvancedMaterialManager";
 import { API } from "@/lib/api";
 
@@ -12,6 +12,9 @@ type AccountModalsProps = {
 export function AccountModals({ activeModal, setActiveModal, userInfo }: AccountModalsProps) {
   const [profile, setProfile] = useState<any>(userInfo || null);
   const [upgrading, setUpgrading] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
+  const [dangerAction, setDangerAction] = useState<"none" | "deactivate" | "delete">("none");
+  const [dangerLoading, setDangerLoading] = useState(false);
 
   useEffect(() => {
     if (userInfo) {
@@ -60,6 +63,57 @@ export function AccountModals({ activeModal, setActiveModal, userInfo }: Account
       alert("Network error. Please try again.");
     } finally {
       setUpgrading(false);
+    }
+  };
+
+  const handleDeactivate = async () => {
+    setDangerLoading(true);
+    try {
+      const res = await fetch(`${API}/auth/deactivate`, {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
+      });
+      if (res.ok) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("tourCompleted");
+        localStorage.removeItem("materialTourCompleted");
+        localStorage.removeItem("analyticsTourCompleted");
+        localStorage.removeItem("workspaceTourCompleted");
+        window.location.href = "/?login=true";
+      } else {
+        alert("Failed to deactivate account.");
+      }
+    } catch (err) {
+      alert("Network error.");
+    } finally {
+      setDangerLoading(false);
+      setDangerAction("none");
+    }
+  };
+
+  const handleDelete = async () => {
+    if (deleteConfirmText !== "DELETE") return;
+    setDangerLoading(true);
+    try {
+      const res = await fetch(`${API}/auth/delete`, {
+        method: "DELETE",
+        headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
+      });
+      if (res.ok) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("tourCompleted");
+        localStorage.removeItem("materialTourCompleted");
+        localStorage.removeItem("analyticsTourCompleted");
+        localStorage.removeItem("workspaceTourCompleted");
+        window.location.href = "/?login=true";
+      } else {
+        alert("Failed to delete account.");
+      }
+    } catch (err) {
+      alert("Network error.");
+    } finally {
+      setDangerLoading(false);
+      setDangerAction("none");
     }
   };
 
@@ -214,28 +268,10 @@ export function AccountModals({ activeModal, setActiveModal, userInfo }: Account
                       <h4 className="text-slate-900 dark:text-white font-heading font-bold text-sm">Deactivate Account</h4>
                       <p className="text-slate-500 dark:text-slate-400 text-xs mt-1">Temporarily pause your subscription and hide your profile.</p>
                     </div>
-                    <button onClick={async () => {
-                      if (confirm("Are you sure you want to deactivate your account? You will be logged out.")) {
-                        try {
-                          const res = await fetch(`${API}/auth/deactivate`, {
-                            method: "POST",
-                            headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
-                          });
-                          if (res.ok) {
-                            localStorage.removeItem("token");
-                            localStorage.removeItem("tourCompleted");
-                            localStorage.removeItem("materialTourCompleted");
-                            localStorage.removeItem("analyticsTourCompleted");
-                            localStorage.removeItem("workspaceTourCompleted");
-                            window.location.href = "/?login=true";
-                          } else {
-                            alert("Failed to deactivate account.");
-                          }
-                        } catch (err) {
-                          alert("Network error.");
-                        }
-                      }
-                    }} className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-700 text-red-600 dark:text-red-400 border border-slate-200 dark:border-slate-700 font-bold py-1.5 px-4 rounded-xl transition-colors text-sm whitespace-nowrap">
+                    <button 
+                      onClick={() => setDangerAction("deactivate")} 
+                      className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-700 text-red-600 dark:text-red-400 border border-slate-200 dark:border-slate-700 font-bold py-1.5 px-4 rounded-xl transition-colors text-sm whitespace-nowrap"
+                    >
                       Deactivate
                     </button>
                   </div>
@@ -244,28 +280,10 @@ export function AccountModals({ activeModal, setActiveModal, userInfo }: Account
                       <h4 className="text-slate-900 dark:text-white font-heading font-bold text-sm">Delete Account</h4>
                       <p className="text-slate-500 dark:text-slate-400 text-xs mt-1">Permanently delete your account and projects. <strong className="text-red-600 dark:text-red-400">This action cannot be undone.</strong></p>
                     </div>
-                    <button onClick={async () => {
-                      if (confirm("Are you absolutely sure? This will permanently delete all your projects and data.")) {
-                        try {
-                          const res = await fetch(`${API}/auth/delete`, {
-                            method: "DELETE",
-                            headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
-                          });
-                          if (res.ok) {
-                            localStorage.removeItem("token");
-                            localStorage.removeItem("tourCompleted");
-                            localStorage.removeItem("materialTourCompleted");
-                            localStorage.removeItem("analyticsTourCompleted");
-                            localStorage.removeItem("workspaceTourCompleted");
-                            window.location.href = "/?login=true";
-                          } else {
-                            alert("Failed to delete account.");
-                          }
-                        } catch (err) {
-                          alert("Network error.");
-                        }
-                      }
-                    }} className="bg-red-100 dark:bg-red-900/40 hover:bg-red-600 text-red-700 dark:text-red-200 border border-red-200 dark:border-red-800/50 hover:border-red-500 font-bold py-1.5 px-4 rounded-xl transition-colors text-sm whitespace-nowrap">
+                    <button 
+                      onClick={() => setDangerAction("delete")} 
+                      className="bg-red-100 dark:bg-red-900/40 hover:bg-red-600 text-red-600 dark:text-red-200 border border-red-200 dark:border-red-800/50 hover:border-red-500 font-bold py-1.5 px-4 rounded-xl transition-colors text-sm whitespace-nowrap"
+                    >
                       Delete Account
                     </button>
                   </div>
@@ -368,6 +386,93 @@ export function AccountModals({ activeModal, setActiveModal, userInfo }: Account
           )}
         </div>
       </div>
+
+      {/* Deactivate Modal */}
+      {dangerAction === "deactivate" && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 w-full max-w-sm shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
+            <button onClick={() => setDangerAction("none")} className="absolute top-4 right-4 text-slate-500 hover:text-slate-900 dark:hover:text-white">
+              <X className="w-5 h-5" />
+            </button>
+            <div className="flex items-center gap-3 text-amber-600 dark:text-amber-500 mb-4">
+              <AlertCircle className="w-6 h-6" />
+              <h2 className="text-xl font-bold font-heading">Deactivate?</h2>
+            </div>
+            <p className="text-slate-600 dark:text-slate-300 text-sm mb-6">
+              This will temporarily hide your profile and log you out.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button 
+                onClick={() => setDangerAction("none")} 
+                className="px-4 py-2 font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
+                disabled={dangerLoading}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleDeactivate} 
+                className="px-4 py-2 font-semibold text-white bg-amber-600 hover:bg-amber-700 rounded-xl transition-colors flex items-center justify-center min-w-[120px]"
+                disabled={dangerLoading}
+              >
+                {dangerLoading ? "Processing..." : "Deactivate"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Modal */}
+      {dangerAction === "delete" && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-red-900/40 backdrop-blur-md">
+          <div className="bg-white dark:bg-slate-900 border border-red-200 dark:border-red-900/50 rounded-2xl p-6 w-full max-w-sm shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
+            <button onClick={() => setDangerAction("none")} className="absolute top-4 right-4 text-slate-500 hover:text-slate-900 dark:hover:text-white">
+              <X className="w-5 h-5" />
+            </button>
+            <div className="flex items-center gap-3 text-red-600 dark:text-red-500 mb-2">
+              <Trash2 className="w-6 h-6" />
+              <h2 className="text-xl font-bold font-heading">Delete Account</h2>
+            </div>
+            <p className="text-red-600/80 dark:text-red-400/80 text-sm mb-6 font-medium">
+              This action is irreversible. All data will be destroyed.
+            </p>
+            
+            <div className="mb-6">
+              <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
+                Type <span className="text-red-600 dark:text-red-500 font-mono select-none">DELETE</span> to confirm
+              </label>
+              <input 
+                type="text" 
+                value={deleteConfirmText}
+                onChange={(e) => setDeleteConfirmText(e.target.value)}
+                placeholder="DELETE"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white font-mono focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none transition-all"
+                autoComplete="off"
+              />
+            </div>
+
+            <div className="flex gap-3 justify-end">
+              <button 
+                onClick={() => {
+                  setDangerAction("none");
+                  setDeleteConfirmText("");
+                }} 
+                className="px-4 py-2 font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
+                disabled={dangerLoading}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleDelete} 
+                className="px-4 py-2 font-semibold text-white bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:hover:bg-red-600 rounded-xl transition-colors flex items-center justify-center min-w-[120px]"
+                disabled={deleteConfirmText !== "DELETE" || dangerLoading}
+              >
+                {dangerLoading ? "Processing..." : "Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
