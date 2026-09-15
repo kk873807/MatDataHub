@@ -379,3 +379,30 @@ def generate_my_api_keys(db: Session = Depends(get_db), current_user: User = Dep
     db.commit()
     return {"api_key": raw_key, "api_secret": raw_secret}
 
+@router.post("/deactivate")
+def deactivate_account(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    """Deactivate the current user account."""
+    current_user.is_active = False
+    current_user.session_token = None
+    db.commit()
+    return {"message": "Account deactivated successfully."}
+
+@router.delete("/delete")
+def delete_account(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    """Permanently delete the current user account and their data."""
+    # Delete related data manually if no CASCADE
+    from app.models import Project, Transaction, Feedback, CustomMaterial, ProjectItem
+    
+    # Delete projects and their items
+    projects = db.query(Project).filter(Project.user_id == current_user.id).all()
+    for proj in projects:
+        db.query(ProjectItem).filter(ProjectItem.project_id == proj.id).delete()
+        db.delete(proj)
+
+    db.query(Transaction).filter(Transaction.user_id == current_user.id).delete()
+    db.query(Feedback).filter(Feedback.user_id == current_user.id).update({"user_id": None})
+    
+    db.delete(current_user)
+    db.commit()
+    return {"message": "Account deleted successfully."}
+

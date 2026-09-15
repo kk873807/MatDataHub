@@ -67,6 +67,52 @@ export function TopNav() {
     return () => window.removeEventListener('openLoginModal', handleOpenModal);
   }, [pathname]);
 
+  useEffect(() => {
+    let lastKey = "";
+    let lastTime = 0;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        window.location.href = "/materials";
+      }
+
+      if ((e.ctrlKey || e.metaKey) && e.key === '/') {
+        e.preventDefault();
+        setShowShortcuts(true);
+      }
+      
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'j') {
+        e.preventDefault();
+        window.dispatchEvent(new CustomEvent('openAiAdvisor'));
+      }
+
+      if (e.key === '[' || e.key === ']') {
+        window.dispatchEvent(new CustomEvent('toggleSidebar'));
+      }
+
+      const now = Date.now();
+      if (now - lastTime > 1000) lastKey = "";
+      
+      const currentKey = e.key.toLowerCase();
+      if (lastKey === 'g' && currentKey === 'd') {
+        window.location.href = "/dashboard";
+      } else if (lastKey === 'g' && currentKey === 'c') {
+        window.location.href = "/materials?compare=true";
+      }
+      
+      lastKey = currentKey;
+      lastTime = now;
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   const tierColor = userInfo?.is_admin
     ? "bg-red-100 text-red-600 dark:bg-red-100 dark:bg-red-900/40 dark:text-red-600 dark:text-red-400 border-red-200 dark:border-red-200 dark:border-red-800/50"
     : userInfo?.tier === "advanced"

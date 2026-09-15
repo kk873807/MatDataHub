@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState, useEffect, Suspense } from "react";
 import MaterialManager from "@/components/MaterialManager";
 import AdvancedMaterialManager from "@/components/AdvancedMaterialManager";
@@ -340,7 +340,24 @@ function AccountDashboardInner() {
                       <h4 className="text-slate-900 dark:text-white font-heading font-bold text-sm">Deactivate Account</h4>
                       <p className="text-slate-500 dark:text-slate-400 text-sm mt-1 max-w-lg">Temporarily pause your subscription and hide your profile. You can reactivate at any time by logging back in.</p>
                     </div>
-                    <button onClick={() => alert("Account deactivation requires email confirmation. An email has been sent.")} className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-700 text-red-600 dark:text-red-400 border border-slate-200 dark:border-slate-700 font-bold py-2 px-6 rounded-2xl transition-colors text-sm whitespace-nowrap">
+                    <button onClick={async () => {
+                      if (confirm("Are you sure you want to deactivate your account? You will be logged out.")) {
+                        try {
+                          const res = await fetch(`${API}/auth/deactivate`, {
+                            method: "POST",
+                            headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
+                          });
+                          if (res.ok) {
+                            localStorage.removeItem("token");
+                            window.location.href = "/?login=true";
+                          } else {
+                            alert("Failed to deactivate account.");
+                          }
+                        } catch (err) {
+                          alert("Network error.");
+                        }
+                      }
+                    }} className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-700 text-red-600 dark:text-red-400 border border-slate-200 dark:border-slate-700 font-bold py-2 px-6 rounded-2xl transition-colors text-sm whitespace-nowrap">
                       Deactivate
                     </button>
                   </div>
@@ -350,9 +367,22 @@ function AccountDashboardInner() {
                       <h4 className="text-slate-900 dark:text-white font-heading font-bold text-sm">Delete Account</h4>
                       <p className="text-slate-500 dark:text-slate-400 text-sm mt-1 max-w-lg">Permanently delete your account, projects, blueprints, and API keys. <strong className="text-red-600 dark:text-red-400">This action cannot be undone.</strong></p>
                     </div>
-                    <button onClick={() => {
+                    <button onClick={async () => {
                       if (confirm("Are you absolutely sure? This will permanently delete all your projects and data.")) {
-                        alert("Account deletion initiated. This may take up to 24 hours to process across all databases.");
+                        try {
+                          const res = await fetch(`${API}/auth/delete`, {
+                            method: "DELETE",
+                            headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
+                          });
+                          if (res.ok) {
+                            localStorage.removeItem("token");
+                            window.location.href = "/?login=true";
+                          } else {
+                            alert("Failed to delete account.");
+                          }
+                        } catch (err) {
+                          alert("Network error.");
+                        }
                       }
                     }} className="bg-red-100 dark:bg-red-100 dark:bg-red-900/40 hover:bg-red-600 text-red-200 border border-red-200 dark:border-red-800/50 hover:border-red-500 font-bold py-2 px-6 rounded-2xl transition-colors text-sm whitespace-nowrap">
                       Delete Account
