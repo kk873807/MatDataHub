@@ -64,10 +64,12 @@ export const PageTour = forwardRef<PageTourRef, PageTourProps>(({ steps, storage
   }, [mounted, storageKey, run]);
 
   const handleJoyrideCallback = (data: any) => {
-    const { status, action } = data;
-    if (status === "finished" || status === "skipped" || action === "close") {
+    const { status, action, type } = data;
+    if (status === "finished" || status === "skipped" || action === "close" || type === "error") {
       setRun(false);
-      localStorage.setItem(storageKey, "true");
+      if (type !== "error") {
+        localStorage.setItem(storageKey, "true");
+      }
     }
   };
 

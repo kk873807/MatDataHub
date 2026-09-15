@@ -33,10 +33,12 @@ export function OnboardingTour() {
   }, [mounted]);
 
   const handleJoyrideCallback = (data: any) => {
-    const { status } = data;
-    if (status === "finished" || status === "skipped") {
+    const { status, action, type } = data;
+    if (status === "finished" || status === "skipped" || action === "close" || type === "error") {
       setRun(false);
-      localStorage.setItem("tourCompleted", "true");
+      if (type !== "error") {
+        localStorage.setItem("tourCompleted", "true");
+      }
     }
   };
 
@@ -94,8 +96,8 @@ export function OnboardingTour() {
           overlayColor: "rgba(0, 0, 0, 0.5)",
           zIndex: 10000,
         }
-      } as any}
-      onEvent={handleJoyrideCallback}
+      }}
+      callback={handleJoyrideCallback}
     />
   );
 }

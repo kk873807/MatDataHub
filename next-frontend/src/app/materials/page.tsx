@@ -140,6 +140,9 @@ export default function MaterialsPage() {
             </h1>
             <p className="text-slate-600 dark:text-slate-300">Search and filter verified engineering materials.</p>
           </div>
+          <button onClick={() => tourRef.current?.startTour()} className="flex items-center gap-1.5 text-xs font-bold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-900/20 dark:hover:bg-emerald-900/40 px-3 py-1.5 rounded-full transition-colors shrink-0">
+            <HelpCircle className="w-4 h-4" /> Page Guide
+          </button>
         </div>
 
         {/* Interactive Demo */}
@@ -151,14 +154,6 @@ export default function MaterialsPage() {
 
         {/* Search & Top Filters */}
         <div className="flex flex-col bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 gap-5 shadow-lg">
-          
-          <div className="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-4">
-            <h2 className="font-bold text-slate-800 dark:text-slate-200">Find Materials</h2>
-            <button onClick={() => tourRef.current?.startTour()} className="flex items-center gap-1.5 text-xs font-bold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-900/20 dark:hover:bg-emerald-900/40 px-3 py-1.5 rounded-full transition-colors">
-              <HelpCircle className="w-4 h-4" /> Page Guide
-            </button>
-          </div>
-
           <div className="flex flex-col lg:flex-row gap-4">
             <div className="relative flex-1 tour-search-bar" ref={searchRef}>
               <Search className="absolute left-4 top-3.5 w-5 h-5 text-slate-500 dark:text-slate-400" />
