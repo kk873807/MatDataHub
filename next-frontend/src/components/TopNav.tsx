@@ -38,9 +38,9 @@ const appNavItems: NavItem[] = [
 
 export function TopNav() {
   const pathname = usePathname();
-  const isLanding = pathname === "/";
   const [userInfo, setUserInfo] = useState<any>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const isLanding = pathname === "/" && !isLoggedIn;
   const [authChecked, setAuthChecked] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showShortcuts, setShowShortcuts] = useState(false);

@@ -33,9 +33,16 @@ export function LoginModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =
       if (!res.ok) throw new Error(data.detail || "Authentication failed");
 
       localStorage.setItem("token", data.access_token);
+      
+      // If this is a new registration, clear the tour flags so the tour runs
+      if (isRegister) {
+        localStorage.removeItem("tourCompleted");
+        localStorage.removeItem("ai_chat_history");
+      }
+      
       onClose();
-      // Redirect to dashboard
-      window.location.href = "/dashboard";
+      // Redirect to homepage
+      window.location.href = "/";
     } catch (err: any) {
       setError(err.message);
     } finally {

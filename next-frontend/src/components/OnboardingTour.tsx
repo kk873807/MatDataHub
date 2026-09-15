@@ -8,8 +8,9 @@ export function OnboardingTour() {
   const pathname = usePathname();
 
   useEffect(() => {
-    // Only run the tour if the user is logged in (not on landing page)
-    if (pathname === "/") return;
+    // Only run the tour if the user is logged in
+    const token = localStorage.getItem("token");
+    if (!token) return;
     
     // Check if the user has already completed the tour
     const hasCompleted = localStorage.getItem("tourCompleted");
