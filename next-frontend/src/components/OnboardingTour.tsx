@@ -60,19 +60,29 @@ export function OnboardingTour() {
       placement: "bottom" as const,
     },
     {
-      target: ".tour-projects",
-      content: "Engineering Workspaces — create projects, build multi-part Bill of Materials (BOM), and track total assembly weight, cost, and carbon footprint.",
-      placement: "bottom" as const,
-    },
-    {
       target: ".tour-analytics",
       content: "Advanced Analytics — run side-by-side material comparisons, AI-powered substitutions, CBAM emissions modeling, and composite material synthesis.",
       placement: "bottom" as const,
     },
     {
-      target: ".tour-ai-widget",
-      content: "Your AI Engineering Assistant — click this button anytime to ask questions about material properties, standards, or get recommendations.",
-      placement: "top" as const,
+      target: ".tour-projects",
+      content: "Engineering Workspaces — create projects, build multi-part Bill of Materials (BOM), and track total assembly weight, cost, and carbon footprint.",
+      placement: "bottom" as const,
+    },
+    {
+      target: ".tour-blogs",
+      content: "Blogs — stay updated with our latest articles, case studies, and engineering insights.",
+      placement: "bottom" as const,
+    },
+    {
+      target: ".tour-help",
+      content: "Help & Support — find answers to your questions in the FAQs or contact our support team.",
+      placement: "bottom" as const,
+    },
+    {
+      target: ".tour-feedback",
+      content: "Feedback — help us improve by sharing your thoughts, reporting bugs, or requesting new features.",
+      placement: "bottom" as const,
     },
     {
       target: ".tour-account",

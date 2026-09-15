@@ -24,16 +24,17 @@ const appNavItems: NavItem[] = [
   { name: "Materials", href: "/materials", icon: Database, tourClass: "tour-materials" },
   { name: "Analytics", href: "/analytics", icon: BarChart3, tourClass: "tour-analytics" },
   { name: "Workspaces", href: "/projects", icon: Workflow, tourClass: "tour-projects" },
-  { name: "Blogs", href: "/blogs", icon: FileText },
+  { name: "Blogs", href: "/blogs", icon: FileText, tourClass: "tour-blogs" },
   { 
     name: "Help & Support", 
     icon: HelpCircle,
+    tourClass: "tour-help",
     subItems: [
       { name: "FAQs", href: "/faq" },
       { name: "Support Centre", href: "/contact" }
     ]
   },
-  { name: "Feedback", href: "/feedback", icon: MessageSquare },
+  { name: "Feedback", href: "/feedback", icon: MessageSquare, tourClass: "tour-feedback" },
 ];
 
 export function TopNav() {
