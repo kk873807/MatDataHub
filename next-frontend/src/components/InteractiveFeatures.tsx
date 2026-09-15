@@ -86,10 +86,10 @@ export function InteractiveFeatures() {
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white mb-6 font-heading">
-            A comprehensive <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-violet-600">engineering toolkit</span>
+            One platform. <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-violet-600">Every material decision.</span>
           </h2>
           <p className="text-slate-600 dark:text-slate-400 max-w-3xl mx-auto text-lg">
-            MatDataHub is packed with specialized tools designed to streamline your material selection, structural calculations, and compliance reporting. Interactive demos are available on each page.
+            From searching a material database to building a Bill of Materials to predicting EU carbon taxes — MatDataHub replaces the spreadsheets, PDFs, and guesswork.
           </p>
         </div>
 

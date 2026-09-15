@@ -56,23 +56,37 @@ export default function LandingPage() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-400/20 dark:bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none"></div>
         <div className="max-w-5xl mx-auto text-center relative z-10">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-700 dark:text-indigo-600 dark:text-indigo-300 text-xs font-semibold uppercase tracking-widest mb-6">
-              <BookOpen className="w-3.5 h-3.5" /> Academic-Grade Materials Intelligence
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 text-xs font-semibold uppercase tracking-widest mb-6">
+              <Database className="w-3.5 h-3.5" /> The Engineering Material Platform
             </div>
             <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-6 font-heading leading-tight">
-              Engineering decisions, <br />
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-cyan-400">backed by physics.</span>
+              Find the right material. <br />
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-cyan-400">Know why it&apos;s right.</span>
             </h1>
             <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed font-light">
-              A unified platform for mechanical properties, macroeconomic cost indices, and AI-driven substitution analysis. Designed for the rigor of modern R&D.
+              Search 1000+ engineering materials, compare them side-by-side, predict costs, and let AI recommend the best fit — all before you cut a single prototype.
             </p>
-                          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                {authChecked && !isLoggedIn && (
-                  <button onClick={() => window.dispatchEvent(new Event("openLoginModal"))} className="flex items-center gap-2 px-8 py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold transition-all shadow-xl shadow-indigo-600/20 w-full sm:w-auto justify-center">
-                    Access Platform <ArrowRight className="w-4 h-4" />
-                  </button>
-                )}
-              </div>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+              {authChecked && !isLoggedIn && (
+                <button onClick={() => window.dispatchEvent(new Event("openLoginModal"))} className="flex items-center gap-2 px-8 py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold transition-all shadow-xl shadow-indigo-600/20 w-full sm:w-auto justify-center">
+                  Access Platform <ArrowRight className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+
+            {/* Social Proof Stats */}
+            <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
+              {[
+                { value: "1000+", label: "Verified Materials" },
+                { value: "50+", label: "Properties Each" },
+                { value: "AI", label: "Powered Analysis" },
+              ].map((stat, i) => (
+                <div key={i} className="text-center">
+                  <div className="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white">{stat.value}</div>
+                  <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mt-1">{stat.label}</div>
+                </div>
+              ))}
+            </div>
           </motion.div>
         </div>
       </section>
@@ -82,12 +96,12 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <div>
-              <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-6 font-heading">The Data Fragmentation Problem</h2>
+              <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-6 font-heading">Material selection shouldn&apos;t require 12 browser tabs.</h2>
               <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
-                Engineers and material scientists spend countless hours cross-referencing isolated databases to find mechanical limits, pricing estimates, and ESG compliance factors (like CBAM).
+                Engineers and material scientists waste hours cross-referencing scattered databases, supplier PDFs, and pricing spreadsheets just to make a single material decision.
               </p>
               <ul className="space-y-4">
-                {["Inconsistent datasheets from different suppliers", "Lack of historical pricing trends for accurate BOM estimation", "Disconnect between mechanical viability and financial reality"].map((item, i) => (
+                {["Supplier datasheets that contradict each other on the same alloy", "No way to quickly compare cost vs. strength vs. carbon footprint", "Hours spent on BOM estimates that could be automated in seconds"].map((item, i) => (
                   <li key={i} className="flex items-start gap-3 text-slate-600 dark:text-slate-300">
                     <Target className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
                     <span>{item}</span>
@@ -171,8 +185,8 @@ export default function LandingPage() {
       {/* Testimonials / Community Feedback */}
       <section className="py-24 bg-white dark:bg-slate-900/50 border-y border-slate-200 dark:border-slate-800/50">
         <div className="max-w-7xl mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4 font-heading">Live Community Feedback</h2>
-          <p className="text-slate-600 dark:text-slate-400 mb-12 max-w-2xl mx-auto">See what our community of engineers and scientists are saying directly from our platform.</p>
+          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4 font-heading">Engineers who switched say it best.</h2>
+          <p className="text-slate-600 dark:text-slate-400 mb-12 max-w-2xl mx-auto">Real feedback from engineers and scientists using MatDataHub every day.</p>
           
           <div className="grid md:grid-cols-3 gap-8 text-left">
             {feedbacks.length > 0 ? (
@@ -225,8 +239,8 @@ export default function LandingPage() {
       <section id="pricing" className="py-24 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4 font-heading">Transparent Pricing Models</h2>
-            <p className="text-slate-600 dark:text-slate-400">Select the tier that fits your research and engineering needs.</p>
+            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4 font-heading">Start free. Scale when you need to.</h2>
+            <p className="text-slate-600 dark:text-slate-400">No credit card required. Upgrade only when you need the full database, advanced AI, or enterprise compliance tools.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             
@@ -287,7 +301,7 @@ export default function LandingPage() {
             <Database className="w-5 h-5 text-indigo-500" />
             <span className="font-bold text-slate-900 dark:text-white">MatDataHub</span>
           </div>
-          <p className="text-slate-500 dark:text-slate-400 text-sm">© 2026 MatDataHub. Empowering material intelligence.</p>
+          <p className="text-slate-500 dark:text-slate-400 text-sm">© 2026 MatDataHub. The smartest way to choose engineering materials.</p>
           <div className="flex gap-6">
             <Link href="/terms" className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-900 dark:text-white transition-colors">Terms & Conditions</Link>
             <Link href="/privacy" className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-900 dark:text-white transition-colors">Privacy Policy</Link>
