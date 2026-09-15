@@ -86,29 +86,23 @@ export const PageTour = forwardRef<PageTourRef, PageTourProps>(({ steps, storage
 
   if (!mounted) return null;
 
-  const mappedSteps = steps.map(step => ({
-    ...step,
-    disableBeacon: true
-  }));
-
   return (
     <JoyrideComponent
-      steps={mappedSteps}
+      steps={steps}
       run={run}
       stepIndex={stepIndex}
-      continuous
-      showSkipButton
-      showProgress
-      styles={{
-        options: {
-          primaryColor: "#059669",
-          textColor: "#0f172a",
-          backgroundColor: "#ffffff",
-          overlayColor: "rgba(0, 0, 0, 0.6)",
-          zIndex: 10000,
-        }
+      continuous={true}
+      options={{
+        primaryColor: "#059669",
+        textColor: "#0f172a",
+        backgroundColor: "#ffffff",
+        overlayColor: "rgba(0, 0, 0, 0.6)",
+        zIndex: 10000,
+        showProgress: true,
+        skipBeacon: true,
+        buttons: ["back", "close", "primary", "skip"]
       }}
-      callback={handleJoyrideCallback}
+      onEvent={handleJoyrideCallback}
     />
   );
 });

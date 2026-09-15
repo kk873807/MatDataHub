@@ -87,17 +87,17 @@ export function OnboardingTour() {
     <JoyrideComponent
       steps={steps}
       run={run}
-      continuous
-      styles={{
-        options: {
-          primaryColor: "#059669",
-          textColor: "#0f172a",
-          backgroundColor: "#ffffff",
-          overlayColor: "rgba(0, 0, 0, 0.5)",
-          zIndex: 10000,
-        }
+      continuous={true}
+      options={{
+        primaryColor: "#059669",
+        textColor: "#0f172a",
+        backgroundColor: "#ffffff",
+        overlayColor: "rgba(0, 0, 0, 0.5)",
+        zIndex: 10000,
+        skipBeacon: true,
+        buttons: ["back", "close", "primary", "skip"]
       }}
-      callback={handleJoyrideCallback}
+      onEvent={handleJoyrideCallback}
     />
   );
 }
