@@ -78,7 +78,7 @@ export default function LandingPage() {
             <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
               {[
                 { value: "1000+", label: "Verified Materials" },
-                { value: "50+", label: "Properties Each" },
+                { value: "15+", label: "Material Properties" },
                 { value: "AI", label: "Powered Analysis" },
               ].map((stat, i) => (
                 <div key={i} className="text-center">
