@@ -264,7 +264,7 @@ export default function ProjectWorkspace() {
                     {filteredMats.map(m => (
                       <div 
                         key={m.id} 
-                        className={`px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-100 dark:bg-slate-800 cursor-pointer transition-colors ${matId === m.id.toString() ? 'bg-slate-100 dark:bg-slate-800 text-blue-600 dark:text-blue-400' : 'text-slate-600 dark:text-slate-300'}`}
+                        className={`px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-colors ${matId === m.id.toString() ? 'bg-slate-100 dark:bg-slate-800 text-blue-600 dark:text-blue-400' : 'text-slate-600 dark:text-slate-300'}`}
                         onClick={() => {
                           setMatId(m.id.toString());
                           setSearchMatQuery(m.name);
@@ -330,7 +330,7 @@ export default function ProjectWorkspace() {
                 </thead>
                 <tbody className="divide-y divide-slate-800/50">
                   {enrichedItems.map((item: any) => (
-                    <tr key={item.id} className="hover:bg-slate-100 dark:hover:bg-slate-100 dark:bg-slate-800/40 transition-colors group">
+                    <tr key={item.id} className="hover:bg-slate-100 dark:hover:bg-slate-700/50 dark:bg-slate-800/40 transition-colors group">
                       <td className="px-5 py-3 text-slate-900 dark:text-white font-medium">{item.part_name}</td>
                       <td className="px-5 py-3 text-blue-600 dark:text-blue-400">
                         <Link href={`/materials/${item.material_id}`} className="hover:text-blue-600 dark:text-blue-300 hover:underline transition-colors">{item.mat?.name || 'Unknown'}</Link>
@@ -500,7 +500,7 @@ export default function ProjectWorkspace() {
       {/* Top Navbar for Workspace */}
       <div className="h-16 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between px-6 shrink-0">
         <div className="flex items-center gap-4">
-          <Link href="/projects" className="p-2 hover:bg-slate-100 dark:hover:bg-slate-100 dark:bg-slate-800 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white transition-colors">
+          <Link href="/projects" className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white transition-colors">
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div>
