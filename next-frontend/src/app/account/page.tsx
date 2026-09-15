@@ -51,7 +51,12 @@ function AccountDashboardInner() {
         setProfile(data);
       } else {
         setError("Session expired. Please log in again.");
-        localStorage.removeItem("token"); window.location.href = "/?login=true";
+        localStorage.removeItem("token");
+        localStorage.removeItem("tourCompleted");
+        localStorage.removeItem("materialTourCompleted");
+        localStorage.removeItem("analyticsTourCompleted");
+        localStorage.removeItem("workspaceTourCompleted");
+        window.location.href = "/?login=true";
       }
     } catch (err) {
       setError("Network error fetching profile.");
@@ -197,7 +202,12 @@ function AccountDashboardInner() {
                 </div>
                 <button 
                   onClick={() => {
-                    localStorage.removeItem("token"); window.location.href = "/?login=true";
+                    localStorage.removeItem("token");
+                    localStorage.removeItem("tourCompleted");
+                    localStorage.removeItem("materialTourCompleted");
+                    localStorage.removeItem("analyticsTourCompleted");
+                    localStorage.removeItem("workspaceTourCompleted");
+                    window.location.href = "/?login=true";
                     setProfile(null);
                     setIsLogin(true);
                   }}
@@ -349,6 +359,10 @@ function AccountDashboardInner() {
                           });
                           if (res.ok) {
                             localStorage.removeItem("token");
+                            localStorage.removeItem("tourCompleted");
+                            localStorage.removeItem("materialTourCompleted");
+                            localStorage.removeItem("analyticsTourCompleted");
+                            localStorage.removeItem("workspaceTourCompleted");
                             window.location.href = "/?login=true";
                           } else {
                             alert("Failed to deactivate account.");
@@ -376,6 +390,10 @@ function AccountDashboardInner() {
                           });
                           if (res.ok) {
                             localStorage.removeItem("token");
+                            localStorage.removeItem("tourCompleted");
+                            localStorage.removeItem("materialTourCompleted");
+                            localStorage.removeItem("analyticsTourCompleted");
+                            localStorage.removeItem("workspaceTourCompleted");
                             window.location.href = "/?login=true";
                           } else {
                             alert("Failed to delete account.");

@@ -125,7 +125,11 @@ export function TopNav() {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    window.location.href = "/";
+    localStorage.removeItem("tourCompleted");
+    localStorage.removeItem("materialTourCompleted");
+    localStorage.removeItem("analyticsTourCompleted");
+    localStorage.removeItem("workspaceTourCompleted");
+    window.location.href = "/?login=true";
   };
 
 

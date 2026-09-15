@@ -35,12 +35,33 @@ export const PageTour = forwardRef<PageTourRef, PageTourProps>(({ steps, storage
     if (!mounted) return;
     const token = localStorage.getItem("token");
     if (!token) return;
-    const hasCompleted = localStorage.getItem(storageKey);
-    if (!hasCompleted) {
-      const timer = setTimeout(() => setRun(true), 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [mounted, storageKey]);
+
+    const checkAndStart = () => {
+      const hasCompleted = localStorage.getItem(storageKey);
+      const globalTourCompleted = localStorage.getItem("tourCompleted");
+      
+      // Check if all step targets exist in the DOM
+      const allTargetsExist = steps.every(step => {
+        if (typeof step.target === 'string') {
+          return document.querySelector(step.target) !== null;
+        }
+        return true;
+      });
+
+      if (!hasCompleted && globalTourCompleted === "true" && !run && allTargetsExist) {
+        setRun(true);
+      }
+    };
+
+    const timer = setTimeout(checkAndStart, 2000);
+    
+    const interval = setInterval(checkAndStart, 3000);
+
+    return () => {
+      clearTimeout(timer);
+      clearInterval(interval);
+    };
+  }, [mounted, storageKey, run]);
 
   const handleJoyrideCallback = (data: any) => {
     const { status, action } = data;

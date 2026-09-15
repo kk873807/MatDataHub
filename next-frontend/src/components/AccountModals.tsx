@@ -223,6 +223,10 @@ export function AccountModals({ activeModal, setActiveModal, userInfo }: Account
                           });
                           if (res.ok) {
                             localStorage.removeItem("token");
+                            localStorage.removeItem("tourCompleted");
+                            localStorage.removeItem("materialTourCompleted");
+                            localStorage.removeItem("analyticsTourCompleted");
+                            localStorage.removeItem("workspaceTourCompleted");
                             window.location.href = "/?login=true";
                           } else {
                             alert("Failed to deactivate account.");
@@ -249,6 +253,10 @@ export function AccountModals({ activeModal, setActiveModal, userInfo }: Account
                           });
                           if (res.ok) {
                             localStorage.removeItem("token");
+                            localStorage.removeItem("tourCompleted");
+                            localStorage.removeItem("materialTourCompleted");
+                            localStorage.removeItem("analyticsTourCompleted");
+                            localStorage.removeItem("workspaceTourCompleted");
                             window.location.href = "/?login=true";
                           } else {
                             alert("Failed to delete account.");
