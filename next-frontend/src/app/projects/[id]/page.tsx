@@ -181,7 +181,7 @@ export default function ProjectWorkspace() {
     const header = "Part Name,Material,Volume (cm3),Mass (kg),Cost (INR)\n";
     const rows = project.items.map((item: any) => {
       const mat = materials.find(m => m.id === item.material_id);
-      const density = mat?.density || 0;
+      const density = mat?.density || 1;
       const cost_per_kg = mat?.cost_per_kg_min || 0;
       const mass_kg = (item.volume_cm3 * density) / 1000;
       const cost = mass_kg * cost_per_kg;
@@ -202,7 +202,7 @@ export default function ProjectWorkspace() {
   // Enriched Items
   const enrichedItems = (project.items || []).map((item: any) => {
     const mat = materials.find(m => m.id === item.material_id);
-    const density = mat?.density || 0;
+    const density = mat?.density || 1;
     const cost_per_kg = mat?.cost_per_kg_min || 0;
     const mass_kg = (item.volume_cm3 * density) / 1000;
     const cost = mass_kg * cost_per_kg;
@@ -457,7 +457,7 @@ export default function ProjectWorkspace() {
                     // Generate CSV content
                     const headers = "Part_Name,Material_ID,Material_Name,Volume_cm3,Density_g_cm3,Weight_kg\n";
                     const rows = project.items.map((item: any) => {
-                       const density = item.material?.density || 0;
+                       const density = item.material?.density || 1;
                        const weight = (item.volume_cm3 * density) / 1000;
                        return `"${item.part_name}",${item.material_id},"${item.material?.name || 'Unknown'}",${item.volume_cm3},${density},${weight.toFixed(3)}`;
                     }).join("\n");
@@ -545,7 +545,7 @@ export default function ProjectWorkspace() {
                 const matName = mat.name || "Unknown";
                 const category = mat.category || "General";
                 const volume = Number(item.volume_cm3 || 0);
-                const density = Number(mat.density || 0);
+                const density = Number(mat.density || 1);
                 const massKg = Number(item.mass_kg ?? ((volume * density) / 1000));
                 const unitCost = Number(mat.cost_per_kg_min || 0);
                 const cost = Number(item.cost ?? (massKg * unitCost));
