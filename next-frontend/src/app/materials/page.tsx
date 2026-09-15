@@ -33,6 +33,7 @@ export default function MaterialsPage() {
   
   // Filters
   const [category, setCategory] = useState("");
+  const [metallurgyType, setMetallurgyType] = useState<"" | "ferrous" | "non-ferrous">("");
   const [minTensile, setMinTensile] = useState<number | "">("");
   const [maxCost, setMaxCost] = useState<number | "">("");
   const [minThermal, setMinThermal] = useState<number | "">("");
@@ -124,11 +125,21 @@ export default function MaterialsPage() {
     return 0;
   });
 
-  // Cap for free users
-  const isFreeCapped = isFree && sortedAll.length > FREE_BROWSE_LIMIT;
-  const sortedMaterials = isFree ? sortedAll.slice(0, FREE_BROWSE_LIMIT) : sortedAll;
+  // Client-side Ferrous / Non-Ferrous filter (applies only when category is Metal)
+  const FERROUS_KEYWORDS = ["steel", "iron", "cast iron", "wrought iron", "stainless"];
+  const filteredAll = metallurgyType ? sortedAll.filter((mat) => {
+    if (mat.category !== "Metal") return false;
+    const sub = (mat.subcategory || "").toLowerCase();
+    const name = (mat.name || "").toLowerCase();
+    const isFerrous = FERROUS_KEYWORDS.some(kw => sub.includes(kw) || name.includes(kw));
+    return metallurgyType === "ferrous" ? isFerrous : !isFerrous;
+  }) : sortedAll;
 
-  const activeFiltersCount = (category ? 1 : 0) + (minTensile !== "" ? 1 : 0) + (maxCost !== "" ? 1 : 0) + (minThermal !== "" ? 1 : 0);
+  // Cap for free users
+  const isFreeCapped = isFree && filteredAll.length > FREE_BROWSE_LIMIT;
+  const sortedMaterials = isFree ? filteredAll.slice(0, FREE_BROWSE_LIMIT) : filteredAll;
+
+  const activeFiltersCount = (category ? 1 : 0) + (metallurgyType ? 1 : 0) + (minTensile !== "" ? 1 : 0) + (maxCost !== "" ? 1 : 0) + (minThermal !== "" ? 1 : 0);
 
   return (
     <main className="flex flex-col p-6 lg:p-10 w-full overflow-y-auto">
@@ -234,12 +245,12 @@ export default function MaterialsPage() {
                 exit={{ height: 0, opacity: 0 }}
                 className="overflow-hidden border-t border-slate-200 dark:border-slate-800/60 pt-5 mt-1"
               >
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-5">
                   <div>
                     <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Material Category</label>
                     <select
                       value={category}
-                      onChange={(e) => setCategory(e.target.value)}
+                      onChange={(e) => { setCategory(e.target.value); if (e.target.value !== "Metal") setMetallurgyType(""); }}
                       className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2.5 text-sm text-slate-900 dark:text-white appearance-none outline-none focus:border-emerald-500 transition-colors"
                     >
                       <option className="bg-white dark:bg-slate-900" value="">All Categories</option>
@@ -247,6 +258,18 @@ export default function MaterialsPage() {
                       <option className="bg-white dark:bg-slate-900" value="Polymer">Polymers</option>
                       <option className="bg-white dark:bg-slate-900" value="Ceramic">Ceramics</option>
                       <option className="bg-white dark:bg-slate-900" value="Composite">Composites</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Metal Type</label>
+                    <select
+                      value={metallurgyType}
+                      onChange={(e) => { setMetallurgyType(e.target.value as "" | "ferrous" | "non-ferrous"); if (e.target.value) setCategory("Metal"); }}
+                      className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2.5 text-sm text-slate-900 dark:text-white appearance-none outline-none focus:border-emerald-500 transition-colors"
+                    >
+                      <option className="bg-white dark:bg-slate-900" value="">All Metals</option>
+                      <option className="bg-white dark:bg-slate-900" value="ferrous">Ferrous (Iron-based)</option>
+                      <option className="bg-white dark:bg-slate-900" value="non-ferrous">Non-Ferrous</option>
                     </select>
                   </div>
                   <div>
@@ -307,6 +330,12 @@ export default function MaterialsPage() {
                   <button onClick={() => setCategory("")} className="hover:text-emerald-200"><X className="w-3 h-3" /></button>
                 </span>
               )}
+              {metallurgyType && (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800/50 rounded-full text-xs font-medium">
+                  {metallurgyType === "ferrous" ? "Ferrous" : "Non-Ferrous"}
+                  <button onClick={() => setMetallurgyType("")} className="hover:text-indigo-200"><X className="w-3 h-3" /></button>
+                </span>
+              )}
               {minTensile !== "" && (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50 rounded-full text-xs font-medium">
                   Tensile &gt; {minTensile} MPa
@@ -325,7 +354,7 @@ export default function MaterialsPage() {
                   <button onClick={() => setMinThermal("")} className="hover:text-orange-200"><X className="w-3 h-3" /></button>
                 </span>
               )}
-              <button onClick={() => { setCategory(""); setMinTensile(""); setMaxCost(""); setMinThermal(""); }} className="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white ml-2 underline underline-offset-2">
+              <button onClick={() => { setCategory(""); setMetallurgyType(""); setMinTensile(""); setMaxCost(""); setMinThermal(""); }} className="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white ml-2 underline underline-offset-2">
                 Clear all
               </button>
             </div>
@@ -354,7 +383,7 @@ export default function MaterialsPage() {
             <h3 className="text-xl font-bold text-slate-900 dark:text-white font-heading mb-2">No materials found</h3>
             <p className="text-slate-500 dark:text-slate-400 max-w-md mx-auto mb-6">We couldn't find any materials matching your specific filters and search criteria.</p>
             <button 
-              onClick={() => { setSearch(""); setCategory(""); setMinTensile(""); setMaxCost(""); setMinThermal(""); }}
+              onClick={() => { setSearch(""); setCategory(""); setMetallurgyType(""); setMinTensile(""); setMaxCost(""); setMinThermal(""); }}
               className="px-6 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-white rounded-2xl font-semibold transition-colors"
             >
               Clear all filters
@@ -385,11 +414,17 @@ export default function MaterialsPage() {
                       <h3 className="font-bold text-slate-900 dark:text-white font-heading text-lg group-hover:text-emerald-600 dark:text-emerald-400 transition-colors line-clamp-1 pr-2" title={mat.name}>{mat.name}</h3>
                     </div>
                     
-                    <div className="mb-5 relative z-10">
+                    <div className="mb-3 relative z-10">
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${catColor}`}>
                         {mat.category} {mat.subcategory ? `• ${mat.subcategory}` : ''}
                       </span>
                     </div>
+                    
+                    {mat.composition && (
+                      <div className="mb-5 relative z-10 text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2" title={mat.composition}>
+                        <span className="font-semibold text-slate-700 dark:text-slate-300">Comp:</span> {mat.composition}
+                      </div>
+                    )}
                     
                     <div className="space-y-3.5 text-sm mt-auto relative z-10 bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200/60 dark:border-slate-800/60 group-hover:border-emerald-500/30 transition-colors">
                       <div>
