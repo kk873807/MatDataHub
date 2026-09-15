@@ -75,9 +75,14 @@ export const PageTour = forwardRef<PageTourRef, PageTourProps>(({ steps, storage
 
   if (!mounted) return null;
 
+  const mappedSteps = steps.map(step => ({
+    ...step,
+    disableBeacon: true
+  }));
+
   return (
     <JoyrideComponent
-      steps={steps}
+      steps={mappedSteps}
       run={run}
       continuous
       showSkipButton
