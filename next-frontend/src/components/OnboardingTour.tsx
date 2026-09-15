@@ -1,30 +1,40 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Joyride, STATUS } from "react-joyride";
-import { usePathname } from "next/navigation";
+import dynamic from "next/dynamic";
+
+// Dynamically import Joyride to avoid SSR issues (it uses document/window)
+const JoyrideComponent = dynamic(
+  () => import("react-joyride").then((mod) => mod.Joyride),
+  { ssr: false }
+);
 
 export function OnboardingTour() {
   const [run, setRun] = useState(false);
-  const pathname = usePathname();
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+
     // Only run the tour if the user is logged in
     const token = localStorage.getItem("token");
     if (!token) return;
-    
+
     // Check if the user has already completed the tour
     const hasCompleted = localStorage.getItem("tourCompleted");
     if (!hasCompleted) {
-      // Small delay to ensure UI is rendered
-      setTimeout(() => setRun(true), 1500);
+      // Delay to ensure DOM elements with tour classes are rendered
+      const timer = setTimeout(() => setRun(true), 2500);
+      return () => clearTimeout(timer);
     }
-  }, [pathname]);
+  }, [mounted]);
 
   const handleJoyrideCallback = (data: any) => {
     const { status } = data;
-    const finishedStatuses: string[] = [STATUS.FINISHED, STATUS.SKIPPED];
-
-    if (finishedStatuses.includes(status)) {
+    if (status === "finished" || status === "skipped") {
       setRun(false);
       localStorage.setItem("tourCompleted", "true");
     }
@@ -39,67 +49,82 @@ export function OnboardingTour() {
     },
     {
       target: ".tour-dashboard",
-      content: "This is your Dashboard. It gives you a quick overview of your recent activity and quick actions.",
+      content: "This is your Dashboard — a quick overview of your recent activity, quick actions, and workspace shortcuts.",
       placement: "bottom" as const,
     },
     {
       target: ".tour-materials",
-      content: "The Material Database is where you can search, compare, and filter through 1000+ verified engineering materials.",
+      content: "The Material Database — search, filter, and explore 1000+ verified engineering materials with detailed property datasheets.",
       placement: "bottom" as const,
     },
     {
       target: ".tour-projects",
-      content: "Workspaces! This is the most powerful feature. Here you can create projects, build multi-part Bill of Materials (BOM), and track total assembly weights, costs, and carbon footprints.",
+      content: "Engineering Workspaces — create projects, build multi-part Bill of Materials (BOM), and track total assembly weight, cost, and carbon footprint.",
       placement: "bottom" as const,
     },
     {
       target: ".tour-analytics",
-      content: "Run advanced calculations like CBAM emissions modeling and deep multi-material radar comparisons.",
+      content: "Advanced Analytics — run side-by-side material comparisons, AI-powered substitutions, CBAM emissions modeling, and composite material synthesis.",
       placement: "bottom" as const,
     },
     {
       target: ".tour-ai-widget",
-      content: "Stuck? Need a specific standard? Our specialized Engineering AI is always available right here to chat and help you find exact material properties.",
-      placement: "left" as const,
+      content: "Your AI Engineering Assistant — click this button anytime to ask questions about material properties, standards, or get recommendations.",
+      placement: "top" as const,
     },
     {
       target: ".tour-account",
-      content: "Manage your API keys, subscriptions, and custom enterprise materials in your Account settings. You're all set!",
+      content: "Account & Settings — manage your profile, API keys, subscriptions, and custom enterprise materials. You're all set!",
       placement: "bottom-end" as const,
-    }
+    },
   ];
 
+  if (!mounted) return null;
+
   return (
-    <Joyride
+    <JoyrideComponent
       steps={steps}
       run={run}
       continuous
-      styles={{
-        options: {
-          primaryColor: '#059669', // emerald-600
-          textColor: '#0f172a', // slate-900
-          backgroundColor: '#ffffff',
-          overlayColor: 'rgba(0, 0, 0, 0.6)',
-          zIndex: 1000,
-        },
-        tooltip: {
-          borderRadius: '16px',
-          padding: '24px',
-          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-        },
-        buttonNext: {
-          borderRadius: '8px',
-          fontWeight: 'bold',
-          padding: '8px 16px',
-        },
-        buttonBack: {
-          marginRight: '8px',
-          color: '#64748b',
-        },
-        buttonSkip: {
-          color: '#94a3b8',
-        }
-      } as any}
+      styles={
+        {
+          options: {
+            primaryColor: "#059669",
+            textColor: "#0f172a",
+            backgroundColor: "#ffffff",
+            overlayColor: "rgba(0, 0, 0, 0.5)",
+            zIndex: 10000,
+          },
+          tooltip: {
+            borderRadius: "16px",
+            padding: "24px",
+            boxShadow:
+              "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+            fontSize: "14px",
+          },
+          tooltipContent: {
+            padding: "8px 0",
+          },
+          buttonNext: {
+            borderRadius: "12px",
+            fontWeight: "bold",
+            padding: "10px 20px",
+            fontSize: "13px",
+          },
+          buttonBack: {
+            marginRight: "8px",
+            color: "#64748b",
+            fontSize: "13px",
+          },
+          buttonSkip: {
+            color: "#94a3b8",
+            fontSize: "12px",
+          },
+          spotlight: {
+            borderRadius: "16px",
+          },
+        } as any
+      }
       onEvent={handleJoyrideCallback}
     />
   );

@@ -17,7 +17,7 @@ export default function LandingPage() {
     const oauthToken = urlParams.get("t");
     if (oauthToken) {
       localStorage.setItem("token", oauthToken);
-      window.location.href = "/dashboard";
+      localStorage.removeItem("tourCompleted"); localStorage.removeItem("ai_chat_history"); window.location.href = "/";
       return;
     }
 
