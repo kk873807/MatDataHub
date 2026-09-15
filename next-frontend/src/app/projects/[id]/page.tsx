@@ -33,7 +33,7 @@ export default function ProjectWorkspace() {
   const [matId, setMatId] = useState("");
   const [searchMatQuery, setSearchMatQuery] = useState("");
   const [searchMatOpen, setSearchMatOpen] = useState(false);
-  const [volume, setVolume] = useState("");
+  const [mass, setMass] = useState("");
   const [adding, setAdding] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
 
@@ -103,25 +103,31 @@ export default function ProjectWorkspace() {
 
   const handleAddPart = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!partName.trim() || !matId || !volume) return;
+    if (!partName.trim() || !matId || !mass) return;
     setAdding(true);
     
     try {
       const token = getToken();
+      
+      // Calculate volume_cm3 from mass (kg)
+      const selectedMat = materials.find(m => m.id.toString() === matId);
+      const density = selectedMat?.density || 1; // avoid division by zero
+      const calculatedVolumeCm3 = (parseFloat(mass) * 1000) / density;
+
       const res = await fetch(`${API}/projects/${id}/items`, {
         method: "POST",
         headers: authHeaders(),
         body: JSON.stringify({
           material_id: parseInt(matId),
           part_name: partName.trim(),
-          volume_cm3: parseFloat(volume)
+          volume_cm3: calculatedVolumeCm3
         })
       });
       if (res.ok) {
         setPartName("");
         setMatId("");
         setSearchMatQuery("");
-        setVolume("");
+        setMass("");
         await fetchProject();
         showToast(`Part "${partName.trim()}" added successfully`);
       } else {
@@ -278,20 +284,20 @@ export default function ProjectWorkspace() {
                 )}
               </div>
               <div>
-                <label className="block text-xs text-slate-500 dark:text-slate-400 mb-1 font-semibold">Volume (cm³)</label>
+                <label className="block text-xs text-slate-500 dark:text-slate-400 mb-1 font-semibold">Mass (kg)</label>
                 <input 
                   type="number" 
-                  step="0.1" 
-                  value={volume} 
-                  onChange={e => setVolume(e.target.value)} 
-                  placeholder="e.g. 125"
+                  step="0.001" 
+                  value={mass} 
+                  onChange={e => setMass(e.target.value)} 
+                  placeholder="e.g. 5.5"
                   className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-3 py-2.5 text-slate-900 dark:text-white text-sm outline-none focus:border-blue-500 transition-colors" 
                   required 
                 />
               </div>
               <button 
                 type="submit" 
-                disabled={adding || !partName || !matId || !volume}
+                disabled={adding || !partName || !matId || !mass}
                 className="bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 text-white font-bold py-2.5 px-4 rounded-2xl text-sm transition-all h-[42px] flex justify-center items-center shadow-lg shadow-blue-900/20"
               >
                 {adding ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Plus className="w-4 h-4 mr-1" /> Add Part</>}
