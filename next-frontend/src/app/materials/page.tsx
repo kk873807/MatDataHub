@@ -1,15 +1,26 @@
-﻿"use client";
+"use client";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { LayoutGrid, List, Search, ArrowLeft, Filter, Loader2, Database, SlidersHorizontal, X, ArrowDownAZ, TrendingUp, Scale, Zap, Beaker, FileBox, Lock, Shield } from "lucide-react";
+import { LayoutGrid, List, Search, ArrowLeft, Filter, Loader2, Database, SlidersHorizontal, X, ArrowDownAZ, TrendingUp, Scale, Zap, Beaker, FileBox, Lock, Shield, HelpCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { API } from "@/lib/api";
 import { PageDemo } from "@/components/demos/PageDemo";
 import { SimulatedMaterialsDemo } from "@/components/demos/SimulatedMaterialsDemo";
+import { PageTour, PageTourRef } from "@/components/PageTour";
+import { Step } from "react-joyride";
 
 const FREE_BROWSE_LIMIT = 40;
 
 export default function MaterialsPage() {
+  const tourRef = useRef<PageTourRef>(null);
+  
+  const tourSteps: Step[] = [
+    { target: ".tour-search-bar", content: "Search for specific materials using keywords, standards, or grades. The autocomplete will help you find matches fast.", placement: "bottom" },
+    { target: ".tour-sort-options", content: "Sort the materials list by cost, tensile strength, or density to find what you need.", placement: "bottom" },
+    { target: ".tour-filters-button", content: "Click here to open advanced filters and narrow down by category, yield strength, thermal properties, and more.", placement: "left" },
+    { target: ".tour-material-card", content: "Click on any material card to view its full datasheet and engineering properties.", placement: "top" }
+  ];
+
   const [materials, setMaterials] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -136,10 +147,20 @@ export default function MaterialsPage() {
           <SimulatedMaterialsDemo />
         </PageDemo>
 
+        <PageTour ref={tourRef} steps={tourSteps} storageKey="materialTourCompleted" />
+
         {/* Search & Top Filters */}
         <div className="flex flex-col bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 gap-5 shadow-lg">
+          
+          <div className="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-4">
+            <h2 className="font-bold text-slate-800 dark:text-slate-200">Find Materials</h2>
+            <button onClick={() => tourRef.current?.startTour()} className="flex items-center gap-1.5 text-xs font-bold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-900/20 dark:hover:bg-emerald-900/40 px-3 py-1.5 rounded-full transition-colors">
+              <HelpCircle className="w-4 h-4" /> Page Guide
+            </button>
+          </div>
+
           <div className="flex flex-col lg:flex-row gap-4">
-            <div className="relative flex-1" ref={searchRef}>
+            <div className="relative flex-1 tour-search-bar" ref={searchRef}>
               <Search className="absolute left-4 top-3.5 w-5 h-5 text-slate-500 dark:text-slate-400" />
               <input
                 type="text"
@@ -179,7 +200,7 @@ export default function MaterialsPage() {
             </div>
             
             <div className="flex gap-3">
-              <div className="relative">
+              <div className="relative tour-sort-options">
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
@@ -198,7 +219,7 @@ export default function MaterialsPage() {
 
               <button 
                 onClick={() => setShowFilters(!showFilters)}
-                className={`flex items-center gap-2 px-5 py-3 rounded-xl border transition-all font-semibold ${showFilters ? 'bg-emerald-100  dark:bg-emerald-900/40 border-emerald-500 text-emerald-600 dark:text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)]' : 'bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-100 dark:bg-slate-800'}`}
+                className={`tour-filters-button flex items-center gap-2 px-5 py-3 rounded-xl border transition-all font-semibold ${showFilters ? 'bg-emerald-100  dark:bg-emerald-900/40 border-emerald-500 text-emerald-600 dark:text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)]' : 'bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-100 dark:bg-slate-800'}`}
               >
                 <SlidersHorizontal className="w-5 h-5" />
                 Filters {activeFiltersCount > 0 && <span className="flex items-center justify-center w-5 h-5 bg-emerald-500 text-slate-950 rounded-full text-xs ml-1">{activeFiltersCount}</span>}
@@ -357,6 +378,7 @@ export default function MaterialsPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: Math.min(i * 0.05, 0.5) }}
                   key={mat.id}
+                  className={i === 0 ? "tour-material-card" : ""}
                 >
                   <Link href={`/materials/${mat.id}`} className="block h-full flex flex-col p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500/50 hover:bg-white dark:hover:bg-slate-900/80 hover:shadow-xl hover:shadow-emerald-900/10 transition-all group relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-slate-800 to-transparent opacity-20 group-hover:from-emerald-800 transition-colors pointer-events-none rounded-tr-2xl"></div>

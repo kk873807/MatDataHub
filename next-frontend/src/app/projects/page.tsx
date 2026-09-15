@@ -1,12 +1,22 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { Workflow, Plus, FolderKanban, HardDrive, Play, Loader2, X, Trash2, Search, Clock, Lock } from "lucide-react";
+import { Workflow, Plus, FolderKanban, HardDrive, Play, Loader2, X, Trash2, Search, Clock, Lock, HelpCircle } from "lucide-react";
 import { API } from "@/lib/api";
 import { PageDemo } from "@/components/demos/PageDemo";
 import { SimulatedWorkspaceDemo } from "@/components/demos/SimulatedWorkspaceDemo";
+import { PageTour, PageTourRef } from "@/components/PageTour";
+import { Step } from "react-joyride";
 
 export default function WorkspacesPage() {
+  const tourRef = useRef<PageTourRef>(null);
+
+  const tourSteps: Step[] = [
+    { target: ".tour-workspace-header", content: "Engineering Workspaces: Create isolated environments for different assemblies or systems.", placement: "bottom" },
+    { target: ".tour-create-project", content: "Click here to create a new workspace for your project.", placement: "left" },
+    { target: ".tour-search-projects", content: "Easily find your existing projects using the search bar.", placement: "bottom" }
+  ];
+
   const [projects, setProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   
@@ -153,32 +163,38 @@ export default function WorkspacesPage() {
 
   return (
     <main className="flex flex-col p-6 lg:p-10 w-full h-full overflow-y-auto relative">
+      <PageTour ref={tourRef} steps={tourSteps} storageKey="workspaceTourCompleted" />
       <div className="w-full max-w-6xl mx-auto space-y-8">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white font-heading flex items-center gap-3">
-            <Workflow className="w-8 h-8 text-blue-600 dark:text-blue-400" />
-            Engineering Workspaces
-          </h1>
-          <p className="text-slate-600 dark:text-slate-300 mt-2">Manage your multi-part assemblies and interactive blueprints.</p>
-          </div>
-          <PageDemo pageKey="workspaces" title="See how Engineering Workspaces work">
-            <SimulatedWorkspaceDemo />
-          </PageDemo>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 tour-workspace-header">
           <div>
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-white font-heading flex items-center gap-3">
+              <Workflow className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+              Engineering Workspaces
+            </h1>
+            <p className="text-slate-600 dark:text-slate-300 mt-2">Manage your multi-part assemblies and interactive blueprints.</p>
+          </div>
+          <button onClick={() => tourRef.current?.startTour()} className="flex items-center gap-1.5 text-xs font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 dark:text-blue-400 dark:bg-blue-900/20 dark:hover:bg-blue-900/40 px-3 py-1.5 rounded-full transition-colors shrink-0">
+            <HelpCircle className="w-4 h-4" /> Page Guide
+          </button>
+        </div>
+        <PageDemo pageKey="workspaces" title="See how Engineering Workspaces work">
+          <SimulatedWorkspaceDemo />
+        </PageDemo>
+        <div>
         </div>
 
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-bold text-slate-900 dark:text-white font-heading">Your Projects</h2>
           <button 
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-sm font-semibold transition-colors shadow-lg shadow-blue-900/50"
+            className="tour-create-project flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-sm font-semibold transition-colors shadow-lg shadow-blue-900/50"
           >
             <Plus className="w-4 h-4" /> Create Project
           </button>
         </div>
 
         {/* Search Bar */}
-        <div className="relative">
+        <div className="relative tour-search-projects">
           <Search className="absolute left-3 top-3 w-5 h-5 text-slate-500 dark:text-slate-400" />
           <input
             type="text"

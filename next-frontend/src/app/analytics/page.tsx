@@ -1,11 +1,23 @@
 "use client";
+import { useRef } from "react";
 import Link from "next/link";
-import { BarChart3, Scale, Replace, Info, Factory, Layers, Shield } from "lucide-react";
+import { BarChart3, Scale, Replace, Info, Factory, Layers, Shield, HelpCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageDemo } from "@/components/demos/PageDemo";
 import { SimulatedCompareDemo } from "@/components/demos/SimulatedCompareDemo";
+import { PageTour, PageTourRef } from "@/components/PageTour";
+import { Step } from "react-joyride";
 
 export default function AnalyticsDashboard() {
+  const tourRef = useRef<PageTourRef>(null);
+
+  const tourSteps: Step[] = [
+    { target: ".tour-analytics-header", content: "Welcome to Advanced Analytics! Here you can run powerful analysis on materials.", placement: "bottom" },
+    { target: ".tour-tool-0", content: "Side-by-Side Compare: The essential tool for visually benchmarking materials against each other.", placement: "bottom" },
+    { target: ".tour-tool-1", content: "Smart AI Substitution: Automatically find the best alternative materials based on engineering constraints.", placement: "bottom" },
+    { target: ".tour-tool-2", content: "Supply Chain & CBAM: Enterprise tool to track carbon emissions and supply risks for assemblies.", placement: "top" }
+  ];
+
   const tools = [
     {
       title: "Side-by-Side Compare",
@@ -51,15 +63,21 @@ export default function AnalyticsDashboard() {
 
   return (
     <main className="flex flex-col p-6 lg:p-10 w-full h-full overflow-y-auto">
+      <PageTour ref={tourRef} steps={tourSteps} storageKey="analyticsTourCompleted" />
       <div className="w-full max-w-5xl mx-auto space-y-8">
-        <div>
-          <h1 className="text-4xl font-bold text-slate-900 dark:text-white font-heading flex items-center gap-3">
-            <BarChart3 className="w-10 h-10 text-blue-600 dark:text-blue-600 dark:text-blue-400" />
-            Advanced Analytics
-          </h1>
-          <p className="text-slate-600 dark:text-slate-300 mt-2 text-lg max-w-3xl">
-            Leverage enterprise-grade tools to benchmark materials, run AI substitutions, and calculate supply chain emissions.
-          </p>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 tour-analytics-header">
+          <div>
+            <h1 className="text-4xl font-bold text-slate-900 dark:text-white font-heading flex items-center gap-3">
+              <BarChart3 className="w-10 h-10 text-blue-600 dark:text-blue-600 dark:text-blue-400" />
+              Advanced Analytics
+            </h1>
+            <p className="text-slate-600 dark:text-slate-300 mt-2 text-lg max-w-3xl">
+              Leverage enterprise-grade tools to benchmark materials, run AI substitutions, and calculate supply chain emissions.
+            </p>
+          </div>
+          <button onClick={() => tourRef.current?.startTour()} className="flex items-center gap-1.5 text-xs font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 dark:text-blue-400 dark:bg-blue-900/20 dark:hover:bg-blue-900/40 px-3 py-1.5 rounded-full transition-colors shrink-0">
+            <HelpCircle className="w-4 h-4" /> Page Guide
+          </button>
         </div>
 
         <PageDemo pageKey="analytics" title="See how Compare & Analytics works">
@@ -73,7 +91,7 @@ export default function AnalyticsDashboard() {
               transition={{ delay: i * 0.1 }}
               key={tool.title}
             >
-              <Link href={tool.href} className={`block h-full p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 ${tool.border} transition-all group relative overflow-hidden`}>
+              <Link href={tool.href} className={`tour-tool-${i} block h-full p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 ${tool.border} transition-all group relative overflow-hidden`}>
                 <div className={`w-12 h-12 rounded-xl ${tool.bg} flex items-center justify-center mb-4`}>
                   <tool.icon className={`w-6 h-6 ${tool.color}`} />
                 </div>
