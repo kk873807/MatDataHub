@@ -16,8 +16,9 @@ export default function MaterialsPage() {
   
   const tourSteps: Step[] = [
     { target: ".tour-search-bar", content: "Search for specific materials using keywords, standards, or grades. The autocomplete will help you find matches fast.", placement: "bottom" },
-    { target: ".tour-sort-options", content: "Sort the materials list by cost, tensile strength, or density to find what you need.", placement: "bottom" },
-    { target: ".tour-filters-button", content: "Click here to open advanced filters and narrow down by category, yield strength, thermal properties, and more.", placement: "left" },
+    { target: ".tour-sort-options", content: "Sort results by name, density, or cost to find exactly what you need.", placement: "bottom" },
+    { target: ".tour-filters-button", content: "Use advanced filters to narrow down by material category, pricing, or carbon footprint.", placement: "left" },
+    { target: ".tour-materials-demo", content: "Watch this interactive demo to see how Material Search works in action.", placement: "bottom" },
     { target: ".tour-material-card", content: "Click on any material card to view its full datasheet and engineering properties.", placement: "top" }
   ];
 
@@ -146,9 +147,11 @@ export default function MaterialsPage() {
         </div>
 
         {/* Interactive Demo */}
-        <PageDemo pageKey="materials" title="See how Material Search works">
-          <SimulatedMaterialsDemo />
-        </PageDemo>
+        <div className="tour-materials-demo">
+          <PageDemo pageKey="materials" title="See how Material Search works">
+            <SimulatedMaterialsDemo />
+          </PageDemo>
+        </div>
 
         <PageTour ref={tourRef} steps={tourSteps} storageKey="materialTourCompleted" />
 

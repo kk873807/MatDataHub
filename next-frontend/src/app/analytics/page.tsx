@@ -13,9 +13,11 @@ export default function AnalyticsDashboard() {
 
   const tourSteps: Step[] = [
     { target: ".tour-analytics-header", content: "Welcome to Advanced Analytics! Here you can run powerful analysis on materials.", placement: "bottom" },
+    { target: ".tour-analytics-demo", content: "Watch this interactive demo to see how Compare & Analytics works in action.", placement: "bottom" },
     { target: ".tour-tool-0", content: "Side-by-Side Compare: The essential tool for visually benchmarking materials against each other.", placement: "bottom" },
     { target: ".tour-tool-1", content: "Smart AI Substitution: Automatically find the best alternative materials based on engineering constraints.", placement: "bottom" },
-    { target: ".tour-tool-2", content: "Supply Chain & CBAM: Enterprise tool to track carbon emissions and supply risks for assemblies.", placement: "top" }
+    { target: ".tour-tool-2", content: "Supply Chain & CBAM: Enterprise tool to track carbon emissions and supply risks for assemblies.", placement: "bottom" },
+    { target: ".tour-tool-3", content: "Composite Synthesizer: Blend two materials using the Rule of Mixtures to predict hybrid mechanical properties.", placement: "top" }
   ];
 
   const tools = [
@@ -80,9 +82,11 @@ export default function AnalyticsDashboard() {
           </button>
         </div>
 
-        <PageDemo pageKey="analytics" title="See how Compare & Analytics works">
-          <SimulatedCompareDemo />
-        </PageDemo>
+        <div className="tour-analytics-demo">
+          <PageDemo pageKey="analytics" title="See how Compare & Analytics works">
+            <SimulatedCompareDemo />
+          </PageDemo>
+        </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
           {tools.map((tool, i) => (
             <motion.div

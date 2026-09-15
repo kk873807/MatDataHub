@@ -13,6 +13,7 @@ export default function WorkspacesPage() {
 
   const tourSteps: Step[] = [
     { target: ".tour-workspace-header", content: "Engineering Workspaces: Create isolated environments for different assemblies or systems.", placement: "bottom" },
+    { target: ".tour-workspace-demo", content: "Watch this interactive demo to see how Engineering Workspaces work in action.", placement: "bottom" },
     { target: ".tour-create-project", content: "Click here to create a new workspace for your project.", placement: "left" },
     { target: ".tour-search-projects", content: "Easily find your existing projects using the search bar.", placement: "bottom" }
   ];
@@ -177,9 +178,11 @@ export default function WorkspacesPage() {
             <HelpCircle className="w-4 h-4" /> Page Guide
           </button>
         </div>
-        <PageDemo pageKey="workspaces" title="See how Engineering Workspaces work">
-          <SimulatedWorkspaceDemo />
-        </PageDemo>
+        <div className="tour-workspace-demo">
+          <PageDemo pageKey="workspaces" title="See how Engineering Workspaces work">
+            <SimulatedWorkspaceDemo />
+          </PageDemo>
+        </div>
         <div>
         </div>
 
