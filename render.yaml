@@ -7,7 +7,7 @@ services:
     runtime: python
     plan: free
     buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    startCommand: python -m app.main
     envVars:
       - key: DATABASE_URL
         sync: false    # You'll set this manually in Render dashboard (Supabase URL)
