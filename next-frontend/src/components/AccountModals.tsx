@@ -389,7 +389,10 @@ export function AccountModals({ activeModal, setActiveModal, userInfo }: Account
 
       {/* Deactivate Modal */}
       {dangerAction === "deactivate" && (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div 
+          className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+          onClick={(e) => e.stopPropagation()}
+        >
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 w-full max-w-sm shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
             <button onClick={() => setDangerAction("none")} className="absolute top-4 right-4 text-slate-500 hover:text-slate-900 dark:hover:text-white">
               <X className="w-5 h-5" />
@@ -423,7 +426,10 @@ export function AccountModals({ activeModal, setActiveModal, userInfo }: Account
 
       {/* Delete Modal */}
       {dangerAction === "delete" && (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-red-900/40 backdrop-blur-md">
+        <div 
+          className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-red-900/40 backdrop-blur-md"
+          onClick={(e) => e.stopPropagation()}
+        >
           <div className="bg-white dark:bg-slate-900 border border-red-200 dark:border-red-900/50 rounded-2xl p-6 w-full max-w-sm shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
             <button onClick={() => setDangerAction("none")} className="absolute top-4 right-4 text-slate-500 hover:text-slate-900 dark:hover:text-white">
               <X className="w-5 h-5" />
