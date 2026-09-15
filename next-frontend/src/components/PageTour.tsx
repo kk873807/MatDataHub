@@ -19,10 +19,12 @@ interface PageTourProps {
 
 export const PageTour = forwardRef<PageTourRef, PageTourProps>(({ steps, storageKey }, ref) => {
   const [run, setRun] = useState(false);
+  const [stepIndex, setStepIndex] = useState(0);
   const [mounted, setMounted] = useState(false);
 
   useImperativeHandle(ref, () => ({
     startTour: () => {
+      setStepIndex(0);
       setRun(true);
     }
   }));
@@ -49,6 +51,7 @@ export const PageTour = forwardRef<PageTourRef, PageTourProps>(({ steps, storage
       });
 
       if (!hasCompleted && globalTourCompleted === "true" && !run && allTargetsExist) {
+        setStepIndex(0);
         setRun(true);
       }
     };
@@ -64,7 +67,15 @@ export const PageTour = forwardRef<PageTourRef, PageTourProps>(({ steps, storage
   }, [mounted, storageKey, run]);
 
   const handleJoyrideCallback = (data: any) => {
-    const { status, action, type } = data;
+    const { status, action, type, index } = data;
+    
+    // Update stepIndex as the user progresses
+    if (data.type === "step:after" && action === "next") {
+      setStepIndex(index + 1);
+    } else if (data.type === "step:after" && action === "prev") {
+      setStepIndex(index - 1);
+    }
+
     if (status === "finished" || status === "skipped" || action === "close" || type === "error") {
       setRun(false);
       if (type !== "error") {
@@ -84,6 +95,7 @@ export const PageTour = forwardRef<PageTourRef, PageTourProps>(({ steps, storage
     <JoyrideComponent
       steps={mappedSteps}
       run={run}
+      stepIndex={stepIndex}
       continuous
       showSkipButton
       showProgress
