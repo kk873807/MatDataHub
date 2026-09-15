@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Send, Loader2, Bot, X, Maximize2, Minimize2, Lock, ArrowUpRight, Sparkles, Trash2, Download, ChevronRight } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useDragControls } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import Link from "next/link";
@@ -33,6 +33,7 @@ export function AiChatWidget() {
   const bottomRef = useRef<HTMLDivElement>(null);
   const [tier, setTier] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const dragControls = useDragControls();
 
   // Daily message limit tracking
   const todayKey = typeof window !== "undefined" ? `ai_msg_${new Date().toISOString().slice(0, 10)}` : "ai_msg_default";
@@ -156,14 +157,23 @@ export function AiChatWidget() {
   if (pathname === "/") return null;
 
   return (
-    <>
+    <motion.div
+      drag
+      dragControls={dragControls}
+      dragListener={false}
+      dragMomentum={false}
+      className="fixed bottom-12 left-6 lg:left-8 z-50 flex items-end pointer-events-none"
+      style={{ touchAction: "none" }}
+    >
       {/* Floating Button */}
-      <div className="fixed bottom-12 left-6 lg:left-8 z-50 flex items-center gap-4 pointer-events-auto">
+      <div className="flex items-center gap-4 pointer-events-auto">
         <motion.button
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: isOpen ? 0 : 1, opacity: isOpen ? 0 : 1 }}
           onClick={() => setIsOpen(true)}
-          className="tour-ai-widget relative p-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full shadow-2xl shadow-emerald-600/30 transition-all hover:scale-110 flex items-center justify-center"
+          onPointerDown={(e) => dragControls.start(e)}
+          className="tour-ai-widget relative p-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full shadow-2xl shadow-emerald-600/30 transition-all hover:scale-110 flex items-center justify-center cursor-grab active:cursor-grabbing"
+          title="Drag me!"
         >
           {!isOpen && history.length === 0 && (
             <>
@@ -201,12 +211,16 @@ export function AiChatWidget() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 50, scale: 0.9 }}
             transition={{ type: "spring", bounce: 0.3 }}
-            className={`fixed bottom-12 left-6 lg:left-8 z-50 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.3)] dark:shadow-[0_10px_40px_-10px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden pointer-events-auto transition-all duration-300 origin-bottom-left ${
+            className={`absolute bottom-0 left-0 z-50 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.3)] dark:shadow-[0_10px_40px_-10px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden pointer-events-auto transition-all duration-300 origin-bottom-left ${
               isExpanded ? "w-[90vw] md:w-[700px] h-[85vh] max-h-[900px]" : "w-[90vw] md:w-[450px] h-[70vh] max-h-[700px]"
             }`}
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-4 bg-emerald-600 text-white border-b border-emerald-700/50">
+            <div 
+              onPointerDown={(e) => dragControls.start(e)}
+              className="flex items-center justify-between p-4 bg-emerald-600 text-white border-b border-emerald-700/50 cursor-grab active:cursor-grabbing"
+              title="Drag to move"
+            >
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
                   <Bot className="w-5 h-5" />
@@ -385,6 +399,6 @@ export function AiChatWidget() {
           </motion.div>
         )}
       </AnimatePresence>
-    </>
+    </motion.div>
   );
 }
