@@ -1,4 +1,4 @@
-﻿import os
+import os
 import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -23,6 +23,7 @@ mats = [
         "max_service_temp": 704,
         "cost_per_kg_min": 2500,
         "cost_per_kg_max": 3500,
+        "composition": "Ni 50-55%, Cr 17-21%, Fe Balance, Nb 4.7-5.5%, Mo 2.8-3.3%",
         "applications": "Gas turbine engines, aerospace structures, nuclear reactors"
     },
     {
@@ -42,6 +43,7 @@ mats = [
         "max_service_temp": 982,
         "cost_per_kg_min": 2200,
         "cost_per_kg_max": 3000,
+        "composition": "Ni 58% min, Cr 20-23%, Mo 8-10%, Fe 5% max, Nb 3.15-4.15%",
         "applications": "Marine applications, chemical processing equipment, aerospace exhaust systems"
     },
     {
