@@ -123,7 +123,7 @@ export function TopNav() {
                     <Link
                       key={item.name}
                       href={item.href!}
-                      className={`flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium transition-all ${
+                      className={`flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium transition-all ${item.tourClass || ""} ${
                         isActive 
                           ? "bg-slate-900 text-white dark:bg-slate-800 dark:text-blue-400" 
                           : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white"
@@ -178,7 +178,7 @@ export function TopNav() {
                     </Link>
                   ) : (
                     <div className="relative group">
-                      <button onClick={() => setAccountMenuOpen(!accountMenuOpen)} className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                      <button onClick={() => setAccountMenuOpen(!accountMenuOpen)} className="tour-account flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                         <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center text-white font-bold text-xs">
                           {userInfo?.name.charAt(0).toUpperCase() || "U"}
                         </div>

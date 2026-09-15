@@ -73,11 +73,33 @@ export function OnboardingTour() {
       steps={steps}
       run={run}
       continuous
-      
-      
-      
+      styles={{
+        options: {
+          primaryColor: '#059669', // emerald-600
+          textColor: '#0f172a', // slate-900
+          backgroundColor: '#ffffff',
+          overlayColor: 'rgba(0, 0, 0, 0.6)',
+          zIndex: 1000,
+        },
+        tooltip: {
+          borderRadius: '16px',
+          padding: '24px',
+          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+        },
+        buttonNext: {
+          borderRadius: '8px',
+          fontWeight: 'bold',
+          padding: '8px 16px',
+        },
+        buttonBack: {
+          marginRight: '8px',
+          color: '#64748b',
+        },
+        buttonSkip: {
+          color: '#94a3b8',
+        }
+      } as any}
       onEvent={handleJoyrideCallback}
-      
     />
   );
 }

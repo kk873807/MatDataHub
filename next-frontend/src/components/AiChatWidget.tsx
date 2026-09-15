@@ -158,14 +158,40 @@ export function AiChatWidget() {
   return (
     <>
       {/* Floating Button */}
-      <motion.button
-        initial={{ scale: 0, opacity: 0 }}
-        animate={{ scale: isOpen ? 0 : 1, opacity: isOpen ? 0 : 1 }}
-        onClick={() => setIsOpen(true)}
-        className="tour-ai-widget fixed bottom-12 left-6 lg:left-8 z-50 p-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full shadow-2xl shadow-emerald-600/30 transition-all hover:scale-110 flex items-center justify-center pointer-events-auto"
-      >
-        <Bot className="w-7 h-7" />
-      </motion.button>
+      <div className="fixed bottom-12 left-6 lg:left-8 z-50 flex items-center gap-4 pointer-events-auto">
+        <motion.button
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: isOpen ? 0 : 1, opacity: isOpen ? 0 : 1 }}
+          onClick={() => setIsOpen(true)}
+          className="tour-ai-widget relative p-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full shadow-2xl shadow-emerald-600/30 transition-all hover:scale-110 flex items-center justify-center"
+        >
+          {!isOpen && history.length === 0 && (
+            <>
+              <span className="absolute inset-0 rounded-full bg-emerald-500 animate-ping opacity-60"></span>
+              <span className="absolute -top-1 -right-1 w-3 h-3 bg-rose-500 rounded-full border-2 border-white dark:border-slate-900"></span>
+            </>
+          )}
+          <Bot className="w-7 h-7 relative z-10" />
+        </motion.button>
+        
+        {/* Onboarding Tooltip for AI Adviser */}
+        <AnimatePresence>
+          {!isOpen && history.length === 0 && (
+            <motion.div
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="hidden sm:flex bg-white dark:bg-slate-900 border border-emerald-200 dark:border-emerald-900/50 shadow-xl rounded-2xl px-4 py-2.5 items-center gap-3"
+            >
+              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+              <div>
+                <p className="text-sm font-bold text-slate-800 dark:text-white">AI Adviser</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Ask about material properties!</p>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
 
       {/* Chat Window */}
       <AnimatePresence>
