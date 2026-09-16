@@ -87,6 +87,20 @@ def seed_demo_data():
     except Exception as e:
         return {"ok": False, "error": str(e)}
 
+
+@app.get("/api/v1/admin/seed-aa1000")
+def seed_aa1000_data():
+    """
+    Hidden endpoint to seed AA 1000 Series (Commercially Pure Wrought Aluminum).
+    15 alloys scraped from MakeItFrom.com.
+    """
+    try:
+        from scripts.seed_aa1000_series import run_seed
+        added = run_seed()
+        return {"ok": True, "message": f"Successfully seeded {added} AA 1000 series materials!"}
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+
 from app.routers import blogs
 app.include_router(blogs.router, prefix="/api/v1")
 
