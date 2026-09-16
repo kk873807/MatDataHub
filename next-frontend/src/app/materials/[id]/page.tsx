@@ -526,7 +526,7 @@ export default function MaterialDetail() {
                       Data Source <Info className="w-3 h-3 text-slate-400" />
                     </span>
                     <span className="text-emerald-600 dark:text-emerald-400 font-medium border-b border-dashed border-emerald-400/50">
-                      {material.data_source || "Verified Internal Database"}
+                      {material.source_name || material.data_source || "Verified Internal Database"}
                     </span>
                     <div className="absolute bottom-full left-0 mb-2 w-72 bg-slate-900 dark:bg-slate-800 text-white text-xs rounded-xl p-3 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
                       All material properties, supply chain math, economics, and ESG/CBAM emission factors are rigorously sourced from verified industry standards (ASTM, ISO, DIN), reputable global commodities indices, and validated scientific databases (e.g., ICE DB University of Bath).
