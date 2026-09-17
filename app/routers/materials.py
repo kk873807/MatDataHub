@@ -408,6 +408,74 @@ def find_similar_materials(
 
     return top_matches
 # ──────────────────────────────────────────────
+
+import requests
+import time
+
+LIVE_PRICE_CACHE = {}
+
+def fetch_yahoo_price(ticker: str) -> float:
+    now = time.time()
+    if ticker in LIVE_PRICE_CACHE and now - LIVE_PRICE_CACHE[ticker]['time'] < 3600:
+        return LIVE_PRICE_CACHE[ticker]['price']
+    
+    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}"
+    headers = {"User-Agent": "Mozilla/5.0"}
+    try:
+        res = requests.get(url, headers=headers, timeout=5)
+        res.raise_for_status()
+        data = res.json()
+        price = data['chart']['result'][0]['meta']['regularMarketPrice']
+        LIVE_PRICE_CACHE[ticker] = {'time': now, 'price': float(price)}
+        return price
+    except Exception as e:
+        return None
+
+@router.get("/{material_id}/live-price")
+def get_live_price(material_id: int, db: Session = Depends(get_db)):
+    mat = db.query(Material).filter(Material.id == material_id).first()
+    if not mat:
+        raise HTTPException(404, "Material not found")
+        
+    name = (mat.name or "").lower()
+    subcategory = (mat.subcategory or "").lower()
+    
+    ticker = None
+    usd_to_inr = 83.5
+    multiplier = 1.0
+    
+    if "copper" in name or "copper" in subcategory:
+        ticker = "HG=F"
+        multiplier = usd_to_inr / 0.453592
+    elif "aluminum" in name or "aluminium" in name or "aluminum" in subcategory or "aluminium" in subcategory:
+        ticker = "ALI=F"
+        multiplier = usd_to_inr / 1000.0
+    elif "gold" in name:
+        ticker = "GC=F"
+        multiplier = usd_to_inr / 0.0311035
+    elif "silver" in name:
+        ticker = "SI=F"
+        multiplier = usd_to_inr / 0.0311035
+    elif "steel" in name or "steel" in subcategory:
+        ticker = "HRC=F"
+        multiplier = usd_to_inr / 907.185
+        
+    if not ticker:
+        if mat.cost_per_kg_min:
+            return {"live_price": float(mat.cost_per_kg_min), "currency": "INR", "source": "Database Baseline"}
+        else:
+            return {"live_price": None, "currency": "INR", "source": "Unknown"}
+            
+    price_usd_unit = fetch_yahoo_price(ticker)
+    if price_usd_unit:
+        price_inr_kg = price_usd_unit * multiplier
+        return {"live_price": round(price_inr_kg, 2), "currency": "INR", "source": f"Yahoo Finance ({ticker})"}
+    
+    if mat.cost_per_kg_min:
+        return {"live_price": float(mat.cost_per_kg_min), "currency": "INR", "source": "Database Baseline (Fallback)"}
+        
+    return {"live_price": None, "currency": "INR", "source": "API Failed"}
+
 # GET /materials/{id}  — Get one
 # ──────────────────────────────────────────────
 @router.get("/{material_id}", response_model=MaterialResponse)

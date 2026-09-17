@@ -51,7 +51,7 @@ class MaterialBase(BaseModel):
 
 class MaterialCreate(MaterialBase):
     """Schema for creating a new material (POST request body)."""
-    pass
+    source_url: str = Field(..., max_length=500, description="Source URL is required for verified tracking")
 
 
 class MaterialResponse(MaterialBase):

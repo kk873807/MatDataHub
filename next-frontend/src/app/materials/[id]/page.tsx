@@ -21,6 +21,7 @@ import { API } from "@/lib/api";
 export default function MaterialDetail() {
   const { id } = useParams();
   const [material, setMaterial] = useState<any>(null);
+  const [livePrice, setLivePrice] = useState<any>(null);
   const [priceHistory, setPriceHistory] = useState<any[]>([]);
   const [similar, setSimilar] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -44,6 +45,12 @@ export default function MaterialDetail() {
         // Fetch Details
         const res = await fetch(`${API}/materials/${id}`);
         if (res.ok) setMaterial(await res.json());
+
+        // Fetch Live Price
+        const liveRes = await fetch(`${API}/materials/${id}/live-price`);
+        if (liveRes.ok) {
+          setLivePrice(await liveRes.json());
+        }
 
         // Fetch Price History
         const priceRes = await fetch(
@@ -209,10 +216,12 @@ export default function MaterialDetail() {
                 Market Price
               </p>
               <p className="text-4xl font-bold text-emerald-600 dark:text-emerald-400 mb-2">
-                ₹{material.cost_per_kg_min}
+                ₹{livePrice?.live_price !== null && livePrice?.live_price !== undefined ? livePrice.live_price : material.cost_per_kg_min}
                 <span className="text-xl text-slate-500 dark:text-slate-400 font-medium">/kg</span>
               </p>
-              <p className="text-[10px] text-slate-500 dark:text-slate-400 mb-2 mt-[-4px] uppercase tracking-wide font-bold">Estimated Baseline</p>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 mb-2 mt-[-4px] uppercase tracking-wide font-bold">
+                {livePrice?.source ? `Source: ${livePrice.source}` : "Estimated Baseline"}
+              </p>
               {priceHistory.length > 0 && (
                 <div className="flex items-center justify-end gap-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-500 bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-500 px-2 py-1 rounded inline-flex self-end">
                   <TrendingUp className="w-3.5 h-3.5" /> Market Trend

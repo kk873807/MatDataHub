@@ -286,8 +286,8 @@ def process_single_material(page_url, max_retries=3):
     else:
         print(f"⏭️ Skipping {page_url} after {max_retries} failed attempts.")
         
-    print("⏳ Cooling down for 15 seconds before the next material...")
-    time.sleep(15)
+    print("⏳ Cooling down for 1 second before the next material...")
+    time.sleep(1)
 
 
 # ------------------------------------------------------------------
