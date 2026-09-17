@@ -34,3 +34,23 @@ slowapi>=0.1.9
 pandas>=2.2.0
 thefuzz>=0.22.0
 python-multipart>=0.0.9
+
+# ---- Material Data Ingestion Pipeline ----
+# NOTE: Some packages may not yet support Python 3.14.
+# Install individually and skip any that fail:
+#   pip install mp-api pymatgen matminer
+# If pymatgen/matminer fail, the AFLOW/OQMD/NIST/Kaggle/GitHub scripts
+# still work fine (they use requests + pandas, not pymatgen).
+mp-api>=0.41.0             # Materials Project API client
+# pymatgen>=2024.1.0       # Uncomment if your Python version is supported
+# matminer>=0.9.0          # Uncomment if your Python version is supported
+# aflow==0.0.11            # Uncomment if needed (uses REST API fallback in script)
+kaggle>=1.6.0              # Kaggle dataset downloader
+habanero>=1.2.0            # CrossRef DOI verification
+
+
+firecrawl-py
+groq
+supabase
+pydantic
+python-dotenv
