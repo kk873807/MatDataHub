@@ -32,7 +32,7 @@ load_dotenv()
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from app.database import SessionLocal
-from app.models import Material, MaterialSource
+from app.models import Material
 
 logging.basicConfig(
     level=logging.INFO,
@@ -55,7 +55,7 @@ DATASETS = {
         "subcategory": "Steel",
     },
     "iron_alloys": {
-        "slug": "amanbarthwal/iron-alloys-dataset",
+        "slug": "nikitamanaenkov/iron-alloys-dataset",
         "desc": "Iron alloys mechanical properties",
         "category": "Metal",
         "subcategory": "Iron Alloy",
@@ -200,7 +200,6 @@ def ingest_dataset(ds_key: str, ds_info: dict, db):
                     grade=grade,
                     category=ds_info["category"],
                     subcategory=ds_info.get("subcategory"),
-                    data_type="experimental",
                     density=_safe_float(row.get(density_col)) if density_col else None,
                     tensile_strength_min=_safe_float(row.get(ts_col)) if ts_col else None,
                     tensile_strength_max=_safe_float(row.get(ts_col)) if ts_col else None,
@@ -213,23 +212,10 @@ def ingest_dataset(ds_key: str, ds_info: dict, db):
                     source_name=src_label,
                     source_url=source_url,
                     is_verified=True,
-                    verification_count=1,
-                    data_quality_score=0.6,
                 )
 
                 db.add(mat)
                 db.flush()
-
-                src = MaterialSource(
-                    material_id=mat.id,
-                    source_type="datasheet",
-                    source_name=src_label,
-                    source_url=source_url,
-                    access_type="free",
-                    confidence_score=0.65,
-                    notes=f"Kaggle dataset: {slug}, file: {os.path.basename(csv_path)}, row {idx}",
-                )
-                db.add(src)
 
                 existing.add((name, grade))
                 added += 1
