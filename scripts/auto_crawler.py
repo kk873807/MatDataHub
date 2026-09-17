@@ -86,9 +86,19 @@ def fallback_scraper(raw_markdown, page_url):
     """Zero-AI deterministic fallback for MakeItFrom markdown tables."""
     print("⚡ AI unavailable. Using deterministic zero-AI fallback parser...")
     
-    raw_name = page_url.split('/')[-1]
+    raw_name = page_url.split('/')[-1].replace('.ashx', '')
     material_name = raw_name.replace('-', ' ')
-    data = {"name": material_name, "source_url": page_url}
+    
+    # Default categorizations based on source
+    category = "Metal" if "aalco.co.uk" in page_url else None
+    subcategory = "Aluminum Alloy" if "aalco.co.uk" in page_url and "Aluminium" in page_url else None
+    
+    data = {
+        "name": material_name, 
+        "source_url": page_url,
+        "category": category,
+        "subcategory": subcategory
+    }
     
     def extract_number(val_str):
         try:
@@ -110,11 +120,13 @@ def fallback_scraper(raw_markdown, page_url):
         
         if "density" in property_name:
             data["density"] = extract_number(raw_value)
-        elif "tensile strength: ultimate" in property_name:
+        elif "tensile strength" in property_name and "ultimate" in property_name:
             data["tensile_strength_max"] = extract_number(raw_value)
-        elif "tensile strength: yield" in property_name:
+        elif "tensile strength" in property_name: # Aalco
+            data["tensile_strength_max"] = extract_number(raw_value)
+        elif "tensile strength: yield" in property_name or "proof stress" in property_name:
             data["yield_strength_min"] = extract_number(raw_value)
-        elif "elastic modulus" in property_name or "young's modulus" in property_name:
+        elif "elastic modulus" in property_name or "young's modulus" in property_name or "modulus of elasticity" in property_name:
             data["elastic_modulus"] = extract_number(raw_value)
         elif "elongation" in property_name:
             data["elongation"] = extract_number(raw_value)
@@ -131,6 +143,8 @@ def fallback_scraper(raw_markdown, page_url):
         elif "price" in property_name or "cost" in property_name:
             data["cost_per_kg_min"] = extract_number(raw_value)
             data["cost_currency"] = "INR"
+        elif "hardness brinell" in property_name:
+            data["hardness"] = f"{extract_number(raw_value)} HB"
             
     return data
 
@@ -228,7 +242,7 @@ def process_single_material(page_url, max_retries=3):
 
                     except Exception as e3:
                         print(f"⚠️ OpenAI API failed: {e3}")
-                        if "makeitfrom.com" in page_url:
+                        if "makeitfrom.com" in page_url or "aalco.co.uk" in page_url:
                             material_data = fallback_scraper(raw_markdown, page_url)
                             material_data["extraction_method"] = "Deterministic Parser"
                         else:
