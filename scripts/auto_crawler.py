@@ -135,7 +135,7 @@ def fallback_scraper(raw_markdown, page_url):
     return data
 
 
-def process_single_material(page_url, max_retries=2):
+def process_single_material(page_url, max_retries=3):
     """Core logic to scrape, extract, and save a single URL with automatic retries."""
     print(f"\nScraping {page_url}...")
     
@@ -244,8 +244,8 @@ def process_single_material(page_url, max_retries=2):
             
         # If we reach here, it means material_data is still None or an error occurred.
         if attempt < max_retries - 1:
-            print("⏳ Network hiccup or total failure. Waiting 10 seconds before retrying...")
-            time.sleep(10)
+            print("⏳ AI rate limit hit. Waiting 65 seconds for quotas to reset before retrying...")
+            time.sleep(65)
             
     # 4. Save to Supabase (Only executes once the loop is finished)
     if material_data:
