@@ -209,7 +209,7 @@ def process_single_material(page_url, max_retries=3):
                 material_data["extraction_method"] = "Groq"
                 
             except Exception as e1:
-                print(f"⚠️ Groq API failed: {e1}")
+                print(f"⚠️ Groq API failed (Limit Reached).")
                 try:
                     print("🧠 Groq failed. Falling back to Gemini Backup AI...")
                     response = gemini_client.models.generate_content(
@@ -225,7 +225,7 @@ def process_single_material(page_url, max_retries=3):
                     material_data["extraction_method"] = "Gemini"
                     
                 except Exception as e2:
-                    print(f"⚠️ Gemini API failed: {e2}")
+                    print(f"⚠️ Gemini API failed (Limit Reached).")
                     try:
                         print("🧠 Gemini failed. Falling back to OpenAI (gpt-4o-mini)...")
                         response = openai_client.chat.completions.create(
@@ -241,7 +241,7 @@ def process_single_material(page_url, max_retries=3):
                         material_data["extraction_method"] = "OpenAI"
 
                     except Exception as e3:
-                        print(f"⚠️ OpenAI API failed: {e3}")
+                        print(f"⚠️ OpenAI API failed (Limit Reached).")
                         if "makeitfrom.com" in page_url or "aalco.co.uk" in page_url:
                             material_data = fallback_scraper(raw_markdown, page_url)
                             material_data["extraction_method"] = "Deterministic Parser"
