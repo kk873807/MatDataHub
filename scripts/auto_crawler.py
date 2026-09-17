@@ -257,13 +257,16 @@ def process_single_material(page_url, max_retries=2):
             
         print(f"💾 Saving {material_data.get('name', 'Material')} to Supabase...")
         try:
-            # Upsert will update the row if the URL already exists, preventing duplicates!
-            supabase.table('materials').upsert(
-                material_data, 
-                on_conflict='source_url'
-            ).execute()
-            
-            print(f"✅ Success! (Data extracted via {material_data.get('extraction_method', 'Unknown')})")
+            # Check if URL exists first since on_conflict requires a DB constraint
+            existing = supabase.table('materials').select('id').eq('source_url', material_data['source_url']).execute()
+            if existing.data:
+                # Update existing
+                supabase.table('materials').update(material_data).eq('id', existing.data[0]['id']).execute()
+                print(f"✅ Success! (Updated existing data extracted via Groq/Gemini)")
+            else:
+                # Insert new
+                supabase.table('materials').insert(material_data).execute()
+                print(f"✅ Success! (Inserted new data extracted via Groq/Gemini)")
         except Exception as e:
             print(f"❌ Database error: {e}")
     else:
