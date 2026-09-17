@@ -64,7 +64,7 @@ export default function LandingPage() {
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-cyan-400">Know why it&apos;s right.</span>
             </h1>
             <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed font-light">
-              Search 1000+ engineering materials, compare them side-by-side, predict costs, and let AI recommend the best fit — all before you cut a single prototype.
+              Search 6500+ engineering materials, compare them side-by-side, predict costs, and let AI recommend the best fit — all before you cut a single prototype.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
               {authChecked && !isLoggedIn && (
@@ -77,7 +77,7 @@ export default function LandingPage() {
             {/* Social Proof Stats */}
             <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
               {[
-                { value: "1000+", label: "Verified Materials" },
+                { value: "6500+", label: "Verified Materials" },
                 { value: "15+", label: "Material Properties" },
                 { value: "AI", label: "Powered Analysis" },
               ].map((stat, i) => (
