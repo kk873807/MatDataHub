@@ -129,7 +129,28 @@ def list_materials(
 
     # Apply filters
     if category:
-        query = query.filter(Material.category.ilike(f"%{category}%"))
+        if category.lower() == "metal":
+            from sqlalchemy import or_
+            query = query.filter(
+                or_(
+                    Material.category.ilike("%metal%"),
+                    Material.category.ilike("%alloy%"),
+                    Material.category.ilike("%steel%"),
+                    Material.category.ilike("%iron%"),
+                    Material.category.ilike("%aluminum%"),
+                )
+            )
+        elif category.lower() == "polymer" or category.lower() == "plastic":
+            from sqlalchemy import or_
+            query = query.filter(
+                or_(
+                    Material.category.ilike("%polymer%"),
+                    Material.category.ilike("%plastic%"),
+                    Material.category.ilike("%thermoplastic%"),
+                )
+            )
+        else:
+            query = query.filter(Material.category.ilike(f"%{category}%"))
     if subcategory:
         query = query.filter(Material.subcategory.ilike(f"%{subcategory}%"))
     if min_tensile is not None:
