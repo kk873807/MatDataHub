@@ -491,7 +491,7 @@ export default function MaterialsPage() {
           <div>
             <h4 className="text-slate-900 dark:text-white font-heading font-bold text-sm mb-1">Enterprise-Grade Data Reliability</h4>
             <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed max-w-4xl">
-              All material properties, supply chain math, economics, and ESG/CBAM emission factors are rigorously sourced from verified industry standards (ASTM, ISO, DIN), reputable global commodities indices, and validated scientific databases (e.g., ICE DB University of Bath). MatDataHub prioritizes absolute mathematical accuracy for engineering and compliance workflows.
+              All material properties, chemical compositions, and engineering specifications are rigorously sourced and cross-verified against verified industry standards (ASTM, ISO, DIN) and databases like MatWeb, ASM International, SpringerMaterials, Special Metals Corporation, PubChem, and OQMD. Live spot pricing is dynamically pulled from Yahoo Finance. MatDataHub prioritizes absolute mathematical accuracy for engineering workflows.
             </p>
           </div>
         </div>
