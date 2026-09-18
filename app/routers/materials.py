@@ -477,9 +477,9 @@ def get_live_price(material_id: int, db: Session = Depends(get_db)):
         }
     
     if mat.cost_per_kg_min:
-        return {"live_price": float(mat.cost_per_kg_min), "currency": "INR", "source": "Database Baseline (Fallback)"}
+        return {"live_price": float(mat.cost_per_kg_min), "currency": "INR", "source": "Live Market Data Unavailable (Showing Estimates)"}
         
-    return {"live_price": None, "currency": "INR", "source": "API Failed"}
+    return {"live_price": None, "currency": "INR", "source": "Price Data Not Available"}
 
 # GET /materials/{id}  — Get one
 # ──────────────────────────────────────────────
