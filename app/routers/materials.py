@@ -462,9 +462,9 @@ def get_live_price(material_id: int, db: Session = Depends(get_db)):
         
     if not ticker:
         if mat.cost_per_kg_min:
-            return {"live_price": float(mat.cost_per_kg_min), "currency": "INR", "source": "Database Baseline"}
+            return {"live_price": float(mat.cost_per_kg_min), "currency": "INR", "source": "Live Market Data Unavailable (Showing Estimates)"}
         else:
-            return {"live_price": None, "currency": "INR", "source": "Unknown"}
+            return {"live_price": None, "currency": "INR", "source": "Price Data Not Available"}
             
     price_usd_unit = fetch_yahoo_price(ticker)
     if price_usd_unit:
