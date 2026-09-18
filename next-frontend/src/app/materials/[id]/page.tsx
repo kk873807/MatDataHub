@@ -535,14 +535,26 @@ export default function MaterialDetail() {
                       Data Source <Info className="w-3 h-3 text-slate-400" />
                     </span>
                     {material.source_url ? (
-                      <a 
-                        href={material.source_url} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-medium border-b border-dashed border-emerald-400/50 inline-flex items-center gap-1"
-                      >
-                        {material.source_name || material.data_source || "Verified Internal Database"}
-                      </a>
+                      <div className="flex flex-col gap-1">
+                        {material.source_url.split(',').map((url, i) => (
+                          <a 
+                            key={i}
+                            href={url.trim()} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-medium border-b border-dashed border-emerald-400/50 inline-flex items-center gap-1 w-fit"
+                          >
+                            {url.includes('makeitfrom') ? 'MakeItFrom' : 
+                             url.includes('matweb') ? 'MatWeb' : 
+                             url.includes('pubchem') ? 'PubChem' : 
+                             url.includes('wikipedia') ? 'Wikipedia' : 
+                             url.includes('springer') ? 'SpringerMaterials' : 
+                             url.includes('azom') ? 'AZoM' : 
+                             url.includes('specialmetals') ? 'Special Metals' : 
+                             'External Source'} <ExternalLink className="w-3 h-3" />
+                          </a>
+                        ))}
+                      </div>
                     ) : (
                       <span className="text-emerald-600 dark:text-emerald-400 font-medium border-b border-dashed border-emerald-400/50">
                         {material.source_name || material.data_source || "Verified Internal Database"}
