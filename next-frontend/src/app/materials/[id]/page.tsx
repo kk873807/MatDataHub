@@ -220,7 +220,18 @@ export default function MaterialDetail() {
                 <span className="text-xl text-slate-500 dark:text-slate-400 font-medium">/kg</span>
               </p>
               <p className="text-[10px] text-slate-500 dark:text-slate-400 mb-2 mt-[-4px] uppercase tracking-wide font-bold">
-                {livePrice?.source ? `Source: ${livePrice.source}` : "Estimated Baseline"}
+                {livePrice?.source ? (
+                  <>
+                    Source:{' '}
+                    {livePrice.source_url ? (
+                      <a href={livePrice.source_url} target="_blank" rel="noopener noreferrer" className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-medium border-b border-dashed border-emerald-400/50">
+                        {livePrice.source} <ExternalLink className="w-2.5 h-2.5 inline-block -mt-0.5" />
+                      </a>
+                    ) : (
+                      livePrice.source
+                    )}
+                  </>
+                ) : "Estimated Baseline"}
               </p>
               {priceHistory.length > 0 && (
                 <div className="flex items-center justify-end gap-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-500 bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-500 px-2 py-1 rounded inline-flex self-end">

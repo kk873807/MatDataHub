@@ -469,7 +469,12 @@ def get_live_price(material_id: int, db: Session = Depends(get_db)):
     price_usd_unit = fetch_yahoo_price(ticker)
     if price_usd_unit:
         price_inr_kg = price_usd_unit * multiplier
-        return {"live_price": round(price_inr_kg, 2), "currency": "INR", "source": f"Yahoo Finance ({ticker})"}
+        return {
+            "live_price": round(price_inr_kg, 2), 
+            "currency": "INR", 
+            "source": f"Yahoo Finance ({ticker})",
+            "source_url": f"https://finance.yahoo.com/quote/{ticker}"
+        }
     
     if mat.cost_per_kg_min:
         return {"live_price": float(mat.cost_per_kg_min), "currency": "INR", "source": "Database Baseline (Fallback)"}
