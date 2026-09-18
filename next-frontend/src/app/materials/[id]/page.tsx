@@ -156,15 +156,15 @@ export default function MaterialDetail() {
           <Link href="/materials" className="hover:text-emerald-600 dark:text-emerald-400 transition-colors flex items-center gap-1">
             <ArrowLeft className="w-3.5 h-3.5" /> Database
           </Link>
-          <ChevronRight, ExternalLink className="w-4 h-4 text-slate-600 dark:text-slate-300" />
+          <ChevronRight className="w-4 h-4 text-slate-600 dark:text-slate-300" />
           <span>{material.category}</span>
           {material.subcategory && (
             <>
-              <ChevronRight, ExternalLink className="w-4 h-4 text-slate-600 dark:text-slate-300" />
+              <ChevronRight className="w-4 h-4 text-slate-600 dark:text-slate-300" />
               <span>{material.subcategory}</span>
             </>
           )}
-          <ChevronRight, ExternalLink className="w-4 h-4 text-slate-600 dark:text-slate-300" />
+          <ChevronRight className="w-4 h-4 text-slate-600 dark:text-slate-300" />
           <span className="text-slate-700 dark:text-slate-200 font-medium truncate max-w-[200px]">{material.name}</span>
         </nav>
 
