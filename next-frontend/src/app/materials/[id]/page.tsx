@@ -14,7 +14,8 @@ import {
   GitCompare,
   Download,
   CheckCircle2,
-  ChevronRight, ExternalLink
+  ChevronRight, ExternalLink,
+  Sparkles
 } from "lucide-react";
 import { API } from "@/lib/api";
 
@@ -93,6 +94,18 @@ export default function MaterialDetail() {
     return (
       <div className="p-10 text-center text-red-600 dark:text-red-400">Material not found.</div>
     );
+
+  const isAiEstimated = material.extraction_method?.includes("Enrichment") || material.extraction_method?.includes("AI") || material.extraction_method?.includes("Groq");
+
+  const AiBadge = () => (
+    <div className="group relative inline-flex items-center justify-center ml-2 align-middle cursor-help">
+      <Sparkles className="w-3.5 h-3.5 text-blue-500 hover:text-blue-600 transition-colors" />
+      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-slate-900 text-white text-[10px] rounded-lg p-2 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 text-center font-normal leading-relaxed">
+        Estimated via AI Data Enrichment Pipeline
+        <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-slate-900"></div>
+      </div>
+    </div>
+  );
 
   const maxPrice =
     priceHistory.length > 0
@@ -213,8 +226,8 @@ export default function MaterialDetail() {
             </div>
             
             <div className="bg-slate-50 dark:bg-slate-950 p-6 rounded-xl border border-slate-200 dark:border-slate-800 text-right min-w-[220px] shadow-inner self-stretch flex flex-col justify-center">
-              <p className="text-slate-500 dark:text-slate-400 text-sm mb-1 uppercase tracking-wider font-semibold">
-                Market Price
+              <p className="text-slate-500 dark:text-slate-400 text-sm mb-1 uppercase tracking-wider font-semibold flex items-center justify-end">
+                Market Price {isAiEstimated && <AiBadge />}
               </p>
               <p className="text-4xl font-bold text-emerald-600 dark:text-emerald-400 mb-2">
                 ₹{livePrice?.live_price !== null && livePrice?.live_price !== undefined ? livePrice.live_price : material.cost_per_kg_min}
@@ -249,8 +262,7 @@ export default function MaterialDetail() {
             {/* Mechanical Properties Panel */}
             <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
               <h3 className="text-xl font-bold text-slate-900 dark:text-white font-heading mb-4 flex items-center gap-2">
-                <Beaker className="w-5 h-5 text-blue-600 dark:text-blue-400" /> Mechanical &
-                Physical Properties
+                <Beaker className="w-5 h-5 text-blue-600 dark:text-blue-400" /> Mechanical & Physical Properties {isAiEstimated && <AiBadge />}
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
@@ -305,8 +317,7 @@ export default function MaterialDetail() {
             {/* Thermal & Chemical Panel */}
             <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
               <h3 className="text-xl font-bold text-slate-900 dark:text-white font-heading mb-4 flex items-center gap-2">
-                <Beaker className="w-5 h-5 text-red-600 dark:text-red-400" /> Thermal &
-                Environmental Properties
+                <Beaker className="w-5 h-5 text-red-600 dark:text-red-400" /> Thermal & Environmental Properties {isAiEstimated && <AiBadge />}
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
@@ -358,8 +369,8 @@ export default function MaterialDetail() {
             {/* Chemical Composition */}
             {material.composition && material.composition !== "{}" && material.composition !== "null" && (
               <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white font-heading mb-4 border-b border-slate-200 dark:border-slate-800 pb-2">
-                  Chemical Composition
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white font-heading mb-4 border-b border-slate-200 dark:border-slate-800 pb-2 flex items-center">
+                  Chemical Composition {isAiEstimated && <AiBadge />}
                 </h3>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
                   {(() => {
@@ -564,9 +575,27 @@ export default function MaterialDetail() {
                     Equivalent Grades
                   </span>
                   <span className="text-slate-900 dark:text-white">
-                    {material.equivalent_grades || "-"}
+                    {Array.isArray(material.equivalent_grades) ? material.equivalent_grades.join(', ') : material.equivalent_grades || "-"}
                   </span>
                 </div>
+                {material.uns_number && (
+                  <div>
+                    <span className="text-slate-600 dark:text-slate-300 block text-xs">UNS Number</span>
+                    <span className="text-slate-900 dark:text-white font-medium">{material.uns_number}</span>
+                  </div>
+                )}
+                {material.en_number && (
+                  <div>
+                    <span className="text-slate-600 dark:text-slate-300 block text-xs">EN Standard</span>
+                    <span className="text-slate-900 dark:text-white font-medium">{material.en_number}</span>
+                  </div>
+                )}
+                {material.din_number && (
+                  <div>
+                    <span className="text-slate-600 dark:text-slate-300 block text-xs">DIN Standard</span>
+                    <span className="text-slate-900 dark:text-white font-medium">{material.din_number}</span>
+                  </div>
+                )}
                 <div className="pt-2 border-t border-slate-200 dark:border-slate-800 relative group cursor-pointer">
                     <span className="text-slate-600 dark:text-slate-300 block text-xs flex items-center gap-1">
                       Data Source <Info className="w-3 h-3 text-slate-400" />

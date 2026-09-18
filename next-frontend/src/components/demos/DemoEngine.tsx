@@ -114,7 +114,7 @@ export function DemoEngine({
   }, []);
 
   const startStep = useCallback(
-    (idx: number) => {
+    function startStep(idx: number) {
       clearTimers();
       const nextStep = steps[idx];
       if (!nextStep) return;

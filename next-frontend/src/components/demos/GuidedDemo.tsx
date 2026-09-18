@@ -32,7 +32,7 @@ export function GuidedDemo({ steps, children, height = "min-h-[340px]" }: Guided
   const [progress, setProgress] = useState(0);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const progressRef = useRef<NodeJS.Timeout | null>(null);
-  const startTimeRef = useRef(Date.now());
+  const startTimeRef = useRef(0);
 
   const currentStep = steps[activeStep];
   const duration = getDuration(currentStep);
@@ -42,7 +42,7 @@ export function GuidedDemo({ steps, children, height = "min-h-[340px]" }: Guided
     if (progressRef.current) clearInterval(progressRef.current);
   }, []);
 
-  const startStep = useCallback((stepIdx: number) => {
+  const startStep = useCallback(function startStep(stepIdx: number) {
     clearTimers();
     setActiveStep(stepIdx);
     setProgress(0);
@@ -65,7 +65,7 @@ export function GuidedDemo({ steps, children, height = "min-h-[340px]" }: Guided
       startStep(activeStep);
     }
     return clearTimers;
-  }, [playing]);
+  }, [playing, activeStep, startStep, clearTimers]);
 
   const goTo = (idx: number) => {
     setPlaying(true);

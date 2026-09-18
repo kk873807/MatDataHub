@@ -17,6 +17,7 @@ export function PageDemo({ pageKey, title, children }: PageDemoProps) {
   useEffect(() => {
     const wasDismissed = localStorage.getItem(storageKey);
     if (!wasDismissed) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setShow(true);
       setDismissed(false);
     } else {

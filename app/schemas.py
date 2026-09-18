@@ -46,6 +46,7 @@ class MaterialBase(BaseModel):
     # Source
     source_url: Optional[str] = Field(None, max_length=500)
     source_name: Optional[str] = Field(None, max_length=100, examples=["MatWeb"])
+    extraction_method: Optional[str] = Field(None, max_length=200)
     is_verified: Optional[bool] = False
 
 
