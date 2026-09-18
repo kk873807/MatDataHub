@@ -95,7 +95,7 @@ export default function MaterialDetail() {
       <div className="p-10 text-center text-red-600 dark:text-red-400">Material not found.</div>
     );
 
-  const isAiEstimated = material.extraction_method?.includes("Enrichment") || material.extraction_method?.includes("AI") || material.extraction_method?.includes("Groq");
+  const isAiEstimated = material.extraction_method?.includes("Enrichment") || material.extraction_method?.includes("AI") || material.extraction_method?.includes("Groq") || material.source_name === "MIDHANI";
 
   const AiBadge = () => (
     <div className="group relative inline-flex items-center justify-center ml-2 align-middle cursor-help">
