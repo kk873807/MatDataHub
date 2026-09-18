@@ -231,7 +231,7 @@ export default function MaterialDetail() {
                       livePrice.source
                     )}
                   </>
-                ) : "Estimated Baseline"}
+                ) : "Price Data Not Available"}
               </p>
               {priceHistory.length > 0 && (
                 <div className="flex items-center justify-end gap-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-500 bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-500 px-2 py-1 rounded inline-flex self-end">
