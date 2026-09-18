@@ -108,6 +108,7 @@ def list_materials(
     # Filters
     category: Optional[str] = Query(None, description="Filter by category: Metal, Polymer, Ceramic, Composite"),
     subcategory: Optional[str] = Query(None, description="Filter by subcategory"),
+    metal_type: Optional[str] = Query(None, description="ferrous or non-ferrous"),
     # Property range filters
     min_tensile: Optional[float] = Query(None, ge=0, description="Minimum tensile strength (MPa)"),
     max_cost: Optional[float] = Query(None, ge=0, description="Maximum cost per kg"),
@@ -128,7 +129,33 @@ def list_materials(
     query = db.query(Material)
 
     # Apply filters
-    if category:
+    if metal_type:
+        from sqlalchemy import or_, not_
+        ferrous_conditions = or_(
+            Material.category.ilike("%steel%"),
+            Material.category.ilike("%iron%"),
+            Material.name.ilike("%steel%"),
+            Material.name.ilike("%iron%"),
+            Material.subcategory.ilike("%steel%"),
+            Material.subcategory.ilike("%iron%"),
+        )
+        if metal_type.lower() == "ferrous":
+            query = query.filter(ferrous_conditions)
+        elif metal_type.lower() == "non-ferrous":
+            query = query.filter(not_(ferrous_conditions))
+            # Also optionally restrict to just metals if non-ferrous is selected
+            query = query.filter(
+                or_(
+                    Material.category.ilike("%metal%"),
+                    Material.category.ilike("%alloy%"),
+                    Material.category.ilike("%aluminum%"),
+                    Material.category.ilike("%copper%"),
+                    Material.category.ilike("%titanium%"),
+                    Material.category.ilike("%nickel%")
+                )
+            )
+            
+    if category and not metal_type:
         if category.lower() == "metal":
             from sqlalchemy import or_
             query = query.filter(

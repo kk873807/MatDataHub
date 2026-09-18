@@ -96,6 +96,7 @@ export default function MaterialsPage() {
           url = `${API}/materials/search?q=${encodeURIComponent(search)}&per_page=${perPage}`;
         } else {
           if (category) url += `&category=${encodeURIComponent(category)}`;
+          if (metallurgyType) url += `&metal_type=${encodeURIComponent(metallurgyType)}`;
           if (minTensile !== "") url += `&min_tensile=${minTensile}`;
           if (maxCost !== "") url += `&max_cost=${maxCost}`;
           if (minThermal !== "") url += `&min_thermal_conductivity=${minThermal}`;
