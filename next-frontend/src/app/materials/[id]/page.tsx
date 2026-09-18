@@ -27,6 +27,7 @@ export default function MaterialDetail() {
   const [loading, setLoading] = useState(true);
   const [isSimilarLocked, setIsSimilarLocked] = useState(false);
   const [isPriceLocked, setIsPriceLocked] = useState(false);
+  const [userTier, setUserTier] = useState("free");
   
   // Toast state
   const [toastMessage, setToastMessage] = useState("");
