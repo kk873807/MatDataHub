@@ -98,13 +98,13 @@ export default function MaterialDetail() {
   const isAiEstimated = material.extraction_method?.includes("Enrichment") || material.extraction_method?.includes("AI") || material.extraction_method?.includes("Groq") || material.source_name === "MIDHANI";
 
   const AiBadge = () => (
-    <div className="group relative inline-flex items-center justify-center ml-2 align-middle cursor-help">
+    <span className="group relative inline-flex items-center justify-center ml-2 align-middle cursor-help">
       <Sparkles className="w-3.5 h-3.5 text-blue-500 hover:text-blue-600 transition-colors" />
-      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-slate-900 text-white text-[10px] rounded-lg p-2 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 text-center font-normal leading-relaxed">
+      <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-slate-900 text-white text-[10px] rounded-lg p-2 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 text-center font-normal leading-relaxed">
         Estimated via AI Data Enrichment Pipeline
-        <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-slate-900"></div>
-      </div>
-    </div>
+        <span className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-slate-900"></span>
+      </span>
+    </span>
   );
 
   const maxPrice =
