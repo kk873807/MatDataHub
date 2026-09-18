@@ -162,7 +162,7 @@ export function AiChatWidget() {
       dragControls={dragControls}
       dragListener={false}
       dragMomentum={false}
-      className="fixed bottom-12 left-6 lg:left-8 z-50 flex items-end pointer-events-none"
+      className="fixed bottom-12 left-6 lg:left-8 z-50 flex items-end pointer-events-none print:hidden"
       style={{ touchAction: "none" }}
     >
       {/* Floating Button */}

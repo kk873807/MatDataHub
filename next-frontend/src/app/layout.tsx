@@ -20,6 +20,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${redHat.variable} min-h-screen antialiased`} suppressHydrationWarning>
       <body suppressHydrationWarning className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white transition-colors duration-300">
+        <script dangerouslySetInnerHTML={{ __html: `
+          window.addEventListener('beforeprint', () => document.documentElement.classList.remove('dark'));
+          window.addEventListener('afterprint', () => {
+            if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+              document.documentElement.classList.add('dark');
+            }
+          });
+        `}} />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <TopNav />
           <div className="flex-1 w-full flex flex-col relative print-scroll-visible">
