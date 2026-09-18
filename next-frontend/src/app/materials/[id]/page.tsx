@@ -547,7 +547,7 @@ export default function MaterialDetail() {
                     </span>
                     {material.source_url ? (
                       <div className="flex flex-col gap-1">
-                        {material.source_url.split(',').map((url: string, i: number) => (
+                        {material.source_url.split(/,\s*(?=http)/).map((url: string, i: number) => (
                           <a 
                             key={i}
                             href={url.trim()} 
