@@ -355,6 +355,31 @@ export default function MaterialDetail() {
               </div>
             </div>
 
+            {/* Chemical Composition */}
+            {material.composition && material.composition !== "{}" && material.composition !== "null" && (
+              <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white font-heading mb-4 border-b border-slate-200 dark:border-slate-800 pb-2">
+                  Chemical Composition
+                </h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                  {(() => {
+                    try {
+                      const parsed = typeof material.composition === 'string' ? JSON.parse(material.composition) : material.composition;
+                      if (!parsed || typeof parsed !== 'object') return <div className="text-sm text-slate-500">{material.composition}</div>;
+                      return Object.entries(parsed).map(([element, percentage]) => (
+                        <div key={element} className="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col items-center justify-center text-center">
+                          <span className="text-lg font-bold text-emerald-600 dark:text-emerald-400">{element}</span>
+                          <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 mt-1">{String(percentage).replace('%', '')}%</span>
+                        </div>
+                      ));
+                    } catch (e) {
+                      return <div className="text-sm text-slate-500 break-all">{material.composition}</div>;
+                    }
+                  })()}
+                </div>
+              </div>
+            )}
+
             {/* Historical Price Tracking Graph */}
             <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
               <h3 className="text-xl font-bold text-slate-900 dark:text-white font-heading mb-6 flex items-center gap-2">
