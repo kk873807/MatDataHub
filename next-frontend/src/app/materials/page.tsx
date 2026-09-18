@@ -421,8 +421,18 @@ export default function MaterialsPage() {
                     </div>
                     
                     {mat.composition && (
-                      <div className="mb-5 relative z-10 text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2" title={mat.composition}>
-                        <span className="font-semibold text-slate-700 dark:text-slate-300">Comp:</span> {mat.composition}
+                      <div className="mb-5 relative z-10 text-[11px] text-slate-500 dark:text-slate-400" title={mat.composition}>
+                        <span className="font-semibold text-slate-700 dark:text-slate-300">Comp: </span>
+                        <span className="line-clamp-2 leading-relaxed">
+                          {(() => {
+                            try {
+                              const parsed = JSON.parse(mat.composition);
+                              return Object.entries(parsed).map(([k, v]) => `${k} ${v}%`).join(', ');
+                            } catch (e) {
+                              return mat.composition.replace(/[{}"']/g, '');
+                            }
+                          })()}
+                        </span>
                       </div>
                     )}
                     
