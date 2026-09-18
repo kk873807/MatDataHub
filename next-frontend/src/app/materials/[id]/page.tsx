@@ -98,11 +98,12 @@ export default function MaterialDetail() {
   const isAiEstimated = material.extraction_method?.includes("Enrichment") || material.extraction_method?.includes("AI") || material.extraction_method?.includes("Groq") || material.source_name === "MIDHANI";
 
   const AiBadge = () => (
-    <span className="group relative inline-flex items-center justify-center ml-2 align-middle cursor-help">
-      <Sparkles className="w-3.5 h-3.5 text-blue-500 hover:text-blue-600 transition-colors" />
-      <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-slate-900 text-white text-[10px] rounded-lg p-2 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 text-center font-normal leading-relaxed">
-        Estimated via AI Data Enrichment Pipeline
-        <span className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-slate-900"></span>
+    <span className="ml-3 inline-flex items-center gap-1.5 rounded-full bg-amber-100 dark:bg-amber-900/40 px-2.5 py-1 text-xs font-semibold text-amber-800 dark:text-amber-300 ring-1 ring-inset ring-amber-600/20 cursor-help group relative shadow-sm">
+      <Sparkles className="w-3.5 h-3.5" />
+      <span>AI Estimate</span>
+      <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 bg-slate-900 dark:bg-slate-800 text-white text-[11px] rounded-lg p-2.5 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 text-center font-normal leading-relaxed whitespace-normal border border-slate-700">
+        Properties estimated by AI data enrichment pipeline. Not lab-verified. Use with caution.
+        <span className="absolute top-full left-1/2 -translate-x-1/2 -mt-[5px] border-4 border-transparent border-t-slate-900 dark:border-t-slate-800"></span>
       </span>
     </span>
   );
