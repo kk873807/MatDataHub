@@ -73,6 +73,7 @@ class Material(Base):
     # ---- Data Source ----
     source_url = Column(String(500), nullable=True)                  # Where we scraped this from
     source_name = Column(String(100), nullable=True)                 # "MatWeb", "MakeItFrom", "ASTM"
+    extraction_method = Column(String(200), nullable=True)           # AI enrichment info
     is_verified = Column(Boolean, default=False)                     # Manually reviewed?
 
     # ---- Timestamps ----
