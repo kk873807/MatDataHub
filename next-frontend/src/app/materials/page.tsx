@@ -128,10 +128,12 @@ export default function MaterialsPage() {
   // Client-side Ferrous / Non-Ferrous filter (applies only when category is Metal)
   const FERROUS_KEYWORDS = ["steel", "iron", "cast iron", "wrought iron", "stainless"];
   const filteredAll = metallurgyType ? sortedAll.filter((mat) => {
-    if (mat.category !== "Metal") return false;
+    const cat = (mat.category || "").toLowerCase();
+    const isMetalCategory = cat.includes("metal") || cat.includes("alloy") || cat.includes("steel") || cat.includes("iron") || cat.includes("aluminum");
+    if (!isMetalCategory) return false;
     const sub = (mat.subcategory || "").toLowerCase();
     const name = (mat.name || "").toLowerCase();
-    const isFerrous = FERROUS_KEYWORDS.some(kw => sub.includes(kw) || name.includes(kw));
+    const isFerrous = FERROUS_KEYWORDS.some(kw => sub.includes(kw) || name.includes(kw) || cat.includes(kw));
     return metallurgyType === "ferrous" ? isFerrous : !isFerrous;
   }) : sortedAll;
 
