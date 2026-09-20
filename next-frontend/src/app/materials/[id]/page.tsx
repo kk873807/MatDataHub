@@ -604,22 +604,31 @@ export default function MaterialDetail() {
                     {material.source_url ? (
                       <div className="flex flex-col gap-1">
                         {material.source_url.split(/,\s*(?=http)/).map((url: string, i: number) => (
-                          <a 
-                            key={i}
-                            href={url.trim()} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-medium border-b border-dashed border-emerald-400/50 inline-flex items-center gap-1 w-fit"
-                          >
-                            {url.includes('makeitfrom') ? 'MakeItFrom' : 
-                             url.includes('matweb') ? 'MatWeb' : 
-                             url.includes('pubchem') ? 'PubChem' : 
-                             url.includes('wikipedia') ? 'Wikipedia' : 
-                             url.includes('springer') ? 'SpringerMaterials' : 
-                             url.includes('azom') ? 'AZoM' : 
-                             url.includes('specialmetals') ? 'Special Metals' : 
-                             'External Source'} <ExternalLink className="w-3 h-3" />
-                          </a>
+                            <div key={i} className="flex items-center gap-2 mt-1">
+                              <a 
+                                href={url.trim()} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-medium border-b border-dashed border-emerald-400/50 inline-flex items-center gap-1 w-fit"
+                              >
+                                {url.includes('makeitfrom') ? 'MakeItFrom' : 
+                                 url.includes('matweb') ? 'MatWeb' : 
+                                 url.includes('pubchem') ? 'PubChem' : 
+                                 url.includes('wikipedia') ? 'Wikipedia' : 
+                                 url.includes('springer') ? 'SpringerMaterials' : 
+                                 url.includes('azom') ? 'AZoM' : 
+                                 url.includes('specialmetals') ? 'Special Metals' : 
+                                 'External Source'} <ExternalLink className="w-3 h-3" />
+                              </a>
+                              {url.includes('makeitfrom') && (
+                                <span 
+                                  className="inline-flex items-center gap-1 rounded bg-amber-50 dark:bg-amber-900/30 px-1.5 py-0.5 text-[10px] font-medium text-amber-700 dark:text-amber-400 ring-1 ring-inset ring-amber-600/20 cursor-help"
+                                  title="Data aggregated from secondary compilation. Proceed with caution for critical engineering applications."
+                                >
+                                  <ShieldAlert className="w-2.5 h-2.5" /> Secondary Source
+                                </span>
+                              )}
+                            </div>
                         ))}
                       </div>
                     ) : (
