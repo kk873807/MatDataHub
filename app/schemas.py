@@ -10,7 +10,7 @@ from datetime import datetime
 class MaterialBase(BaseModel):
     """Fields shared by create and response schemas."""
     name: str = Field(..., min_length=1, max_length=200, examples=["AISI 304 Stainless Steel"])
-    category: str = Field(..., min_length=1, max_length=50, examples=["Metal"])
+    category: Optional[str] = Field(None, max_length=50, examples=["Metal"])
     subcategory: Optional[str] = Field(None, max_length=100, examples=["Stainless Steel"])
     grade: Optional[str] = Field(None, max_length=100, examples=["304"])
     standard: Optional[str] = Field(None, max_length=200, examples=["ASTM A240"])
