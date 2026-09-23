@@ -114,7 +114,7 @@ export default function MaterialsPage() {
 
     const debounce = setTimeout(fetchMaterials, 300);
     return () => clearTimeout(debounce);
-  }, [search, category, minTensile, maxCost, minThermal, perPage]);
+  }, [search, category, metallurgyType, minTensile, maxCost, minThermal, perPage]);
 
   // Client-side sorting
   const sortedAll = [...materials].sort((a, b) => {
@@ -130,7 +130,7 @@ export default function MaterialsPage() {
   const FERROUS_KEYWORDS = ["steel", "iron", "cast iron", "wrought iron", "stainless"];
   const filteredAll = metallurgyType ? sortedAll.filter((mat) => {
     const cat = (mat.category || "").toLowerCase();
-    const isMetalCategory = cat.includes("metal") || cat.includes("alloy") || cat.includes("steel") || cat.includes("iron") || cat.includes("aluminum");
+    const isMetalCategory = cat.includes("metal") || cat.includes("alloy") || cat.includes("steel") || cat.includes("iron") || cat.includes("aluminum") || cat.includes("copper") || cat.includes("titanium") || cat.includes("nickel");
     if (!isMetalCategory) return false;
     const sub = (mat.subcategory || "").toLowerCase();
     const name = (mat.name || "").toLowerCase();
