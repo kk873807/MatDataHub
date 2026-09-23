@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { API } from "@/lib/api";
 
 const PUBLIC_ROUTES = ["/", "/terms", "/privacy", "/contact", /* account is protected */];
 
@@ -20,9 +21,26 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
     const token = localStorage.getItem("token") || new URLSearchParams(window.location.search).get("t");
     if (!token) {
       router.replace("/?login=true");
-    } else {
-      setIsAuthorized(true);
+      return;
     }
+
+    // Validate token with backend
+    fetch(`${API}/auth/me`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(r => {
+        if (r.ok) {
+          setIsAuthorized(true);
+        } else {
+          // Token expired or invalid — clear and redirect
+          localStorage.removeItem("token");
+          router.replace("/?login=true");
+        }
+      })
+      .catch(() => {
+        // Network error — still allow (offline tolerance)
+        setIsAuthorized(true);
+      });
   }, [pathname, router]);
 
   if (isAuthorized === null && !PUBLIC_ROUTES.includes(pathname)) {
@@ -31,3 +49,4 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
 
   return <>{children}</>;
 }
+

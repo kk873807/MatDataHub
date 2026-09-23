@@ -56,11 +56,25 @@ export function TopNav() {
       fetch(`${API}/auth/me`, {
         headers: { Authorization: `Bearer ${token}` }
       })
-        .then(r => r.ok ? r.json() : null)
+        .then(r => {
+          if (!r.ok) {
+            // Token is expired or invalid — clear it and force re-login
+            localStorage.removeItem("token");
+            setIsLoggedIn(false);
+            setUserInfo(null);
+            return null;
+          }
+          return r.json();
+        })
         .then(data => {
           if (data) { data.name = data.name || data.email; setUserInfo(data); }
         })
-        .catch(() => {});
+        .catch(() => {
+          // Network error — clear stale session
+          localStorage.removeItem("token");
+          setIsLoggedIn(false);
+          setUserInfo(null);
+        });
     }
     setAuthChecked(true);
     const handleOpenModal = () => setShowLoginModal(true);
