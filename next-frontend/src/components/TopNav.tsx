@@ -52,7 +52,7 @@ export function TopNav() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      setIsLoggedIn(true);
+      // DON'T set isLoggedIn=true yet — validate the token first
       fetch(`${API}/auth/me`, {
         headers: { Authorization: `Bearer ${token}` }
       })
@@ -62,21 +62,29 @@ export function TopNav() {
             localStorage.removeItem("token");
             setIsLoggedIn(false);
             setUserInfo(null);
+            setAuthChecked(true);
             return null;
           }
           return r.json();
         })
         .then(data => {
-          if (data) { data.name = data.name || data.email; setUserInfo(data); }
+          if (data) {
+            data.name = data.name || data.email;
+            setUserInfo(data);
+            setIsLoggedIn(true);
+          }
+          setAuthChecked(true);
         })
         .catch(() => {
-          // Network error — clear stale session
+          // Network error — don't show stale "User" ghost
           localStorage.removeItem("token");
           setIsLoggedIn(false);
           setUserInfo(null);
+          setAuthChecked(true);
         });
+    } else {
+      setAuthChecked(true);
     }
-    setAuthChecked(true);
     const handleOpenModal = () => setShowLoginModal(true);
     window.addEventListener('openLoginModal', handleOpenModal);
     return () => window.removeEventListener('openLoginModal', handleOpenModal);

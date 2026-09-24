@@ -21,10 +21,30 @@ export default function LandingPage() {
       return;
     }
 
-    // Check auth
+    // Check auth — validate token before trusting it
     const token = localStorage.getItem("token");
-    if (token) setIsLoggedIn(true);
-    setAuthChecked(true);
+    if (token) {
+      fetch(`${API}/auth/me`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+        .then(r => {
+          if (r.ok) {
+            setIsLoggedIn(true);
+          } else {
+            // Token expired — clear stale session
+            localStorage.removeItem("token");
+            setIsLoggedIn(false);
+          }
+          setAuthChecked(true);
+        })
+        .catch(() => {
+          localStorage.removeItem("token");
+          setIsLoggedIn(false);
+          setAuthChecked(true);
+        });
+    } else {
+      setAuthChecked(true);
+    }
 
     // Check query params for ?login=true
     if (window.location.search.includes('login=true')) {

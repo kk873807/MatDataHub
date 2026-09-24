@@ -15,9 +15,20 @@ export default function AppDashboard() {
       fetch(`${API}/auth/me`, {
         headers: { Authorization: `Bearer ${token}` }
       })
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) {
+          localStorage.removeItem("token");
+          window.location.href = "/?login=true";
+          return null;
+        }
+        return res.json();
+      })
       .then(data => {
-        if (!data.detail) setProfile(data);
+        if (data && !data.detail) setProfile(data);
+      })
+      .catch(() => {
+        localStorage.removeItem("token");
+        window.location.href = "/?login=true";
       })
       .finally(() => setLoading(false));
     } else {
