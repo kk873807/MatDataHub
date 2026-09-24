@@ -315,6 +315,12 @@ function AccountDashboardInner() {
                     </div>
                   )}
                 </div>
+              </div>
+            )}
+
+            {/* Custom Materials (Advanced & Pro) */}
+            {(profile.tier === "advanced" || profile.tier === "pro") && (
+              <div className="mt-8">
                 <AdvancedMaterialManager />
               </div>
             )}

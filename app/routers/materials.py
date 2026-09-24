@@ -637,8 +637,8 @@ def create_custom_material(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    if current_user.tier != "advanced" and not current_user.is_admin:
-        raise HTTPException(status_code=403, detail="Custom Materials are exclusively available on the Advanced tier.")
+    if current_user.tier not in ["advanced", "pro"] and not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Custom Materials are exclusively available on the Pro and Advanced tiers.")
     
     # --- Anti-Spam & Rate Limiting ---
     one_minute_ago = datetime.utcnow() - timedelta(minutes=1)
@@ -695,7 +695,7 @@ def get_my_custom_materials(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    if current_user.tier != "advanced" and not current_user.is_admin:
+    if current_user.tier not in ["advanced", "pro"] and not current_user.is_admin:
         return []
     return db.query(CustomMaterial).filter(CustomMaterial.user_id == current_user.id).order_by(CustomMaterial.created_at.desc()).all()
 

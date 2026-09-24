@@ -209,11 +209,13 @@ export function AccountModals({ activeModal, setActiveModal, userInfo }: Account
                       </button>
                     )}
                   </div>
-                  
-                  {/* Custom Materials Manager */}
-                  <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
-                    <AdvancedMaterialManager />
-                  </div>
+                </div>
+              )}
+
+              {/* Custom Materials (Advanced & Pro) */}
+              {(profile.tier === "advanced" || profile.tier === "pro") && (
+                <div className="mt-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+                  <AdvancedMaterialManager />
                 </div>
               )}
 
