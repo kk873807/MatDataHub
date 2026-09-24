@@ -61,6 +61,28 @@ def run_enrichment():
         ALSO: Parse the 'Current known equivalent specs' into the specific standard fields (en_number, din_number, etc.). If a German spec is given (e.g., 2.4816), put it in din_number. If a British spec is given, put it in en_number. Put the rest (AMS, trade names) in equivalent_grades_clean.
         """
         
+        json_format_instructions = """
+        Return a simple JSON object with EXACTLY these keys:
+        - composition (string)
+        - density (float)
+        - yield_strength_min (float)
+        - tensile_strength_min (float)
+        - elongation (float)
+        - elastic_modulus (float)
+        - thermal_conductivity (float)
+        - specific_heat (float)
+        - melting_point_min (float)
+        - cost_per_kg_min (float)
+        - cost_per_kg_max (float)
+        - cost_currency (string, always 'INR')
+        - uns_number (string)
+        - en_number (string)
+        - din_number (string)
+        - is_number (string)
+        - gb_number (string)
+        - equivalent_grades_clean (array of strings)
+        """
+        
         max_retries = 3
         for attempt in range(max_retries):
             try:
@@ -68,7 +90,7 @@ def run_enrichment():
                     model="openai/gpt-oss-20b",
                     response_format={"type": "json_object"},
                     messages=[
-                        {"role": "system", "content": f"You are a data extractor. Output ONLY valid JSON matching this exact schema: {EnrichmentSchema.model_json_schema()}"},
+                        {"role": "system", "content": f"You are a data extractor. Output ONLY valid JSON. {json_format_instructions}"},
                         {"role": "user", "content": prompt}
                     ],
                     temperature=0.1

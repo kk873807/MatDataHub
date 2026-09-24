@@ -15,9 +15,21 @@ from dotenv import load_dotenv
 load_dotenv()
 firecrawl_app = FirecrawlApp(api_key=os.environ["FIRECRAWL_API_KEY"])
 supabase: Client = create_client(os.environ["SUPABASE_URL"], os.environ["SUPABASE_KEY"])
-groq_client = Groq(api_key=os.environ["GROQ_API_KEY"]) 
-gemini_client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
-openai_client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+import re, random, itertools
+with open('.env', 'r', encoding='utf-8') as f:
+    env_text = f.read()
+
+# Grab any key starting with GEMINI_API_KEY (e.g., GEMINI_API_KEY_1, GEMINI_API_KEY2)
+gemini_keys = re.findall(r'GEMINI_API_KEY.*?=([^\s]+)', env_text)
+groq_keys = re.findall(r'GROQ_API_KEY.*?=([^\s]+)', env_text)
+
+groq_clients = [Groq(api_key=key) for key in groq_keys if key]
+gemini_clients = [genai.Client(api_key=key) for key in gemini_keys if key]
+
+# Setup Round-Robin rotation for Gemini
+gemini_cycle = itertools.cycle(gemini_clients) if gemini_clients else None
+
+openai_client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY", "dummy_key"))
 
 # Exact Database Schema
 class MaterialSchema(BaseModel):
@@ -196,7 +208,7 @@ def process_single_material(page_url, max_retries=3):
             # --- THE AI WATERFALL ---
             try:
                 print("🧠 Analyzing with Groq...")
-                chat_completion = groq_client.chat.completions.create(
+                chat_completion = random.choice(groq_clients).chat.completions.create(
                     messages=[
                         {"role": "system", "content": f"You are a data extractor. Output ONLY valid JSON matching this exact schema: {MaterialSchema.model_json_schema()}"},
                         {"role": "user", "content": prompt}
@@ -210,22 +222,33 @@ def process_single_material(page_url, max_retries=3):
                 
             except Exception as e1:
                 print(f"⚠️ Groq API failed (Limit Reached).")
-                try:
-                    print("🧠 Groq failed. Falling back to Gemini Backup AI...")
-                    response = gemini_client.models.generate_content(
-                        model='gemini-3.6-flash',  # FIX: Updated to active model
-                        contents=prompt,
-                        config=types.GenerateContentConfig(
-                            response_mime_type="application/json",
-                            response_schema=MaterialSchema,
-                            temperature=0.1 
-                        ),
-                    )
-                    material_data = json.loads(response.text)
-                    material_data["extraction_method"] = "Gemini"
-                    
-                except Exception as e2:
-                    print(f"⚠️ Gemini API failed (Limit Reached).")
+                
+                print("🧠 Groq failed. Falling back to Gemini Backup AI...")
+                gemini_success = False
+                if gemini_cycle is not None and len(gemini_clients) > 0:
+                    # Loop through all available Gemini keys to find one that isn't rate-limited
+                    for _ in range(len(gemini_clients)):
+                        current_gemini = next(gemini_cycle)
+                        try:
+                            response = current_gemini.models.generate_content(
+                                model='gemini-3.6-flash',
+                                contents=prompt,
+                                config=types.GenerateContentConfig(
+                                    response_mime_type="application/json",
+                                    response_schema=MaterialSchema,
+                                    temperature=0.1
+                                ),
+                            )
+                            material_data = json.loads(response.text)
+                            material_data["extraction_method"] = "Gemini"
+                            gemini_success = True
+                            break  # Success! Break out of the Gemini key loop
+                        except Exception as gemini_err:
+                            # This specific key failed (likely rate limit), continue to the next one
+                            pass
+                
+                if not gemini_success:
+                    print(f"⚠️ All {len(gemini_clients)} Gemini APIs failed (Limits Reached).")
                     try:
                         print("🧠 Gemini failed. Falling back to OpenAI (gpt-4o-mini)...")
                         response = openai_client.chat.completions.create(
@@ -246,7 +269,7 @@ def process_single_material(page_url, max_retries=3):
                             material_data = fallback_scraper(raw_markdown, page_url)
                             material_data["extraction_method"] = "Deterministic Parser"
                         else:
-                            print("❌ All 3 AIs failed, and deterministic fallback cannot read random sources.")
+                            print("❌ All AIs failed, and deterministic fallback cannot read random sources.")
             # --- END WATERFALL ---
             
             # If we successfully got data, BREAK out of the retry loop immediately!
