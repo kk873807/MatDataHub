@@ -253,6 +253,10 @@ class TransactionOut(BaseModel):
 
     model_config = {"from_attributes": True}
 
+class AdminTransactionOut(TransactionOut):
+    user_email: str
+
+
 
 class CustomMaterialCreate(BaseModel):
     name: str = Field(..., max_length=200)

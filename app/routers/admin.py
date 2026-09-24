@@ -8,9 +8,9 @@ from fastapi import APIRouter, Depends, HTTPException, Header, status
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.models import User
+from app.models import User, Transaction
 from app.auth import generate_api_credentials
-from app.schemas import PendingRequestOut, AdminActionResponse
+from app.schemas import PendingRequestOut, AdminActionResponse, AdminTransactionOut
 import hashlib
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
@@ -320,3 +320,24 @@ def reject_contribution(contrib_id: int, db: Session = Depends(get_db), _: bool 
     contrib.status = "rejected"
     db.commit()
     return {"message": "Contribution rejected"}
+
+@router.get("/transactions", response_model=list[AdminTransactionOut])
+def get_all_transactions(db: Session = Depends(get_db), admin: User = Depends(get_admin_user)):
+    """Fetch all platform transactions with user emails for the admin dashboard."""
+    txns = db.query(Transaction, User.email).join(User, Transaction.user_id == User.id).order_by(Transaction.created_at.desc()).all()
+    
+    result = []
+    for txn, email in txns:
+        txn_dict = {
+            "id": txn.id,
+            "user_id": txn.user_id,
+            "amount": txn.amount,
+            "currency": txn.currency,
+            "tier_purchased": txn.tier_purchased,
+            "status": txn.status,
+            "payment_id": txn.payment_id,
+            "created_at": txn.created_at,
+            "user_email": email
+        }
+        result.append(txn_dict)
+    return result
