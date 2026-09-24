@@ -322,7 +322,7 @@ def reject_contribution(contrib_id: int, db: Session = Depends(get_db), _: bool 
     return {"message": "Contribution rejected"}
 
 @router.get("/transactions", response_model=list[AdminTransactionOut])
-def get_all_transactions(db: Session = Depends(get_db), admin: User = Depends(get_admin_user)):
+def get_all_transactions(db: Session = Depends(get_db), _: bool = Depends(verify_admin)):
     """Fetch all platform transactions with user emails for the admin dashboard."""
     txns = db.query(Transaction, User.email).join(User, Transaction.user_id == User.id).order_by(Transaction.created_at.desc()).all()
     
