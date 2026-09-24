@@ -131,9 +131,11 @@ async def razorpay_webhook(request: Request, db: Session = Depends(get_db)):
                 user_id = int(user_id_str)
                 user = db.query(User).filter(User.id == user_id).first()
                 if user:
-                    user.tier = tier
-                    user.upgrade_status = None
-                    user.requested_tier = None
+                    # Protect against unauthorized downgrades via webhook
+                    if not (user.tier == "advanced" and tier == "pro"):
+                        user.tier = tier
+                        user.upgrade_status = None
+                        user.requested_tier = None
                     
                 # Always record transaction for audit trail, even if user was deleted mid-payment
                 amount_paid = entity.get("amount", 0) / 100.0  # Convert paise to INR
