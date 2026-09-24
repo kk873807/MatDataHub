@@ -226,3 +226,32 @@ def run_ai_scraper(req: ScrapeRequest, _: bool = Depends(verify_admin), db: Sess
     except Exception as e:
         print(e)
         raise HTTPException(500, f"AI Scraper Error: {str(e)}")
+
+from app.models import CustomMaterial
+
+@router.get("/user-contributions")
+def get_all_user_contributions(_: bool = Depends(verify_admin), db: Session = Depends(get_db)):
+    """
+    Returns all user contributions grouped by user.
+    """
+    users = db.query(User).all()
+    materials = db.query(CustomMaterial).all()
+    
+    user_map = {u.id: {"id": u.id, "name": u.name or "User", "email": u.email, "tier": u.tier} for u in users}
+    
+    contribs = {}
+    for m in materials:
+        if m.user_id not in contribs:
+            contribs[m.user_id] = {
+                "user": user_map.get(m.user_id, {"id": m.user_id, "name": "Unknown", "email": "unknown", "tier": "free"}),
+                "materials": []
+            }
+        contribs[m.user_id]["materials"].append({
+            "id": m.id,
+            "name": m.name,
+            "category": m.category,
+            "source_url": m.source_url,
+            "created_at": m.created_at
+        })
+        
+    return list(contribs.values())
