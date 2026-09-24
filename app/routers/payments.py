@@ -34,6 +34,12 @@ def create_payment_link(req: CreateLinkRequest, current_user: User = Depends(get
     if tier not in ["pro", "advanced"]:
         raise HTTPException(status_code=400, detail="Invalid tier.")
         
+    if current_user.tier == tier:
+        raise HTTPException(status_code=400, detail=f"You are already on the {tier.capitalize()} tier.")
+        
+    if current_user.tier == "advanced" and tier == "pro":
+        raise HTTPException(status_code=400, detail="You are currently on the Advanced tier. Downgrading to Pro requires contacting support.")
+        
     amount = 49900 if tier == "pro" else 1999900  # Amount in paise (multiply INR by 100)
     
     # Generate payment link
@@ -124,19 +130,19 @@ async def razorpay_webhook(request: Request, db: Session = Depends(get_db)):
                     user.upgrade_status = None
                     user.requested_tier = None
                     
-                    # Record transaction
-                    amount_paid = entity.get("amount", 0) / 100.0  # Convert paise to INR
-                    
-                    new_txn = Transaction(
-                        user_id=user.id,
-                        amount=amount_paid,
-                        currency=entity.get("currency", "INR"),
-                        tier_purchased=tier,
-                        status="completed",
-                        payment_id=payment_id
-                    )
-                    db.add(new_txn)
-                    db.commit()
+                # Always record transaction for audit trail, even if user was deleted mid-payment
+                amount_paid = entity.get("amount", 0) / 100.0  # Convert paise to INR
+                
+                new_txn = Transaction(
+                    user_id=user_id,
+                    amount=amount_paid,
+                    currency=entity.get("currency", "INR"),
+                    tier_purchased=tier,
+                    status="completed",
+                    payment_id=payment_id
+                )
+                db.add(new_txn)
+                db.commit()
                     
         return {"status": "ok"}
     except Exception as e:
