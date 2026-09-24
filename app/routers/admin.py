@@ -235,7 +235,7 @@ def get_all_user_contributions(_: bool = Depends(verify_admin), db: Session = De
     Returns all user contributions grouped by user.
     """
     users = db.query(User).all()
-    materials = db.query(CustomMaterial).all()
+    materials = db.query(CustomMaterial).order_by(CustomMaterial.created_at.desc()).all()
     
     user_map = {u.id: {"id": u.id, "name": u.name or "User", "email": u.email, "tier": u.tier} for u in users}
     

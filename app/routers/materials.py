@@ -458,6 +458,9 @@ def find_similar_materials(
 # ──────────────────────────────────────────────
 
 import requests
+import urllib.parse
+import socket
+import ipaddress
 import time
 
 LIVE_PRICE_CACHE = {}
@@ -613,6 +616,19 @@ def clean_legacy_data(db: Session = Depends(get_db), _: bool = Depends(verify_ad
     return {"message": f"Fixed {count} legacy records"}
 
 # --- Custom Private Materials (Enterprise) ---
+
+def is_safe_url(url: str) -> bool:
+    try:
+        parsed = urllib.parse.urlparse(url)
+        if parsed.scheme not in ['http', 'https']: return False
+        if not parsed.hostname: return False
+        ip = socket.gethostbyname(parsed.hostname)
+        ip_obj = ipaddress.ip_address(ip)
+        if ip_obj.is_private or ip_obj.is_loopback or ip_obj.is_link_local: return False
+        return True
+    except Exception:
+        return False
+
 @router.post("/custom", response_model=CustomMaterialResponse)
 def create_custom_material(
     mat: CustomMaterialCreate,
@@ -625,9 +641,12 @@ def create_custom_material(
     if not getattr(mat, 'source_url', None) or not str(mat.source_url).startswith('http'):
         raise HTTPException(status_code=400, detail="A valid source_url (http/https) is required.")
         
+    if not is_safe_url(str(mat.source_url)):
+        raise HTTPException(status_code=400, detail="Invalid or unsafe Source URL (SSRF blocked).")
+        
     try:
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
-        r = requests.get(mat.source_url, headers=headers, timeout=10, allow_redirects=True, stream=True)
+        r = requests.get(str(mat.source_url), headers=headers, timeout=10, allow_redirects=False, stream=True)
         r.close()
         if r.status_code >= 400 and r.status_code not in [403, 429]:
             raise HTTPException(status_code=400, detail=f"Source URL verification failed (HTTP {r.status_code}). Please provide a valid and authentic primary source link.")
@@ -647,7 +666,7 @@ def get_my_custom_materials(
 ):
     if current_user.tier != "advanced" and not current_user.is_admin:
         return []
-    return db.query(CustomMaterial).filter(CustomMaterial.user_id == current_user.id).all()
+    return db.query(CustomMaterial).filter(CustomMaterial.user_id == current_user.id).order_by(CustomMaterial.created_at.desc()).all()
 
 @router.post("/custom/bulk", response_model=dict)
 def bulk_create_custom_materials(
