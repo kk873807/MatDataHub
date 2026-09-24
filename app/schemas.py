@@ -255,9 +255,9 @@ class TransactionOut(BaseModel):
 
 
 class CustomMaterialCreate(BaseModel):
-    name: str = Field(..., max_length=255)
-    category: str = Field(..., max_length=100)
-    source_url: str = Field(..., max_length=1000)
+    name: str = Field(..., max_length=200)
+    category: str = Field(..., max_length=50)
+    source_url: str = Field(..., max_length=500)
     subcategory: Optional[str] = Field(None, max_length=100)
     grade: Optional[str] = Field(None, max_length=100)
     description: Optional[str] = Field(None, max_length=5000)

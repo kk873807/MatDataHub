@@ -268,6 +268,11 @@ def approve_contribution(contrib_id: int, db: Session = Depends(get_db), _: bool
     if contrib.status == "approved":
         raise HTTPException(status_code=400, detail="Already approved")
 
+    if contrib.source_url:
+        existing = db.query(Material).filter(Material.source_url == contrib.source_url).first()
+        if existing:
+            raise HTTPException(status_code=400, detail="This source URL already exists in the public database! Please Reject this contribution instead.")
+
     # Move to public materials
     hardness_str = None
     if contrib.hardness_min and contrib.hardness_scale:

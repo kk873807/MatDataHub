@@ -667,7 +667,11 @@ def create_custom_material(
 
     existing_url = db.query(CustomMaterial).filter(CustomMaterial.source_url == str(mat.source_url)).first()
     if existing_url:
-        raise HTTPException(status_code=400, detail="This Source URL has already been added to the database. Duplicate links are not permitted.")
+        raise HTTPException(status_code=400, detail="This Source URL has already been submitted. Duplicate links are not permitted.")
+    
+    existing_main_url = db.query(Material).filter(Material.source_url == str(mat.source_url)).first()
+    if existing_main_url:
+        raise HTTPException(status_code=400, detail="This Source URL already exists in the main public database!")
 
     if not getattr(mat, 'source_url', None) or not str(mat.source_url).startswith('http'):
         raise HTTPException(status_code=400, detail="A valid source_url (http/https) is required.")
