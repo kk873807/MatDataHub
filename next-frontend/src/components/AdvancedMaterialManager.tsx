@@ -1,15 +1,37 @@
 "use client";
-import { useState, useRef } from "react";
-import Papa from "papaparse";
-import * as XLSX from "xlsx";
-import { Database, Upload, FileUp, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { Database, Loader2, CheckCircle2 } from "lucide-react";
 import { API } from "@/lib/api";
 
 export default function AdvancedMaterialManager() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [myMaterials, setMyMaterials] = useState<any[]>([]);
+  const [fetchingMaterials, setFetchingMaterials] = useState(false);
+
+  const fetchMyMaterials = async () => {
+    setFetchingMaterials(true);
+    try {
+      const res = await fetch(`${API}/materials/custom/mine`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setMyMaterials(data);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setFetchingMaterials(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchMyMaterials();
+  }, []);
+
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -105,10 +127,14 @@ export default function AdvancedMaterialManager() {
         </div>
       </div>
       <div className="p-6">
-        <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-6 mt-6">
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white font-heading mb-4 flex items-center gap-2">
-            <Database className="w-5 h-5 text-slate-500 dark:text-slate-400" /> Add Single Material
-          </h3>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          {/* Left Column: Form */}
+          <div className="lg:col-span-2">
+            <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-6">
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white font-heading mb-4 flex items-center gap-2">
+                <Database className="w-5 h-5 text-slate-500 dark:text-slate-400" /> Add Single Material
+              </h3>
           <form onSubmit={async (e) => {
             e.preventDefault();
             setLoading(true); setMessage(""); setError("");
@@ -132,6 +158,7 @@ export default function AdvancedMaterialManager() {
               }
               setMessage(`Successfully added ${mat.name}`);
               (e.target as HTMLFormElement).reset();
+              fetchMyMaterials();
             } catch (err: any) {
               setError(`Upload Error: ${err.message}`);
             } finally {
@@ -155,6 +182,42 @@ export default function AdvancedMaterialManager() {
               {loading ? "Adding..." : "Add Material"}
             </button>
           </form>
+            </div>
+          </div>
+          
+          {/* Right Column: Contributions */}
+          <div className="lg:col-span-1">
+            <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-6 h-full flex flex-col">
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white font-heading mb-4 flex items-center justify-between">
+                <span>Your Contributions</span>
+                <span className="text-sm bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400 px-2 py-1 rounded-full">{myMaterials.length}</span>
+              </h3>
+              
+              {fetchingMaterials ? (
+                <div className="flex-1 flex items-center justify-center">
+                  <Loader2 className="w-6 h-6 animate-spin text-slate-400" />
+                </div>
+              ) : myMaterials.length === 0 ? (
+                <div className="flex-1 flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 text-center py-10">
+                  <Database className="w-8 h-8 mb-3 opacity-50" />
+                  <p className="text-sm">No materials added yet.</p>
+                </div>
+              ) : (
+                <ul className="flex-1 overflow-y-auto space-y-3 max-h-[400px] pr-2 custom-scrollbar">
+                  {myMaterials.map((m, i) => (
+                    <li key={i} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow">
+                      <p className="font-semibold text-sm text-slate-900 dark:text-white line-clamp-1">{m.name}</p>
+                      <div className="flex justify-between items-center mt-1">
+                        <span className="text-xs font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">{m.category}</span>
+                        <span className="text-[10px] text-slate-400 dark:text-slate-500">{m.created_at ? new Date(m.created_at).toLocaleDateString() : ''}</span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+          
         </div>
         <div className="mt-6 text-center text-slate-500 dark:text-slate-400">
            <a href="/Admin_Material_Upload_Guide.pdf" target="_blank" className="text-cyan-400 hover:underline text-sm flex items-center justify-center gap-1">
