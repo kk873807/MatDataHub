@@ -61,6 +61,11 @@ def create_payment_link(req: CreateLinkRequest, current_user: User = Depends(get
             "notes": {
                 "user_id": str(current_user.id),
                 "tier": tier
+            },
+            "options": {
+                "checkout": {
+                    "name": "MatDataHub"
+                }
             }
         }
         
