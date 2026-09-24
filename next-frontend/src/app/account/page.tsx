@@ -356,7 +356,7 @@ function AccountDashboardInner() {
                     
                     <div className="text-center mb-6">
                       <span className="text-4xl font-black text-slate-900 dark:text-white">&#8377;499</span>
-                      <span className="text-slate-500 dark:text-slate-400">/mo</span>
+                      <span className="text-sm font-medium text-slate-500 dark:text-slate-400">/lifetime</span>
                     </div>
                     <ul className="space-y-3 mb-8">
                       <li className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300"><CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> Full 1000+ material database</li>
@@ -372,7 +372,7 @@ function AccountDashboardInner() {
                         disabled={upgrading || profile.upgrade_status === "pending"}
                         className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl transition-colors flex justify-center items-center gap-2"
                       >
-                        Pay &#8377;499/mo & Upgrade <ArrowUpRight className="w-4 h-4" />
+                        Pay &#8377;499 for Lifetime PRO <ArrowUpRight className="w-4 h-4" />
                       </button>
                     )}
                   </div>
@@ -384,7 +384,7 @@ function AccountDashboardInner() {
                     
                     <div className="text-center mb-6">
                       <span className="text-4xl font-black text-slate-900 dark:text-white">&#8377;19,999</span>
-                      <span className="text-slate-500 dark:text-slate-400">/mo</span>
+                      <span className="text-sm font-medium text-slate-500 dark:text-slate-400">/lifetime</span>
                     </div>
                     <ul className="space-y-3 mb-6 text-sm text-slate-600 dark:text-slate-300">
                       <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> Unlimited Material Lookups</li>
@@ -400,7 +400,7 @@ function AccountDashboardInner() {
                       disabled={upgrading || profile.upgrade_status === "pending"}
                       className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl transition-colors flex justify-center items-center gap-2 relative z-10"
                     >
-                      Pay &#8377;19,999/mo & Upgrade <ArrowUpRight className="w-4 h-4" />
+                      Pay &#8377;19,999 for Lifetime ADVANCED <ArrowUpRight className="w-4 h-4" />
                     </button>
                   </div>
 

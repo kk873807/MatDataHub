@@ -249,11 +249,11 @@ export function AccountModals({ activeModal, setActiveModal, userInfo }: Account
                       <p className="text-slate-500 dark:text-slate-400 text-sm mb-4 flex-1">Perfect for engineers who need deeper material comparisons and exports.</p>
                       <div className="text-center mb-4">
                         <span className="text-3xl font-black text-slate-900 dark:text-white">&#8377;499</span>
-                        <span className="text-slate-500 dark:text-slate-400">/mo</span>
+                        <span className="text-sm font-medium text-slate-500 dark:text-slate-400">/lifetime</span>
                       </div>
                       {profile.tier === "free" && (
                         <button onClick={() => handleUpgrade("pro")} disabled={upgrading || profile.upgrade_status === "pending"} className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-bold py-2 rounded-xl transition-colors flex justify-center items-center gap-2">
-                          Pay &#8377;499/mo & Upgrade <ArrowUpRight className="w-4 h-4" />
+                          Pay &#8377;499 for Lifetime PRO <ArrowUpRight className="w-4 h-4" />
                         </button>
                       )}
                     </div>
@@ -265,10 +265,10 @@ export function AccountModals({ activeModal, setActiveModal, userInfo }: Account
                       <p className="text-slate-400 text-sm mb-4 flex-1">For enterprises needing API access, custom materials, and SSO integrations.</p>
                       <div className="text-center mb-4">
                         <span className="text-3xl font-black text-white">&#8377;19,999</span>
-                        <span className="text-slate-400">/mo</span>
+                        <span className="text-sm font-medium text-slate-500 dark:text-slate-400">/lifetime</span>
                       </div>
                       <button onClick={() => handleUpgrade("advanced")} disabled={upgrading || profile.upgrade_status === "pending"} className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-bold py-2 rounded-xl transition-colors flex justify-center items-center gap-2 relative z-10">
-                        Pay &#8377;19,999/mo & Upgrade <ArrowUpRight className="w-4 h-4" />
+                        Pay &#8377;19,999 for Lifetime ADVANCED <ArrowUpRight className="w-4 h-4" />
                       </button>
                     </div>
 
