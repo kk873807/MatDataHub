@@ -9,7 +9,7 @@ from datetime import datetime
 
 class MaterialBase(BaseModel):
     """Fields shared by create and response schemas."""
-    name: str = Field(..., min_length=1, max_length=200, examples=["AISI 304 Stainless Steel"])
+    name: str = Field(..., max_length=255) = Field(..., min_length=1, max_length=200, examples=["AISI 304 Stainless Steel"])
     category: Optional[str] = Field(None, max_length=50, examples=["Metal"])
     subcategory: Optional[str] = Field(None, max_length=100, examples=["Stainless Steel"])
     grade: Optional[str] = Field(None, max_length=100, examples=["304"])
@@ -41,7 +41,7 @@ class MaterialBase(BaseModel):
     applications: Optional[str] = Field(None, examples=["Kitchen sinks, chemical tanks, food processing"])
     equivalent_grades: Optional[str] = Field(None, examples=["SUS 304 (JIS), X5CrNi18-10 (EN)"])
     composition: Optional[str] = Field(None, examples=["Fe 66-74%, Cr 18-20%, Ni 8-10.5%"])
-    description: Optional[str] = None
+    description: Optional[str] = Field(None, max_length=5000)
 
     # Source
     source_url: Optional[str] = Field(None, max_length=500)
@@ -172,7 +172,7 @@ class FeedbackCreate(BaseModel):
     """Body sent by the frontend when a user submits feedback."""
     name: Optional[str] = Field(None, max_length=100)
     email: Optional[str] = Field(None, max_length=255)
-    category: str = Field("General Feedback", max_length=50)
+    category: str = Field(..., max_length=100) = Field("General Feedback", max_length=50)
     message: str = Field(..., min_length=3, max_length=2000, examples=["Would love a dark mode toggle!"])
     rating: Optional[int] = Field(None, ge=1, le=5)
     page_context: Optional[str] = Field(None, max_length=100, examples=["Feedback Tab"])
@@ -187,7 +187,7 @@ class FeedbackOut(BaseModel):
     helpful_votes: Optional[int] = 0
     name: Optional[str] = None
     email: Optional[str] = None
-    category: str
+    category: str = Field(..., max_length=100)
     message: str
     rating: Optional[int] = None
     page_context: Optional[str] = None
@@ -209,29 +209,29 @@ class FeedbackResponse(BaseModel):
 # ── Project Schemas ──
 class ProjectItemCreate(BaseModel):
     material_id: int
-    part_name: str
+    part_name: str = Field(..., max_length=255)
     volume_cm3: float
 
 class ProjectItemOut(BaseModel):
     id: int
     project_id: int
     material_id: int
-    part_name: str
+    part_name: str = Field(..., max_length=255)
     volume_cm3: float
     material: MaterialResponse
 
     model_config = {"from_attributes": True}
 
 class ProjectCreate(BaseModel):
-    name: str
-    description: Optional[str] = None
+    name: str = Field(..., max_length=255)
+    description: Optional[str] = Field(None, max_length=5000)
     blueprint_data: Optional[str] = None
 
 class ProjectOut(BaseModel):
     id: int
     user_id: int
-    name: str
-    description: Optional[str] = None
+    name: str = Field(..., max_length=255)
+    description: Optional[str] = Field(None, max_length=5000)
     blueprint_data: Optional[str] = None
     created_at: Optional[datetime] = None
     items: List[ProjectItemOut] = []
@@ -255,12 +255,12 @@ class TransactionOut(BaseModel):
 
 
 class CustomMaterialCreate(BaseModel):
-    name: str
-    category: str
-    source_url: str
-    subcategory: Optional[str] = None
-    grade: Optional[str] = None
-    description: Optional[str] = None
+    name: str = Field(..., max_length=255)
+    category: str = Field(..., max_length=100)
+    source_url: str = Field(..., max_length=1000)
+    subcategory: Optional[str] = Field(None, max_length=100)
+    grade: Optional[str] = Field(None, max_length=100)
+    description: Optional[str] = Field(None, max_length=5000)
     yield_strength_min: Optional[float] = None
     tensile_strength_min: Optional[float] = None
     elastic_modulus: Optional[float] = None

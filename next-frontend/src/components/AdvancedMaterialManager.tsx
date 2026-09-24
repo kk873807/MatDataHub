@@ -69,7 +69,15 @@ export default function AdvancedMaterialManager() {
               });
               if (!res.ok) {
                 const errData = await res.json();
-                throw new Error(errData.detail || "Failed to upload material");
+                let errMsg = "Failed to upload material";
+                if (errData.detail) {
+                  if (typeof errData.detail === "string") {
+                    errMsg = errData.detail;
+                  } else if (Array.isArray(errData.detail)) {
+                    errMsg = errData.detail.map((e: any) => `${e.loc[e.loc.length-1]}: ${e.msg}`).join(", ");
+                  }
+                }
+                throw new Error(errMsg);
               }
               setMessage(`Successfully added ${mat.name}`);
               (e.target as HTMLFormElement).reset();
