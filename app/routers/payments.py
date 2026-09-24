@@ -90,6 +90,9 @@ async def razorpay_webhook(request: Request, db: Session = Depends(get_db)):
     if not webhook_signature:
         raise HTTPException(status_code=400, detail="Missing signature")
         
+    if not RAZORPAY_WEBHOOK_SECRET:
+        raise HTTPException(status_code=500, detail="Webhook secret not configured on server")
+        
     body = await request.body()
     
     # Verify HMAC-SHA256 signature
@@ -138,7 +141,7 @@ async def razorpay_webhook(request: Request, db: Session = Depends(get_db)):
                         user.requested_tier = None
                     
                 # Always record transaction for audit trail, even if user was deleted mid-payment
-                amount_paid = entity.get("amount", 0) / 100.0  # Convert paise to INR
+                amount_paid = (entity.get("amount") or 0) / 100.0  # Convert paise to INR
                 
                 new_txn = Transaction(
                     user_id=user_id,
@@ -153,5 +156,7 @@ async def razorpay_webhook(request: Request, db: Session = Depends(get_db)):
                     
         return {"status": "ok"}
     except Exception as e:
-        # Return 200 so Razorpay doesn't endlessly retry on our logic errors
-        return {"status": "error", "detail": str(e)}
+        # Raise 500 so Razorpay properly retries the webhook in case of database downtime
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
