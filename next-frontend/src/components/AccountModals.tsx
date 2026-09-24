@@ -46,7 +46,7 @@ export function AccountModals({ activeModal, setActiveModal, userInfo }: Account
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}` 
         },
-        body: JSON.stringify({ tier })
+        body: JSON.stringify({ tier, callback_url: window.location.href })
       });
       if (res.ok) {
         const data = await res.json();

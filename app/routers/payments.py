@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 import razorpay
 
 from app.database import get_db
-from app.models import User
+from app.models import User, Transaction
 from app.auth import get_current_user
 from pydantic import BaseModel
 
@@ -19,8 +19,11 @@ RAZORPAY_WEBHOOK_SECRET = os.getenv("RAZORPAY_WEBHOOK_SECRET", "")
 # Initialize razorpay client only if keys are present
 client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET)) if RAZORPAY_KEY_ID else None
 
+from typing import Optional
+
 class CreateLinkRequest(BaseModel):
     tier: str
+    callback_url: Optional[str] = None
 
 @router.post("/create-link")
 def create_payment_link(req: CreateLinkRequest, current_user: User = Depends(get_current_user)):
@@ -52,10 +55,12 @@ def create_payment_link(req: CreateLinkRequest, current_user: User = Depends(get
             "notes": {
                 "user_id": str(current_user.id),
                 "tier": tier
-            },
-            # "callback_url": "https://matdataapp-x5gof2igdr7cmiwucho22n.streamlit.app/", # Optional redirect
-            # "callback_method": "get"
+            }
         }
+        
+        if req.callback_url:
+            payment_link_data["callback_url"] = req.callback_url
+            payment_link_data["callback_method"] = "get"
         
         response = client.payment_link.create(payment_link_data)
         return {"payment_url": response.get("short_url")}
@@ -106,6 +111,20 @@ async def razorpay_webhook(request: Request, db: Session = Depends(get_db)):
                     user.tier = tier
                     user.upgrade_status = None
                     user.requested_tier = None
+                    
+                    # Record transaction securely
+                    payment_id = data["payload"].get("payment", {}).get("entity", {}).get("id") or entity.get("id")
+                    amount_paid = entity.get("amount", 0) / 100.0  # Convert paise to INR
+                    
+                    new_txn = Transaction(
+                        user_id=user.id,
+                        amount=amount_paid,
+                        currency=entity.get("currency", "INR"),
+                        tier_purchased=tier,
+                        status="completed",
+                        payment_id=payment_id
+                    )
+                    db.add(new_txn)
                     db.commit()
                     
         return {"status": "ok"}
