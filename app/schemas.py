@@ -270,6 +270,7 @@ class CustomMaterialCreate(BaseModel):
 class CustomMaterialResponse(CustomMaterialCreate):
     id: int
     user_id: int
+    status: str
     created_at: datetime
     class Config:
         from_attributes = True
