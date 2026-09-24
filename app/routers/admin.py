@@ -314,6 +314,9 @@ def reject_contribution(contrib_id: int, db: Session = Depends(get_db), _: bool 
     if not contrib:
         raise HTTPException(status_code=404, detail="Contribution not found")
     
+    if contrib.status == "approved":
+        raise HTTPException(status_code=400, detail="Cannot reject a contribution that has already been approved and merged into the public database.")
+    
     contrib.status = "rejected"
     db.commit()
     return {"message": "Contribution rejected"}

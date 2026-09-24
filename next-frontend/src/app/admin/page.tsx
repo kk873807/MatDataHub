@@ -13,6 +13,8 @@ export default function AdminDashboard() {
   const [contributions, setContributions] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [expandedUsers, setExpandedUsers] = useState<Record<number, boolean>>({});
+  const toggleExpand = (userId: number) => setExpandedUsers(prev => ({ ...prev, [userId]: !prev[userId] }));
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();

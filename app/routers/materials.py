@@ -657,6 +657,10 @@ def create_custom_material(
     if daily_count >= 50:
         raise HTTPException(status_code=429, detail="Daily limit reached. You can only add up to 50 materials per 24 hours.")
 
+    # Normalize Inputs
+    if mat.name: mat.name = mat.name.strip()
+    if mat.source_url: mat.source_url = str(mat.source_url).strip().rstrip('/')
+
     # --- Duplicate Prevention ---
     existing_name = db.query(CustomMaterial).filter(
         CustomMaterial.user_id == current_user.id,
