@@ -1,4 +1,4 @@
-﻿import os
+import os
 import hmac
 import hashlib
 from fastapi import APIRouter, Depends, HTTPException, Request
@@ -71,40 +71,52 @@ def create_payment_link(req: CreateLinkRequest, current_user: User = Depends(get
 async def razorpay_webhook(request: Request, db: Session = Depends(get_db)):
     """
     Razorpay sends a webhook when payment succeeds.
+    Verifies HMAC-SHA256 signature, upgrades user tier, and logs the transaction.
     """
+    import json
+    
     webhook_signature = request.headers.get("X-Razorpay-Signature")
     if not webhook_signature:
         raise HTTPException(status_code=400, detail="Missing signature")
         
     body = await request.body()
     
-    # Verify signature
-    try:
-        expected_sig = hmac.new(
-            bytes(RAZORPAY_WEBHOOK_SECRET, 'utf-8'),
-            msg=body,
-            digestmod=hashlib.sha256
-        ).hexdigest()
-        
-        if not hmac.compare_digest(expected_sig, webhook_signature):
-            raise HTTPException(status_code=400, detail="Invalid signature")
-    except Exception as e:
-        raise HTTPException(status_code=400, detail="Signature verification failed")
+    # Verify HMAC-SHA256 signature
+    expected_sig = hmac.HMAC(
+        key=RAZORPAY_WEBHOOK_SECRET.encode('utf-8'),
+        msg=body,
+        digestmod=hashlib.sha256
+    ).hexdigest()
+    
+    if not hmac.compare_digest(expected_sig, webhook_signature):
+        raise HTTPException(status_code=400, detail="Invalid signature")
         
     try:
-        data = await request.json()
+        # Parse JSON from the already-consumed body bytes (not request.json())
+        data = json.loads(body)
         event = data.get("event")
         
-        if event == "payment_link.paid" or event == "payment.captured":
+        if event in ("payment_link.paid", "payment.captured"):
             # Payment link payloads store notes in data.payload.payment_link.entity.notes
             # or data.payload.payment.entity.notes depending on the event
-            entity = data["payload"].get("payment_link", data["payload"].get("payment"))["entity"]
+            payload = data.get("payload", {})
+            entity = (payload.get("payment_link") or payload.get("payment", {})).get("entity", {})
             notes = entity.get("notes", {})
             
             user_id_str = notes.get("user_id")
             tier = notes.get("tier")
             
+            # Extract payment_id for idempotency
+            payment_entity = payload.get("payment", {}).get("entity", {})
+            payment_id = payment_entity.get("id") or entity.get("id")
+            
             if user_id_str and tier:
+                # Idempotency: skip if this payment_id was already processed
+                if payment_id:
+                    existing_txn = db.query(Transaction).filter(Transaction.payment_id == payment_id).first()
+                    if existing_txn:
+                        return {"status": "ok", "detail": "Already processed"}
+                
                 user_id = int(user_id_str)
                 user = db.query(User).filter(User.id == user_id).first()
                 if user:
@@ -112,8 +124,7 @@ async def razorpay_webhook(request: Request, db: Session = Depends(get_db)):
                     user.upgrade_status = None
                     user.requested_tier = None
                     
-                    # Record transaction securely
-                    payment_id = data["payload"].get("payment", {}).get("entity", {}).get("id") or entity.get("id")
+                    # Record transaction
                     amount_paid = entity.get("amount", 0) / 100.0  # Convert paise to INR
                     
                     new_txn = Transaction(
@@ -129,6 +140,5 @@ async def razorpay_webhook(request: Request, db: Session = Depends(get_db)):
                     
         return {"status": "ok"}
     except Exception as e:
-        # We return 200 even on processing errors so Razorpay doesn't endlessly retry if our logic fails,
-        # but in production we'd want to log this securely.
+        # Return 200 so Razorpay doesn't endlessly retry on our logic errors
         return {"status": "error", "detail": str(e)}

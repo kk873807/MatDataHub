@@ -15,6 +15,21 @@ export function AccountModals({ activeModal, setActiveModal, userInfo }: Account
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [dangerAction, setDangerAction] = useState<"none" | "deactivate" | "delete">("none");
   const [dangerLoading, setDangerLoading] = useState(false);
+  const [transactions, setTransactions] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (activeModal === 'billing') {
+      const token = localStorage.getItem("token");
+      if (token) {
+        fetch(`${API}/account/transactions`, {
+          headers: { "Authorization": `Bearer ${token}` }
+        })
+          .then(res => res.ok ? res.json() : [])
+          .then(data => setTransactions(data))
+          .catch(() => setTransactions([]));
+      }
+    }
+  }, [activeModal]);
 
   useEffect(() => {
     if (userInfo) {
