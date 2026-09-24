@@ -142,11 +142,7 @@ export default function AdvancedMaterialManager() {
           </div>
           
         </div>
-        <div className="mt-6 text-center text-slate-500 dark:text-slate-400">
-           <a href="/Admin_Material_Upload_Guide.pdf" target="_blank" className="text-cyan-400 hover:underline text-sm flex items-center justify-center gap-1">
-             View Admin Upload Guide (PDF)
-           </a>
-        </div>
+        
       </div>
     </div>
   );
