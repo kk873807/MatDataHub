@@ -32,12 +32,7 @@ class Material(Base):
     # ---- Identity ----
     name = Column(String(200), nullable=False, index=True)          # "AISI 304 Stainless Steel"
     category = Column(String(50), nullable=False, index=True)       # Metal, Polymer, Ceramic, Composite
-    subcategory = Column(String(100), nullable=True)
-    grade = Column(String(100), nullable=True)
-    description = Column(Text, nullable=True)
-    source_url = Column(String(1024), nullable=True)
-    status = Column(String(20), default="pending")
-    elastic_modulus = Column(Float, nullable=True)                 # Stainless Steel, Thermoplastic, etc.
+    subcategory = Column(String(100), nullable=True)                 # Stainless Steel, Thermoplastic, etc.
     grade = Column(String(100), nullable=True)                       # 304, 6061-T6, PA6, etc.
     standard = Column(String(200), nullable=True)                    # ASTM A240, IS 2062, JIS G3101
 
