@@ -105,48 +105,6 @@ export default function AdvancedMaterialManager() {
         </div>
       </div>
       <div className="p-6">
-        <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-6">
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white font-heading mb-2 flex items-center gap-2">
-            <Upload className="w-5 h-5 text-slate-500 dark:text-slate-400" /> Bulk Upload Materials
-          </h3>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">
-            Upload a .csv or .xlsx file containing material properties. The column headers must exactly match the database property names (e.g., name, category, yield_strength_min). Blank cells will be ignored.
-          </p>
-
-          <div className="flex items-center gap-4">
-            <input
-              type="file"
-              accept=".csv, .xlsx, .xls"
-              onChange={handleFileUpload}
-              ref={fileInputRef}
-              className="hidden"
-              id="file-upload"
-            />
-            <label
-              htmlFor="file-upload"
-              className="cursor-pointer bg-cyan-600 hover:bg-cyan-500 text-slate-900 dark:text-white font-semibold py-2 px-6 rounded-2xl transition-colors flex items-center gap-2"
-            >
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileUp className="w-4 h-4" />}
-              {loading ? "Processing..." : "Select File"}
-            </label>
-            <span className="text-sm text-slate-500 dark:text-slate-400">Supported: .csv, .xlsx</span>
-          </div>
-
-          {error && (
-            <div className="mt-4 p-3 bg-red-100 dark:bg-red-100 dark:bg-red-900/20 border border-red-500/50 rounded-2xl flex items-start gap-2 text-red-600 dark:text-red-400 text-sm">
-              <AlertCircle className="w-5 h-5 shrink-0" />
-              <p>{error}</p>
-            </div>
-          )}
-
-          {message && (
-            <div className="mt-4 p-3 bg-emerald-100  dark:bg-emerald-900/20 border border-emerald-500/50 rounded-2xl flex items-start gap-2 text-emerald-600 dark:text-emerald-400 text-sm">
-              <CheckCircle2 className="w-5 h-5 shrink-0" />
-              <p>{message}</p>
-            </div>
-          )}
-        </div>
-
         <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-6 mt-6">
           <h3 className="text-lg font-semibold text-slate-900 dark:text-white font-heading mb-4 flex items-center gap-2">
             <Database className="w-5 h-5 text-slate-500 dark:text-slate-400" /> Add Single Material
@@ -157,7 +115,7 @@ export default function AdvancedMaterialManager() {
             const formData = new FormData(e.currentTarget);
             const mat: any = {};
             formData.forEach((value, key) => {
-              if (value) mat[key] = isNaN(Number(value)) || key === "name" || key === "category" || key === "subcategory" || key === "description" || key === "standard" || key === "grade" ? value : Number(value);
+              if (value) mat[key] = isNaN(Number(value)) || key === "name" || key === "category" || key === "subcategory" || key === "description" || key === "standard" || key === "grade" || key === "source_url" ? value : Number(value);
             });
             try {
               const res = await fetch(`${API}/materials/custom`, {
@@ -183,6 +141,7 @@ export default function AdvancedMaterialManager() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <input type="text" name="name" placeholder="Name (Required)" required className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-slate-900 dark:text-white" />
               <input type="text" name="category" placeholder="Category (Required)" required className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-slate-900 dark:text-white" />
+              <input type="url" name="source_url" placeholder="Source URL (Required)" required className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-slate-900 dark:text-white" />
               <input type="text" name="subcategory" placeholder="Subcategory" className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-slate-900 dark:text-white" />
               <input type="text" name="grade" placeholder="Grade" className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-slate-900 dark:text-white" />
               <input type="number" step="any" name="yield_strength_min" placeholder="Yield Strength (Min)" className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-slate-900 dark:text-white" />

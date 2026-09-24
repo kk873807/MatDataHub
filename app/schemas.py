@@ -257,8 +257,14 @@ class TransactionOut(BaseModel):
 class CustomMaterialCreate(BaseModel):
     name: str
     category: str
-    density: Optional[float] = None
+    source_url: str
+    subcategory: Optional[str] = None
+    grade: Optional[str] = None
+    description: Optional[str] = None
+    yield_strength_min: Optional[float] = None
     tensile_strength_min: Optional[float] = None
+    elastic_modulus: Optional[float] = None
+    density: Optional[float] = None
     cost_per_kg_min: Optional[float] = None
 
 class CustomMaterialResponse(CustomMaterialCreate):
