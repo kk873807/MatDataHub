@@ -9,7 +9,7 @@ from datetime import datetime
 
 class MaterialBase(BaseModel):
     """Fields shared by create and response schemas."""
-    name: str = Field(..., max_length=255) = Field(..., min_length=1, max_length=200, examples=["AISI 304 Stainless Steel"])
+    name: str = Field(..., min_length=1, max_length=200, examples=["AISI 304 Stainless Steel"])
     category: Optional[str] = Field(None, max_length=50, examples=["Metal"])
     subcategory: Optional[str] = Field(None, max_length=100, examples=["Stainless Steel"])
     grade: Optional[str] = Field(None, max_length=100, examples=["304"])
@@ -172,7 +172,7 @@ class FeedbackCreate(BaseModel):
     """Body sent by the frontend when a user submits feedback."""
     name: Optional[str] = Field(None, max_length=100)
     email: Optional[str] = Field(None, max_length=255)
-    category: str = Field(..., max_length=100) = Field("General Feedback", max_length=50)
+    category: str = Field("General Feedback", max_length=50)
     message: str = Field(..., min_length=3, max_length=2000, examples=["Would love a dark mode toggle!"])
     rating: Optional[int] = Field(None, ge=1, le=5)
     page_context: Optional[str] = Field(None, max_length=100, examples=["Feedback Tab"])

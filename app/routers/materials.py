@@ -14,7 +14,9 @@ Endpoints:
     GET  /materials/{id}     - Get one material by ID — public
     POST /materials          - Add a new material
 """
+from fastapi import APIRouter
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from datetime import datetime, timedelta
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 
@@ -638,6 +640,35 @@ def create_custom_material(
     if current_user.tier != "advanced" and not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Custom Materials are exclusively available on the Advanced tier.")
     
+    # --- Anti-Spam & Rate Limiting ---
+    one_minute_ago = datetime.utcnow() - timedelta(minutes=1)
+    recent_count = db.query(CustomMaterial).filter(
+        CustomMaterial.user_id == current_user.id,
+        CustomMaterial.created_at >= one_minute_ago
+    ).count()
+    if recent_count >= 5:
+        raise HTTPException(status_code=429, detail="Rate limit exceeded. Please wait a minute before adding more materials.")
+
+    one_day_ago = datetime.utcnow() - timedelta(days=1)
+    daily_count = db.query(CustomMaterial).filter(
+        CustomMaterial.user_id == current_user.id,
+        CustomMaterial.created_at >= one_day_ago
+    ).count()
+    if daily_count >= 50:
+        raise HTTPException(status_code=429, detail="Daily limit reached. You can only add up to 50 materials per 24 hours.")
+
+    # --- Duplicate Prevention ---
+    existing_name = db.query(CustomMaterial).filter(
+        CustomMaterial.user_id == current_user.id,
+        CustomMaterial.name.ilike(mat.name)
+    ).first()
+    if existing_name:
+        raise HTTPException(status_code=400, detail=f"You have already added a material named '{mat.name}'.")
+
+    existing_url = db.query(CustomMaterial).filter(CustomMaterial.source_url == str(mat.source_url)).first()
+    if existing_url:
+        raise HTTPException(status_code=400, detail="This Source URL has already been added to the database. Duplicate links are not permitted.")
+
     if not getattr(mat, 'source_url', None) or not str(mat.source_url).startswith('http'):
         raise HTTPException(status_code=400, detail="A valid source_url (http/https) is required.")
         
