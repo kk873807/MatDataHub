@@ -9,7 +9,7 @@ import razorpay
 
 from app.database import get_db
 from app.models import User, Transaction
-from app.auth import get_current_user
+from app.auth import get_current_user, generate_api_credentials
 from pydantic import BaseModel
 
 router = APIRouter(prefix="/payments", tags=["Payments"])
@@ -146,6 +146,12 @@ async def razorpay_webhook(request: Request, db: Session = Depends(get_db)):
                         user.tier = tier
                         user.upgrade_status = None
                         user.requested_tier = None
+                        
+                        # Generate API credentials for Advanced users if they don't have them
+                        if tier == "advanced" and not user.api_key:
+                            raw_key, raw_secret = generate_api_credentials()
+                            user.api_key = raw_key
+                            user.api_secret = raw_secret
                     
                 # Always record transaction for audit trail, even if user was deleted mid-payment
                 amount_paid = (entity.get("amount") or 0) / 100.0  # Convert paise to INR
