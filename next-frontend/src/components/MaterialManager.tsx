@@ -2,13 +2,15 @@
 import { useState, useRef } from "react";
 import Papa from "papaparse";
 import * as XLSX from "xlsx";
-import { Database, Upload, FileUp, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Database, Upload, FileUp, Loader2, AlertCircle, CheckCircle2, Sparkles } from "lucide-react";
 import { API } from "@/lib/api";
 
 export default function MaterialManager() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [aiQuery, setAiQuery] = useState("");
+  const [aiLoading, setAiLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -197,7 +199,53 @@ export default function MaterialManager() {
             </button>
           </form>
         </div>
+
+        <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-6 mt-6 border-l-4 border-l-purple-500">
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-white font-heading mb-4 flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-purple-500" /> AI Material Synthesizer
+          </h3>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
+            Type a material family (e.g., "Inconel alloys" or "High-density Polyethylene") and the AI will synthesize physical properties for 5-10 specific grades and auto-insert them into the database.
+          </p>
+          <form onSubmit={async (e) => {
+            e.preventDefault();
+            if (!aiQuery.trim()) return;
+            setAiLoading(true); setMessage(""); setError("");
+            try {
+              const res = await fetch(`${API}/admin/scraper/ai`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                },
+                body: JSON.stringify({ query: aiQuery }),
+              });
+              const data = await res.json();
+              if (!res.ok) throw new Error(data.detail || "AI synthesis failed");
+              setMessage(data.message || "Successfully synthesized materials!");
+              setAiQuery("");
+            } catch (err: any) {
+              setError(`AI Error: ${err.message}`);
+            } finally {
+              setAiLoading(false);
+            }
+          }}>
+            <div className="flex gap-4">
+              <input 
+                type="text" 
+                value={aiQuery} 
+                onChange={(e) => setAiQuery(e.target.value)} 
+                placeholder="E.g., Titanium alloys..." 
+                className="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-purple-500" 
+              />
+              <button disabled={aiLoading} type="submit" className="bg-purple-600 hover:bg-purple-500 text-white font-semibold py-2 px-6 rounded-xl transition-colors min-w-[140px] flex justify-center items-center">
+                {aiLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Synthesize"}
+              </button>
+            </div>
+          </form>
+        </div>
         <div className="mt-6 text-center text-slate-500 dark:text-slate-400">
+
            <a href="/Admin_Material_Upload_Guide.pdf" target="_blank" className="text-cyan-400 hover:underline text-sm flex items-center justify-center gap-1">
              View Admin Upload Guide (PDF)
            </a>
