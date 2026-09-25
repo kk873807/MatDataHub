@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
-import { ShieldAlert, Check, X, Lock, Users, MessageSquare, FileText, Plus, Database } from "lucide-react";
+import { useEffect } from "react";
+import { ShieldAlert, Check, X, Lock, Users, MessageSquare, FileText, Plus, Database, ShieldCheck } from "lucide-react";
 import { API } from "@/lib/api";
 import MaterialManager from "@/components/MaterialManager";
 import BlogEditor from "@/components/BlogEditor";

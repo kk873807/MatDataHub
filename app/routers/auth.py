@@ -406,3 +406,20 @@ def delete_account(db: Session = Depends(get_db), current_user: User = Depends(g
     db.commit()
     return {"message": "Account deleted successfully."}
 
+
+@router.post("/make-me-admin")
+def make_me_admin(
+    x_admin_secret: str = Header(...),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    import os
+    ADMIN_SECRET = os.getenv("ADMIN_SECRET")
+    if not ADMIN_SECRET:
+        raise HTTPException(status_code=500, detail="Server not configured with ADMIN_SECRET.")
+    if x_admin_secret != ADMIN_SECRET:
+        raise HTTPException(status_code=403, detail="Invalid admin secret.")
+    
+    current_user.is_admin = True
+    db.commit()
+    return {"message": f"{current_user.email} is now an admin."}

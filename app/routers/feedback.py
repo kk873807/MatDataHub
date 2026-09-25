@@ -74,12 +74,7 @@ def _check_rate_limit(ip: str):
     timestamps.append(now)
 
 
-def verify_admin(x_admin_secret: str = Header(...)):
-    if not ADMIN_SECRET:
-        raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, "Admin access not configured.")
-    if x_admin_secret != ADMIN_SECRET:
-        raise HTTPException(status.HTTP_403_FORBIDDEN, "Invalid admin credentials.")
-    return True
+from app.routers.admin import verify_admin
 
 
 @router.post("/", response_model=FeedbackResponse)

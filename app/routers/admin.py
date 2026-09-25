@@ -17,12 +17,12 @@ router = APIRouter(prefix="/admin", tags=["Admin"])
 ADMIN_SECRET = os.getenv("ADMIN_SECRET")
 
 
-def verify_admin(x_admin_secret: str = Header(...)):
-    if not ADMIN_SECRET:
-        raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, "Admin access not configured.")
-    if x_admin_secret != ADMIN_SECRET:
-        raise HTTPException(status.HTTP_403_FORBIDDEN, "Invalid admin credentials.")
-    return True
+from app.auth import get_current_user
+
+def verify_admin(current_user: User = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "Access denied. Admin privileges required.")
+    return current_user
 
 
 @router.get("/upgrade-requests", response_model=list[PendingRequestOut])
