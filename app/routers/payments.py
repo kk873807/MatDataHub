@@ -169,6 +169,11 @@ async def razorpay_webhook(request: Request, db: Session = Depends(get_db)):
                     
         return {"status": "ok"}
     except Exception as e:
+        # If it's a duplicate due to race condition (IntegrityError on unique payment_id), just return 200 OK
+        if "IntegrityError" in str(type(e)):
+            db.rollback()
+            return {"status": "ok", "detail": "Already processed (concurrent)"}
+        
         # Raise 500 so Razorpay properly retries the webhook in case of database downtime
         import traceback
         traceback.print_exc()

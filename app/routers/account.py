@@ -14,7 +14,7 @@ def get_transactions(db: Session = Depends(get_db), current_user: User = Depends
     return db.query(Transaction).filter(Transaction.user_id == current_user.id).order_by(Transaction.created_at.desc()).all()
 
 
-import secrets
+from app.auth import get_current_user, generate_api_credentials
 
 @router.post("/generate-api-key")
 def generate_api_key(
@@ -24,20 +24,16 @@ def generate_api_key(
     if current_user.tier != "advanced":
         raise HTTPException(status_code=403, detail="API Keys are strictly reserved for the Advanced (Enterprise) tier.")
         
-    import hashlib
-    import base64
-    # Generate an API Key ID and a Secret
-    key_id = "mdh_key_" + secrets.token_hex(8)
-    raw_secret = "mdh_secret_" + secrets.token_hex(24)
+    # Generate API credentials matching the rest of the application
+    raw_key, raw_secret = generate_api_credentials()
     
-    # We only store the hash of the secret for authentication.
-    hashed_secret = hashlib.sha256(raw_secret.encode('utf-8')).hexdigest()
-    current_user.api_key = hashed_secret
+    current_user.api_key = raw_key
+    current_user.api_secret = raw_secret
     db.commit()
     
     return {
         "ok": True, 
-        "api_key_id": key_id,
+        "api_key_id": raw_key,
         "api_secret": raw_secret,
         "message": "API Key generated successfully!"
     }
