@@ -12,24 +12,18 @@ instance would have its own counter). Fine for a single-instance Render
 free/starter deployment; swap for a Redis- or DB-backed limiter if you scale
 horizontally.
 """
-import os
 import time
 from collections import defaultdict
 
-from fastapi import APIRouter, Depends, HTTPException, Header, Request, status, BackgroundTasks
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models import Feedback, User
 from app.schemas import FeedbackCreate, FeedbackOut, FeedbackResponse
 from app.auth import get_optional_user, get_current_user
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 
 router = APIRouter(prefix="/feedback", tags=["Feedback"])
-
-ADMIN_SECRET = os.getenv("ADMIN_SECRET")
 
 # ── Rate limit config ──
 COOLDOWN_SECONDS = 60        # min gap between two submissions from the same IP

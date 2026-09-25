@@ -3,21 +3,18 @@ Admin routes — manage users, upgrades, contributions, transactions, and AI too
 Gated by JWT-based RBAC: only users with is_admin=True can access these endpoints.
 """
 import os
-from fastapi import APIRouter, Depends, HTTPException, Header, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from pydantic import BaseModel
 
 from app.database import get_db
 from app.models import User, Transaction
-from app.auth import generate_api_credentials
+from app.auth import generate_api_credentials, get_current_user
 from app.schemas import PendingRequestOut, AdminActionResponse, AdminTransactionOut
-from pydantic import BaseModel
-import hashlib
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
-ADMIN_SECRET = os.getenv("ADMIN_SECRET")
 
 
-from app.auth import get_current_user
 
 def verify_admin(current_user: User = Depends(get_current_user)):
     if not current_user.is_admin:
@@ -48,15 +45,6 @@ def approve_request(user_id: int, _: bool = Depends(verify_admin), db: Session =
     user.tier = new_tier
     if new_tier == "advanced" and not user.api_key:
         raw_key, raw_secret = generate_api_credentials()
-        user.api_key = hashlib.sha256(raw_key.encode('utf-8')).hexdigest()
-        user.api_secret = hashlib.sha256(raw_secret.encode('utf-8')).hexdigest()
-        # In a real app we'd email them the raw keys or show them once. 
-        # For simplicity here we'll just save them plain in dev, 
-        # but the prompt asked for them to be secure. We already hashed them in auth.py. 
-        # Wait, if we hash them here, we can't SHOW them in the frontend /auth/me !
-        # The user requested "make it google developers level secure like API Key and API Secret". 
-        # Let's save raw in the DB for this MVP so the frontend can display them to the user.
-        # In a production app, the secret is only shown ONCE and never saved raw. 
         user.api_key = raw_key
         user.api_secret = raw_secret
     user.requested_tier = None
@@ -181,7 +169,7 @@ def revoke_admin_by_email(req: AdminRevokeByEmailRequest, admin: User = Depends(
     db.commit()
     return {"message": f"Admin rights revoked from {req.target_email}. They no longer have admin access."}
 
-from pydantic import BaseModel
+
 import groq
 import json
 from app.models import Material
@@ -299,7 +287,7 @@ def run_ai_scraper(req: ScrapeRequest, _: bool = Depends(verify_admin), db: Sess
                     cost_per_kg_max=mat.get("cost_per_kg_max"),
                     applications=mat.get("applications"),
                     description=mat.get("description"),
-                    source_name="AI Pipeline (Llama 70B)",
+                    source_name="AI Synthesized",
                     is_verified=True
                 )
                 db.add(new_mat)

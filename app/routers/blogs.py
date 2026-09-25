@@ -24,7 +24,7 @@ def get_blogs(db: Session = Depends(get_db)):
 
 @router.post("/")
 def create_blog(blog: BlogCreate, _: bool = Depends(verify_admin), db: Session = Depends(get_db)):
-    new_blog = Blog(**blog.dict())
+    new_blog = Blog(**blog.model_dump())
     db.add(new_blog)
     db.commit()
     db.refresh(new_blog)
