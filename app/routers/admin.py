@@ -146,6 +146,24 @@ def revoke_admin(user_id: int, admin: User = Depends(verify_admin), db: Session 
     return {"message": f"Admin rights revoked from {target.email}."}
 
 
+class AdminRevokeByEmailRequest(BaseModel):
+    target_email: str
+
+@router.post("/revoke-by-email")
+def revoke_admin_by_email(req: AdminRevokeByEmailRequest, admin: User = Depends(verify_admin), db: Session = Depends(get_db)):
+    """Revoke admin rights from a user by email."""
+    target = db.query(User).filter(User.email == req.target_email).first()
+    if not target:
+        raise HTTPException(404, f"No user found with email '{req.target_email}'.")
+    if target.id == admin.id:
+        raise HTTPException(400, "You cannot revoke your own admin rights.")
+    if not target.is_admin:
+        raise HTTPException(400, f"{req.target_email} is not an admin.")
+    
+    target.is_admin = False
+    db.commit()
+    return {"message": f"Admin rights revoked from {req.target_email}. They no longer have admin access."}
+
 from pydantic import BaseModel
 import groq
 import json

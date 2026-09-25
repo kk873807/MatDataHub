@@ -512,6 +512,35 @@ export default function AdminDashboard() {
                   </div>
                   <button type="submit" className="bg-purple-600 hover:bg-purple-500 text-white font-semibold py-2 px-5 rounded-lg transition-colors whitespace-nowrap">Grant Admin</button>
                 </form>
+
+                <hr className="border-slate-200 dark:border-slate-800" />
+
+                <p className="text-sm text-slate-500 dark:text-slate-400">Revoke admin rights from a user. Enter their email below.</p>
+                <form onSubmit={async (e) => {
+                  e.preventDefault();
+                  const email = (e.currentTarget.elements.namedItem("revoke_email") as HTMLInputElement).value;
+                  if (!email) return;
+                  if (!confirm(`REVOKE admin rights from ${email}? They will lose all admin access immediately.`)) return;
+                  try {
+                    // First we need the user ID — fetch all users isn't available, so we use a workaround:
+                    // Call the transfer endpoint logic but for revoke we need the user_id.
+                    // Let's search by email via a dedicated revoke-by-email endpoint.
+                    const res = await fetch(`${API}/admin/revoke-by-email`, {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("token")}` },
+                      body: JSON.stringify({ target_email: email }),
+                    });
+                    const data = await res.json();
+                    if (res.ok) { alert(data.message); (e.target as HTMLFormElement).reset(); }
+                    else alert(data.detail || "Failed to revoke admin rights.");
+                  } catch (err) { alert("Network error"); }
+                }} className="flex gap-3 items-end">
+                  <div className="flex-1">
+                    <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Admin Email to Revoke</label>
+                    <input type="email" name="revoke_email" required placeholder="user@example.com" className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500" />
+                  </div>
+                  <button type="submit" className="bg-red-600 hover:bg-red-500 text-white font-semibold py-2 px-5 rounded-lg transition-colors whitespace-nowrap">Revoke Admin</button>
+                </form>
               </div>
             </div>
 
