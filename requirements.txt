@@ -54,3 +54,4 @@ groq
 supabase
 pydantic
 python-dotenv
+psycopg[binary]>=3.0

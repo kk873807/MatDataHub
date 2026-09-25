@@ -13,8 +13,12 @@ load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./matdatahub_dev.db")
 
 # Supabase gives "postgres://..." but SQLAlchemy needs "postgresql://..."
-if DATABASE_URL.startswith("postgres://"):
-    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+if DATABASE_URL.startswith("postgres://") or DATABASE_URL.startswith("postgresql://"):
+    # SQLAlchemy 2.0+ highly recommends psycopg3. 
+    # Force the dialect to use postgresql+psycopg if not already set.
+    if not DATABASE_URL.startswith("postgresql+"):
+        DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+psycopg://", 1)
+        DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+psycopg://", 1)
 
 # For SQLite, we need connect_args to allow multi-threaded access
 if DATABASE_URL.startswith("sqlite"):
