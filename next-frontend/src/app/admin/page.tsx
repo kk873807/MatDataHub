@@ -482,6 +482,39 @@ export default function AdminDashboard() {
 
             <BlogEditor />
 
+            {/* Admin Management */}
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+              <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center gap-3 bg-slate-50 dark:bg-slate-950/50">
+                <ShieldCheck className="w-5 h-5 text-purple-600" />
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white font-heading">Admin Management</h2>
+              </div>
+              <div className="p-6 space-y-4">
+                <p className="text-sm text-slate-500 dark:text-slate-400">Grant admin rights to another registered user by entering their email address. You can also revoke admin rights later.</p>
+                <form onSubmit={async (e) => {
+                  e.preventDefault();
+                  const email = (e.currentTarget.elements.namedItem("target_email") as HTMLInputElement).value;
+                  if (!email) return;
+                  if (!confirm(`Grant admin rights to ${email}?`)) return;
+                  try {
+                    const res = await fetch(`${API}/admin/transfer`, {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("token")}` },
+                      body: JSON.stringify({ target_email: email }),
+                    });
+                    const data = await res.json();
+                    if (res.ok) { alert(data.message); (e.target as HTMLFormElement).reset(); }
+                    else alert(data.detail || "Failed to transfer admin rights.");
+                  } catch (err) { alert("Network error"); }
+                }} className="flex gap-3 items-end">
+                  <div className="flex-1">
+                    <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">User Email</label>
+                    <input type="email" name="target_email" required placeholder="user@example.com" className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500" />
+                  </div>
+                  <button type="submit" className="bg-purple-600 hover:bg-purple-500 text-white font-semibold py-2 px-5 rounded-lg transition-colors whitespace-nowrap">Grant Admin</button>
+                </form>
+              </div>
+            </div>
+
           </div>
         )}
       </div>

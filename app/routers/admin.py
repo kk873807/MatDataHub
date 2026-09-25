@@ -11,6 +11,7 @@ from app.database import get_db
 from app.models import User, Transaction
 from app.auth import generate_api_credentials
 from app.schemas import PendingRequestOut, AdminActionResponse, AdminTransactionOut
+from pydantic import BaseModel
 import hashlib
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
@@ -95,17 +96,54 @@ def block_user(user_id: int, _: bool = Depends(verify_admin), db: Session = Depe
     return {"message": f"User {user.email} blocked."}
 
 @router.delete("/users/{user_id}")
-def delete_user(user_id: int, _: bool = Depends(verify_admin), db: Session = Depends(get_db)):
+def delete_user(user_id: int, admin: User = Depends(verify_admin), db: Session = Depends(get_db)):
     """Admin-only: completely delete a user account and their data."""
+    if user_id == admin.id:
+        raise HTTPException(400, "You cannot delete your own admin account. Transfer admin rights first.")
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(404, "User not found.")
+    if user.is_admin:
+        raise HTTPException(400, "Cannot delete another admin. Revoke their admin rights first.")
     
-    # Due to SQLAlchemy cascades/relationships (if configured), this will delete associated data.
-    # If not fully cascaded, you might need to manually delete transactions, feedback, etc.
     db.delete(user)
     db.commit()
     return {"message": f"User {user.email} has been permanently deleted."}
+
+
+class AdminTransferRequest(BaseModel):
+    target_email: str
+
+@router.post("/transfer")
+def transfer_admin(req: AdminTransferRequest, admin: User = Depends(verify_admin), db: Session = Depends(get_db)):
+    """Transfer admin rights to another user by email. The current admin keeps their rights too."""
+    target = db.query(User).filter(User.email == req.target_email).first()
+    if not target:
+        raise HTTPException(404, f"No user found with email '{req.target_email}'.")
+    if target.is_admin:
+        raise HTTPException(400, f"{req.target_email} is already an admin.")
+    if target.is_blocked:
+        raise HTTPException(400, "Cannot grant admin rights to a blocked user.")
+    
+    target.is_admin = True
+    db.commit()
+    return {"message": f"Admin rights granted to {req.target_email}. Both accounts now have admin access."}
+
+
+@router.post("/revoke/{user_id}")
+def revoke_admin(user_id: int, admin: User = Depends(verify_admin), db: Session = Depends(get_db)):
+    """Revoke admin rights from another user. Cannot revoke your own rights."""
+    if user_id == admin.id:
+        raise HTTPException(400, "You cannot revoke your own admin rights.")
+    target = db.query(User).filter(User.id == user_id).first()
+    if not target:
+        raise HTTPException(404, "User not found.")
+    if not target.is_admin:
+        raise HTTPException(400, f"{target.email} is not an admin.")
+    
+    target.is_admin = False
+    db.commit()
+    return {"message": f"Admin rights revoked from {target.email}."}
 
 
 from pydantic import BaseModel
