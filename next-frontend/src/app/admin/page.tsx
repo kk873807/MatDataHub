@@ -9,6 +9,7 @@ import BlogEditor from "@/components/BlogEditor";
 export default function AdminDashboard() {
   const [secret, setSecret] = useState("");
   const [authed, setAuthed] = useState(false);
+  const [profile, setProfile] = useState<any>(null);
   const [requests, setRequests] = useState<any[]>([]);
   const [feedback, setFeedback] = useState<any[]>([]);
   const [contributions, setContributions] = useState<any[]>([]);
@@ -18,29 +19,66 @@ export default function AdminDashboard() {
   const [expandedUsers, setExpandedUsers] = useState<Record<number, boolean>>({});
   const toggleExpand = (userId: number) => setExpandedUsers(prev => ({ ...prev, [userId]: !prev[userId] }));
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    const cleanSecret = secret.trim();
-    if (!cleanSecret) return;
-    setAuthed(true);
-    fetchAdminData(cleanSecret);
+  useEffect(() => {
+    checkAdmin();
+  }, []);
+
+  const checkAdmin = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+    
+    try {
+      const res = await fetch(`${API}/auth/me`, { headers: { Authorization: `Bearer ${token}` } });
+      if (res.ok) {
+        const data = await res.json();
+        setProfile(data);
+        if (data.is_admin) {
+          setAuthed(true);
+          fetchAdminData(token);
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    setLoading(false);
   };
 
-  const fetchAdminData = async (adminSecret: string) => {
+  const handleClaimAdmin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(`${API}/auth/make-me-admin`, {
+        method: "POST",
+        headers: { "X-Admin-Secret": secret, "Authorization": `Bearer ${token}` }
+      });
+      if (res.ok) {
+        window.location.reload();
+      } else {
+        setError("Invalid system secret.");
+      }
+    } catch (e) {
+      setError("Network error");
+    }
+  };
+
+  const fetchAdminData = async (token: string) => {
     setLoading(true);
     try {
       const [reqRes, feedRes, contribRes, txnRes] = await Promise.all([
         fetch(`${API}/admin/upgrade-requests`, {
-          headers: { "X-Admin-Secret": adminSecret }
+          headers: { "Authorization": `Bearer ${token}` }
         }),
         fetch(`${API}/feedback/`, {
-          headers: { "X-Admin-Secret": adminSecret }
+          headers: { "Authorization": `Bearer ${token}` }
         }),
         fetch(`${API}/admin/user-contributions`, {
-          headers: { "X-Admin-Secret": adminSecret }
+          headers: { "Authorization": `Bearer ${token}` }
         }),
         fetch(`${API}/admin/transactions`, {
-          headers: { "X-Admin-Secret": adminSecret }
+          headers: { "Authorization": `Bearer ${token}` }
         })
       ]);
 
@@ -54,15 +92,19 @@ export default function AdminDashboard() {
       if (feedRes.ok) {
         setFeedback(await feedRes.json());
       }
+      
       if (contribRes.ok) {
-        setContributions(await contribRes.json());
+        const c = await contribRes.json();
+        setContributions(c.users || []);
       }
+      
       if (txnRes.ok) {
         setTransactions(await txnRes.json());
       }
+      
     } catch (err) {
-      setAuthed(false);
-      setError("Network error fetching admin data.");
+      console.error(err);
+      setError("Network Error");
     } finally {
       setLoading(false);
     }
@@ -72,7 +114,7 @@ export default function AdminDashboard() {
     try {
       const res = await fetch(`${API}/admin/contributions/${contribId}/${action}`, {
         method: "POST",
-        headers: { "X-Admin-Secret": secret }
+        headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
       });
       if (res.ok) {
         fetchAdminData(secret);
@@ -89,7 +131,7 @@ export default function AdminDashboard() {
     try {
       const res = await fetch(`${API}/admin/upgrade-requests/${userId}/${action}`, {
         method: "POST",
-        headers: { "X-Admin-Secret": secret }
+        headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
       });
       if (res.ok) {
         // Refresh list
@@ -110,7 +152,7 @@ export default function AdminDashboard() {
       if (action === "hide") { url += "/visibility"; method = "PATCH"; }
       if (action === "resolve") { url += "/resolve"; method = "POST"; }
       
-      const res = await fetch(url, { method, headers: { "X-Admin-Secret": secret } });
+      const res = await fetch(url, { method, headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` } });
       if (res.ok) fetchAdminData(secret);
     } catch (err) {
       console.error(err);
@@ -121,7 +163,7 @@ export default function AdminDashboard() {
     if (!confirm("Are you sure you want to block this user?")) return;
     try {
       const res = await fetch(`${API}/admin/users/${userId}/block`, {
-        method: "POST", headers: { "X-Admin-Secret": secret }
+        method: "POST", headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
       });
       if (res.ok) {
         alert("User blocked successfully.");
@@ -147,33 +189,61 @@ export default function AdminDashboard() {
     }
   };
 
+  if (loading) return <div className="p-12 text-center text-slate-500">Loading Admin Dashboard...</div>;
+
+  if (!profile) {
+    return (
+      <main className="flex justify-center items-center min-h-[80vh] p-6">
+        <div className="text-center space-y-4">
+          <ShieldAlert className="w-12 h-12 text-red-500 mx-auto" />
+          <h1 className="text-2xl font-bold">Access Denied</h1>
+          <p className="text-slate-500">You must be logged in to view this page.</p>
+          <button onClick={() => window.location.href='/?login=true'} className="px-6 py-2 bg-blue-600 text-white rounded-xl">Go to Login</button>
+        </div>
+      </main>
+    );
+  }
+
   if (!authed) {
     return (
-      <main className="flex flex-col items-center justify-center min-h-[80vh] p-6">
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-8 w-full max-w-md shadow-2xl">
-          <div className="w-16 h-16 bg-red-100 dark:bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
-            <ShieldAlert className="w-8 h-8 text-red-500" />
-          </div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white font-heading text-center mb-2">Admin Portal</h1>
-          <p className="text-slate-500 dark:text-slate-400 text-sm text-center mb-8">Restricted access. Enter your administrative secret to proceed.</p>
-          
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div>
-              <input 
-                type="password" 
-                value={secret} 
-                onChange={e => setSecret(e.target.value)} 
-                placeholder="ADMIN_SECRET"
-                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-3 text-slate-900 dark:text-white focus:border-red-500 transition-colors outline-none"
-                required
-              />
+      <main className="flex justify-center items-center min-h-[80vh] p-6">
+        <form onSubmit={handleClaimAdmin} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-2xl w-full max-w-sm shadow-2xl flex flex-col gap-6">
+          <div className="flex justify-center">
+            <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 text-blue-600 rounded-full flex items-center justify-center">
+              <ShieldCheck className="w-8 h-8" />
             </div>
-            {error && <p className="text-red-600 dark:text-red-400 text-sm text-center">{error}</p>}
-            <button type="submit" className="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-3 rounded-2xl transition-colors flex justify-center items-center gap-2">
-              <Lock className="w-4 h-4" /> Authenticate
+          </div>
+          <div className="text-center space-y-2">
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-white font-heading">Claim Admin Rights</h1>
+            <p className="text-slate-500 dark:text-slate-400 text-sm">Enter the root system secret to permanently make {profile.email} an admin.</p>
+          </div>
+          
+          <div className="space-y-4">
+            <div>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                <input 
+                  type="password"
+                  value={secret}
+                  onChange={e => setSecret(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-blue-500 outline-none transition-shadow"
+                  placeholder="System Secret (ADMIN_SECRET)"
+                  autoFocus
+                />
+              </div>
+            </div>
+            
+            {error && <p className="text-red-500 text-sm font-medium text-center">{error}</p>}
+            
+            <button 
+              type="submit"
+              disabled={loading}
+              className="w-full py-3 bg-slate-900 hover:bg-slate-800 dark:bg-blue-600 dark:hover:bg-blue-700 text-white rounded-xl font-bold transition-colors disabled:opacity-50"
+            >
+              Make Me Admin
             </button>
-          </form>
-        </div>
+          </div>
+        </form>
       </main>
     );
   }
