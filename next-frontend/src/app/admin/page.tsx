@@ -117,7 +117,7 @@ export default function AdminDashboard() {
         headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
       });
       if (res.ok) {
-        fetchAdminData(secret);
+        fetchAdminData(localStorage.getItem("token") || "");
       } else {
         const err = await res.json();
         alert(err.detail || "Failed to perform action");
@@ -135,7 +135,7 @@ export default function AdminDashboard() {
       });
       if (res.ok) {
         // Refresh list
-        fetchAdminData(secret);
+        fetchAdminData(localStorage.getItem("token") || "");
       } else {
         const err = await res.json();
         alert(err.detail || "Failed to perform action");
@@ -153,7 +153,7 @@ export default function AdminDashboard() {
       if (action === "resolve") { url += "/resolve"; method = "POST"; }
       
       const res = await fetch(url, { method, headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` } });
-      if (res.ok) fetchAdminData(secret);
+      if (res.ok) fetchAdminData(localStorage.getItem("token") || "");
     } catch (err) {
       console.error(err);
     }
@@ -167,7 +167,7 @@ export default function AdminDashboard() {
       });
       if (res.ok) {
         alert("User blocked successfully.");
-        fetchAdminData(secret);
+        fetchAdminData(localStorage.getItem("token") || "");
       }
     } catch (err) {
       console.error(err);
@@ -183,7 +183,7 @@ export default function AdminDashboard() {
         headers: { "X-Admin-Secret": secret, "Content-Type": "application/json" },
         body: JSON.stringify({ reply_text: replyText })
       });
-      if (res.ok) fetchAdminData(secret);
+      if (res.ok) fetchAdminData(localStorage.getItem("token") || "");
     } catch (err) {
       console.error(err);
     }
@@ -264,7 +264,7 @@ export default function AdminDashboard() {
         ) : (
           <div className="space-y-8">
             
-            <MaterialManager secret={secret} />
+            <MaterialManager />
             
             {/* Billing & Transactions */}
             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-xl">
@@ -480,7 +480,7 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            <BlogEditor secret={secret} />
+            <BlogEditor />
 
           </div>
         )}

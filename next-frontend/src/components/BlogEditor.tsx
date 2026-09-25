@@ -3,7 +3,7 @@ import { useState } from "react";
 import { FileText, Plus, Loader2 } from "lucide-react";
 import { API } from "@/lib/api";
 
-export default function BlogEditor({ secret }: { secret: string }) {
+export default function BlogEditor() {
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState("");
@@ -24,7 +24,7 @@ export default function BlogEditor({ secret }: { secret: string }) {
     };
     try {
       const res = await fetch(`${API}/blogs/`, {
-        method: "POST", headers: { "Content-Type": "application/json", "X-Admin-Secret": secret },
+        method: "POST", headers: { "Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("token")}` },
         body: JSON.stringify(payload)
       });
       if(res.ok) { setMessage("Blog posted successfully!"); (e.target as HTMLFormElement).reset(); setIsOpen(false); }

@@ -5,7 +5,7 @@ import * as XLSX from "xlsx";
 import { Database, Upload, FileUp, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
 import { API } from "@/lib/api";
 
-export default function MaterialManager({ secret }: { secret: string }) {
+export default function MaterialManager() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -76,7 +76,7 @@ export default function MaterialManager({ secret }: { secret: string }) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-Admin-Secret": secret,
+          "Authorization": `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify(cleanedData),
       });
@@ -164,7 +164,7 @@ export default function MaterialManager({ secret }: { secret: string }) {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
-                  "X-Admin-Secret": secret,
+                  "Authorization": `Bearer ${localStorage.getItem("token")}`,
                 },
                 body: JSON.stringify(mat),
               });
