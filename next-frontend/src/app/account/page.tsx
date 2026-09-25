@@ -58,8 +58,8 @@ function AccountDashboardInner() {
   const fetchProfile = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
-      setError("Not logged in");
-      setLoading(false);
+      // Force redirect to login if no token is found, preventing infinite "Authenticating..." spinner
+      window.location.href = "/?login=true";
       return;
     }
 

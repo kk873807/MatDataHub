@@ -2,6 +2,8 @@ import os
 import hmac
 import hashlib
 from fastapi import APIRouter, Depends, HTTPException, Request
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 from sqlalchemy.orm import Session
 import razorpay
 
@@ -11,6 +13,8 @@ from app.auth import get_current_user
 from pydantic import BaseModel
 
 router = APIRouter(prefix="/payments", tags=["Payments"])
+
+limiter = Limiter(key_func=get_remote_address)
 
 RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID", "")
 RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET", "")
@@ -26,7 +30,8 @@ class CreateLinkRequest(BaseModel):
     callback_url: Optional[str] = None
 
 @router.post("/create-link")
-def create_payment_link(req: CreateLinkRequest, current_user: User = Depends(get_current_user)):
+@limiter.limit("5/minute")
+def create_payment_link(request: Request, req: CreateLinkRequest, current_user: User = Depends(get_current_user)):
     if not client:
         raise HTTPException(status_code=500, detail="Razorpay is not configured on the server.")
         
@@ -70,6 +75,8 @@ def create_payment_link(req: CreateLinkRequest, current_user: User = Depends(get
         }
         
         if req.callback_url:
+            if not req.callback_url.startswith(("http://", "https://")):
+                raise HTTPException(status_code=400, detail="Invalid callback URL.")
             payment_link_data["callback_url"] = req.callback_url
             payment_link_data["callback_method"] = "get"
         
