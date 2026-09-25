@@ -201,7 +201,7 @@ class Transaction(Base):
     currency = Column(String(10), default="INR")
     tier_purchased = Column(String(50), nullable=False)
     status = Column(String(20), default="completed") # completed, failed, pending
-    payment_id = Column(String(100), nullable=True)  # e.g., razorpay_payment_id or stripe_id
+    payment_id = Column(String(100), nullable=True, unique=True)  # e.g., razorpay_payment_id or stripe_id
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 
