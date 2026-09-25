@@ -1,7 +1,6 @@
 """
-Admin routes — approve/reject tier upgrade requests.
-Gated by a shared secret (ADMIN_SECRET env var) sent as X-Admin-Secret header.
-This is a single-operator gate, not full RBAC.
+Admin routes — manage users, upgrades, contributions, transactions, and AI tools.
+Gated by JWT-based RBAC: only users with is_admin=True can access these endpoints.
 """
 import os
 from fastapi import APIRouter, Depends, HTTPException, Header, status
@@ -86,7 +85,7 @@ def reject_request(user_id: int, _: bool = Depends(verify_admin), db: Session = 
     return AdminActionResponse(message=f"Rejected {user.email}'s request for {rejected}.", user_email=user.email, tier=user.tier)
 
 @router.post("/users/{user_id}/block")
-def block_user(user_id: int, _: bool = Depends(verify_admin), db: Session = Depends(get_db)):
+def block_user(user_id: int, _: User = Depends(verify_admin), db: Session = Depends(get_db)):
     """Admin-only: block a user."""
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
@@ -94,6 +93,18 @@ def block_user(user_id: int, _: bool = Depends(verify_admin), db: Session = Depe
     user.is_blocked = True
     db.commit()
     return {"message": f"User {user.email} blocked."}
+
+@router.post("/users/{user_id}/unblock")
+def unblock_user(user_id: int, _: User = Depends(verify_admin), db: Session = Depends(get_db)):
+    """Admin-only: unblock a user."""
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(404, "User not found.")
+    if not user.is_blocked:
+        raise HTTPException(400, f"{user.email} is not blocked.")
+    user.is_blocked = False
+    db.commit()
+    return {"message": f"User {user.email} unblocked."}
 
 @router.delete("/users/{user_id}")
 def delete_user(user_id: int, admin: User = Depends(verify_admin), db: Session = Depends(get_db)):
@@ -105,6 +116,12 @@ def delete_user(user_id: int, admin: User = Depends(verify_admin), db: Session =
         raise HTTPException(404, "User not found.")
     if user.is_admin:
         raise HTTPException(400, "Cannot delete another admin. Revoke their admin rights first.")
+    
+    # Clean up orphan data before deleting the user
+    from app.models import Feedback, Project
+    db.query(Transaction).filter(Transaction.user_id == user.id).delete()
+    db.query(Feedback).filter(Feedback.user_id == user.id).update({"user_id": None})
+    db.query(Project).filter(Project.user_id == user.id).delete()
     
     db.delete(user)
     db.commit()
@@ -354,7 +371,7 @@ def approve_contribution(contrib_id: int, db: Session = Depends(get_db), _: bool
         category=contrib.category,
         subcategory=contrib.subcategory,
         grade=contrib.grade,
-        standard=contrib.grade,
+        standard=getattr(contrib, 'standard', None),
         source_name="User Contributed",
         description=contrib.description,
         source_url=contrib.source_url,
@@ -369,7 +386,11 @@ def approve_contribution(contrib_id: int, db: Session = Depends(get_db), _: bool
         thermal_conductivity=contrib.thermal_conductivity,
         specific_heat=contrib.specific_heat,
         melting_point_min=contrib.melting_point,
-        max_service_temp=contrib.max_service_temp
+        max_service_temp=contrib.max_service_temp,
+        cost_per_kg_min=getattr(contrib, 'cost_per_kg_min', None),
+        cost_per_kg_max=getattr(contrib, 'cost_per_kg_max', None),
+        applications=getattr(contrib, 'applications', None),
+        is_verified=True,
     )
     db.add(new_mat)
     contrib.status = "approved"

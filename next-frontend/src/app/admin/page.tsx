@@ -86,7 +86,7 @@ export default function AdminDashboard() {
         setRequests(await reqRes.json());
       } else {
         setAuthed(false);
-        setError("Invalid Admin Secret.");
+        setError("Failed to load admin data. Session may have expired.");
       }
 
       if (feedRes.ok) {
@@ -95,7 +95,7 @@ export default function AdminDashboard() {
       
       if (contribRes.ok) {
         const c = await contribRes.json();
-        setContributions(c.users || []);
+        setContributions(c);
       }
       
       if (txnRes.ok) {
@@ -180,7 +180,7 @@ export default function AdminDashboard() {
     try {
       const res = await fetch(`${API}/feedback/${fbId}/reply`, {
         method: "POST",
-        headers: { "X-Admin-Secret": secret, "Content-Type": "application/json" },
+        headers: { "Authorization": `Bearer ${localStorage.getItem("token")}`, "Content-Type": "application/json" },
         body: JSON.stringify({ reply_text: replyText })
       });
       if (res.ok) fetchAdminData(localStorage.getItem("token") || "");
