@@ -94,6 +94,19 @@ def block_user(user_id: int, _: bool = Depends(verify_admin), db: Session = Depe
     db.commit()
     return {"message": f"User {user.email} blocked."}
 
+@router.delete("/users/{user_id}")
+def delete_user(user_id: int, _: bool = Depends(verify_admin), db: Session = Depends(get_db)):
+    """Admin-only: completely delete a user account and their data."""
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(404, "User not found.")
+    
+    # Due to SQLAlchemy cascades/relationships (if configured), this will delete associated data.
+    # If not fully cascaded, you might need to manually delete transactions, feedback, etc.
+    db.delete(user)
+    db.commit()
+    return {"message": f"User {user.email} has been permanently deleted."}
+
 
 from pydantic import BaseModel
 import groq
