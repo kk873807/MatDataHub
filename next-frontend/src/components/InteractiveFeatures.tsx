@@ -5,7 +5,7 @@ import {
   Search, SlidersHorizontal, Share2, 
   FolderKanban, ShieldAlert, Thermometer, Activity, AlignEndVertical, IndianRupee,
   Scale, Replace, Factory, Layers,
-  MessageSquare, BookOpen, Lightbulb
+  MessageSquare, BookOpen, Lightbulb, ShieldCheck, Cpu
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -60,6 +60,18 @@ const features = [
       { name: "Context-Aware Chat", desc: "Engineering-focused conversational AI.", icon: MessageSquare, use: "Open the floating widget on any page to ask highly technical questions about materials and physics." },
       { name: "Standard Lookups", desc: "Cross-reference global indices.", icon: BookOpen, use: "Ask the AI to find exact equivalents (e.g., 'What is the DIN equivalent of ASTM A36?')." },
       { name: "Design Recommendations", desc: "Constraint-based material selection.", icon: Lightbulb, use: "Describe your environment (e.g., 'high-strength alloy for a corrosive marine environment') and receive tailored suggestions." }
+    ]
+  },
+  {
+    id: "admin",
+    title: "Admin, API & Growth",
+    desc: "Enterprise-grade access control, API provisioning, and automated DB expansion.",
+    icon: ShieldCheck,
+    color: "bg-purple-600",
+    tools: [
+      { name: "Role-Based Access (RBAC)", desc: "Secure multi-user permissions.", icon: ShieldCheck, use: "JWT-based true RBAC to safely manage admin capabilities, block users, and audit platform security." },
+      { name: "AI Material Synthesizer", desc: "Automated DB expansion.", icon: Bot, use: "Admins can type a material family (e.g., 'Inconel') and the Groq LLM instantly synthesizes properties for multiple specific grades directly into the database." },
+      { name: "Developer API Access", desc: "Programmatic platform integration.", icon: Cpu, use: "Advanced tier users can generate secure API keys (Client ID & Secret) to query the material database directly from their own Python or Node.js backends." }
     ]
   }
 ];

@@ -81,10 +81,10 @@ export default function LandingPage() {
             </div>
             <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-6 font-heading leading-tight">
               Find the right material. <br />
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-cyan-400">Know why it&apos;s right.</span>
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-cyan-400">Synthesize what&apos;s missing.</span>
             </h1>
             <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed font-light">
-              Search 6500+ engineering materials, compare them side-by-side, predict costs, and let AI recommend the best fit — all before you cut a single prototype.
+              Search 6500+ engineering materials, let AI instantly synthesize custom grades, and integrate via API — pay once, use forever.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
               {authChecked && !isLoggedIn && (
@@ -98,8 +98,8 @@ export default function LandingPage() {
             <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
               {[
                 { value: "6500+", label: "Verified Materials" },
-                { value: "15+", label: "Material Properties" },
-                { value: "AI", label: "Powered Analysis" },
+                { value: "AI", label: "Material Synthesizer" },
+                { value: "API", label: "Developer Access" },
               ].map((stat, i) => (
                 <div key={i} className="text-center">
                   <div className="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white">{stat.value}</div>
@@ -259,8 +259,8 @@ export default function LandingPage() {
       <section id="pricing" className="py-24 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4 font-heading">Start free. Scale when you need to.</h2>
-            <p className="text-slate-600 dark:text-slate-400">No credit card required. Upgrade only when you need the full database, advanced AI, or enterprise compliance tools.</p>
+            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4 font-heading">Pay Once. Use Forever. Lifetime Deals.</h2>
+            <p className="text-slate-600 dark:text-slate-400">Skip the monthly subscriptions. Grab a lifetime deal before we switch to monthly pricing. No credit card required to start free.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             
