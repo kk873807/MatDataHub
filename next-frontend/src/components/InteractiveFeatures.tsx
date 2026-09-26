@@ -11,15 +11,6 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const features = [
   {
-    id: "cbam",
-    title: "CBAM Estimator",
-    description: "Instantly estimate EU carbon tax liability for material exports before you ship.",
-    icon: Leaf,
-    color: "bg-emerald-500",
-    tools: [],
-  },
-
-  {
     id: "database",
     title: "Parametric Database",
     desc: "Search, filter, and extract verified material properties from our global database.",

@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, BookOpen, Database, Target, BrainCircuit, ShieldCheck, Cpu, TestTube2, CheckCircle2, MessageSquare, ThumbsUp } from "lucide-react";
 import { API } from "@/lib/api";
 import { InteractiveFeatures } from "@/components/InteractiveFeatures";
+import { CbamLeadMagnet } from "@/components/CbamLeadMagnet";
 
 export default function LandingPage() {
   const [currency, setCurrency] = useState<"INR" | "USD" | "EUR">("USD");
@@ -260,6 +261,8 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      <CbamLeadMagnet />
 
       {/* Pricing */}
       <section id="pricing" className="py-24 px-6">
