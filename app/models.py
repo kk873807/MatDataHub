@@ -119,6 +119,9 @@ class User(Base):
 
     # Tier: "free", "pro", "advanced"
     tier = Column(String(20), default="free", nullable=False)
+    
+    # AI usage limits (defends against free users draining LLM budget)
+    ai_credits = Column(Integer, default=5, nullable=False)
 
     # API key and Secret for programmatic access (Advanced tier only)
     api_key = Column(String(64), unique=True, nullable=True, index=True)

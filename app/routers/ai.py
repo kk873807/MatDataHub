@@ -43,7 +43,11 @@ def get_ai_advice(req: AIRequest, current_user: User = Depends(get_current_user)
         raise HTTPException(status_code=500, detail="Groq API is not configured on the server.")
         
     if current_user.tier == "free" and not current_user.is_admin:
-        raise HTTPException(status_code=403, detail="AI Advisor is a Premium feature. Please upgrade to Pro or Advanced.")
+        if current_user.ai_credits > 0:
+            current_user.ai_credits -= 1
+            db.commit()
+        else:
+            raise HTTPException(status_code=403, detail="You have used all your free AI credits! Please upgrade to Pro or Advanced for unlimited access.")
 
     # STEP 1: Extract Constraints
     system_prompt_extract = """

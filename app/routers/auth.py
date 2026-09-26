@@ -338,7 +338,8 @@ def get_profile(current_user: User = Depends(get_current_user), db: Session = De
         "created_at": current_user.created_at,
         "requested_tier": current_user.requested_tier,
         "upgrade_status": current_user.upgrade_status,
-        "saved_count": saved_count
+        "saved_count": saved_count,
+        "ai_credits": current_user.ai_credits
     }
     return profile_data
 
