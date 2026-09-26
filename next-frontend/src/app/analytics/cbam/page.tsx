@@ -96,8 +96,9 @@ export default function CBAMAnalytics() {
         alert("Please enter both material and weight.");
         return;
       }
-      // Generate virtual CSV
-      const csvContent = `Material,Weight_kg\n${manualMaterial},${manualWeight}\n`;
+      // Generate virtual CSV with proper quoting to handle commas in material names
+      const escapedMaterial = manualMaterial.includes(",") ? `"${manualMaterial.replace(/"/g, '""')}"` : manualMaterial;
+      const csvContent = `Material,Weight_kg\n${escapedMaterial},${manualWeight}\n`;
       payloadFile = new File([csvContent], "manual_entry.csv", { type: "text/csv" });
       payloadMatCol = "Material";
       payloadWeightCol = "Weight_kg";
@@ -372,11 +373,28 @@ export default function CBAMAnalytics() {
                   <tbody className="divide-y divide-slate-800/50">
                     {resultsData.map((row, idx) => (
                       <tr key={idx} className="hover:bg-slate-100 dark:hover:bg-slate-800/30 transition-colors">
-                        {Object.keys(row).map((header) => (
-                          <td key={`${idx}-${header}`} className="p-4 text-slate-600 dark:text-slate-300 whitespace-nowrap">
-                            {row[header] || "-"}
-                          </td>
-                        ))}
+                        {Object.keys(row).map((header) => {
+                          const val = row[header];
+                          let display = val || "-";
+                          
+                          if (header === "ESG_Risk_Score" && val) {
+                            const score = parseFloat(val);
+                            const colorClass = score > 60 ? "bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400" : 
+                                               score > 30 ? "bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400" : 
+                                               "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400";
+                            display = <span className={`px-2.5 py-1 rounded-md text-xs font-bold ${colorClass}`}>{val}</span>;
+                          } else if (header === "CBAM_Cost_EUR" && val && parseFloat(val) > 0) {
+                            display = <span className="font-mono font-bold text-amber-600 dark:text-amber-500">€{parseFloat(val).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>;
+                          } else if (header === "Total_CO2_tonnes" && val && parseFloat(val) > 0) {
+                            display = <span className="font-mono font-bold text-slate-700 dark:text-slate-300">{val} t</span>;
+                          }
+                          
+                          return (
+                            <td key={`${idx}-${header}`} className="p-4 text-slate-600 dark:text-slate-300 whitespace-nowrap">
+                              {display}
+                            </td>
+                          );
+                        })}
                       </tr>
                     ))}
                   </tbody>
