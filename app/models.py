@@ -34,6 +34,7 @@ class Material(Base):
     category = Column(String(50), nullable=False, index=True)       # Metal, Polymer, Ceramic, Composite
     subcategory = Column(String(100), nullable=True)                 # Stainless Steel, Thermoplastic, etc.
     grade = Column(String(100), nullable=True)                       # 304, 6061-T6, PA6, etc.
+    temper_condition = Column(String(100), nullable=True)            # "Annealed", "H04 Hard", "As-Cast"
     standard = Column(String(200), nullable=True)                    # ASTM A240, IS 2062, JIS G3101
 
     # ---- Mechanical Properties ----
@@ -213,6 +214,7 @@ class CustomMaterial(Base):
     category = Column(String(100), index=True)
     subcategory = Column(String(100), nullable=True)
     grade = Column(String(100), nullable=True)
+    temper_condition = Column(String(100), nullable=True)
     description = Column(Text, nullable=True)
     source_url = Column(String(1024), nullable=True)
     status = Column(String(20), default="pending")

@@ -14,6 +14,7 @@ class MaterialBase(BaseModel):
     subcategory: Optional[str] = Field(None, max_length=100, examples=["Stainless Steel"])
     grade: Optional[str] = Field(None, max_length=100, examples=["304"])
     standard: Optional[str] = Field(None, max_length=200, examples=["ASTM A240"])
+    temper_condition: Optional[str] = Field(None, max_length=100, examples=["Annealed", "H04 Hard", "As-Cast"])
 
     # Mechanical
     density: Optional[float] = Field(None, ge=0, examples=[7.93])
@@ -265,6 +266,7 @@ class CustomMaterialCreate(BaseModel):
     source_url: str = Field(..., max_length=500)
     subcategory: Optional[str] = Field(None, max_length=100)
     grade: Optional[str] = Field(None, max_length=100)
+    temper_condition: Optional[str] = Field(None, max_length=100)
     description: Optional[str] = Field(None, max_length=5000)
     yield_strength_min: Optional[float] = None
     tensile_strength_min: Optional[float] = None
