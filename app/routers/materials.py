@@ -27,7 +27,7 @@ from typing import List, Optional
 
 from app.database import get_db
 from app.models import Material, User, CustomMaterial, PriceHistory
-from app.schemas import MaterialCreate, CustomMaterialCreate, CustomMaterialResponse, PriceHistoryResponse, MaterialResponse, MaterialListResponse, BulkImportResponse
+from app.schemas import MaterialMenuResponse, MaterialCreate, CustomMaterialCreate, CustomMaterialResponse, PriceHistoryResponse, MaterialResponse, MaterialListResponse, BulkImportResponse
 from app.auth import get_optional_user, get_current_user
 from app.routers.admin import verify_admin
 from app.auth import TIER_LIMITS
