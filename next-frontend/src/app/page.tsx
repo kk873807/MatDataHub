@@ -229,21 +229,15 @@ export default function LandingPage() {
                 </div>
               ))
             ) : (
-              // Fallback if no feedbacks loaded yet
-              [
-                { quote: "MatDataHub completely changed how we estimate aerospace BOM costs. The multi-objective substitution tool saved us months of R&D.", author: "Dr. Sarah Jenkins", role: "Lead Materials Scientist" },
-                { quote: "Finally, a platform that understands both the physics and the economics of materials. The CBAM calculator is a lifesaver for EU imports.", author: "Marcus Thorne", role: "Supply Chain Director" },
-                { quote: "The clean, academic interface makes it a joy to use. It feels like having an expert metallurgist sitting right next to you.", author: "Elena Rodriguez", role: "Mechanical Engineer" }
-              ].map((test, i) => (
-                <div key={i} className="p-8 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl relative">
-                  <div className="text-4xl text-indigo-500/20 absolute top-4 left-4 font-serif">"</div>
-                  <p className="text-slate-600 dark:text-slate-300 relative z-10 mb-6 text-sm leading-relaxed italic flex-1">"{test.quote}"</p>
-                  <div>
-                    <p className="text-slate-900 dark:text-white font-bold text-sm">{test.author}</p>
-                    <p className="text-slate-500 dark:text-slate-400 text-xs">{test.role}</p>
-                  </div>
-                </div>
-              ))
+              // Honest empty state when there are no feedbacks
+              <div className="md:col-span-3 text-center py-12 bg-white dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 border-dashed">
+                <MessageSquare className="w-12 h-12 text-slate-300 dark:text-slate-700 mx-auto mb-4" />
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">No feedback yet</h3>
+                <p className="text-slate-500 dark:text-slate-400 mb-6">Be the first to tell us how MatDataHub is helping your engineering workflow.</p>
+                <Link href="/feedback" className="inline-flex items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold transition-colors">
+                  Share Your Thoughts
+                </Link>
+              </div>
             )}
           </div>
           
