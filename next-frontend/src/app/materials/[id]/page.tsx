@@ -15,7 +15,7 @@ import {
   Download,
   CheckCircle2,
   ChevronRight, ExternalLink,
-  Sparkles
+  Sparkles, Bookmark
 } from "lucide-react";
 import { API } from "@/lib/api";
 
@@ -28,11 +28,32 @@ export default function MaterialDetail() {
   const [loading, setLoading] = useState(true);
   const [isSimilarLocked, setIsSimilarLocked] = useState(false);
   const [isPriceLocked, setIsPriceLocked] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [userTier, setUserTier] = useState("free");
   
   // Toast state
   const [toastMessage, setToastMessage] = useState("");
 
+  const toggleSave = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return showToast("Log in to save materials");
+    setSaving(true);
+    try {
+      const res = await fetch(`${API}/materials/${id}/save`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setIsSaved(data.status === 'saved');
+        showToast(data.status === 'saved' ? "Material Saved!" : "Material Unsaved");
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    setSaving(false);
+  };
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(""), 3000);
@@ -63,6 +84,13 @@ export default function MaterialDetail() {
           setPriceHistory(await priceRes.json());
         } else if (priceRes.status === 403 || priceRes.status === 401) {
           setIsPriceLocked(true);
+        }
+
+        // Fetch Saved Status
+        const savedRes = await fetch(`${API}/materials/me/saved`, { headers });
+        if (savedRes.ok) {
+          const savedList = await savedRes.json();
+          setIsSaved(savedList.some((m: any) => m.id === parseInt(id as string)));
         }
 
         // Fetch Similar
@@ -205,6 +233,13 @@ export default function MaterialDetail() {
                 >
                   <GitCompare className="w-4 h-4" /> Add to Compare
                 </Link>
+                <button
+                  onClick={toggleSave}
+                  disabled={saving}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-2xl text-sm font-bold transition-all shadow-lg ${isSaved ? 'bg-emerald-600 text-white shadow-emerald-900/20 hover:bg-emerald-700' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700'}`}
+                >
+                  <Bookmark className={`w-4 h-4 ${isSaved ? 'fill-current' : ''}`} /> {isSaved ? 'Saved' : 'Save'}
+                </button>
                 <Link 
                   href={`/analytics/substitution?base=${id}`}
                   className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-2xl text-sm font-bold transition-all shadow-lg shadow-purple-900/20"

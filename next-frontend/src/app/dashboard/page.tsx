@@ -120,7 +120,7 @@ export default function AppDashboard() {
           <div>
             <p className="text-[10px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">API Access</p>
             <p className="text-lg sm:text-xl font-black text-slate-900 dark:text-white font-heading">
-              {profile?.tier === "advanced" || profile?.is_admin ? "Active" : "Locked"}
+              {profile?.api_key ? "Active" : profile?.tier === "advanced" || profile?.is_admin ? "Not Generated" : "Locked"}
             </p>
           </div>
         </div>
@@ -128,7 +128,7 @@ export default function AppDashboard() {
           <div className="p-3 bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 rounded-xl"><Star className="w-6 h-6" /></div>
           <div>
             <p className="text-[10px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Saved Items</p>
-            <p className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white font-heading">-</p>
+            <p className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white font-heading">{profile?.saved_count || 0}</p>
           </div>
         </div>
       </div>

@@ -315,14 +315,32 @@ def login(req: LoginRequest, request: Request, db: Session = Depends(get_db)):
 # GET /auth/me
 # ──────────────────────────────────────────────
 @router.get("/me", response_model=UserProfile)
-def get_profile(current_user: User = Depends(get_current_user)):
+def get_profile(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     """
     Get the current user's profile.
 
     Requires a valid JWT token in the Authorization header:
         Authorization: Bearer <token>
     """
-    return current_user
+    # Import locally to avoid circular dependencies if any
+    from app.models import SavedMaterial
+    saved_count = db.query(SavedMaterial).filter(SavedMaterial.user_id == current_user.id).count()
+    
+    # We must convert to a dict to inject saved_count since current_user is an ORM object
+    profile_data = {
+        "id": current_user.id,
+        "email": current_user.email,
+        "name": current_user.name,
+        "tier": current_user.tier,
+        "is_admin": current_user.is_admin,
+        "api_key": current_user.api_key,
+        "api_secret": current_user.api_secret,
+        "created_at": current_user.created_at,
+        "requested_tier": current_user.requested_tier,
+        "upgrade_status": current_user.upgrade_status,
+        "saved_count": saved_count
+    }
+    return profile_data
 
 
 # ──────────────────────────────────────────────

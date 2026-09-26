@@ -114,6 +114,7 @@ class UserProfile(BaseModel):
     api_key: Optional[str] = None
     api_secret: Optional[str] = None
     created_at: Optional[datetime] = None
+    saved_count: int = 0
 
     # Upgrade-request state, so the frontend can show a "pending" badge
     # after a fresh /auth/me refresh (e.g. the sidebar "Check status" button).
