@@ -159,11 +159,7 @@ export default function CBAMAnalytics() {
 
   const downloadResults = () => {
     if (!resultsData) return;
-    const headers = Object.keys(resultsData[0]);
-    const csvContent = [
-      headers.join(","),
-      ...resultsData.map(row => headers.map(h => row[h]).join(","))
-    ].join("\n");
+    const csvContent = Papa.unparse(resultsData);
     const blob = new Blob([csvContent], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
