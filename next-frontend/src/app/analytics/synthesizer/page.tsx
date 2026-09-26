@@ -70,7 +70,9 @@ function CompositeSynthesizerContent() {
         const density = ((objA.density || 0) * vA) + ((objB.density || 0) * vB);
         const elastic_modulus = ((objA.elastic_modulus || 0) * vA) + ((objB.elastic_modulus || 0) * vB);
         const tensile = ((objA.tensile_strength_min || 0) * vA) + ((objB.tensile_strength_min || 0) * vB);
-        const cost = ((objA.cost_per_kg_min || 0) * vA) + ((objB.cost_per_kg_min || 0) * vB);
+        const massFracA = density > 0 ? ((objA.density || 0) * vA) / density : 0.5;
+            const massFracB = density > 0 ? ((objB.density || 0) * vB) / density : 0.5;
+            const cost = ((objA.cost_per_kg_min || 0) * massFracA) + ((objB.cost_per_kg_min || 0) * massFracB);
         
         setResult({
           name: `Composite: ${vA*100}% ${objA.name} / ${vB*100}% ${objB.name}`,
