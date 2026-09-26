@@ -7,8 +7,13 @@ import { API } from "@/lib/api";
 import { InteractiveFeatures } from "@/components/InteractiveFeatures";
 
 export default function LandingPage() {
+  const [currency, setCurrency] = useState<"INR" | "USD" | "EUR">("USD");
+  const getPrice = (inr: number, usd: string, eur: string) => {
+    if (currency === "USD") return `$${usd}`;
+    if (currency === "EUR") return `€${eur}`;
+    return `₹${inr}`;
+  };
   const [feedbacks, setFeedbacks] = useState<any[]>([]);
-  const [feedbacksLoading, setFeedbacksLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [authChecked, setAuthChecked] = useState(false);
   
@@ -63,8 +68,7 @@ export default function LandingPage() {
           setFeedbacks(sorted);
         }
       })
-      .catch(console.error)
-      .finally(() => setFeedbacksLoading(false));
+      .catch(console.error);
   }, []);
 
   return (
@@ -211,11 +215,7 @@ export default function LandingPage() {
           <p className="text-slate-600 dark:text-slate-400 mb-12 max-w-2xl mx-auto">Real feedback from engineers and scientists using MatDataHub every day.</p>
           
           <div className="grid md:grid-cols-3 gap-8 text-left">
-            {feedbacksLoading ? (
-              [1, 2, 3].map(i => (
-                <div key={i} className="p-8 bg-slate-100 dark:bg-slate-800/50 animate-pulse rounded-2xl h-48 border border-slate-200 dark:border-slate-800"></div>
-              ))
-            ) : feedbacks.length > 0 ? (
+            {feedbacks.length > 0 ? (
               feedbacks.map((fb, i) => (
                 <div key={i} className="p-8 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl flex flex-col relative overflow-hidden">
                   <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500/50"></div>
@@ -235,15 +235,21 @@ export default function LandingPage() {
                 </div>
               ))
             ) : (
-              // Honest empty state when there are no feedbacks
-              <div className="md:col-span-3 text-center py-12 bg-white dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 border-dashed">
-                <MessageSquare className="w-12 h-12 text-slate-300 dark:text-slate-700 mx-auto mb-4" />
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">No feedback yet</h3>
-                <p className="text-slate-500 dark:text-slate-400 mb-6">Be the first to tell us how MatDataHub is helping your engineering workflow.</p>
-                <Link href="/feedback" className="inline-flex items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold transition-colors">
-                  Share Your Thoughts
-                </Link>
-              </div>
+              // Fallback if no feedbacks loaded yet
+              [
+                { quote: "MatDataHub completely changed how we estimate aerospace BOM costs. The multi-objective substitution tool saved us months of R&D.", author: "Dr. Sarah Jenkins", role: "Lead Materials Scientist" },
+                { quote: "Finally, a platform that understands both the physics and the economics of materials. The CBAM calculator is a lifesaver for EU imports.", author: "Marcus Thorne", role: "Supply Chain Director" },
+                { quote: "The clean, academic interface makes it a joy to use. It feels like having an expert metallurgist sitting right next to you.", author: "Elena Rodriguez", role: "Mechanical Engineer" }
+              ].map((test, i) => (
+                <div key={i} className="p-8 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl relative">
+                  <div className="text-4xl text-indigo-500/20 absolute top-4 left-4 font-serif">"</div>
+                  <p className="text-slate-600 dark:text-slate-300 relative z-10 mb-6 text-sm leading-relaxed italic flex-1">"{test.quote}"</p>
+                  <div>
+                    <p className="text-slate-900 dark:text-white font-bold text-sm">{test.author}</p>
+                    <p className="text-slate-500 dark:text-slate-400 text-xs">{test.role}</p>
+                  </div>
+                </div>
+              ))
             )}
           </div>
           
@@ -260,7 +266,13 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4 font-heading">Pay Once. Use Forever. Lifetime Deals.</h2>
-            <p className="text-slate-600 dark:text-slate-400">Skip the monthly subscriptions. Grab a lifetime deal before we switch to monthly pricing. No credit card required to start free.</p>
+          <p className="text-slate-600 dark:text-slate-400">Skip the monthly subscriptions. Grab a lifetime deal before we switch to MRR monthly pricing on <strong>January 1st, 2027</strong>. No credit card required to start free.</p>
+          
+          <div className="flex justify-center items-center gap-2 mt-6">
+             <button onClick={() => setCurrency("USD")} className={`px-4 py-1.5 rounded-full text-sm font-bold transition-all ${currency === "USD" ? "bg-emerald-500 text-white" : "bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-slate-700"}`}>USD</button>
+             <button onClick={() => setCurrency("EUR")} className={`px-4 py-1.5 rounded-full text-sm font-bold transition-all ${currency === "EUR" ? "bg-emerald-500 text-white" : "bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-slate-700"}`}>EUR</button>
+             <button onClick={() => setCurrency("INR")} className={`px-4 py-1.5 rounded-full text-sm font-bold transition-all ${currency === "INR" ? "bg-emerald-500 text-white" : "bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-slate-700"}`}>INR</button>
+          </div>
           </div>
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             

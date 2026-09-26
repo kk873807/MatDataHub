@@ -5,11 +5,20 @@ import {
   Search, SlidersHorizontal, Share2, 
   FolderKanban, ShieldAlert, Thermometer, Activity, AlignEndVertical, IndianRupee,
   Scale, Replace, Factory, Layers,
-  MessageSquare, BookOpen, Lightbulb, ShieldCheck, Cpu
+  MessageSquare, BookOpen, Lightbulb, ShieldCheck, Cpu, Leaf
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const features = [
+  {
+    id: "cbam",
+    title: "CBAM Estimator",
+    description: "Instantly estimate EU carbon tax liability for material exports before you ship.",
+    icon: Leaf,
+    color: "bg-emerald-500",
+    tools: [],
+  },
+
   {
     id: "database",
     title: "Parametric Database",
