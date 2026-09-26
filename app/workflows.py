@@ -111,7 +111,16 @@ class BOMProcessor:
         enriched_rows = []
         for index, row in df.iterrows():
             raw_name = str(row.get(material_col, ""))
-            weight_kg = float(row.get(weight_col, 0.0)) if pd.notna(row.get(weight_col)) else 0.0
+            raw_weight = row.get(weight_col, 0.0)
+            if pd.notna(raw_weight):
+                try:
+                    if isinstance(raw_weight, str):
+                        raw_weight = raw_weight.replace(',', '')
+                    weight_kg = float(raw_weight)
+                except ValueError:
+                    weight_kg = 0.0
+            else:
+                weight_kg = 0.0
             if not raw_name:
                 continue
             match_tuple = process.extractOne(raw_name, self.mat_names)

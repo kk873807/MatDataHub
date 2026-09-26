@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowLeft, Factory, UploadCloud, Loader2, FileSpreadsheet, Lock, Download, FileText, Table } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { API } from "@/lib/api";
+import Papa from "papaparse";
 
 export default function CBAMAnalytics() {
   const router = useRouter();
@@ -129,25 +130,15 @@ export default function CBAMAnalytics() {
 
       if (res.ok) {
         const text = await res.text();
-        // Parse CSV text for live preview
-        const rows = text.trim().split("\n");
-        const headersArr = rows[0].split(",").map(h => h.trim());
+        // Parse CSV text for live preview using PapaParse for robust comma handling
+        const parsed = Papa.parse(text, { header: true, skipEmptyLines: true });
+        const parsedData = parsed.data as any[];
         
         let total = 0;
         let totalCbamEur = 0;
-        const parsedData = rows.slice(1).map(row => {
-          const values = row.split(",");
-          const rowObj: any = {};
-          headersArr.forEach((header, index) => {
-            rowObj[header] = values[index];
-            if (header === "Total_CO2_kg") {
-              total += parseFloat(values[index] || "0");
-            }
-            if (header === "CBAM_Cost_EUR") {
-              totalCbamEur += parseFloat(values[index] || "0");
-            }
-          });
-          return rowObj;
+        parsedData.forEach((rowObj: any) => {
+          if (rowObj["Total_CO2_kg"]) total += parseFloat(rowObj["Total_CO2_kg"] || "0");
+          if (rowObj["CBAM_Cost_EUR"]) totalCbamEur += parseFloat(rowObj["CBAM_Cost_EUR"] || "0");
         });
 
         setResultsData(parsedData);
