@@ -108,20 +108,43 @@ class BOMProcessor:
         self.mat_names = list(self.mat_dict.values())
 
     def process_bom(self, df, material_col, weight_col):
+        # Auto-detect column mappings if the explicit ones are missing
+        actual_mat_col = material_col
+        if material_col not in df.columns:
+            for guess in ["material", "name", "part", "component", "grade", "item", "description"]:
+                matches = [c for c in df.columns if guess in str(c).lower()]
+                if matches:
+                    actual_mat_col = matches[0]
+                    break
+                    
+        actual_weight_col = weight_col
+        if weight_col not in df.columns:
+            for guess in ["weight", "qty", "quantity", "mass", "amount"]:
+                matches = [c for c in df.columns if guess in str(c).lower()]
+                if matches:
+                    actual_weight_col = matches[0]
+                    break
+        
+        # Determine multiplier if weight is in tonnes
+        weight_multiplier = 1.0
+        if actual_weight_col in df.columns and ("tonne" in str(actual_weight_col).lower() or "ton" in str(actual_weight_col).lower()):
+            weight_multiplier = 1000.0
+
         enriched_rows = []
         for index, row in df.iterrows():
-            raw_name = str(row.get(material_col, ""))
-            raw_weight = row.get(weight_col, 0.0)
+            raw_name = str(row.get(actual_mat_col, ""))
+            raw_weight = row.get(actual_weight_col, 0.0)
             if pd.notna(raw_weight):
                 try:
                     if isinstance(raw_weight, str):
                         raw_weight = raw_weight.replace(',', '')
-                    weight_kg = float(raw_weight)
+                    weight_kg = float(raw_weight) * weight_multiplier
                 except ValueError:
                     weight_kg = 0.0
             else:
                 weight_kg = 0.0
-            if not raw_name:
+                
+            if not raw_name or str(raw_name).strip() == "" or str(raw_name).lower() == "nan":
                 continue
             match_tuple = process.extractOne(raw_name, self.mat_names)
             if match_tuple and match_tuple[1] > 60:
