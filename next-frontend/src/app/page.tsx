@@ -8,6 +8,7 @@ import { InteractiveFeatures } from "@/components/InteractiveFeatures";
 
 export default function LandingPage() {
   const [feedbacks, setFeedbacks] = useState<any[]>([]);
+  const [feedbacksLoading, setFeedbacksLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [authChecked, setAuthChecked] = useState(false);
   
@@ -62,7 +63,8 @@ export default function LandingPage() {
           setFeedbacks(sorted);
         }
       })
-      .catch(console.error);
+      .catch(console.error)
+      .finally(() => setFeedbacksLoading(false));
   }, []);
 
   return (
@@ -209,7 +211,11 @@ export default function LandingPage() {
           <p className="text-slate-600 dark:text-slate-400 mb-12 max-w-2xl mx-auto">Real feedback from engineers and scientists using MatDataHub every day.</p>
           
           <div className="grid md:grid-cols-3 gap-8 text-left">
-            {feedbacks.length > 0 ? (
+            {feedbacksLoading ? (
+              [1, 2, 3].map(i => (
+                <div key={i} className="p-8 bg-slate-100 dark:bg-slate-800/50 animate-pulse rounded-2xl h-48 border border-slate-200 dark:border-slate-800"></div>
+              ))
+            ) : feedbacks.length > 0 ? (
               feedbacks.map((fb, i) => (
                 <div key={i} className="p-8 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl flex flex-col relative overflow-hidden">
                   <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500/50"></div>
