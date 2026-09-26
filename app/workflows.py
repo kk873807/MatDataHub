@@ -111,8 +111,9 @@ class BOMProcessor:
         # Auto-detect column mappings if the explicit ones are missing
         actual_mat_col = material_col
         if material_col not in df.columns:
-            for guess in ["material", "name", "part", "component", "grade", "item", "description"]:
-                matches = [c for c in df.columns if guess in str(c).lower()]
+            # Prioritize 'name' or 'desc' columns, explicit exclude 'id'
+            for guess in ["name", "material", "part", "component", "grade", "description", "item"]:
+                matches = [c for c in df.columns if guess in str(c).lower() and "id" not in str(c).lower()]
                 if matches:
                     actual_mat_col = matches[0]
                     break
@@ -164,6 +165,16 @@ class BOMProcessor:
             indirect_em = extract_float(['indirect_emissions', 'indirect emissions'])
             price_paid = extract_float(['carbon_price_paid', 'price_paid', 'domestic_carbon']) or 0.0
             
+            def extract_string(aliases):
+                for k in row.keys():
+                    if any(a in str(k).lower() for a in aliases):
+                        return str(row[k]).strip()
+                return None
+                
+            supplier_risk = extract_float(['supplier_risk', 'vendor_risk']) or 0.0
+            single_source = extract_string(['single_source', 'sole_source'])
+            geo_risk = extract_string(['geopolitical', 'geo_risk', 'country_risk'])
+            
             provided_carbon_factor = None
             if direct_em is not None and indirect_em is not None:
                 provided_carbon_factor = direct_em + indirect_em
@@ -200,9 +211,18 @@ class BOMProcessor:
             cbam_cost_eur = round(total_co2_tonnes * net_cbam_price, 2)
             
             carbon_score = min(carbon_factor / 30.0 * 50, 50)
-            recycle_score = (1 - recyclability) * 30
-            obsolete_score = 20 if obsolete_flag == "YES" else 0
-            esg_risk = round(min(carbon_score + recycle_score + obsolete_score, 100), 1)
+            
+            if geo_risk or single_source or supplier_risk > 0:
+                geo_score = 15 if geo_risk and "high" in geo_risk.lower() else (7.5 if geo_risk and "med" in geo_risk.lower() else 0)
+                ss_score = 15 if single_source and ("yes" in single_source.lower() or "true" in single_source.lower() or "y" == single_source.lower()) else 0
+                supp_score = min(supplier_risk / 100.0 * 20, 20)
+                base_esg = carbon_score + geo_score + ss_score + supp_score
+            else:
+                recycle_score = (1 - recyclability) * 30
+                obsolete_score = 20 if obsolete_flag == "YES" else 0
+                base_esg = carbon_score + recycle_score + obsolete_score
+                
+            esg_risk = round(min(base_esg, 100), 1)
 
             enriched_rows.append({
                 **row.to_dict(),
