@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Database, Calculator, Workflow, Bot, BarChart3, Plus, ArrowRight, LayoutDashboard, Search, Star, Zap, Clock, Box } from "lucide-react";
+import { Database, Calculator, Workflow, Bot, BarChart3, Plus, ArrowRight, LayoutDashboard, Search, Star, Zap, Clock, Box, Sparkles } from "lucide-react";
 import { API } from "@/lib/api";
 
 export default function AppDashboard() {
@@ -109,10 +109,12 @@ export default function AppDashboard() {
           </div>
         </div>
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 shadow-sm">
-          <div className="p-3 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 rounded-xl"><Database className="w-6 h-6" /></div>
+          <div className="p-3 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 rounded-xl"><Sparkles className="w-6 h-6" /></div>
           <div>
-            <p className="text-[10px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">DB Status</p>
-            <p className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white font-heading">Online</p>
+            <p className="text-[10px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">AI Synthesizer Credits</p>
+            <p className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white font-heading">
+              {profile?.tier === "advanced" || profile?.tier === "pro" || profile?.is_admin ? "Unlimited" : (profile?.ai_credits ?? 5)}
+            </p>
           </div>
         </div>
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 shadow-sm">
