@@ -15,7 +15,7 @@ Moved **~200 loose scripts** (`.py` and `.txt`) from the project root into a new
 MatDataHub/
 ├── app/                  # Backend
 ├── next-frontend/        # Active frontend
-├── frontend/             # Legacy Streamlit (kept for reference)
+├── frontend/             # Legacy Next.js (kept for reference)
 ├── scrapers/             # Web scrapers
 ├── scripts/              # DB migrations
 ├── tests/                # Tests

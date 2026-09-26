@@ -10,7 +10,7 @@ A subscription data platform for engineers, researchers, and procurement teams.
 - Filter by category, tensile strength, cost, thermal conductivity
 - Full-text search across name, grade, standard, and applications
 - REST API with auto-generated documentation (Swagger UI)
-- Streamlit frontend for easy browsing
+- Next.js frontend for easy browsing
 
 ## Tech Stack
 
@@ -19,9 +19,9 @@ A subscription data platform for engineers, researchers, and procurement teams.
 | Backend API | FastAPI |
 | Database | PostgreSQL (Supabase) / SQLite (dev) |
 | ORM | SQLAlchemy |
-| Frontend | Streamlit |
+| Frontend | Next.js |
 | Scraping | Scrapy + BeautifulSoup |
-| Hosting | Render.com + Streamlit Cloud |
+| Hosting | Render.com + Next.js Cloud |
 
 ## Local Development
 
@@ -41,7 +41,7 @@ python -m scraper.seed_data
 uvicorn app.main:app --reload
 
 # 4. Start frontend (new terminal)
-streamlit run frontend/app.py
+next.js run frontend/app.py
 ```
 
 - API: http://127.0.0.1:8000/docs

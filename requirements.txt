@@ -15,7 +15,6 @@ pyjwt>=2.8
 beautifulsoup4>=4.12
 requests>=2.32
 
-# Removed Streamlit/Plotly since frontend is now Next.js
 
 # Utilities
 pydantic>=2.10

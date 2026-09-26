@@ -47,7 +47,7 @@ app.include_router(projects.router, prefix="/api/v1")
 app.include_router(account.router, prefix="/api/v1")       # <-- added payments
 app.include_router(calculators.router, prefix="/api/v1")
 
-# Allow cross-origin requests (so Streamlit Cloud can call Render-hosted API)
+# Allow cross-origin requests (so Next.js frontend can call Render-hosted API)
 
 # Required by Authlib for OAuth flows (saves state between redirect and callback)
 import os
@@ -55,7 +55,7 @@ app.add_middleware(SessionMiddleware, secret_key=os.environ.get("OAUTH_SESSION_S
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],    # Tighten this to your Streamlit URL in production
+    allow_origins=["*"],    # Tighten this to your Next.js URL in production
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
