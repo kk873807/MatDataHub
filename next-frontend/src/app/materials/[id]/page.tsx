@@ -18,6 +18,7 @@ import {
   Sparkles, Bookmark
 } from "lucide-react";
 import { API } from "@/lib/api";
+import { SecurityWrapper } from "@/components/SecurityWrapper";
 
 export default function MaterialDetail() {
   const { id } = useParams();
@@ -183,6 +184,7 @@ export default function MaterialDetail() {
   };
 
   return (
+    <SecurityWrapper>
     <main className="flex flex-col p-6 lg:p-10 w-full relative">
       {/* Toast Notification */}
       {toastMessage && (
@@ -682,5 +684,6 @@ export default function MaterialDetail() {
         </div>
       </div>
     </main>
+    </SecurityWrapper>
   );
 }

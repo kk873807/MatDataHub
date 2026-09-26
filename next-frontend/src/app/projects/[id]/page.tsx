@@ -10,6 +10,7 @@ import { BeamDeflection } from "@/components/BeamDeflection";
 import { CostOptimizer } from "@/components/CostOptimizer";
 import { ThermalShock } from "@/components/ThermalShock";
 import { API } from "@/lib/api";
+import { SecurityWrapper } from "@/components/SecurityWrapper";
 
 function getToken() {
   return typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -494,6 +495,7 @@ export default function ProjectWorkspace() {
   };
 
   return (
+    <SecurityWrapper>
     <main className="flex flex-col p-0 w-full h-full overflow-hidden bg-slate-50 dark:bg-slate-950 relative">
       {/* Toast */}
       {toast && (
@@ -870,5 +872,6 @@ export default function ProjectWorkspace() {
         </div>
       </div>
     </main>
+    </SecurityWrapper>
   );
 }

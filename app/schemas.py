@@ -290,3 +290,9 @@ class PriceHistoryResponse(BaseModel):
     recorded_date: datetime
     class Config:
         from_attributes = True
+
+class MaterialMenuResponse(BaseModel):
+    id: int
+    name: str
+    class Config:
+        orm_mode = True

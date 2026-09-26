@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowLeft, Layers, Loader2, Beaker, Lock } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { API } from "@/lib/api";
+import { SecurityWrapper } from "@/components/SecurityWrapper";
 import MaterialSearchSelect from "@/components/MaterialSearchSelect";
 
 function CompositeSynthesizerContent() {
@@ -48,32 +49,39 @@ function CompositeSynthesizerContent() {
   }, []);
 
   useEffect(() => {
-    fetch(`${API}/materials?per_page=2000`)
+    fetch(`${API}/materials/menu`)
       .then(res => res.json())
-      .then(data => setAllMaterials(data.materials || []));
+      .then(data => setAllMaterials(data || []));
   }, []);
 
-  const handleSynthesize = () => {
+    const handleSynthesize = async () => {
     if (!matA || !matB) return;
     setLoading(true);
-    
-    // Rule of Mixtures calculation (client-side)
-    setTimeout(() => {
-      const objA = allMaterials.find(m => m.id.toString() === matA);
-      const objB = allMaterials.find(m => m.id.toString() === matB);
+
+    try {
+      // Securely fetch properties on-demand to prevent bulk scraping
+      const [resA, resB] = await Promise.all([
+        fetch(`${API}/materials/${matA}`),
+        fetch(`${API}/materials/${matB}`)
+      ]);
       
+      const objA = await resA.json();
+      const objB = await resB.json();
+
       if (objA && objB) {
         const vA = volFractionA / 100;
         const vB = 1 - vA;
-        
+
         // Rule of Mixtures (Upper Bound)
         const density = ((objA.density || 0) * vA) + ((objB.density || 0) * vB);
         const elastic_modulus = ((objA.elastic_modulus || 0) * vA) + ((objB.elastic_modulus || 0) * vB);
         const tensile = ((objA.tensile_strength_min || 0) * vA) + ((objB.tensile_strength_min || 0) * vB);
-        const massFracA = density > 0 ? ((objA.density || 0) * vA) / density : 0.5;
-            const massFracB = density > 0 ? ((objB.density || 0) * vB) / density : 0.5;
-            const cost = ((objA.cost_per_kg_min || 0) * massFracA) + ((objB.cost_per_kg_min || 0) * massFracB);
         
+        // Economics Correct Physics: Cost per kg must scale by MASS fraction, not VOLUME fraction
+        const massFracA = density > 0 ? ((objA.density || 0) * vA) / density : 0.5;
+        const massFracB = density > 0 ? ((objB.density || 0) * vB) / density : 0.5;
+        const cost = ((objA.cost_per_kg_min || 0) * massFracA) + ((objB.cost_per_kg_min || 0) * massFracB);
+
         setResult({
           name: `Composite: ${vA*100}% ${objA.name} / ${vB*100}% ${objB.name}`,
           density: density.toFixed(2),
@@ -82,8 +90,11 @@ function CompositeSynthesizerContent() {
           cost: cost.toFixed(2)
         });
       }
+    } catch (e) {
+      console.error("Failed to fetch material properties", e);
+    } finally {
       setLoading(false);
-    }, 600);
+    }
   };
 
   if (isAuthenticated === null) {
@@ -250,8 +261,10 @@ function CompositeSynthesizerContent() {
 
 export default function CompositeSynthesizer() {
   return (
-    <Suspense fallback={<div className="p-12 text-center text-slate-500 dark:text-slate-400">Loading...</div>}>
-      <CompositeSynthesizerContent />
-    </Suspense>
+    <SecurityWrapper>
+      <Suspense fallback={<div className="p-12 text-center text-slate-500 dark:text-slate-400">Loading...</div>}>
+        <CompositeSynthesizerContent />
+      </Suspense>
+    </SecurityWrapper>
   );
 }

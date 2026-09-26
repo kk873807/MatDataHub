@@ -106,7 +106,7 @@ def list_materials(
     request: Request,
     # Pagination
     page: int = Query(1, ge=1, description="Page number"),
-    per_page: int = Query(20, ge=1, le=2000, description="Items per page"),
+    per_page: int = Query(20, ge=1, le=50, description="Items per page"),
     # Filters
     category: Optional[str] = Query(None, description="Filter by category: Metal, Polymer, Ceramic, Composite"),
     subcategory: Optional[str] = Query(None, description="Filter by subcategory"),
@@ -211,6 +211,14 @@ def list_materials(
 # ──────────────────────────────────────────────
 # GET /materials/autocomplete  — Search suggestions
 # ──────────────────────────────────────────────
+
+@router.get("/menu", response_model=List[MaterialMenuResponse])
+@limiter.limit("60/minute")
+def get_material_menu(request: Request, db: Session = Depends(get_db)):
+    """Returns only ID and Name for frontend dropdowns to prevent bulk data scraping."""
+    results = db.query(Material.id, Material.name).order_by(Material.name).all()
+    return [{"id": r.id, "name": r.name} for r in results]
+
 @router.get("/autocomplete")
 @limiter.limit("600/minute")
 def autocomplete_materials(
