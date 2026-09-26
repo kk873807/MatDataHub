@@ -120,7 +120,7 @@ function CompositeSynthesizerContent() {
   }
 
   // Authenticated but wrong tier — Upgrade Required
-  if (!isAdmin && !["pro", "advanced"].includes(userTier)) {
+  if (!isAdmin && userTier !== "advanced") {
     return (
       <main className="flex flex-col p-6 lg:p-10 w-full h-full">
         <div className="w-full max-w-4xl mx-auto space-y-6">
@@ -134,9 +134,9 @@ function CompositeSynthesizerContent() {
               <Lock className="w-10 h-10 text-yellow-500" />
             </div>
             
-            <h2 className="text-3xl font-bold text-slate-900 dark:text-white font-heading mb-4 relative z-10">Upgrade Required</h2>
+            <h2 className="text-3xl font-bold text-slate-900 dark:text-white font-heading mb-4 relative z-10">Advanced Enterprise Required</h2>
             <p className="text-slate-600 dark:text-slate-300 relative z-10 max-w-2xl mx-auto mb-8 text-lg">
-              The Composite Material Synthesizer is a Pro feature. Upgrade your account to unlock this tool.
+              The Composite Material Synthesizer is an Advanced Enterprise feature. Upgrade your account to unlock this tool.
             </p>
             
             <Link href="/account" className="relative z-10 px-8 py-4 bg-yellow-600 hover:bg-yellow-700 text-slate-900 dark:text-white rounded-xl font-bold transition-all shadow-lg hover:scale-105">

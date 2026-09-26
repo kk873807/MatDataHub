@@ -41,8 +41,8 @@ export function CbamLeadMagnet() {
             <div className="flex flex-col gap-1 mb-2">
               <span className="text-emerald-300/80 font-bold text-xs uppercase">Est. EU Tax Liability:</span>
               <div className="flex justify-between items-end">
-                 <span className="text-4xl font-black text-white">€312.00</span>
-                 <span className="text-xs text-emerald-200 mb-2">@ €65/tCO₂e</span>
+                 <span className="text-4xl font-black text-white">€360.00</span>
+                 <span className="text-xs text-emerald-200 mb-2">@ €75/tCO₂e</span>
               </div>
             </div>
           </div>
