@@ -294,5 +294,6 @@ class PriceHistoryResponse(BaseModel):
 class MaterialMenuResponse(BaseModel):
     id: int
     name: str
+    category: str
     class Config:
-        orm_mode = True
+        from_attributes = True

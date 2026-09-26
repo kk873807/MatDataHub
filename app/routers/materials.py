@@ -215,9 +215,9 @@ def list_materials(
 @router.get("/menu", response_model=List[MaterialMenuResponse])
 @limiter.limit("60/minute")
 def get_material_menu(request: Request, db: Session = Depends(get_db)):
-    """Returns only ID and Name for frontend dropdowns to prevent bulk data scraping."""
-    results = db.query(Material.id, Material.name).order_by(Material.name).all()
-    return [{"id": r.id, "name": r.name} for r in results]
+    """Returns only ID, Name, and Category for frontend dropdowns to prevent bulk data scraping."""
+    results = db.query(Material.id, Material.name, Material.category).order_by(Material.name).all()
+    return [{"id": r.id, "name": r.name, "category": r.category} for r in results]
 
 @router.get("/autocomplete")
 @limiter.limit("600/minute")
