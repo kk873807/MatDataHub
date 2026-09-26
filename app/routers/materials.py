@@ -878,7 +878,7 @@ def toggle_save_material(
 # ──────────────────────────────────────────────
 # GET /materials/me/saved
 # ──────────────────────────────────────────────
-@router.get("/me/saved", response_model=List[MaterialOut])
+@router.get("/me/saved", response_model=List[MaterialResponse])
 def get_saved_materials(
     skip: int = 0,
     limit: int = 100,
