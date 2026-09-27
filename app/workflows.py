@@ -157,50 +157,80 @@ class BOMProcessor:
             weight_multiplier = 1000.0
 
         enriched_rows = []
+        seen_ids = set()
         for index, row in df.iterrows():
-            raw_name = str(row.get(actual_mat_col, ""))
-            raw_weight = row.get(actual_weight_col, 0.0)
-            if pd.notna(raw_weight):
-                try:
-                    if isinstance(raw_weight, str):
-                        raw_weight = raw_weight.replace(',', '')
-                    weight_kg = float(raw_weight) * weight_multiplier
-                    if weight_kg < 0:
-                        weight_kg = 0.0
-                except ValueError:
-                    weight_kg = 0.0
-            else:
-                weight_kg = 0.0
-                
-            if not raw_name or str(raw_name).strip() == "" or str(raw_name).lower() == "nan":
-                continue
-                
-            # Check for provided CBAM data in CSV
-            def extract_float(aliases):
-                for k in row.keys():
-                    if any(a in str(k).lower() for a in aliases):
-                        val = row[k]
-                        if pd.notna(val):
-                            try:
-                                if isinstance(val, str): val = val.replace(',', '')
-                                return float(val)
-                            except ValueError:
-                                pass
-                return None
-
-            direct_em = extract_float(['direct_emissions', 'direct emissions'])
-            indirect_em = extract_float(['indirect_emissions', 'indirect emissions'])
-            price_paid = extract_float(['carbon_price_paid', 'price_paid', 'domestic_carbon']) or 0.0
+            errors = []
             
             def extract_string(aliases):
                 for k in row.keys():
                     if any(a in str(k).lower() for a in aliases):
-                        return str(row[k]).strip()
+                        val = row[k]
+                        if pd.notna(val) and str(val).strip() != "" and str(val).lower() != "nan":
+                            return str(val).strip()
                 return None
+            
+            mat_id = extract_string(['material_id', 'id'])
+            if mat_id:
+                if mat_id in seen_ids:
+                    errors.append("Duplicate material ID")
+                else:
+                    seen_ids.add(mat_id)
+
+            raw_name = str(row.get(actual_mat_col, ""))
+            raw_weight = row.get(actual_weight_col, None)
+            if pd.isna(raw_weight) or str(raw_weight).strip() == "" or str(raw_weight).lower() == "nan":
+                errors.append("Missing quantity")
+                weight_kg = 0.0
+            else:
+                try:
+                    if isinstance(raw_weight, str):
+                        raw_weight = str(raw_weight).replace(',', '')
+                    weight_kg = float(raw_weight) * weight_multiplier
+                    if weight_kg < 0:
+                        errors.append("Negative quantity")
+                        weight_kg = 0.0
+                    elif weight_kg > 100_000_000:
+                        errors.append("Quantity exceeds 100M kg limit")
+                except ValueError:
+                    errors.append("Non-numeric quantity")
+                    weight_kg = 0.0
                 
-            supplier_risk = extract_float(['supplier_risk', 'vendor_risk']) or 0.0
+            if not raw_name or str(raw_name).strip() == "" or str(raw_name).lower() == "nan":
+                errors.append("Missing material name")
+                raw_name = "UNKNOWN" 
+                
+            # Check for provided CBAM data in CSV
+            def extract_float(aliases, field_name):
+                for k in row.keys():
+                    if any(a in str(k).lower() for a in aliases):
+                        val = row[k]
+                        if pd.isna(val) or str(val).strip() == "" or str(val).lower() == "nan":
+                            # We found the column, but it's empty
+                            if field_name: errors.append(f"Missing {field_name}")
+                            return None
+                        try:
+                            if isinstance(val, str): val = val.replace(',', '')
+                            return float(val)
+                        except ValueError:
+                            if field_name: errors.append(f"Non-numeric {field_name}")
+                            return None
+                return None
+
+            direct_em = extract_float(['direct_emissions', 'direct emissions'], 'direct emissions')
+            indirect_em = extract_float(['indirect_emissions', 'indirect emissions'], 'indirect emissions')
+            price_paid_val = extract_float(['carbon_price_paid', 'price_paid', 'domestic_carbon'], None)
+            price_paid = price_paid_val or 0.0
+            
+            supplier_risk = extract_float(['supplier_risk', 'vendor_risk'], 'supplier risk') or 0.0
             single_source = extract_string(['single_source', 'sole_source'])
+            if single_source and single_source.lower() not in ('yes', 'no', 'true', 'false', 'y', 'n'):
+                errors.append("Invalid single_source_flag")
             geo_risk = extract_string(['geopolitical', 'geo_risk', 'country_risk'])
+            if geo_risk and geo_risk.lower() not in ('low', 'medium', 'high'):
+                errors.append("Invalid geopolitical_risk")
+            data_quality = extract_string(['data_quality', 'data quality'])
+            if data_quality and data_quality.lower() == 'verified' and price_paid_val is None:
+                errors.append("Missing carbon price for Verified data")
             
             provided_carbon_factor = None
             if direct_em is not None and indirect_em is not None:
@@ -213,26 +243,32 @@ class BOMProcessor:
             cbam_sector = extract_string(['cbam_sector', 'sector'])
             candidates = self.mat_names  # default: all names (already length-filtered)
 
+            sector_valid = True
             if cbam_sector and cbam_sector.lower() not in ('nan', ''):
-                # Pre-filter candidates to the relevant DB category
                 sector_lower = cbam_sector.strip().lower()
-                allowed_cats = None  # None = sector not in map, keep all candidates
+                allowed_cats = None
                 for keyword, cats in self.CBAM_SECTOR_CATEGORY_MAP.items():
                     if keyword in sector_lower:
-                        allowed_cats = cats  # [] = known sector, no DB category
+                        allowed_cats = cats
                         break
-                if allowed_cats is not None:  # sector was recognized
-                    if allowed_cats:
-                        # Merge candidates from matching DB categories
+                
+                if allowed_cats is None:
+                    # Unrecognized sector like Textiles or Automotive
+                    errors.append("Sector not covered by CBAM")
+                    sector_valid = False
+                elif allowed_cats:
+                    # Known CBAM sector, filter to categories
+                    candidates = []
+                    for cat in allowed_cats:
+                        candidates.extend(self.cat_to_names.get(cat, []))
+                    if not candidates:
                         candidates = []
-                        for cat in allowed_cats:
-                            candidates.extend(self.cat_to_names.get(cat, []))
-                        if not candidates:
-                            candidates = []  # no DB entries for this category
-                    else:
-                        # Known CBAM sector with no DB counterpart (Fertilisers,
-                        # Hydrogen) — skip matching entirely, force NO MATCH
-                        candidates = []
+                elif allowed_cats == []:
+                    # Fertilisers, Hydrogen
+                    candidates = []
+            else:
+                sector_valid = False
+                if cbam_sector: errors.append("Sector not covered by CBAM")
 
             # Use token_sort_ratio: compares full token sets, immune to
             # substring-inflation that makes WRatio score 2-letter symbols at 90+
@@ -276,7 +312,7 @@ class BOMProcessor:
             
             # Netting out domestic carbon price paid
             net_cbam_price = max(CBAM_REFERENCE_PRICE_EUR - price_paid, 0.0)
-            cbam_cost_eur = round(total_co2_tonnes * net_cbam_price, 2)
+            cbam_cost_eur = round(total_co2_tonnes * net_cbam_price, 2) if sector_valid else 0.0
             
             carbon_score = min(carbon_factor / 30.0 * 50, 50)
             
@@ -292,6 +328,14 @@ class BOMProcessor:
                 
             esg_risk = round(min(base_esg, 100), 1)
 
+            # If there are any validation errors, zero out the quantitative impacts
+            # so they don't corrupt dashboard aggregations.
+            if errors:
+                total_co2_kg = 0.0
+                total_co2_tonnes = 0.0
+                cbam_cost_eur = 0.0
+                esg_risk = 0.0
+
             enriched_rows.append({
                 **row.to_dict(),
                 "Matched_Material": matched_name,
@@ -305,6 +349,7 @@ class BOMProcessor:
                 "Is_Obsolete": obsolete_flag,
                 "Replacement_Standard": replacement,
                 "ESG_Risk_Score": esg_risk,
+                "Validation_Errors": " | ".join(errors) if errors else "None"
             })
 
         return pd.DataFrame(enriched_rows)
