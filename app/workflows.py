@@ -238,6 +238,18 @@ class BOMProcessor:
                 raw_name, candidates, scorer=fuzz.token_sort_ratio
             ) if candidates else None
             is_match = match_tuple and match_tuple[1] > 60
+
+            # Post-match: reject steel subfamily mismatches.
+            # "Cold-Rolled Steel Sheet" (carbon steel) should NOT match
+            # "Stainless Steel 440C" — different family entirely.
+            if is_match:
+                q_lower = raw_name.lower()
+                m_lower = match_tuple[0].lower()
+                q_is_stainless = "stainless" in q_lower
+                m_is_stainless = "stainless" in m_lower
+                # If one is stainless and the other isn't, reject
+                if q_is_stainless != m_is_stainless and "steel" in q_lower:
+                    is_match = False
             
             if is_match:
                 matched_name = match_tuple[0]
