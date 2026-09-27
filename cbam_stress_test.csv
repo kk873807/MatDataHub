@@ -1,0 +1,41 @@
+material_id,material_name,supplier,country_of_origin,weight_kg,cbam_sector,cn_code,direct_emissions,indirect_emissions,carbon_price_paid,supplier_risk_score,single_source_flag,geopolitical_risk
+MAT-9001,Hot-Rolled Steel Coil,ArcelorMittal,France,500000,Iron & Steel,7208 51 00,1.25,0.60,25.0,30,No,Low
+MAT-9002,Portland Cement,HeidelbergCement,Germany,300000,Cement,2523 29 00,0.62,0.21,15.0,40,No,Medium
+MAT-9003,Aluminium Extrusion Profile,Norsk Hydro,Norway,100000,Aluminium,7604 29 10,5.80,2.44,50.0,20,No,Low
+MAT-9004,,POSCO,South Korea,200000,Iron & Steel,7209 16 90,1.10,0.55,10.0,25,No,Low
+MAT-9005,   ,Nippon Steel,Japan,150000,Iron & Steel,7210 11 00,1.30,0.65,12.0,35,No,Medium
+MAT-9006,nan,JFE Steel,Japan,180000,Iron & Steel,7211 14 00,1.15,0.58,11.0,28,No,Low
+MAT-9007,Ferro-Silicon,Elkem ASA,Norway,,Aluminium,7604 10 10,5.20,2.10,45.0,15,No,Low
+MAT-9008,Steel Wire Rod,Gerdau,Brazil,NaN,Iron & Steel,7213 10 00,1.40,0.70,8.0,45,Yes,High
+MAT-9009,Aluminium Sheet,Hindalco,India,250000,Aluminium,7606 12 20,,,,,No,Low
+MAT-9010,Urea,CF Industries,USA,400000,Fertilisers,3102 10 10,1.80,0.90,0.0,,,
+MAT-9011,Steel Billet,NLMK,Russia,0,Iron & Steel,7207 11 14,1.50,0.75,5.0,60,Yes,High
+MAT-9012,Cement Clinker,Dangote Cement,Nigeria,-500,Cement,2523 10 00,0.85,0.28,0.0,70,Yes,High
+MAT-9013,Aluminium Ingot,Rusal,Russia,350000,Aluminium,7601 10 00,0.0,0.0,0.0,80,Yes,High
+MAT-9014,Ammonium Nitrate,Yara International,Norway,200000,Fertilisers,3102 30 10,2.10,1.05,100.0,10,No,Low
+MAT-9015,Hot-Rolled Steel Plate,SSAB,Sweden,five hundred,Iron & Steel,7208 51 00,1.25,0.60,30.0,25,No,Low
+MAT-9016,Ferro-Manganese,Eramet,France,300000,Iron & Steel,7202 11 20,N/A,N/A,20.0,35,No,Medium
+MAT-9017,Stainless Steel Rebar,Outokumpu,Finland,"1,500,000",Iron & Steel,7222 11 11,4.50,2.25,40.0,20,No,Low
+MAT-9018,Aluminium Wire,Southwire,USA,$500,Aluminium,7605 11 00,6.00,2.50,55.0,30,No,Low
+MAT-9019,Hydrogen - Grey,Air Liquide,France,50000,Hydrogen,2804 10 00,9.50,3.80,0.0,Very High,No,Medium
+MAT-9020,Steel Rebar,Tata Steel,India,0.001,Iron & Steel,7214 20 00,1.20,0.60,5.0,50,Yes,Medium
+MAT-9021,Portland Cement Type II,LafargeHolcim,Switzerland,99999999,Cement,2523 29 00,0.60,0.20,15.0,30,No,Low
+MAT-9022,Ammonia - Anhydrous,BASF,Germany,100000,Fertilisers,2814 10 00,999.99,0.0,0.0,40,No,Medium
+MAT-9023,Aluminium Foil,Novelis,USA,75000,Aluminium,7607 11 10,5.50,2.30,48.0,150,Yes,High
+MAT-9024,Ferro-Chrome,Samancor Chrome,South Africa,200000,Electricity,7202 41 10,2.80,1.40,3.0,55,Yes,High
+MAT-9025,Steel Pipe,Tenaris,Argentina,180000,Automotive,7304 11 00,1.60,0.80,0.0,45,No,Medium
+MAT-9026,Ferro-Nickel,Antam,Indonesia,250000,,7202 60 00,3.20,1.60,2.0,65,Yes,High
+MAT-9027,Hydrogen - Green,ITM Power,Atlantis,80000,Hydrogen,2804 10 00,0.40,0.10,0.0,20,No,Low
+MAT-9028,MAT-9001,Baowu Steel,China,600000,Iron & Steel,7225 30 90,1.45,0.72,8.0,55,Yes,High
+MAT-9029,Aluminium Rod,Emirates Global Aluminium,UAE,120000,Aluminium,7604 29 10,6.10,2.55,0.0,40,No,Medium
+MAT-9030,Hot-Rolled Steel Coil,ArcelorMittal,France,500000,Iron & Steel,7208 51 00,1.25,0.60,25.0,30,No,Low
+MAT-9031,Hot-Rolled Steel Coil,Metinvest,Ukraine,750000,Iron & Steel,7208 51 00,1.25,0.60,3.0,75,Yes,High
+MAT-9032,"Steel Rebar — Grade 500 (Ø12mm)",Celsa Group,Spain,320000,Iron & Steel,7214 20 00,1.35,0.68,18.0,25,No,Low
+MAT-9033,Aluminium Billet,Thyssenkrüpp AG,Germany,200000,Aluminium,7601 20 80,6.30,2.65,52.0,30,No,Low
+MAT-9034,"""High-Carbon"" Steel Wire",Bekaert,Belgium,90000,Iron & Steel,7217 10 10,1.80,0.90,35.0,15,No,Low
+MAT-9035,Steel/Iron Alloy & Composite,Salzgitter AG,Germany,160000,Iron & Steel,7202 99 80,1.95,0.98,22.0,35,No,Medium
+MAT-9036,Ferro-Vanadium,Bushveld Minerals,South Africa,50000,Iron & Steel,7202 92 00,3.50,1.75,75.0,60,Yes,High
+MAT-9037,Ferro-Tungsten,China Molybdenum,China,45000,Iron & Steel,7202 80 00,4.20,2.10,74.99,50,No,Medium
+MAT-9038,Steel Slab,Nucor,USA,900000,Iron & Steel,7207 12 10,1.10,0.55,0.0,0,No,Low
+MAT-9039,Ferro-Molybdenum,Freeport-McMoRan,USA,60000,Iron & Steel,7202 70 00,5.80,2.90,0.0,100,Yes,High
+MAT-9040,"Ultra-High-Molecular-Weight Polyethylene Reinforced Carbon Fiber Composite With Ceramic Matrix Coating Grade A1-Special",Advanced Composites Inc,Japan,25000,Iron & Steel,7208 51 00,2.50,1.25,10.0,45,No,Medium

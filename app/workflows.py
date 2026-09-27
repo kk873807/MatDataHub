@@ -165,6 +165,8 @@ class BOMProcessor:
                     if isinstance(raw_weight, str):
                         raw_weight = raw_weight.replace(',', '')
                     weight_kg = float(raw_weight) * weight_multiplier
+                    if weight_kg < 0:
+                        weight_kg = 0.0
                 except ValueError:
                     weight_kg = 0.0
             else:
