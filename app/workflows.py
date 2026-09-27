@@ -1,6 +1,6 @@
 import pandas as pd
 import math
-from thefuzz import process
+from thefuzz import process, fuzz
 from sqlalchemy.orm import Session
 from app.models import Material
 
@@ -101,11 +101,36 @@ def _estimate_carbon_factor(material_name, category=""):
 
 
 class BOMProcessor:
+    # Minimum candidate name length to prevent 2-3 letter element symbols
+    # (e.g. Ga, Li, Ni, Re, Ir) from winning fuzzy matches via trivial substrings
+    MIN_CANDIDATE_LENGTH = 4
+
+    # Map CBAM sector keywords → Material.category values for pre-filtering
+    CBAM_SECTOR_CATEGORY_MAP = {
+        "iron": ["Metal"],
+        "steel": ["Metal"],
+        "iron & steel": ["Metal"],
+        "iron and steel": ["Metal"],
+        "cement": ["Ceramic"],  # Cement/clinker stored under Ceramic
+        "aluminium": ["Metal"],
+        "aluminum": ["Metal"],
+        "fertiliser": [],       # No natural DB category — skip pre-filter
+        "fertilizer": [],
+        "hydrogen": [],         # No natural DB category — skip pre-filter
+    }
+
     def __init__(self, db: Session):
         self.db = db
-        all_mats = self.db.query(Material.id, Material.name).all()
+        all_mats = self.db.query(Material.id, Material.name, Material.category).all()
         self.mat_dict = {m.id: m.name for m in all_mats}
-        self.mat_names = list(self.mat_dict.values())
+        # Filter out names shorter than MIN_CANDIDATE_LENGTH
+        self.mat_names = [m.name for m in all_mats if len(m.name) >= self.MIN_CANDIDATE_LENGTH]
+        # Build category → [name, ...] for sector-aware pre-filtering
+        self.cat_to_names = {}
+        for m in all_mats:
+            if len(m.name) >= self.MIN_CANDIDATE_LENGTH:
+                cat = (m.category or "").strip()
+                self.cat_to_names.setdefault(cat, []).append(m.name)
 
     def process_bom(self, df, material_col, weight_col):
         # Auto-detect column mappings if the explicit ones are missing
@@ -181,9 +206,33 @@ class BOMProcessor:
             elif direct_em is not None:
                 provided_carbon_factor = direct_em
                 
-            match_tuple = process.extractOne(raw_name, self.mat_names)
-            # Increase threshold to 85 to prevent random bad matches (like Cement -> Steel)
-            is_match = match_tuple and match_tuple[1] > 82
+            # --- Sector-aware fuzzy matching ---
+            # Try to extract CBAM sector from the row for pre-filtering
+            cbam_sector = extract_string(['cbam_sector', 'sector'])
+            candidates = self.mat_names  # default: all names (already length-filtered)
+
+            if cbam_sector and cbam_sector.lower() not in ('nan', ''):
+                # Pre-filter candidates to the relevant DB category
+                sector_lower = cbam_sector.strip().lower()
+                allowed_cats = None
+                for keyword, cats in self.CBAM_SECTOR_CATEGORY_MAP.items():
+                    if keyword in sector_lower:
+                        allowed_cats = cats
+                        break
+                if allowed_cats:
+                    # Merge all candidates from matching categories
+                    candidates = []
+                    for cat in allowed_cats:
+                        candidates.extend(self.cat_to_names.get(cat, []))
+                    if not candidates:
+                        candidates = self.mat_names  # fallback if filter yields nothing
+
+            # Use token_sort_ratio: compares full token sets, immune to
+            # substring-inflation that makes WRatio score 2-letter symbols at 90+
+            match_tuple = process.extractOne(
+                raw_name, candidates, scorer=fuzz.token_sort_ratio
+            ) if candidates else None
+            is_match = match_tuple and match_tuple[1] > 60
             
             if is_match:
                 matched_name = match_tuple[0]
