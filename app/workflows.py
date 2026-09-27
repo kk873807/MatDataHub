@@ -261,6 +261,17 @@ class BOMProcessor:
                 invalid_countries = ['nowhereland', 'atlantis', 'narnia', 'test', 'unknown']
                 if len(c_lower) < 2 or c_lower in invalid_countries:
                     errors.append("Unrecognized country")
+                    
+            # Date validation
+            shipment_date = extract_string(['last_shipment_date', 'shipment_date', 'date'])
+            if shipment_date:
+                import datetime
+                try:
+                    dt = datetime.datetime.strptime(shipment_date, "%Y-%m-%d")
+                    if dt > datetime.datetime.now():
+                        errors.append("Shipment date cannot be in the future")
+                except ValueError:
+                    errors.append("Invalid date format (requires YYYY-MM-DD)")
             
             provided_carbon_factor = None
             if direct_em is not None and indirect_em is not None:
