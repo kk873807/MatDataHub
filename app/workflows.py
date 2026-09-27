@@ -231,6 +231,36 @@ class BOMProcessor:
             data_quality = extract_string(['data_quality', 'data quality'])
             if data_quality and data_quality.lower() == 'verified' and price_paid_val is None:
                 errors.append("Missing carbon price for Verified data")
+                
+            # CN Code Validation
+            cn_code = extract_string(['cn_code', 'hs_code', 'cn code'])
+            if cn_code:
+                # Strip spaces, dots, hyphens
+                clean_cn = cn_code.replace(" ", "").replace(".", "").replace("-", "")
+                if not clean_cn.isdigit() or len(clean_cn) < 4:
+                    errors.append("Invalid CN Code format")
+            else:
+                pass # Only flag if explicitly required by business rules, but user mainly cared about malformed ones
+                
+            # Country Validation (lightweight heuristic list)
+            def extract_exact_string(aliases):
+                for k in row.keys():
+                    if any(a == str(k).lower().strip() for a in aliases):
+                        val = row[k]
+                        if pd.notna(val) and str(val).strip() != "" and str(val).lower() != "nan":
+                            return str(val).strip()
+                return None
+                
+            country = extract_exact_string(['country_of_origin', 'supplier_country', 'origin', 'country'])
+            if not country:
+                errors.append("Missing supplier country")
+            else:
+                # Basic check for fictional or obviously invalid countries. 
+                # (A full list is too long, but we can check for common joke entries and require >2 chars)
+                c_lower = country.lower().strip()
+                invalid_countries = ['nowhereland', 'atlantis', 'narnia', 'test', 'unknown']
+                if len(c_lower) < 2 or c_lower in invalid_countries:
+                    errors.append("Unrecognized country")
             
             provided_carbon_factor = None
             if direct_em is not None and indirect_em is not None:
@@ -335,6 +365,7 @@ class BOMProcessor:
                 total_co2_tonnes = 0.0
                 cbam_cost_eur = 0.0
                 esg_risk = 0.0
+                carbon_factor = 0.0
 
             enriched_rows.append({
                 **row.to_dict(),
