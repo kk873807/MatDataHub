@@ -214,18 +214,23 @@ class BOMProcessor:
             if cbam_sector and cbam_sector.lower() not in ('nan', ''):
                 # Pre-filter candidates to the relevant DB category
                 sector_lower = cbam_sector.strip().lower()
-                allowed_cats = None
+                allowed_cats = None  # None = sector not in map, keep all candidates
                 for keyword, cats in self.CBAM_SECTOR_CATEGORY_MAP.items():
                     if keyword in sector_lower:
-                        allowed_cats = cats
+                        allowed_cats = cats  # [] = known sector, no DB category
                         break
-                if allowed_cats:
-                    # Merge all candidates from matching categories
-                    candidates = []
-                    for cat in allowed_cats:
-                        candidates.extend(self.cat_to_names.get(cat, []))
-                    if not candidates:
-                        candidates = self.mat_names  # fallback if filter yields nothing
+                if allowed_cats is not None:  # sector was recognized
+                    if allowed_cats:
+                        # Merge candidates from matching DB categories
+                        candidates = []
+                        for cat in allowed_cats:
+                            candidates.extend(self.cat_to_names.get(cat, []))
+                        if not candidates:
+                            candidates = []  # no DB entries for this category
+                    else:
+                        # Known CBAM sector with no DB counterpart (Fertilisers,
+                        # Hydrogen) — skip matching entirely, force NO MATCH
+                        candidates = []
 
             # Use token_sort_ratio: compares full token sets, immune to
             # substring-inflation that makes WRatio score 2-letter symbols at 90+
