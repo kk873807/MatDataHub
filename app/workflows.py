@@ -174,13 +174,15 @@ class BOMProcessor:
             
             def extract_string(aliases):
                 for k in row.keys():
-                    if any(a in str(k).lower() for a in aliases):
+                    k_lower = str(k).lower().strip()
+                    # Prevent 'id' from matching 'width', 'solid', 'liquid'
+                    if any(a == k_lower or k_lower.startswith(a + '_') or k_lower.endswith('_' + a) for a in aliases):
                         val = row[k]
                         if pd.notna(val) and str(val).strip() != "" and str(val).lower() != "nan":
                             return str(val).strip()
                 return None
             
-            mat_id = extract_string(['material_id', 'id', 'item'])
+            mat_id = extract_string(['material_id', 'id', 'item_no', 'part_number'])
             if not mat_id:
                 errors.append("Missing material ID")
                 quarantine_reasons.append("Missing material ID")
@@ -217,7 +219,6 @@ class BOMProcessor:
                 
             if not raw_name or str(raw_name).strip() == "" or str(raw_name).lower() == "nan":
                 errors.append("Missing material name")
-                quarantine_reasons.append("Missing material name")
                 raw_name = "UNKNOWN" 
                 
             def extract_float(aliases, field_name):
@@ -334,7 +335,10 @@ class BOMProcessor:
                     notes.append("Destination outside EU (exempt)")
                     
             shipment_date = extract_string(['last_shipment_date', 'shipment_date', 'date'])
-            if shipment_date:
+            if not shipment_date:
+                errors.append("Missing shipment date")
+                quarantine_reasons.append("Missing shipment date")
+            else:
                 import datetime
                 try:
                     dt = datetime.datetime.strptime(shipment_date, "%Y-%m-%d")
