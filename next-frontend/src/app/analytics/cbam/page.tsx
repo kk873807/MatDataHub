@@ -175,8 +175,8 @@ export default function CBAMAnalytics() {
             }
           } else if (included && included.startsWith("NO")) {
             revCount += 1;
-            if (rowObj["Provisional_CO2_kg"]) {
-                revTonnes += parseFloat(rowObj["Provisional_CO2_kg"] || "0") / 1000.0;
+            if (rowObj["Parsed_Weight_kg"]) {
+                revTonnes += parseFloat(rowObj["Parsed_Weight_kg"] || "0") / 1000.0;
             }
           }
         });
@@ -401,7 +401,7 @@ export default function CBAMAnalytics() {
                 <div className="text-xs text-slate-400 mt-2 font-medium space-y-1">
                   <p>of which {fallbackTonnes.toLocaleString(undefined, { maximumFractionDigits: 1 })} t based on fallback defaults</p>
                   {pendingReviewCount > 0 && (
-                    <p className="text-amber-500">{pendingReviewTonnes.toLocaleString(undefined, { maximumFractionDigits: 1 })} t in {pendingReviewCount} rows pending review</p>
+                    <p className="text-amber-500">{pendingReviewTonnes.toLocaleString(undefined, { maximumFractionDigits: 1 })} t (material mass) in {pendingReviewCount} rows pending review</p>
                   )}
                 </div>
               </div>

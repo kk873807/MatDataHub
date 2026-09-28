@@ -263,6 +263,10 @@ class BOMProcessor:
                 errors.append("Carbon price cannot be negative")
                 price_paid = 0.0
             
+            supplier_name = extract_string(['supplier_name', 'supplier', 'vendor'])
+            if not supplier_name:
+                errors.append("Missing supplier name")
+
             supplier_risk = extract_float(['supplier_risk', 'vendor_risk'], 'supplier risk') or 0.0
             if supplier_risk > 100:
                 errors.append("Risk score capped at 100")
@@ -272,22 +276,36 @@ class BOMProcessor:
                 supplier_risk = 0.0
                 
             lead_time = extract_float(['lead_time', 'lead time'], None)
-            if lead_time is not None and (lead_time < 0 or lead_time > 3650):
+            if lead_time is None:
+                errors.append("Missing lead time")
+            elif lead_time < 0 or lead_time > 3650:
                 errors.append("Lead time out of plausible bounds")
 
             single_source = extract_string(['single_source', 'sole_source'])
-            if single_source and single_source.lower() not in ('yes', 'no', 'true', 'false', 'y', 'n'):
+            if not single_source:
+                errors.append("Missing single_source_flag")
+            elif single_source.lower() not in ('yes', 'no', 'true', 'false', 'y', 'n'):
                 errors.append("Invalid single_source_flag")
+                
             geo_risk = extract_string(['geopolitical', 'geo_risk', 'country_risk'])
-            if geo_risk and geo_risk.lower() not in ('low', 'medium', 'high'):
+            if not geo_risk:
+                errors.append("Missing geopolitical_risk")
+            elif geo_risk.lower() not in ('low', 'medium', 'high'):
                 errors.append("Invalid geopolitical_risk")
+                
             data_quality = extract_string(['data_quality', 'data quality'])
-            if data_quality and data_quality.lower() == 'verified' and price_paid_val is None:
+            if not data_quality:
+                errors.append("Missing data quality")
+            elif data_quality.lower() not in ('verified', 'default', 'estimated', 'measured'):
+                errors.append("Invalid data quality")
+            elif data_quality.lower() == 'verified' and price_paid_val is None:
                 errors.append("Missing carbon price for Verified data")
                 
             cn_code = extract_string(['cn_code', 'hs_code', 'cn code'])
             clean_cn = ""
-            if cn_code:
+            if not cn_code:
+                errors.append("Missing CN Code")
+            else:
                 clean_cn = cn_code.replace(" ", "").replace(".", "").replace("-", "")
                 if not clean_cn.isdigit() or len(clean_cn) < 4:
                     errors.append("Invalid CN Code format")
@@ -460,7 +478,7 @@ class BOMProcessor:
             net_cbam_price = max(CBAM_REFERENCE_PRICE_EUR - price_paid, 0.0)
             
             is_exempt = False
-            if "Origin is exempt from CBAM (EU/EEA)" in notes or "Destination outside EU (exempt)" in notes:
+            if "Origin is exempt from CBAM (EU/EEA)" in notes or "Destination outside EU (exempt)" in notes or "Pre-2026 shipment (reporting-only phase, no financial liability)" in notes:
                 is_exempt = True
             
             cbam_cost_eur = round(total_co2_tonnes * net_cbam_price, 2) if sector_valid and not is_exempt else 0.0
@@ -470,7 +488,8 @@ class BOMProcessor:
                 geo_score = 15 if geo_risk and "high" in geo_risk.lower() else (7.5 if geo_risk and "med" in geo_risk.lower() else 0)
                 ss_score = 15 if single_source and ("yes" in single_source.lower() or "true" in single_source.lower() or "y" == single_source.lower()) else 0
                 supp_score = min(supplier_risk / 100.0 * 20, 20)
-                base_esg = carbon_score + geo_score + ss_score + supp_score
+                lead_score = 10 if lead_time and lead_time > 180 else (5 if lead_time and lead_time > 90 else 0)
+                base_esg = carbon_score + geo_score + ss_score + supp_score + lead_score
             else:
                 recycle_score = (1 - recyclability) * 30
                 obsolete_score = 20 if obsolete_flag == "YES" else 0
@@ -504,6 +523,7 @@ class BOMProcessor:
                 
             enriched_rows.append({
                 **clean_row,
+                "Parsed_Weight_kg": round(weight_kg, 2),
                 "DeMinimis_Eligible_Mass_kg": weight_kg if is_deminimis_eligible == "YES" else 0.0,
                 "Matched_Material": matched_name,
                 "Match_Confidence": f"{confidence}%" if is_match else "0%",
@@ -521,7 +541,7 @@ class BOMProcessor:
                 "Replacement_Standard": replacement,
                 "ESG_Risk_Score": esg_risk if esg_risk > 0 else 0.0,
                 "Notes": " | ".join(notes) if notes else "None",
-                "Validation_Errors": " | ".join(errors) if errors else "None",
+                "Validation_Errors": " | ".join(list(dict.fromkeys(errors + quarantine_reasons))) if (errors or quarantine_reasons) else "None",
                 "Included_In_Total": included_str
             })
 
