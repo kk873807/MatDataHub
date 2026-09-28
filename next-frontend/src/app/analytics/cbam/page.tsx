@@ -26,6 +26,7 @@ export default function CBAMAnalytics() {
   const [resultsData, setResultsData] = useState<any[] | null>(null);
   const [totalCO2, setTotalCO2] = useState(0);
   const [totalCbamCost, setTotalCbamCost] = useState(0);
+  const [selectedYear, setSelectedYear] = useState<"2034" | "2027" | "2026">("2034");
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -138,8 +139,15 @@ export default function CBAMAnalytics() {
         let total = 0;
         let totalCbamEur = 0;
         parsedData.forEach((rowObj: any) => {
-          if (rowObj["Total_CO2_kg"]) total += parseFloat(rowObj["Total_CO2_kg"] || "0");
-          if (rowObj["CBAM_Cost_EUR"]) totalCbamEur += parseFloat(rowObj["CBAM_Cost_EUR"] || "0");
+          // Only sum rows that don't have validation errors (or only 'None')
+          // Wait, the backend already zeroes out critical errors, but the user wants to exclude ALL rows with ANY error from the top-level total for safety!
+          const errors = rowObj["Validation_Errors"];
+          const hasErrors = errors && errors !== "None";
+          
+          if (!hasErrors) {
+            if (rowObj["Total_CO2_kg"]) total += parseFloat(rowObj["Total_CO2_kg"] || "0");
+            if (rowObj["CBAM_Cost_EUR"]) totalCbamEur += parseFloat(rowObj["CBAM_Cost_EUR"] || "0");
+          }
         });
 
         setResultsData(parsedData);
@@ -203,7 +211,8 @@ export default function CBAMAnalytics() {
   }
 
   // CBAM cost now comes from backend (€75/tCO2e reference price)
-  const estimatedTaxEUR = totalCbamCost;
+  const phaseInFactor = selectedYear === "2026" ? 0.025 : selectedYear === "2027" ? 0.05 : 1.0;
+  const estimatedTaxEUR = totalCbamCost * phaseInFactor;
 
   return (
     <main className="flex flex-col p-6 lg:p-10 w-full h-full overflow-y-auto">
@@ -345,7 +354,18 @@ export default function CBAMAnalytics() {
                 <h3 className="text-3xl font-bold text-slate-900 dark:text-white font-heading">{totalCO2.toLocaleString(undefined, { maximumFractionDigits: 2 })} <span className="text-lg text-slate-500 dark:text-slate-400 font-normal">kg CO₂</span></h3>
               </div>
               <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl flex flex-col justify-center">
-                <p className="text-slate-500 dark:text-slate-400 font-medium mb-1 flex items-center gap-2"><FileText className="w-4 h-4 text-amber-600 dark:text-amber-400" /> Est. CBAM Tax Obligation</p>
+                <div className="flex justify-between items-start mb-1">
+                  <p className="text-slate-500 dark:text-slate-400 font-medium flex items-center gap-2"><FileText className="w-4 h-4 text-amber-600 dark:text-amber-400" /> Est. CBAM Tax Payable</p>
+                  <select 
+                    value={selectedYear} 
+                    onChange={e => setSelectedYear(e.target.value as any)}
+                    className="text-xs bg-slate-100 dark:bg-slate-800 border-none rounded p-1 font-bold text-slate-700 dark:text-slate-300 outline-none cursor-pointer"
+                  >
+                    <option value="2034">2034 (100% Gross Exposure)</option>
+                    <option value="2027">2027 (5% Phase-in)</option>
+                    <option value="2026">2026 (2.5% Phase-in)</option>
+                  </select>
+                </div>
                 <h3 className="text-3xl font-bold text-amber-500">€{estimatedTaxEUR.toLocaleString(undefined, { maximumFractionDigits: 2 })} <span className="text-lg text-slate-500 dark:text-slate-400 font-normal">(@ €75/tCO₂e)</span></h3>
               </div>
             </div>

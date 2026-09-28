@@ -101,6 +101,14 @@ def _estimate_carbon_factor(material_name, category=""):
 
 
 class BOMProcessor:
+    EU_EEA_COUNTRIES = {
+        'austria', 'belgium', 'bulgaria', 'croatia', 'republic of cyprus', 'cyprus', 'czech republic', 'czechia',
+        'denmark', 'estonia', 'finland', 'france', 'germany', 'greece', 'hungary', 'ireland', 'italy',
+        'latvia', 'lithuania', 'luxembourg', 'malta', 'netherlands', 'poland', 'portugal', 'romania',
+        'slovakia', 'slovenia', 'spain', 'sweden',
+        'iceland', 'liechtenstein', 'norway', 'switzerland'
+    }
+
     # Minimum candidate name length to prevent 2-3 letter element symbols
     # (e.g. Ga, Li, Ni, Re, Ir) from winning fuzzy matches via trivial substrings
     MIN_CANDIDATE_LENGTH = 4
@@ -172,10 +180,11 @@ class BOMProcessor:
             
             mat_id = extract_string(['material_id', 'id'])
             if mat_id:
-                if mat_id in seen_ids:
+                mat_id_lower = str(mat_id).strip().lower()
+                if mat_id_lower in seen_ids:
                     critical_errors.append("Duplicate material ID")
                 else:
-                    seen_ids.add(mat_id)
+                    seen_ids.add(mat_id_lower)
 
             raw_name = str(row.get(actual_mat_col, ""))
             raw_weight = row.get(actual_weight_col, None)
@@ -210,7 +219,16 @@ class BOMProcessor:
                             if field_name: errors.append(f"Missing {field_name}")
                             return None
                         try:
-                            if isinstance(val, str): val = val.replace(',', '')
+                            if isinstance(val, str):
+                                val = str(val).replace('€', '').replace('$', '').strip()
+                                if ',' in val and '.' not in val:
+                                    parts = val.split(',')
+                                    if len(parts[-1]) == 3:
+                                        val = val.replace(',', '')
+                                    else:
+                                        val = val.replace(',', '.')
+                                elif ',' in val and '.' in val:
+                                    val = val.replace(',', '')
                             return float(val)
                         except ValueError:
                             if field_name: errors.append(f"Non-numeric {field_name}")
@@ -219,10 +237,31 @@ class BOMProcessor:
 
             direct_em = extract_float(['direct_emissions', 'direct emissions'], 'direct emissions')
             indirect_em = extract_float(['indirect_emissions', 'indirect emissions'], 'indirect emissions')
+            
+            if direct_em is not None and direct_em > 50.0:
+                critical_errors.append("Emissions exceed plausibility bound (50 t/t)")
+            if indirect_em is not None and indirect_em > 50.0:
+                critical_errors.append("Emissions exceed plausibility bound (50 t/t)")
+                
             price_paid_val = extract_float(['carbon_price_paid', 'price_paid', 'domestic_carbon'], None)
             price_paid = price_paid_val or 0.0
+            if price_paid < 0:
+                critical_errors.append("Carbon price cannot be negative")
+                price_paid = 0.0
             
             supplier_risk = extract_float(['supplier_risk', 'vendor_risk'], 'supplier risk') or 0.0
+            if supplier_risk > 100:
+                errors.append("Risk score capped at 100")
+                supplier_risk = 100.0
+            if supplier_risk < 0:
+                errors.append("Risk score must be positive")
+                supplier_risk = 0.0
+                
+            # Lead time plausibility just to handle ignoring nonsense
+            lead_time = extract_float(['lead_time', 'lead time'], None)
+            if lead_time is not None and (lead_time < 0 or lead_time > 3650):
+                errors.append("Lead time out of plausible bounds")
+
             single_source = extract_string(['single_source', 'sole_source'])
             if single_source and single_source.lower() not in ('yes', 'no', 'true', 'false', 'y', 'n'):
                 errors.append("Invalid single_source_flag")
@@ -235,6 +274,7 @@ class BOMProcessor:
                 
             # CN Code Validation
             cn_code = extract_string(['cn_code', 'hs_code', 'cn code'])
+            clean_cn = ""
             if cn_code:
                 # Strip spaces, dots, hyphens
                 clean_cn = cn_code.replace(" ", "").replace(".", "").replace("-", "")
@@ -256,12 +296,18 @@ class BOMProcessor:
             if not country:
                 errors.append("Missing supplier country")
             else:
-                # Basic check for fictional or obviously invalid countries. 
-                # (A full list is too long, but we can check for common joke entries and require >2 chars)
                 c_lower = country.lower().strip()
                 invalid_countries = ['nowhereland', 'atlantis', 'narnia', 'test', 'unknown']
                 if len(c_lower) < 2 or c_lower in invalid_countries:
                     errors.append("Unrecognized country")
+                if c_lower in self.EU_EEA_COUNTRIES:
+                    critical_errors.append("Origin is exempt from CBAM (EU/EEA)")
+                    
+            destination = extract_exact_string(['destination', 'destination_country'])
+            if destination:
+                d_lower = destination.lower().strip()
+                if d_lower not in self.EU_EEA_COUNTRIES:
+                    critical_errors.append("Destination outside EU (exempt)")
                     
             # Date validation
             shipment_date = extract_string(['last_shipment_date', 'shipment_date', 'date'])
@@ -274,21 +320,16 @@ class BOMProcessor:
                 except ValueError:
                     errors.append("Invalid date format (requires YYYY-MM-DD)")
             
-            provided_carbon_factor = None
-            if direct_em is not None and indirect_em is not None:
-                provided_carbon_factor = direct_em + indirect_em
-            elif direct_em is not None:
-                provided_carbon_factor = direct_em
-                
             # --- Sector-aware fuzzy matching ---
             # Try to extract CBAM sector from the row for pre-filtering
             cbam_sector = extract_string(['cbam_sector', 'sector'])
             candidates = self.mat_names  # default: all names (already length-filtered)
 
             sector_valid = True
+            sector_lower = ""
+            allowed_cats = None
             if cbam_sector and cbam_sector.lower() not in ('nan', ''):
                 sector_lower = cbam_sector.strip().lower()
-                allowed_cats = None
                 for keyword, cats in self.CBAM_SECTOR_CATEGORY_MAP.items():
                     if keyword in sector_lower:
                         allowed_cats = cats
@@ -320,6 +361,36 @@ class BOMProcessor:
                 raw_name, candidates, scorer=fuzz.token_sort_ratio
             ) if candidates else None
             is_match = match_tuple and match_tuple[1] > 60
+
+            
+            provided_carbon_factor = None
+            # CBAM scope rules: Indirect emissions only count for Cement and Fertilisers.
+            # They are excluded for Iron & Steel, Aluminium, and Hydrogen.
+            includes_indirect = False
+            if allowed_cats is not None:
+                # Based on the CBAM_SECTOR_CATEGORY_MAP logic above
+                if any(k in sector_lower for k in ['cement', 'fertili']):
+                    includes_indirect = True
+            
+            if direct_em is not None:
+                provided_carbon_factor = direct_em
+                if includes_indirect and indirect_em is not None:
+                    provided_carbon_factor += indirect_em
+
+            # Cross-validate CN Code against Sector
+            if clean_cn and sector_lower:
+                if "steel" in sector_lower or "iron" in sector_lower:
+                    if not clean_cn.startswith(("72", "73", "26")):
+                        errors.append("CN Code does not match Iron & Steel sector")
+                elif "cement" in sector_lower:
+                    if not clean_cn.startswith("2523"):
+                        errors.append("CN Code does not match Cement sector")
+                elif "alumin" in sector_lower:
+                    if not clean_cn.startswith("76"):
+                        errors.append("CN Code does not match Aluminium sector")
+                elif "fertil" in sector_lower:
+                    if not clean_cn.startswith(("2808", "2814", "2834", "3102", "3105")):
+                        errors.append("CN Code does not match Fertilisers sector")
 
             # Post-match: reject steel subfamily mismatches.
             # "Cold-Rolled Steel Sheet" (carbon steel) should NOT match
@@ -381,8 +452,15 @@ class BOMProcessor:
                 esg_risk = 0.0
                 carbon_factor = 0.0
 
+            clean_row = {}
+            for k, v in row.to_dict().items():
+                if isinstance(v, str) and str(v).startswith(('=', '+', '-', '@')):
+                    clean_row[k] = f"'{v}"
+                else:
+                    clean_row[k] = v
+
             enriched_rows.append({
-                **row.to_dict(),
+                **clean_row,
                 "Matched_Material": matched_name,
                 "Match_Confidence": f"{confidence}%" if is_match else "0%",
                 "Carbon_Factor_kgCO2e_per_kg": round(carbon_factor, 3),
