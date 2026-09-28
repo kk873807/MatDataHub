@@ -160,6 +160,7 @@ class BOMProcessor:
         seen_ids = set()
         for index, row in df.iterrows():
             errors = []
+            critical_errors = []
             
             def extract_string(aliases):
                 for k in row.keys():
@@ -172,7 +173,7 @@ class BOMProcessor:
             mat_id = extract_string(['material_id', 'id'])
             if mat_id:
                 if mat_id in seen_ids:
-                    errors.append("Duplicate material ID")
+                    critical_errors.append("Duplicate material ID")
                 else:
                     seen_ids.add(mat_id)
 
@@ -187,10 +188,10 @@ class BOMProcessor:
                         raw_weight = str(raw_weight).replace(',', '')
                     weight_kg = float(raw_weight) * weight_multiplier
                     if weight_kg < 0:
-                        errors.append("Negative quantity")
+                        critical_errors.append("Negative quantity")
                         weight_kg = 0.0
                     elif weight_kg > 100_000_000:
-                        errors.append("Quantity exceeds 100M kg limit")
+                        critical_errors.append("Quantity exceeds 100M kg limit")
                 except ValueError:
                     errors.append("Non-numeric quantity")
                     weight_kg = 0.0
@@ -295,7 +296,7 @@ class BOMProcessor:
                 
                 if allowed_cats is None:
                     # Unrecognized sector like Textiles or Automotive
-                    errors.append("Sector not covered by CBAM")
+                    critical_errors.append("Sector not covered by CBAM")
                     sector_valid = False
                 elif allowed_cats:
                     # Known CBAM sector, filter to categories
@@ -308,8 +309,10 @@ class BOMProcessor:
                     # Fertilisers, Hydrogen
                     candidates = []
             else:
-                sector_valid = False
-                if cbam_sector: errors.append("Sector not covered by CBAM")
+                sector_valid = True
+                if cbam_sector: 
+                    critical_errors.append("Sector not covered by CBAM")
+                    sector_valid = False
 
             # Use token_sort_ratio: compares full token sets, immune to
             # substring-inflation that makes WRatio score 2-letter symbols at 90+
@@ -371,7 +374,7 @@ class BOMProcessor:
 
             # If there are any validation errors, zero out the quantitative impacts
             # so they don't corrupt dashboard aggregations.
-            if errors:
+            if critical_errors:
                 total_co2_kg = 0.0
                 total_co2_tonnes = 0.0
                 cbam_cost_eur = 0.0
@@ -391,7 +394,7 @@ class BOMProcessor:
                 "Is_Obsolete": obsolete_flag,
                 "Replacement_Standard": replacement,
                 "ESG_Risk_Score": esg_risk,
-                "Validation_Errors": " | ".join(errors) if errors else "None"
+                "Validation_Errors": " | ".join(critical_errors + errors) if (critical_errors or errors) else "None"
             })
 
         return pd.DataFrame(enriched_rows)
