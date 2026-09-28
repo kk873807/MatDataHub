@@ -124,7 +124,8 @@ class BOMProcessor:
         "aluminum": ["Metal"],
         "fertiliser": [],       # No natural DB category — skip pre-filter
         "fertilizer": [],
-        "hydrogen": [],         # No natural DB category — skip pre-filter
+        "hydrogen": [],
+        "electricity": [],         # No natural DB category — skip pre-filter
     }
 
     def __init__(self, db: Session):
@@ -168,7 +169,7 @@ class BOMProcessor:
         seen_ids = set()
         for index, row in df.iterrows():
             errors = []
-            critical_errors = []
+            quarantine_reasons = []
             
             def extract_string(aliases):
                 for k in row.keys():
@@ -179,10 +180,13 @@ class BOMProcessor:
                 return None
             
             mat_id = extract_string(['material_id', 'id'])
-            if mat_id:
+            if not mat_id:
+                errors.append("Missing material ID")
+                quarantine_reasons.append("Missing material ID")
+            else:
                 mat_id_lower = str(mat_id).strip().lower()
                 if mat_id_lower in seen_ids:
-                    critical_errors.append("Duplicate material ID")
+                    quarantine_reasons.append("Duplicate material ID")
                 else:
                     seen_ids.add(mat_id_lower)
 
@@ -190,6 +194,7 @@ class BOMProcessor:
             raw_weight = row.get(actual_weight_col, None)
             if pd.isna(raw_weight) or str(raw_weight).strip() == "" or str(raw_weight).lower() == "nan":
                 errors.append("Missing quantity")
+                quarantine_reasons.append("Missing quantity")
                 weight_kg = 0.0
             else:
                 try:
@@ -197,16 +202,18 @@ class BOMProcessor:
                         raw_weight = str(raw_weight).replace(',', '')
                     weight_kg = float(raw_weight) * weight_multiplier
                     if weight_kg < 0:
-                        critical_errors.append("Negative quantity")
+                        quarantine_reasons.append("Negative quantity")
                         weight_kg = 0.0
                     elif weight_kg > 100_000_000:
-                        critical_errors.append("Quantity exceeds 100M kg limit")
+                        quarantine_reasons.append("Quantity exceeds 100M kg limit")
                 except ValueError:
                     errors.append("Non-numeric quantity")
+                    quarantine_reasons.append("Non-numeric quantity")
                     weight_kg = 0.0
                 
             if not raw_name or str(raw_name).strip() == "" or str(raw_name).lower() == "nan":
                 errors.append("Missing material name")
+                quarantine_reasons.append("Missing material name")
                 raw_name = "UNKNOWN" 
                 
             # Check for provided CBAM data in CSV
@@ -215,7 +222,6 @@ class BOMProcessor:
                     if any(a in str(k).lower() for a in aliases):
                         val = row[k]
                         if pd.isna(val) or str(val).strip() == "" or str(val).lower() == "nan":
-                            # We found the column, but it's empty
                             if field_name: errors.append(f"Missing {field_name}")
                             return None
                         try:
@@ -239,14 +245,14 @@ class BOMProcessor:
             indirect_em = extract_float(['indirect_emissions', 'indirect emissions'], 'indirect emissions')
             
             if direct_em is not None and direct_em > 50.0:
-                critical_errors.append("Emissions exceed plausibility bound (50 t/t)")
+                quarantine_reasons.append("Emissions exceed plausibility bound (50 t/t)")
             if indirect_em is not None and indirect_em > 50.0:
-                critical_errors.append("Emissions exceed plausibility bound (50 t/t)")
+                quarantine_reasons.append("Emissions exceed plausibility bound (50 t/t)")
                 
             price_paid_val = extract_float(['carbon_price_paid', 'price_paid', 'domestic_carbon'], None)
             price_paid = price_paid_val or 0.0
             if price_paid < 0:
-                critical_errors.append("Carbon price cannot be negative")
+                errors.append("Carbon price cannot be negative")
                 price_paid = 0.0
             
             supplier_risk = extract_float(['supplier_risk', 'vendor_risk'], 'supplier risk') or 0.0
@@ -257,7 +263,6 @@ class BOMProcessor:
                 errors.append("Risk score must be positive")
                 supplier_risk = 0.0
                 
-            # Lead time plausibility just to handle ignoring nonsense
             lead_time = extract_float(['lead_time', 'lead time'], None)
             if lead_time is not None and (lead_time < 0 or lead_time > 3650):
                 errors.append("Lead time out of plausible bounds")
@@ -276,14 +281,11 @@ class BOMProcessor:
             cn_code = extract_string(['cn_code', 'hs_code', 'cn code'])
             clean_cn = ""
             if cn_code:
-                # Strip spaces, dots, hyphens
                 clean_cn = cn_code.replace(" ", "").replace(".", "").replace("-", "")
                 if not clean_cn.isdigit() or len(clean_cn) < 4:
                     errors.append("Invalid CN Code format")
-            else:
-                pass # Only flag if explicitly required by business rules, but user mainly cared about malformed ones
                 
-            # Country Validation (lightweight heuristic list)
+            # Country Validation
             def extract_exact_string(aliases):
                 for k in row.keys():
                     if any(a == str(k).lower().strip() for a in aliases):
@@ -291,23 +293,39 @@ class BOMProcessor:
                         if pd.notna(val) and str(val).strip() != "" and str(val).lower() != "nan":
                             return str(val).strip()
                 return None
+
+            def clean_country(c):
+                c = c.lower().strip()
+                if c == 'the netherlands': return 'netherlands'
+                if c == 'usa' or c == 'united states of america': return 'united states'
+                if c == 'uk' or c == 'great britain': return 'united kingdom'
+                return c
                 
             country = extract_exact_string(['country_of_origin', 'supplier_country', 'origin', 'country'])
             if not country:
                 errors.append("Missing supplier country")
+                quarantine_reasons.append("Missing origin country")
             else:
-                c_lower = country.lower().strip()
+                c_lower = clean_country(country)
                 invalid_countries = ['nowhereland', 'atlantis', 'narnia', 'test', 'unknown']
                 if len(c_lower) < 2 or c_lower in invalid_countries:
                     errors.append("Unrecognized country")
+                    quarantine_reasons.append("Unrecognized origin country")
                 if c_lower in self.EU_EEA_COUNTRIES:
-                    critical_errors.append("Origin is exempt from CBAM (EU/EEA)")
+                    errors.append("Origin is exempt from CBAM (EU/EEA)")
                     
             destination = extract_exact_string(['destination', 'destination_country'])
-            if destination:
-                d_lower = destination.lower().strip()
-                if d_lower not in self.EU_EEA_COUNTRIES:
-                    critical_errors.append("Destination outside EU (exempt)")
+            if not destination:
+                errors.append("Missing destination country")
+                quarantine_reasons.append("Missing destination country")
+            else:
+                d_lower = clean_country(destination)
+                invalid_countries = ['nowhereland', 'atlantis', 'narnia', 'test', 'unknown']
+                if len(d_lower) < 2 or d_lower in invalid_countries:
+                    errors.append("Unrecognized destination country")
+                    quarantine_reasons.append("Unrecognized destination country")
+                elif d_lower not in self.EU_EEA_COUNTRIES:
+                    errors.append("Destination outside EU (exempt)")
                     
             # Date validation
             shipment_date = extract_string(['last_shipment_date', 'shipment_date', 'date'])
@@ -317,11 +335,12 @@ class BOMProcessor:
                     dt = datetime.datetime.strptime(shipment_date, "%Y-%m-%d")
                     if dt > datetime.datetime.now():
                         errors.append("Shipment date cannot be in the future")
+                        quarantine_reasons.append("Shipment date cannot be in the future")
                 except ValueError:
                     errors.append("Invalid date format (requires YYYY-MM-DD)")
+                    quarantine_reasons.append("Invalid date format")
             
             # --- Sector-aware fuzzy matching ---
-            # Try to extract CBAM sector from the row for pre-filtering
             cbam_sector = extract_string(['cbam_sector', 'sector'])
             candidates = self.mat_names  # default: all names (already length-filtered)
 
@@ -336,39 +355,32 @@ class BOMProcessor:
                         break
                 
                 if allowed_cats is None:
-                    # Unrecognized sector like Textiles or Automotive
-                    critical_errors.append("Sector not covered by CBAM")
+                    quarantine_reasons.append("Sector not covered by CBAM")
+                    errors.append("Sector not covered by CBAM")
                     sector_valid = False
                 elif allowed_cats:
-                    # Known CBAM sector, filter to categories
                     candidates = []
                     for cat in allowed_cats:
                         candidates.extend(self.cat_to_names.get(cat, []))
                     if not candidates:
                         candidates = []
                 elif allowed_cats == []:
-                    # Fertilisers, Hydrogen
                     candidates = []
             else:
                 sector_valid = True
                 if cbam_sector: 
-                    critical_errors.append("Sector not covered by CBAM")
+                    quarantine_reasons.append("Sector not covered by CBAM")
+                    errors.append("Sector not covered by CBAM")
                     sector_valid = False
 
-            # Use token_sort_ratio: compares full token sets, immune to
-            # substring-inflation that makes WRatio score 2-letter symbols at 90+
             match_tuple = process.extractOne(
                 raw_name, candidates, scorer=fuzz.token_sort_ratio
             ) if candidates else None
             is_match = match_tuple and match_tuple[1] > 60
 
-            
             provided_carbon_factor = None
-            # CBAM scope rules: Indirect emissions only count for Cement and Fertilisers.
-            # They are excluded for Iron & Steel, Aluminium, and Hydrogen.
             includes_indirect = False
             if allowed_cats is not None:
-                # Based on the CBAM_SECTOR_CATEGORY_MAP logic above
                 if any(k in sector_lower for k in ['cement', 'fertili']):
                     includes_indirect = True
             
@@ -376,31 +388,32 @@ class BOMProcessor:
                 provided_carbon_factor = direct_em
                 if includes_indirect and indirect_em is not None:
                     provided_carbon_factor += indirect_em
+                elif not includes_indirect and indirect_em is not None:
+                    errors.append("Note: Indirect emissions excluded for this sector (CBAM definitive rules)")
 
-            # Cross-validate CN Code against Sector
             if clean_cn and sector_lower:
                 if "steel" in sector_lower or "iron" in sector_lower:
                     if not clean_cn.startswith(("72", "73", "26")):
                         errors.append("CN Code does not match Iron & Steel sector")
+                        quarantine_reasons.append("CN Code does not match Iron & Steel sector")
                 elif "cement" in sector_lower:
                     if not clean_cn.startswith("2523"):
                         errors.append("CN Code does not match Cement sector")
+                        quarantine_reasons.append("CN Code does not match Cement sector")
                 elif "alumin" in sector_lower:
                     if not clean_cn.startswith("76"):
                         errors.append("CN Code does not match Aluminium sector")
+                        quarantine_reasons.append("CN Code does not match Aluminium sector")
                 elif "fertil" in sector_lower:
                     if not clean_cn.startswith(("2808", "2814", "2834", "3102", "3105")):
                         errors.append("CN Code does not match Fertilisers sector")
+                        quarantine_reasons.append("CN Code does not match Fertilisers sector")
 
-            # Post-match: reject steel subfamily mismatches.
-            # "Cold-Rolled Steel Sheet" (carbon steel) should NOT match
-            # "Stainless Steel 440C" — different family entirely.
             if is_match:
                 q_lower = raw_name.lower()
                 m_lower = match_tuple[0].lower()
                 q_is_stainless = "stainless" in q_lower
                 m_is_stainless = "stainless" in m_lower
-                # If one is stainless and the other isn't, reject
                 if q_is_stainless != m_is_stainless and "steel" in q_lower:
                     is_match = False
             
@@ -425,12 +438,18 @@ class BOMProcessor:
             total_co2_kg = round(weight_kg * carbon_factor, 3)
             total_co2_tonnes = total_co2_kg / 1000.0
             
-            # Netting out domestic carbon price paid
             net_cbam_price = max(CBAM_REFERENCE_PRICE_EUR - price_paid, 0.0)
-            cbam_cost_eur = round(total_co2_tonnes * net_cbam_price, 2) if sector_valid else 0.0
+            
+            # Exemptions force cost to 0
+            is_exempt = False
+            if "Origin is exempt from CBAM (EU/EEA)" in errors:
+                is_exempt = True
+            if "Destination outside EU (exempt)" in errors:
+                is_exempt = True
+            
+            cbam_cost_eur = round(total_co2_tonnes * net_cbam_price, 2) if sector_valid and not is_exempt else 0.0
             
             carbon_score = min(carbon_factor / 30.0 * 50, 50)
-            
             if geo_risk or single_source or supplier_risk > 0:
                 geo_score = 15 if geo_risk and "high" in geo_risk.lower() else (7.5 if geo_risk and "med" in geo_risk.lower() else 0)
                 ss_score = 15 if single_source and ("yes" in single_source.lower() or "true" in single_source.lower() or "y" == single_source.lower()) else 0
@@ -440,17 +459,14 @@ class BOMProcessor:
                 recycle_score = (1 - recyclability) * 30
                 obsolete_score = 20 if obsolete_flag == "YES" else 0
                 base_esg = carbon_score + recycle_score + obsolete_score
-                
             esg_risk = round(min(base_esg, 100), 1)
 
-            # If there are any validation errors, zero out the quantitative impacts
-            # so they don't corrupt dashboard aggregations.
-            if critical_errors:
-                total_co2_kg = 0.0
-                total_co2_tonnes = 0.0
-                cbam_cost_eur = 0.0
-                esg_risk = 0.0
-                carbon_factor = 0.0
+            # Do not ZERO the mathematical values out if they just have validation reasons!
+            # The dashboard handles exclusion via Included_In_Total.
+            if quarantine_reasons:
+                included_str = "NO: " + " | ".join(quarantine_reasons)
+            else:
+                included_str = "YES"
 
             clean_row = {}
             for k, v in row.to_dict().items():
@@ -472,7 +488,8 @@ class BOMProcessor:
                 "Is_Obsolete": obsolete_flag,
                 "Replacement_Standard": replacement,
                 "ESG_Risk_Score": esg_risk,
-                "Validation_Errors": " | ".join(critical_errors + errors) if (critical_errors or errors) else "None"
+                "Validation_Errors": " | ".join(errors) if errors else "None",
+                "Included_In_Total": included_str
             })
 
         return pd.DataFrame(enriched_rows)

@@ -27,6 +27,8 @@ export default function CBAMAnalytics() {
   const [totalCO2, setTotalCO2] = useState(0);
   const [totalCbamCost, setTotalCbamCost] = useState(0);
   const [selectedYear, setSelectedYear] = useState<"2034" | "2027" | "2026">("2034");
+  const [pendingReviewCount, setPendingReviewCount] = useState(0);
+  const [pendingReviewTonnes, setPendingReviewTonnes] = useState(0);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -138,21 +140,25 @@ export default function CBAMAnalytics() {
         
         let total = 0;
         let totalCbamEur = 0;
+        let revCount = 0;
+        let revTonnes = 0;
+        
         parsedData.forEach((rowObj: any) => {
-          // Only sum rows that don't have validation errors (or only 'None')
-          // Wait, the backend already zeroes out critical errors, but the user wants to exclude ALL rows with ANY error from the top-level total for safety!
-          const errors = rowObj["Validation_Errors"];
-          const hasErrors = errors && errors !== "None";
-          
-          if (!hasErrors) {
+          const included = rowObj["Included_In_Total"];
+          if (included && included.startsWith("YES")) {
             if (rowObj["Total_CO2_kg"]) total += parseFloat(rowObj["Total_CO2_kg"] || "0");
             if (rowObj["CBAM_Cost_EUR"]) totalCbamEur += parseFloat(rowObj["CBAM_Cost_EUR"] || "0");
+          } else if (included && included.startsWith("NO")) {
+            revCount += 1;
+            if (rowObj["Total_CO2_kg"]) revTonnes += parseFloat(rowObj["Total_CO2_kg"] || "0") / 1000.0;
           }
         });
 
         setResultsData(parsedData);
         setTotalCO2(total);
         setTotalCbamCost(totalCbamEur);
+        setPendingReviewCount(revCount);
+        setPendingReviewTonnes(revTonnes);
       } else if (res.status === 403) {
         setIsLocked(true);
       } else {
@@ -352,6 +358,11 @@ export default function CBAMAnalytics() {
               <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl flex flex-col justify-center">
                 <p className="text-slate-500 dark:text-slate-400 font-medium mb-1 flex items-center gap-2"><Factory className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> Total Embodied Carbon</p>
                 <h3 className="text-3xl font-bold text-slate-900 dark:text-white font-heading">{totalCO2.toLocaleString(undefined, { maximumFractionDigits: 2 })} <span className="text-lg text-slate-500 dark:text-slate-400 font-normal">kg CO₂</span></h3>
+                {pendingReviewCount > 0 && (
+                  <p className="text-xs text-slate-400 mt-2 font-medium">
+                    {(totalCO2 / 1000).toLocaleString(undefined, { maximumFractionDigits: 0 })} t included · {pendingReviewTonnes.toLocaleString(undefined, { maximumFractionDigits: 0 })} t in {pendingReviewCount} rows pending review
+                  </p>
+                )}
               </div>
               <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl flex flex-col justify-center">
                 <div className="flex justify-between items-start mb-1">
@@ -359,11 +370,11 @@ export default function CBAMAnalytics() {
                   <select 
                     value={selectedYear} 
                     onChange={e => setSelectedYear(e.target.value as any)}
-                    className="text-xs bg-slate-100 dark:bg-slate-800 border-none rounded p-1 font-bold text-slate-700 dark:text-slate-300 outline-none cursor-pointer"
+                    className="text-xs bg-slate-100 dark:bg-slate-800 border-none rounded p-1 font-bold text-slate-700 dark:text-slate-300 outline-none cursor-pointer max-w-[200px]"
                   >
                     <option value="2034">2034 (100% Gross Exposure)</option>
-                    <option value="2027">2027 (5% Phase-in)</option>
-                    <option value="2026">2026 (2.5% Phase-in)</option>
+                    <option value="2027">2027 (Est. ~5% effective, near benchmark)</option>
+                    <option value="2026">2026 (Est. ~2.5% effective, near benchmark)</option>
                   </select>
                 </div>
                 <h3 className="text-3xl font-bold text-amber-500">€{estimatedTaxEUR.toLocaleString(undefined, { maximumFractionDigits: 2 })} <span className="text-lg text-slate-500 dark:text-slate-400 font-normal">(@ €75/tCO₂e)</span></h3>
