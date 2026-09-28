@@ -170,6 +170,7 @@ class BOMProcessor:
         for index, row in df.iterrows():
             errors = []
             quarantine_reasons = []
+            notes = []
             
             def extract_string(aliases):
                 for k in row.keys():
@@ -179,7 +180,7 @@ class BOMProcessor:
                             return str(val).strip()
                 return None
             
-            mat_id = extract_string(['material_id', 'id'])
+            mat_id = extract_string(['material_id', 'id', 'item'])
             if not mat_id:
                 errors.append("Missing material ID")
                 quarantine_reasons.append("Missing material ID")
@@ -198,9 +199,12 @@ class BOMProcessor:
                 weight_kg = 0.0
             else:
                 try:
+                    import math
                     if isinstance(raw_weight, str):
                         raw_weight = str(raw_weight).replace(',', '')
                     weight_kg = float(raw_weight) * weight_multiplier
+                    if math.isinf(weight_kg) or math.isnan(weight_kg):
+                        raise ValueError("Infinity or NaN")
                     if weight_kg < 0:
                         quarantine_reasons.append("Negative quantity")
                         weight_kg = 0.0
@@ -216,7 +220,6 @@ class BOMProcessor:
                 quarantine_reasons.append("Missing material name")
                 raw_name = "UNKNOWN" 
                 
-            # Check for provided CBAM data in CSV
             def extract_float(aliases, field_name):
                 for k in row.keys():
                     if any(a in str(k).lower() for a in aliases):
@@ -235,7 +238,11 @@ class BOMProcessor:
                                         val = val.replace(',', '.')
                                 elif ',' in val and '.' in val:
                                     val = val.replace(',', '')
-                            return float(val)
+                            fval = float(val)
+                            import math
+                            if math.isinf(fval) or math.isnan(fval):
+                                raise ValueError("Infinity or NaN")
+                            return fval
                         except ValueError:
                             if field_name: errors.append(f"Non-numeric {field_name}")
                             return None
@@ -277,15 +284,14 @@ class BOMProcessor:
             if data_quality and data_quality.lower() == 'verified' and price_paid_val is None:
                 errors.append("Missing carbon price for Verified data")
                 
-            # CN Code Validation
             cn_code = extract_string(['cn_code', 'hs_code', 'cn code'])
             clean_cn = ""
             if cn_code:
                 clean_cn = cn_code.replace(" ", "").replace(".", "").replace("-", "")
                 if not clean_cn.isdigit() or len(clean_cn) < 4:
                     errors.append("Invalid CN Code format")
+                    quarantine_reasons.append("Invalid CN Code format")
                 
-            # Country Validation
             def extract_exact_string(aliases):
                 for k in row.keys():
                     if any(a == str(k).lower().strip() for a in aliases):
@@ -312,7 +318,7 @@ class BOMProcessor:
                     errors.append("Unrecognized country")
                     quarantine_reasons.append("Unrecognized origin country")
                 if c_lower in self.EU_EEA_COUNTRIES:
-                    errors.append("Origin is exempt from CBAM (EU/EEA)")
+                    notes.append("Origin is exempt from CBAM (EU/EEA)")
                     
             destination = extract_exact_string(['destination', 'destination_country'])
             if not destination:
@@ -325,9 +331,8 @@ class BOMProcessor:
                     errors.append("Unrecognized destination country")
                     quarantine_reasons.append("Unrecognized destination country")
                 elif d_lower not in self.EU_EEA_COUNTRIES:
-                    errors.append("Destination outside EU (exempt)")
+                    notes.append("Destination outside EU (exempt)")
                     
-            # Date validation
             shipment_date = extract_string(['last_shipment_date', 'shipment_date', 'date'])
             if shipment_date:
                 import datetime
@@ -340,9 +345,8 @@ class BOMProcessor:
                     errors.append("Invalid date format (requires YYYY-MM-DD)")
                     quarantine_reasons.append("Invalid date format")
             
-            # --- Sector-aware fuzzy matching ---
             cbam_sector = extract_string(['cbam_sector', 'sector'])
-            candidates = self.mat_names  # default: all names (already length-filtered)
+            candidates = self.mat_names
 
             sector_valid = True
             sector_lower = ""
@@ -389,7 +393,7 @@ class BOMProcessor:
                 if includes_indirect and indirect_em is not None:
                     provided_carbon_factor += indirect_em
                 elif not includes_indirect and indirect_em is not None:
-                    errors.append("Note: Indirect emissions excluded for this sector (CBAM definitive rules)")
+                    notes.append("Indirect emissions excluded for this sector (CBAM definitive rules)")
 
             if clean_cn and sector_lower:
                 if "steel" in sector_lower or "iron" in sector_lower:
@@ -417,20 +421,29 @@ class BOMProcessor:
                 if q_is_stainless != m_is_stainless and "steel" in q_lower:
                     is_match = False
             
+            emissions_basis = "SUPPLIED"
             if is_match:
                 matched_name = match_tuple[0]
                 confidence = match_tuple[1]
                 mat = self.db.query(Material).filter(Material.name == matched_name).first()
                 db_carbon = mat.embodied_carbon if mat.embodied_carbon else 0.0
                 
-                carbon_factor = provided_carbon_factor if provided_carbon_factor is not None else (db_carbon if db_carbon > 0 else _estimate_carbon_factor(mat.name, mat.category))
+                if provided_carbon_factor is not None:
+                    carbon_factor = provided_carbon_factor
+                else:
+                    carbon_factor = db_carbon if db_carbon > 0 else _estimate_carbon_factor(mat.name, mat.category)
+                    emissions_basis = "DEFAULT_FALLBACK"
                 obsolete_flag = "YES" if mat.is_obsolete else "NO"
                 replacement = mat.replacement_standard if mat.replacement_standard else "N/A"
                 recyclability = mat.recyclability_index if mat.recyclability_index else 0.5
             else:
                 matched_name = "NO MATCH FOUND"
                 confidence = 0
-                carbon_factor = provided_carbon_factor if provided_carbon_factor is not None else _estimate_carbon_factor(raw_name, "")
+                if provided_carbon_factor is not None:
+                    carbon_factor = provided_carbon_factor
+                else:
+                    carbon_factor = _estimate_carbon_factor(raw_name, "")
+                    emissions_basis = "DEFAULT_FALLBACK"
                 obsolete_flag = "N/A"
                 replacement = "N/A"
                 recyclability = 0.5
@@ -440,11 +453,8 @@ class BOMProcessor:
             
             net_cbam_price = max(CBAM_REFERENCE_PRICE_EUR - price_paid, 0.0)
             
-            # Exemptions force cost to 0
             is_exempt = False
-            if "Origin is exempt from CBAM (EU/EEA)" in errors:
-                is_exempt = True
-            if "Destination outside EU (exempt)" in errors:
+            if "Origin is exempt from CBAM (EU/EEA)" in notes or "Destination outside EU (exempt)" in notes:
                 is_exempt = True
             
             cbam_cost_eur = round(total_co2_tonnes * net_cbam_price, 2) if sector_valid and not is_exempt else 0.0
@@ -461,10 +471,16 @@ class BOMProcessor:
                 base_esg = carbon_score + recycle_score + obsolete_score
             esg_risk = round(min(base_esg, 100), 1)
 
-            # Do not ZERO the mathematical values out if they just have validation reasons!
-            # The dashboard handles exclusion via Included_In_Total.
+            raw_total_co2_kg = total_co2_kg
+            raw_total_co2_tonnes = total_co2_tonnes
+            raw_cbam_cost_eur = cbam_cost_eur
+            
             if quarantine_reasons:
                 included_str = "NO: " + " | ".join(quarantine_reasons)
+                total_co2_kg = 0.0
+                total_co2_tonnes = 0.0
+                cbam_cost_eur = 0.0
+                esg_risk = 0.0
             else:
                 included_str = "YES"
 
@@ -480,14 +496,19 @@ class BOMProcessor:
                 "Matched_Material": matched_name,
                 "Match_Confidence": f"{confidence}%" if is_match else "0%",
                 "Carbon_Factor_kgCO2e_per_kg": round(carbon_factor, 3),
-                "Total_CO2_kg": round(total_co2_kg, 3),
-                "Total_CO2_tonnes": round(total_co2_tonnes, 4),
+                "Emissions_Basis": emissions_basis,
+                "Total_CO2_kg": round(total_co2_kg, 3) if total_co2_kg > 0 else 0.0,
+                "Total_CO2_tonnes": round(total_co2_tonnes, 4) if total_co2_tonnes > 0 else 0.0,
+                "CBAM_Cost_EUR": cbam_cost_eur if cbam_cost_eur > 0 else 0.0,
+                "Provisional_CO2_kg": round(raw_total_co2_kg, 3),
+                "Provisional_CO2_tonnes": round(raw_total_co2_tonnes, 4),
+                "Provisional_CBAM_Cost_EUR": round(raw_cbam_cost_eur, 2),
                 "Domestic_Carbon_Price_Paid_EUR": price_paid,
                 "Net_CBAM_Price_EUR": net_cbam_price,
-                "CBAM_Cost_EUR": cbam_cost_eur,
                 "Is_Obsolete": obsolete_flag,
                 "Replacement_Standard": replacement,
-                "ESG_Risk_Score": esg_risk,
+                "ESG_Risk_Score": esg_risk if esg_risk > 0 else 0.0,
+                "Notes": " | ".join(notes) if notes else "None",
                 "Validation_Errors": " | ".join(errors) if errors else "None",
                 "Included_In_Total": included_str
             })

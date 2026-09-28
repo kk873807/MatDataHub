@@ -29,6 +29,8 @@ export default function CBAMAnalytics() {
   const [selectedYear, setSelectedYear] = useState<"2034" | "2027" | "2026">("2034");
   const [pendingReviewCount, setPendingReviewCount] = useState(0);
   const [pendingReviewTonnes, setPendingReviewTonnes] = useState(0);
+  const [fallbackTonnes, setFallbackTonnes] = useState(0);
+  const [taxableTonnes, setTaxableTonnes] = useState(0);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -138,27 +140,43 @@ export default function CBAMAnalytics() {
         const parsed = Papa.parse(text, { header: true, skipEmptyLines: true });
         const parsedData = parsed.data as any[];
         
-        let total = 0;
+        let total = 0; // Total physical kg included
         let totalCbamEur = 0;
         let revCount = 0;
         let revTonnes = 0;
+        let fallbackKg = 0;
+        let taxableKg = 0;
         
         parsedData.forEach((rowObj: any) => {
           const included = rowObj["Included_In_Total"];
           if (included && included.startsWith("YES")) {
-            if (rowObj["Total_CO2_kg"]) total += parseFloat(rowObj["Total_CO2_kg"] || "0");
-            if (rowObj["CBAM_Cost_EUR"]) totalCbamEur += parseFloat(rowObj["CBAM_Cost_EUR"] || "0");
+            const rowKg = parseFloat(rowObj["Total_CO2_kg"] || "0");
+            total += rowKg;
+            const rowEur = parseFloat(rowObj["CBAM_Cost_EUR"] || "0");
+            totalCbamEur += rowEur;
+            
+            if (rowObj["Emissions_Basis"] === "DEFAULT_FALLBACK") {
+                fallbackKg += rowKg;
+            }
           } else if (included && included.startsWith("NO")) {
             revCount += 1;
-            if (rowObj["Total_CO2_kg"]) revTonnes += parseFloat(rowObj["Total_CO2_kg"] || "0") / 1000.0;
+            if (rowObj["Provisional_CO2_kg"]) {
+                revTonnes += parseFloat(rowObj["Provisional_CO2_kg"] || "0") / 1000.0;
+            }
           }
         });
+        
+        // Reverse engineer taxable equivalent kg (Tax = Tonnes * €75)
+        // 1 Tonne = €75. 1 Kg = €0.075.
+        taxableKg = totalCbamEur / 0.075;
 
         setResultsData(parsedData);
         setTotalCO2(total);
         setTotalCbamCost(totalCbamEur);
         setPendingReviewCount(revCount);
         setPendingReviewTonnes(revTonnes);
+        setFallbackTonnes(fallbackKg / 1000.0);
+        setTaxableTonnes(taxableKg / 1000.0);
       } else if (res.status === 403) {
         setIsLocked(true);
       } else {
@@ -354,30 +372,41 @@ export default function CBAMAnalytics() {
         {/* Live Preview Results */}
         {resultsData && (
           <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl flex flex-col justify-center">
-                <p className="text-slate-500 dark:text-slate-400 font-medium mb-1 flex items-center gap-2"><Factory className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> Total Embodied Carbon</p>
-                <h3 className="text-3xl font-bold text-slate-900 dark:text-white font-heading">{totalCO2.toLocaleString(undefined, { maximumFractionDigits: 2 })} <span className="text-lg text-slate-500 dark:text-slate-400 font-normal">kg CO₂</span></h3>
-                {pendingReviewCount > 0 && (
-                  <p className="text-xs text-slate-400 mt-2 font-medium">
-                    {(totalCO2 / 1000).toLocaleString(undefined, { maximumFractionDigits: 0 })} t included · {pendingReviewTonnes.toLocaleString(undefined, { maximumFractionDigits: 0 })} t in {pendingReviewCount} rows pending review
-                  </p>
-                )}
+                <p className="text-slate-500 dark:text-slate-400 font-medium mb-1 flex items-center gap-2"><Factory className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> Total Embodied Carbon (Included)</p>
+                <h3 className="text-3xl font-bold text-slate-900 dark:text-white font-heading">{(totalCO2/1000).toLocaleString(undefined, { maximumFractionDigits: 1 })} <span className="text-lg text-slate-500 dark:text-slate-400 font-normal">t CO₂</span></h3>
+                <div className="text-xs text-slate-400 mt-2 font-medium space-y-1">
+                  <p>of which {fallbackTonnes.toLocaleString(undefined, { maximumFractionDigits: 1 })} t based on fallback defaults</p>
+                  {pendingReviewCount > 0 && (
+                    <p className="text-amber-500">{pendingReviewTonnes.toLocaleString(undefined, { maximumFractionDigits: 1 })} t in {pendingReviewCount} rows pending review</p>
+                  )}
+                </div>
               </div>
+
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl flex flex-col justify-center">
+                <p className="text-slate-500 dark:text-slate-400 font-medium mb-1 flex items-center gap-2"><FileText className="w-4 h-4 text-blue-600 dark:text-blue-400" /> Taxable Carbon Base</p>
+                <h3 className="text-3xl font-bold text-slate-900 dark:text-white font-heading">{taxableTonnes.toLocaleString(undefined, { maximumFractionDigits: 1 })} <span className="text-lg text-slate-500 dark:text-slate-400 font-normal">t CO₂</span></h3>
+                <p className="text-xs text-slate-400 mt-2 font-medium">
+                  {((totalCO2/1000) - taxableTonnes).toLocaleString(undefined, { maximumFractionDigits: 1 })} t excluded (exempt origin/dest or carbon price paid)
+                </p>
+              </div>
+
               <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl flex flex-col justify-center">
                 <div className="flex justify-between items-start mb-1">
                   <p className="text-slate-500 dark:text-slate-400 font-medium flex items-center gap-2"><FileText className="w-4 h-4 text-amber-600 dark:text-amber-400" /> Est. CBAM Tax Payable</p>
                   <select 
                     value={selectedYear} 
                     onChange={e => setSelectedYear(e.target.value as any)}
-                    className="text-xs bg-slate-100 dark:bg-slate-800 border-none rounded p-1 font-bold text-slate-700 dark:text-slate-300 outline-none cursor-pointer max-w-[200px]"
+                    className="text-xs bg-slate-100 dark:bg-slate-800 border-none rounded p-1 font-bold text-slate-700 dark:text-slate-300 outline-none cursor-pointer max-w-[140px]"
                   >
-                    <option value="2034">2034 (100% Gross Exposure)</option>
-                    <option value="2027">2027 (Est. ~5% effective, near benchmark)</option>
-                    <option value="2026">2026 (Est. ~2.5% effective, near benchmark)</option>
+                    <option value="2034">2034 (100% Gross)</option>
+                    <option value="2027">2027 (~5% effective)</option>
+                    <option value="2026">2026 (~2.5% effective)</option>
                   </select>
                 </div>
-                <h3 className="text-3xl font-bold text-amber-500">€{estimatedTaxEUR.toLocaleString(undefined, { maximumFractionDigits: 2 })} <span className="text-lg text-slate-500 dark:text-slate-400 font-normal">(@ €75/tCO₂e)</span></h3>
+                <h3 className="text-3xl font-bold text-amber-500">€{estimatedTaxEUR.toLocaleString(undefined, { maximumFractionDigits: 2 })}</h3>
+                <p className="text-xs text-slate-400 mt-2 font-medium">@ €75/tCO₂e · assumes emissions near benchmark</p>
               </div>
             </div>
 
