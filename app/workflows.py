@@ -108,6 +108,13 @@ class BOMProcessor:
         'slovakia', 'slovenia', 'spain', 'sweden',
         'iceland', 'liechtenstein', 'norway', 'switzerland'
     }
+    
+    EU_DESTINATION_COUNTRIES = {
+        'austria', 'belgium', 'bulgaria', 'croatia', 'republic of cyprus', 'cyprus', 'czech republic', 'czechia',
+        'denmark', 'estonia', 'finland', 'france', 'germany', 'greece', 'hungary', 'ireland', 'italy',
+        'latvia', 'lithuania', 'luxembourg', 'malta', 'netherlands', 'poland', 'portugal', 'romania',
+        'slovakia', 'slovenia', 'spain', 'sweden'
+    }
 
     # Minimum candidate name length to prevent 2-3 letter element symbols
     # (e.g. Ga, Li, Ni, Re, Ir) from winning fuzzy matches via trivial substrings
@@ -250,12 +257,14 @@ class BOMProcessor:
                 return None
 
             direct_em = extract_float(['direct_emissions', 'direct emissions'], 'direct emissions')
+            if direct_em is not None and direct_em < 0:
+                errors.append("Direct emissions cannot be negative")
+                direct_em = 0.0
+
             indirect_em = extract_float(['indirect_emissions', 'indirect emissions'], 'indirect emissions')
-            
-            if direct_em is not None and direct_em > 50.0:
-                quarantine_reasons.append("Emissions exceed plausibility bound (50 t/t)")
-            if indirect_em is not None and indirect_em > 50.0:
-                quarantine_reasons.append("Emissions exceed plausibility bound (50 t/t)")
+            if indirect_em is not None and indirect_em < 0:
+                errors.append("Indirect emissions cannot be negative")
+                indirect_em = 0.0
                 
             price_paid_val = extract_float(['carbon_price_paid', 'price_paid', 'domestic_carbon'], None)
             price_paid = price_paid_val or 0.0
@@ -296,10 +305,12 @@ class BOMProcessor:
             data_quality = extract_string(['data_quality', 'data quality'])
             if not data_quality:
                 errors.append("Missing data quality")
-            elif data_quality.lower() not in ('verified', 'default', 'estimated', 'measured'):
-                errors.append("Invalid data quality")
-            elif data_quality.lower() == 'verified' and price_paid_val is None:
-                errors.append("Missing carbon price for Verified data")
+            else:
+                dq_lower = data_quality.lower()
+                if not any(x in dq_lower for x in ['verified', 'default', 'estimated', 'measured']):
+                    errors.append("Invalid data quality")
+                elif 'verified' in dq_lower and price_paid_val is None:
+                    errors.append("Missing carbon price for Verified data")
                 
             cn_code = extract_string(['cn_code', 'hs_code', 'cn code'])
             clean_cn = ""
@@ -349,7 +360,7 @@ class BOMProcessor:
                 if len(d_lower) < 2 or d_lower in invalid_countries:
                     errors.append("Unrecognized destination country")
                     quarantine_reasons.append("Unrecognized destination country")
-                elif d_lower not in self.EU_EEA_COUNTRIES:
+                elif d_lower not in self.EU_DESTINATION_COUNTRIES:
                     notes.append("Destination outside EU (exempt)")
                     
             shipment_date = extract_string(['last_shipment_date', 'shipment_date', 'date'])
@@ -412,10 +423,20 @@ class BOMProcessor:
                 if any(k in sector_lower for k in ['cement', 'fertili']):
                     includes_indirect = True
             
+            if direct_em is not None and direct_em > 50.0:
+                quarantine_reasons.append("Emissions exceed plausibility bound (50 t/t)")
+                
+            if includes_indirect and indirect_em is not None and indirect_em > 50.0:
+                quarantine_reasons.append("Emissions exceed plausibility bound (50 t/t)")
+            
             if direct_em is not None:
                 provided_carbon_factor = direct_em
-                if includes_indirect and indirect_em is not None:
-                    provided_carbon_factor += indirect_em
+                if includes_indirect:
+                    if indirect_em is not None:
+                        provided_carbon_factor += indirect_em
+                    else:
+                        errors.append("Missing indirect emissions (using fallback default for total)")
+                        provided_carbon_factor = None # Invalidate so it uses full db/fallback factor
                 elif not includes_indirect and indirect_em is not None:
                     notes.append("Indirect emissions excluded for this sector (CBAM definitive rules)")
 
@@ -425,7 +446,7 @@ class BOMProcessor:
                         errors.append("CN Code does not match Iron & Steel sector")
                         quarantine_reasons.append("CN Code does not match Iron & Steel sector")
                 elif "cement" in sector_lower:
-                    if not clean_cn.startswith("2523"):
+                    if not clean_cn.startswith(("2523", "2507")):
                         errors.append("CN Code does not match Cement sector")
                         quarantine_reasons.append("CN Code does not match Cement sector")
                 elif "alumin" in sector_lower:
@@ -489,7 +510,13 @@ class BOMProcessor:
                 ss_score = 15 if single_source and ("yes" in single_source.lower() or "true" in single_source.lower() or "y" == single_source.lower()) else 0
                 supp_score = min(supplier_risk / 100.0 * 20, 20)
                 lead_score = 10 if lead_time and lead_time > 180 else (5 if lead_time and lead_time > 90 else 0)
-                base_esg = carbon_score + geo_score + ss_score + supp_score + lead_score
+                dq_score = 0
+                if data_quality:
+                    if 'default' in data_quality.lower() or 'unknown' in data_quality.lower():
+                        dq_score = 10
+                    elif 'estimated' in data_quality.lower():
+                        dq_score = 5
+                base_esg = carbon_score + geo_score + ss_score + supp_score + lead_score + dq_score
             else:
                 recycle_score = (1 - recyclability) * 30
                 obsolete_score = 20 if obsolete_flag == "YES" else 0

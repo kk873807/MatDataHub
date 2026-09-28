@@ -410,7 +410,7 @@ export default function CBAMAnalytics() {
                 <p className="text-slate-500 dark:text-slate-400 font-medium mb-1 flex items-center gap-2"><FileText className="w-4 h-4 text-blue-600 dark:text-blue-400" /> Taxable Carbon Base</p>
                 <h3 className="text-3xl font-bold text-slate-900 dark:text-white font-heading">{taxableTonnes.toLocaleString(undefined, { maximumFractionDigits: 1 })} <span className="text-lg text-slate-500 dark:text-slate-400 font-normal">t CO₂</span></h3>
                 <p className="text-xs text-slate-400 mt-2 font-medium">
-                  {((totalCO2/1000) - taxableTonnes).toLocaleString(undefined, { maximumFractionDigits: 1 })} t-equivalent excluded (exempt origin/dest or carbon price paid)
+                  {((totalCO2/1000) - taxableTonnes).toLocaleString(undefined, { maximumFractionDigits: 1 })} t-equivalent excluded (exempt origin/dest, pre-2026, or carbon price paid)
                 </p>
               </div>
 
