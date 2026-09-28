@@ -345,6 +345,8 @@ class BOMProcessor:
                     if dt > datetime.datetime.now():
                         errors.append("Shipment date cannot be in the future")
                         quarantine_reasons.append("Shipment date cannot be in the future")
+                    elif dt < datetime.datetime(2026, 1, 1):
+                        notes.append("Pre-2026 shipment (reporting-only phase, no financial liability)")
                 except ValueError:
                     errors.append("Invalid date format (requires YYYY-MM-DD)")
                     quarantine_reasons.append("Invalid date format")
@@ -495,8 +497,14 @@ class BOMProcessor:
                 else:
                     clean_row[k] = v
 
+            
+            is_deminimis_eligible = "NO"
+            if sector_valid and sector_lower and not any(x in sector_lower for x in ['electric', 'hydrogen']):
+                is_deminimis_eligible = "YES"
+                
             enriched_rows.append({
                 **clean_row,
+                "DeMinimis_Eligible_Mass_kg": weight_kg if is_deminimis_eligible == "YES" else 0.0,
                 "Matched_Material": matched_name,
                 "Match_Confidence": f"{confidence}%" if is_match else "0%",
                 "Carbon_Factor_kgCO2e_per_kg": round(carbon_factor, 3),
