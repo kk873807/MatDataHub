@@ -84,6 +84,26 @@ export default function CBAMAnalytics() {
     }
   };
 
+  const DEMO_BOMS = {
+    automotive: `Material,Weight_kg,cbam_sector,cn_code,country_of_origin,supplier
+Hot-Rolled Steel Coil,50000,Iron & Steel,7208 51 00,China,Acme Metals
+Aluminium Engine Block,15000,Aluminium,7601 20 00,India,Global Alum
+Plastic Dashboard,5000,,,Vietnam,PolyCorp
+Stainless Steel Fasteners,2000,Iron & Steel,7318 15 00,Taiwan,FastenTech`,
+    construction: `Material,Weight_kg,cbam_sector,cn_code,country_of_origin,supplier
+Portland Cement,200000,Cement,2523 29 00,Turkey,EuroCement
+Steel Rebar,100000,Iron & Steel,7214 20 00,China,SteelCo
+Aluminium Window Frames,10000,Aluminium,7610 10 00,China,AlumBuild
+Glass Panes,5000,,,India,ClearGlass`
+  };
+
+  const handleLoadDemo = (type: "automotive" | "construction") => {
+    const csvStr = DEMO_BOMS[type];
+    const demoFile = new File([csvStr], `${type}_bom_demo.csv`, { type: "text/csv" });
+    setFile(demoFile);
+    processBOM(demoFile, "Material", "Weight_kg");
+  };
+
   const downloadTemplate = () => {
     const csvContent = "Material,Weight_kg\nSteel 304L,100\nAluminum 6061,50\n";
     const blob = new Blob([csvContent], { type: "text/csv" });
@@ -95,12 +115,12 @@ export default function CBAMAnalytics() {
     URL.revokeObjectURL(url);
   };
 
-  const processBOM = async () => {
-    let payloadFile = file;
-    let payloadMatCol = materialCol;
-    let payloadWeightCol = weightCol;
+  const processBOM = async (demoFile?: File, demoMatCol?: string, demoWeightCol?: string) => {
+    let payloadFile = demoFile || file;
+    let payloadMatCol = demoMatCol || materialCol;
+    let payloadWeightCol = demoWeightCol || weightCol;
 
-    if (activeTab === "manual") {
+    if (activeTab === "manual" && !demoFile) {
       if (!manualMaterial || !manualWeight) {
         alert("Please enter both material and weight.");
         return;
@@ -112,7 +132,7 @@ export default function CBAMAnalytics() {
       payloadMatCol = "Material";
       payloadWeightCol = "Weight_kg";
     } else {
-      if (!file) return;
+      if (!payloadFile) return;
     }
 
     setLoading(true);
@@ -368,6 +388,25 @@ export default function CBAMAnalytics() {
                     <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Must contain material and weight columns</p>
                   </div>
                 )}
+              </div>
+
+              {/* Demo Buttons */}
+              <div className="flex flex-col items-center mt-6">
+                <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-3">No CSV? Try with demo data:</p>
+                <div className="flex gap-4">
+                  <button 
+                    onClick={() => handleLoadDemo('automotive')}
+                    className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-sm font-semibold transition-colors flex items-center gap-2"
+                  >
+                    🚗 Automotive BOM
+                  </button>
+                  <button 
+                    onClick={() => handleLoadDemo('construction')}
+                    className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-sm font-semibold transition-colors flex items-center gap-2"
+                  >
+                    🏗️ Construction BOM
+                  </button>
+                </div>
               </div>
             </div>
           )}
