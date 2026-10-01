@@ -1,8 +1,9 @@
 import pandas as pd
 import math
+import datetime
 from thefuzz import process, fuzz
 from sqlalchemy.orm import Session
-from app.models import Material
+from app.models import Material, CBAMDefault
 
 class SubstitutionEngine:
     """
@@ -153,6 +154,57 @@ class BOMProcessor:
             if len(m.name) >= self.MIN_CANDIDATE_LENGTH:
                 cat = (m.category or "").strip()
                 self.cat_to_names.setdefault(cat, []).append(m.name)
+        
+        # Preload CBAM defaults into memory for fast lookups
+        self.cbam_defaults_cache = {}
+        self.cbam_defaults_stale = False
+        try:
+            all_defaults = self.db.query(CBAMDefault).all()
+            for d in all_defaults:
+                key = (d.cn_prefix, d.year, (d.origin_country or "").lower() if d.origin_country else None)
+                self.cbam_defaults_cache[key] = d
+            if all_defaults:
+                latest = max(d.updated_at for d in all_defaults if d.updated_at)
+                if latest and (datetime.datetime.now(latest.tzinfo) - latest).days > 90:
+                    self.cbam_defaults_stale = True
+        except Exception:
+            # Table may not exist yet — fall back gracefully
+            self.cbam_defaults_cache = {}
+
+    def _lookup_cbam_default(self, cn_code: str, origin_country: str, year: int):
+        """
+        Look up the Commission's default emission factor from the cbam_defaults table.
+        
+        Tries progressively shorter CN prefixes (e.g. 72085100 → 720851 → 7208 → 72)
+        to find the most specific match. Tries country-specific first, then global.
+        
+        Returns (effective_value, includes_indirect, source_label) or (None, None, None).
+        """
+        if not self.cbam_defaults_cache or not cn_code:
+            return None, None, None
+        
+        clean_cn = cn_code.replace(" ", "").replace(".", "").replace("-", "")
+        country_lower = origin_country.lower().strip() if origin_country else None
+        
+        # Try progressively shorter CN prefixes
+        prefixes = []
+        for length in range(len(clean_cn), 1, -1):
+            prefixes.append(clean_cn[:length])
+        
+        for prefix in prefixes:
+            # Try country-specific first
+            if country_lower:
+                key = (prefix, year, country_lower)
+                if key in self.cbam_defaults_cache:
+                    d = self.cbam_defaults_cache[key]
+                    return d.effective_value, d.includes_indirect, "COMMISSION_DEFAULT"
+            # Then try global default (origin_country = NULL)
+            key = (prefix, year, None)
+            if key in self.cbam_defaults_cache:
+                d = self.cbam_defaults_cache[key]
+                return d.effective_value, d.includes_indirect, "COMMISSION_DEFAULT"
+        
+        return None, None, None
 
     def process_bom(self, df, material_col, weight_col):
         # Auto-detect column mappings if the explicit ones are missing
@@ -481,6 +533,20 @@ class BOMProcessor:
                     is_match = False
             
             emissions_basis = "SUPPLIED"
+            
+            # Determine the lookup year from shipment date (default to current year)
+            lookup_year = datetime.datetime.now().year
+            if shipment_date:
+                try:
+                    lookup_year = int(shipment_date[:4])
+                    if lookup_year < 2026:
+                        lookup_year = 2026  # Use 2026 defaults for pre-2026 dates
+                except (ValueError, IndexError):
+                    pass
+            
+            # Extract origin country for DB lookup
+            origin_country_raw = extract_string(['country_of_origin', 'origin_country', 'supplier_country', 'country'])
+            
             if is_match:
                 matched_name = match_tuple[0]
                 confidence = match_tuple[1]
@@ -490,8 +556,21 @@ class BOMProcessor:
                 if provided_carbon_factor is not None:
                     carbon_factor = provided_carbon_factor
                 else:
-                    carbon_factor = db_carbon if db_carbon > 0 else _estimate_carbon_factor(mat.name, mat.category)
-                    emissions_basis = "DEFAULT_FALLBACK"
+                    # Try DB-backed Commission defaults first (by CN code + country + year)
+                    db_default, db_incl_indirect, db_source = self._lookup_cbam_default(
+                        cn_code or "", origin_country_raw or "", lookup_year
+                    )
+                    if db_default is not None:
+                        carbon_factor = db_default
+                        emissions_basis = "COMMISSION_DEFAULT"
+                        if self.cbam_defaults_stale:
+                            notes.append("CBAM default values may be outdated (>90 days since last refresh)")
+                    elif db_carbon > 0:
+                        carbon_factor = db_carbon
+                        emissions_basis = "DEFAULT_FALLBACK"
+                    else:
+                        carbon_factor = _estimate_carbon_factor(mat.name, mat.category)
+                        emissions_basis = "LEGACY_FALLBACK"
                 obsolete_flag = "YES" if mat.is_obsolete else "NO"
                 replacement = mat.replacement_standard if mat.replacement_standard else "N/A"
                 recyclability = mat.recyclability_index if mat.recyclability_index else 0.5
@@ -501,8 +580,18 @@ class BOMProcessor:
                 if provided_carbon_factor is not None:
                     carbon_factor = provided_carbon_factor
                 else:
-                    carbon_factor = _estimate_carbon_factor(raw_name, "")
-                    emissions_basis = "DEFAULT_FALLBACK"
+                    # Try DB-backed Commission defaults first
+                    db_default, db_incl_indirect, db_source = self._lookup_cbam_default(
+                        cn_code or "", origin_country_raw or "", lookup_year
+                    )
+                    if db_default is not None:
+                        carbon_factor = db_default
+                        emissions_basis = "COMMISSION_DEFAULT"
+                        if self.cbam_defaults_stale:
+                            notes.append("CBAM default values may be outdated (>90 days since last refresh)")
+                    else:
+                        carbon_factor = _estimate_carbon_factor(raw_name, "")
+                        emissions_basis = "LEGACY_FALLBACK"
                 obsolete_flag = "N/A"
                 replacement = "N/A"
                 recyclability = 0.5

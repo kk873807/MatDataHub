@@ -281,3 +281,37 @@ class SavedMaterial(Base):
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     material_id = Column(Integer, ForeignKey("materials.id", ondelete="CASCADE"), nullable=False, index=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class CBAMDefault(Base):
+    """
+    EU CBAM default emission values published by the European Commission.
+    
+    Each row represents the default direct emissions factor for a specific
+    CN code prefix and origin country, for a given year of the definitive period.
+    The markup (10% in 2026, 20% in 2027, 30% in 2028+) is pre-applied to
+    the base_value and stored in effective_value.
+    
+    When process_bom() needs a fallback emission factor, it queries this table
+    first (by CN prefix + country + year), before falling back to the hardcoded
+    FALLBACK_CARBON_FACTORS dictionary.
+    """
+    __tablename__ = "cbam_defaults"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    cn_prefix = Column(String(10), nullable=False, index=True)        # e.g. "7208", "2523", "76"
+    sector = Column(String(50), nullable=False)                        # "Iron & Steel", "Cement", etc.
+    product_description = Column(String(200), nullable=True)           # Human-readable label
+    origin_country = Column(String(100), nullable=True)                # NULL = global default (all countries)
+    year = Column(Integer, nullable=False, index=True)                 # 2026, 2027, 2028, ...
+    base_value = Column(Float, nullable=False)                         # tCO2/t — transitional base
+    markup_pct = Column(Float, nullable=False, default=0.0)            # 0.10, 0.20, 0.30
+    effective_value = Column(Float, nullable=False)                    # base_value * (1 + markup_pct)
+    includes_indirect = Column(Boolean, default=False)                 # True for cement/fertilisers
+    source = Column(String(200), nullable=True)                        # "EC Implementing Regulation 2023/1773"
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+    __table_args__ = (
+        Index('ix_cbam_defaults_lookup', 'cn_prefix', 'year', 'origin_country'),
+    )
+
