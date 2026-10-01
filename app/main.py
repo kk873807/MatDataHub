@@ -18,8 +18,18 @@ from sqlalchemy.orm import Session
 from app.database import get_db   # <-- added payments
 
 
-# Create tables on startup (safe to call multiple times)
-Base.metadata.create_all(bind=engine)
+import os
+import sys
+
+print("--- STARTING APP INITIALIZATION ---", flush=True)
+
+try:
+    print("Connecting to DB and creating tables...", flush=True)
+    # Create tables on startup (safe to call multiple times)
+    Base.metadata.create_all(bind=engine)
+    print("Tables created successfully.", flush=True)
+except Exception as e:
+    print(f"Error creating tables: {e}", file=sys.stderr, flush=True)
 
 app = FastAPI(
     title="MatDataHub API",
