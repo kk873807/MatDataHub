@@ -831,6 +831,7 @@ def analyze_bom(
     file: UploadFile = File(...),
     material_col: str = Form(...),
     weight_col: str = Form(...),
+    strict_mode: bool = Form(False),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
@@ -849,7 +850,7 @@ def analyze_bom(
     df = pd.read_csv(io.BytesIO(contents))
     
     processor = BOMProcessor(db)
-    enriched_df = processor.process_bom(df, material_col, weight_col)
+    enriched_df = processor.process_bom(df, material_col, weight_col, strict_mode=strict_mode)
     
     # Return as CSV
     stream = io.StringIO()

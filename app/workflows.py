@@ -206,7 +206,7 @@ class BOMProcessor:
         
         return None, None, None
 
-    def process_bom(self, df, material_col, weight_col):
+    def process_bom(self, df, material_col, weight_col, strict_mode=False):
         # Auto-detect column mappings if the explicit ones are missing
         actual_mat_col = material_col
         if material_col not in df.columns:
@@ -434,7 +434,6 @@ class BOMProcessor:
                 errors.append("Missing shipment date")
                 quarantine_reasons.append("Missing shipment date")
             else:
-                import datetime
                 try:
                     dt = datetime.datetime.strptime(shipment_date, "%Y-%m-%d")
                     if dt > datetime.datetime.now():
@@ -630,6 +629,11 @@ class BOMProcessor:
             raw_total_co2_tonnes = total_co2_tonnes
             raw_cbam_cost_eur = cbam_cost_eur
             
+            if strict_mode:
+                for err in errors:
+                    if err not in quarantine_reasons:
+                        quarantine_reasons.append(f"Strict Mode: {err}")
+            
             if quarantine_reasons:
                 included_str = "NO: " + " | ".join(quarantine_reasons)
                 total_co2_kg = 0.0
@@ -677,7 +681,7 @@ class BOMProcessor:
 
         total_eligible_mass_kg = sum(r.get("DeMinimis_Eligible_Mass_kg", 0.0) for r in enriched_rows if r.get("Included_In_Total", "").startswith("YES"))
         
-        if 0 < total_eligible_mass_kg <= 50000.0:
+        if 0 < total_eligible_mass_kg <= 50000.0 and not strict_mode:
             for r in enriched_rows:
                 if r.get("Included_In_Total", "").startswith("YES") and r.get("DeMinimis_Eligible_Mass_kg", 0.0) > 0:
                     r["CBAM_Cost_EUR"] = 0.0
@@ -688,5 +692,14 @@ class BOMProcessor:
                     else:
                         if "De minimis exemption applies" not in current_notes:
                             r["Notes"] = current_notes + " | " + new_note
+        elif 0 < total_eligible_mass_kg <= 50000.0 and strict_mode:
+            for r in enriched_rows:
+                if r.get("Included_In_Total", "").startswith("YES") and r.get("DeMinimis_Eligible_Mass_kg", 0.0) > 0:
+                    current_notes = r.get("Notes", "None")
+                    new_note = "Strict Mode: De minimis exemption disabled (annual compliance unverified)"
+                    if current_notes == "None":
+                        r["Notes"] = new_note
+                    else:
+                        r["Notes"] = current_notes + " | " + new_note
 
         return pd.DataFrame(enriched_rows)

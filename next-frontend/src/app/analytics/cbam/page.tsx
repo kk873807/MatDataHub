@@ -14,6 +14,7 @@ export default function CBAMAnalytics() {
   // CSV Configuration
   const [materialCol, setMaterialCol] = useState("Material");
   const [weightCol, setWeightCol] = useState("Weight_kg");
+  const [strictMode, setStrictMode] = useState(false);
   
   // Manual Entry State
   const [manualMaterial, setManualMaterial] = useState("");
@@ -123,6 +124,7 @@ export default function CBAMAnalytics() {
       formData.append("file", payloadFile as File);
       formData.append("material_col", payloadMatCol);
       formData.append("weight_col", payloadWeightCol);
+      formData.append("strict_mode", strictMode.toString());
 
       // Note: Make sure the backend doesn't expect authentication, or send token if needed
       const token = localStorage.getItem("token");
@@ -329,6 +331,15 @@ export default function CBAMAnalytics() {
                 <button onClick={downloadTemplate} className="text-amber-500 hover:text-amber-600 dark:text-amber-400 text-sm font-medium flex items-center gap-1">
                   <Download className="w-4 h-4" /> Template
                 </button>
+              </div>
+              <div className="flex items-center pt-2">
+                <label className="flex items-center gap-3 cursor-pointer group">
+                  <div className={`w-11 h-6 flex items-center rounded-full p-1 transition-colors ${strictMode ? 'bg-amber-500' : 'bg-slate-300 dark:bg-slate-700'}`}>
+                    <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${strictMode ? 'translate-x-5' : ''}`}></div>
+                  </div>
+                  <input type="checkbox" className="hidden" checked={strictMode} onChange={e => setStrictMode(e.target.checked)} />
+                  <span className="text-sm font-semibold text-slate-700 dark:text-slate-300 group-hover:text-amber-600 transition-colors">Strict Compliance Mode (Disable De Minimis Exemption, Hard Quarantine on Missing Compliance Data)</span>
+                </label>
               </div>
 
               <div 
