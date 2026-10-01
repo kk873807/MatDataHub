@@ -67,18 +67,24 @@ class SubstitutionEngine:
 # Industry-standard fallback emission factors (kg CO2e per kg of material)
 # Sources: ICE Database v3 (University of Bath), EU CBAM default values
 FALLBACK_CARBON_FACTORS = {
-    "stainless steel": 6.15, "carbon steel": 1.85, "steel": 1.85,
-    "aluminium": 8.24, "aluminum": 8.24,
+    # CBAM-covered sectors: EU default values (direct emissions only, except cement/fertiliser)
+    "hydrogen": 10.4,
+    "ammonia": 2.82, "urea": 2.82,
+    "stainless steel": 2.21, "carbon steel": 2.01, "steel": 2.01,
+    "aluminium": 2.36, "aluminum": 2.36,
+    "iron": 2.01, "cast iron": 2.01,
+    "cement": 0.87, "clinker": 0.87,
+    "fertiliser": 3.0, "fertilizer": 3.0,
+    # Non-CBAM materials: lifecycle-based estimates for ESG scoring only
     "copper": 3.81, "brass": 3.50, "bronze": 3.70,
     "titanium": 35.7, "nickel": 12.4, "zinc": 3.86,
-    "magnesium": 8.10, "iron": 1.91, "cast iron": 1.91,
-    "lead": 1.57, "tin": 14.5,
+    "magnesium": 8.10, "lead": 1.57, "tin": 14.5,
     "nylon": 8.50, "polyethylene": 1.94, "polypropylene": 1.95,
     "pvc": 2.41, "polycarbonate": 7.62, "abs": 3.76,
     "epoxy": 6.70, "polyester": 2.70, "rubber": 3.18,
     "ptfe": 10.2, "peek": 26.4, "polymer": 3.40, "plastic": 3.40,
     "ceramic": 0.70, "glass": 0.86, "concrete": 0.13,
-    "cement": 0.83, "alumina": 3.68, "silicon carbide": 4.20, "zirconia": 3.90,
+    "alumina": 3.68, "silicon carbide": 4.20, "zirconia": 3.90,
     "carbon fiber": 29.5, "fiberglass": 8.10, "gfrp": 8.10, "cfrp": 29.5,
     "composite": 5.50,
 }
@@ -180,10 +186,18 @@ class BOMProcessor:
             notes = []
             
             def extract_string(aliases):
+                # Pass 1: exact column name match (highest priority)
                 for k in row.keys():
                     k_lower = str(k).lower().strip()
-                    # Prevent 'id' from matching 'width', 'solid', 'liquid'
-                    if any(a == k_lower or k_lower.startswith(a + '_') or k_lower.endswith('_' + a) for a in aliases):
+                    if any(a == k_lower for a in aliases):
+                        val = row[k]
+                        if pd.notna(val) and str(val).strip() != "" and str(val).lower() != "nan":
+                            return str(val).strip()
+                        return None  # Exact match found but value is blank
+                # Pass 2: prefix/suffix boundary match (e.g. 'id' matches 'material_id')
+                for k in row.keys():
+                    k_lower = str(k).lower().strip()
+                    if any(k_lower.startswith(a + '_') or k_lower.endswith('_' + a) for a in aliases):
                         val = row[k]
                         if pd.notna(val) and str(val).strip() != "" and str(val).lower() != "nan":
                             return str(val).strip()
@@ -261,7 +275,7 @@ class BOMProcessor:
                 errors.append("Direct emissions cannot be negative")
                 direct_em = 0.0
 
-            indirect_em = extract_float(['indirect_emissions', 'indirect emissions'], 'indirect emissions')
+            indirect_em = extract_float(['indirect_emissions', 'indirect emissions'], None)
             if indirect_em is not None and indirect_em < 0:
                 errors.append("Indirect emissions cannot be negative")
                 indirect_em = 0.0
