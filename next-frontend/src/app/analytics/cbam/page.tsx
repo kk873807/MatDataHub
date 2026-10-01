@@ -85,16 +85,16 @@ export default function CBAMAnalytics() {
   };
 
   const DEMO_BOMS = {
-    automotive: `Material,Weight_kg,cbam_sector,cn_code,country_of_origin,supplier
-Hot-Rolled Steel Coil,50000,Iron & Steel,7208 51 00,China,Acme Metals
-Aluminium Engine Block,15000,Aluminium,7601 20 00,India,Global Alum
-Plastic Dashboard,5000,,,Vietnam,PolyCorp
-Stainless Steel Fasteners,2000,Iron & Steel,7318 15 00,Taiwan,FastenTech`,
-    construction: `Material,Weight_kg,cbam_sector,cn_code,country_of_origin,supplier
-Portland Cement,200000,Cement,2523 29 00,Turkey,EuroCement
-Steel Rebar,100000,Iron & Steel,7214 20 00,China,SteelCo
-Aluminium Window Frames,10000,Aluminium,7610 10 00,China,AlumBuild
-Glass Panes,5000,,,India,ClearGlass`
+    automotive: `material_id,Material,Weight_kg,cbam_sector,cn_code,country_of_origin,destination,shipment_date,supplier
+MAT-A1,Hot-Rolled Steel Coil,50000,Iron & Steel,7208 51 00,China,Germany,2026-06-15,Acme Metals
+MAT-A2,Aluminium Engine Block,15000,Aluminium,7601 20 00,India,Germany,2026-06-15,Global Alum
+MAT-A3,Plastic Dashboard,5000,,,Vietnam,Germany,2026-06-15,PolyCorp
+MAT-A4,Stainless Steel Fasteners,2000,Iron & Steel,7318 15 00,Taiwan,Germany,2026-06-15,FastenTech`,
+    construction: `material_id,Material,Weight_kg,cbam_sector,cn_code,country_of_origin,destination,shipment_date,supplier
+MAT-C1,Portland Cement,200000,Cement,2523 29 00,Turkey,France,2026-08-01,EuroCement
+MAT-C2,Steel Rebar,100000,Iron & Steel,7214 20 00,China,France,2026-08-01,SteelCo
+MAT-C3,Aluminium Window Frames,10000,Aluminium,7610 10 00,China,France,2026-08-01,AlumBuild
+MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass`
   };
 
   const handleLoadDemo = (type: "automotive" | "construction") => {
