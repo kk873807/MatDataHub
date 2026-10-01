@@ -572,4 +572,18 @@ class BOMProcessor:
                 "Included_In_Total": included_str
             })
 
+        total_eligible_mass_kg = sum(r.get("DeMinimis_Eligible_Mass_kg", 0.0) for r in enriched_rows if r.get("Included_In_Total", "").startswith("YES"))
+        
+        if 0 < total_eligible_mass_kg <= 50000.0:
+            for r in enriched_rows:
+                if r.get("Included_In_Total", "").startswith("YES") and r.get("DeMinimis_Eligible_Mass_kg", 0.0) > 0:
+                    r["CBAM_Cost_EUR"] = 0.0
+                    current_notes = r.get("Notes", "None")
+                    new_note = "De minimis exemption applies (annual eligible total <= 50t)"
+                    if current_notes == "None":
+                        r["Notes"] = new_note
+                    else:
+                        if "De minimis exemption applies" not in current_notes:
+                            r["Notes"] = current_notes + " | " + new_note
+
         return pd.DataFrame(enriched_rows)
