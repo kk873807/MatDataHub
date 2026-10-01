@@ -1,7 +1,7 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeft, Factory, UploadCloud, Loader2, FileSpreadsheet, Lock, Download, FileText, Table } from "lucide-react";
+import { ArrowLeft, Factory, UploadCloud, Loader2, FileSpreadsheet, Lock, Download, FileText, Table, AlertTriangle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { API } from "@/lib/api";
 import Papa from "papaparse";
@@ -273,6 +273,14 @@ export default function CBAMAnalytics() {
             CBAM Calculator & ESG Analyzer
           </h1>
           <p className="text-slate-600 dark:text-slate-300 mt-2">Upload your Bill of Materials or enter manually to calculate ESG impact and carbon tax estimates.</p>
+          
+          <div className="mt-4 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg flex items-start gap-3 text-amber-800 dark:text-amber-200 text-sm max-w-4xl">
+            <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5" />
+            <div>
+              <strong>For Planning & Estimation Only</strong><br/>
+              This tool is not a substitute for professional compliance advice. Calculations, scope mappings, and default emission values may not perfectly reflect final EU Customs determinations or your specific regulatory obligations.
+            </div>
+          </div>
         </div>
 
         <div className="bg-white dark:bg-slate-900 p-8 rounded-2xl border border-slate-200 dark:border-slate-800">
