@@ -84,26 +84,6 @@ export default function CBAMAnalytics() {
     }
   };
 
-  const DEMO_BOMS = {
-    automotive: `Material,Weight_kg,cbam_sector,cn_code,country_of_origin,supplier
-Hot-Rolled Steel Coil,50000,Iron & Steel,7208 51 00,China,Acme Metals
-Aluminium Engine Block,15000,Aluminium,7601 20 00,India,Global Alum
-Plastic Dashboard,5000,,,Vietnam,PolyCorp
-Stainless Steel Fasteners,2000,Iron & Steel,7318 15 00,Taiwan,FastenTech`,
-    construction: `Material,Weight_kg,cbam_sector,cn_code,country_of_origin,supplier
-Portland Cement,200000,Cement,2523 29 00,Turkey,EuroCement
-Steel Rebar,100000,Iron & Steel,7214 20 00,China,SteelCo
-Aluminium Window Frames,10000,Aluminium,7610 10 00,China,AlumBuild
-Glass Panes,5000,,,India,ClearGlass`
-  };
-
-  const handleLoadDemo = (type: "automotive" | "construction") => {
-    const csvStr = DEMO_BOMS[type];
-    const demoFile = new File([csvStr], `${type}_bom_demo.csv`, { type: "text/csv" });
-    setFile(demoFile);
-    processBOM(demoFile, "Material", "Weight_kg");
-  };
-
   const downloadTemplate = () => {
     const csvContent = "Material,Weight_kg\nSteel 304L,100\nAluminum 6061,50\n";
     const blob = new Blob([csvContent], { type: "text/csv" });
@@ -230,6 +210,30 @@ Glass Panes,5000,,,India,ClearGlass`
     } finally {
       setLoading(false);
     }
+  };
+
+  const DEMO_BOMS: Record<string, string> = {
+    automotive: [
+      "material_id,Material,Weight_kg,cbam_sector,cn_code,country_of_origin,destination,shipment_date,supplier,lead_time_days,single_source_flag,geopolitical_risk,data_quality,supplier_risk_score,carbon_price_paid",
+      "AUTO-001,Hot-Rolled Steel Coil,50000,Iron & Steel,7208 51 00,China,Germany,2026-06-15,Baosteel,45,No,Medium,Default Values,35,0",
+      "AUTO-002,Aluminium Engine Block,15000,Aluminium,7601 20 00,India,France,2026-06-15,Hindalco,60,No,Medium,Default Values,40,0",
+      "AUTO-003,Stainless Steel Fasteners,2000,Iron & Steel,7318 15 00,Taiwan,Germany,2026-06-15,FastenTech,30,Yes,Low,Default Values,20,0",
+      "AUTO-004,Plastic Dashboard Panel,5000,,,Vietnam,Germany,2026-06-15,PolyCorp,25,No,Low,Default Values,15,0",
+    ].join("\n"),
+    construction: [
+      "material_id,Material,Weight_kg,cbam_sector,cn_code,country_of_origin,destination,shipment_date,supplier,lead_time_days,single_source_flag,geopolitical_risk,data_quality,supplier_risk_score,carbon_price_paid",
+      "CON-001,Portland Cement,200000,Cement,2523 29 00,Turkey,Germany,2026-08-01,EuroCement,30,No,Medium,Default Values,30,0",
+      "CON-002,Steel Rebar 12mm,100000,Iron & Steel,7214 20 00,China,Netherlands,2026-08-01,SteelCo,50,No,High,Default Values,55,0",
+      "CON-003,Aluminium Window Frames,10000,Aluminium,7610 10 00,China,Belgium,2026-08-01,AlumBuild,40,Yes,Medium,Default Values,45,0",
+      "CON-004,Glass Panes,5000,,,India,Germany,2026-08-01,ClearGlass,20,No,Low,Default Values,10,0",
+    ].join("\n"),
+  };
+
+  const handleLoadDemo = (type: "automotive" | "construction") => {
+    const csvStr = DEMO_BOMS[type];
+    const demoFile = new File([csvStr], `${type}_bom_demo.csv`, { type: "text/csv" });
+    setFile(demoFile);
+    processBOM(demoFile, "Material", "Weight_kg");
   };
 
   const downloadResults = () => {
