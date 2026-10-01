@@ -1,0 +1,127 @@
+ID,Material Name,Error/Status,URL
+694,AISI 4140 Steel (Cold Drawn),404,https://www.asminternational.org/documents/10192/1849770/02141G_Chapter_1.pdf
+1055,White Cast Iron,CONNECTION_ERROR,https://matmatch.com/materials/minfc39192-en-12513-grade-g-x-300-crmo-15-3-soft-annealed-a-
+10434,EN 1.7244 (18CrMoS4) Chromium-Molybdenum Steel,TIMEOUT,https://www.steel-grades.com/Steel-Grades/Alloy-Steel/26CrMo4.html
+10082,EN 1.4508 (GX2CrNiMoN19-11-3) Cast Stainless Steel,429,https://www.fabdigit.com/materials/stainless-steel-1-4508/
+11878,AA Standards Grade 3105 H14,CONNECTION_ERROR,https://www.mfgrobots.com/Article/material/metal/38876.html
+10689,UNS S17600 (Alloy 635) Stainless Steel,429,https://www.fabdigit.com/materials/stainless-steel-17-6ph/
+10259,EN 1.7383 (11CrMo9-10) Chromium-Molybdenum Steel,TIMEOUT,http://www.ccsteels.com/Structural_steel/2567.html
+10336,EN 1.5508 (23B2) Boron Steel,429,https://www.fabdigit.com/materials/steel-23b2/
+10347,EN 1.7241 60CrMo3 3 Chromium Molybdenum Steel,429,https://www.fabdigit.com/materials/steel-60crmo3-3/
+10363,EN 1.7240 (60CrMo3-2) Chromium-Molybdenum Steel,429,https://www.fabdigit.com/materials/steel-60crmo3-2/
+10356,EN 1.5113 (8MnSi7) Silicon Steel,429,https://www.fabdigit.com/materials/steel-8mnsi7/
+10777,EN 1.6554 (G25NiCrMo6) Cast Steel,429,https://www.fabdigit.com/materials/steel-g25nicrmo6/
+10794,EN 1.0454 (GE270) Cast Non-Alloy Steel,429,https://www.fabdigit.com/materials/steel-ge270/
+10806,EN 1.4710 (GX30CrSi7) Cast Stainless Steel,429,https://www.fabdigit.com/materials/stainless-steel-1-4710/
+10854,SAE-AISI A8 (T30108) Air-Hardening Steel,429,https://www.fabdigit.com/materials/steel-a8/
+10986,ASTM A369 Grade FP21 Cr-Mo Steel,429,https://www.fabdigit.com/materials/steel-a369-fp21/
+10969,ASTM A387 Grade 11 (K11789) 1.25Cr-0.5Mo Steel,CONNECTION_ERROR,https://www.octalmetals.com/astm-a387-grade-11/
+11025,EN 1.4449 (X3CrNiMo18-12-3) Stainless Steel,TIMEOUT,http://www.ccsteels.com/Stainless_steel/1078.html
+11120,EN 1.4371 (X2CrMnNiN17-7-5) Stainless Steel,TIMEOUT,http://www.ccsteels.com/Stainless_steel/1023.html
+11851,Graphene / Polymer Nanocomposite,CONNECTION_ERROR,https://www2.mdpi.com/2073-4360/9/9/437
+10262,EN 1.7014 (17CrS3) Chromium Steel,429,https://www.fabdigit.com/materials/steel-17crs3/
+10093,EN 1.4515 (GX3CrNiMoCuN26-6-3) Cast Stainless Steel,429,https://www.fabdigit.com/materials/stainless-steel-1-4515/
+10640,ASTM A283 Carbon Steel,CONNECTION_ERROR,https://www.octalmetals.com/astm-a283-grade-c-d-plate/
+10573,ASTM A285 Carbon Steel,CONNECTION_ERROR,https://www.octalmetals.com/astm-a285-grade-c-steel-plate/
+10970,ASTM A387 Grade 22 (K21590) 2.25Cr-1Mo Steel,CONNECTION_ERROR,https://www.octalmetals.com/astm-a387-grade-22/
+11734,"AW-8006 H18 – Certified EN 573-3 AlFeMn Alloy: Food Safe, High Strength & Durability",CONNECTION_ERROR,https://www.mfgrobots.com/Article/material/metal/37378.html
+11731,"AMS4252C: Aluminum Alloy, Plate 6.4Zn - 2.4Mg - 2.2Cu - 0.12Zr (7150-T7751) Solution Heat Treated, Stress Relieved, and Overaged",TIMEOUT,https://saemobilus.sae.org/standards/ams4252c-aluminum-alloy-plate-64zn-24mg-22cu-012zr-7150-t7751-solution-heat-treated-stress-relieved-overaged
+11725,6463 T6 Aluminum,429,https://www.fabdigit.com/materials/compare/aluminum-6463-t4-vs-aluminum-6463-t6/
+10414,EN 1.7160 (16MnCrB5) Chromium Steel,429,https://www.fabdigit.com/materials/steel-16mncrb5/
+10421,EN 1.8201 (7CrWVMoNb9-6) Chromium-Tungsten Steel,TIMEOUT,http://www.ccsteels.com/Structural_steel/4276.html
+10593,SAE-AISI 1037 (G10370) Carbon Steel,429,https://www.fabdigit.com/materials/steel-1037/
+10741,EN 1.7376 (GX15CrMo9-1) Cast Steel,429,https://www.fabdigit.com/materials/steel-gx15crmo9-1/
+11737,Unknown Webpage,404,https://productsandsolutions.pttgcgroup.com/customer-support/files/LL6420A-BROCHURE-TH.pdf
+10758,ASTM A732 Investment Cast Steel,TIMEOUT,https://store.astm.org/a0732_a0732m-20.html
+10768,EN 1.6553 (G25NiCrMo3) Cast Steel,429,https://www.fabdigit.com/materials/steel-g25nicrmo3/
+11740,PET (Polyethylene Terephthalate),TIMEOUT,https://apm.matweb.com/reference/polyester.aspx
+11885,Aluminum Alloy 7150-T7751,TIMEOUT,https://saemobilus.sae.org/standards/ams4252c-aluminum-alloy-plate-64zn-24mg-22cu-012zr-7150-t7751-solution-heat-treated-stress-relieved-overaged
+11065,UNS S30435 Stainless Steel,429,https://www.fabdigit.com/materials/stainless-steel-s30435/
+11085,EN 1.4315 (X5CrNiN19-9) Stainless Steel,TIMEOUT,http://www.ccsteels.com/Stainless_steel/1840.html
+11887,8006 Aluminium Alloy,CONNECTION_ERROR,https://matmatch.com/materials/alky2272-en-573-3-grade-aw-8006-o
+11195,UNS S81921 Stainless Steel,429,https://www.fabdigit.com/materials/stainless-steel-s81921/
+92,C26000 Cartridge Brass (70/30),404,https://www.copper.org/resources/properties/db/pdf/c26000.pdf
+119,Phosphor Bronze (C51000),404,https://www.copper.org/resources/properties/db/pdf/c51000.pdf
+11889,LL6420A,404,https://productsandsolutions.pttgcgroup.com/customer-support/files/LL6420A-BROCHURE-TH.pdf
+10313,EN 1.7177 (60Cr3) Chromium Steel,429,https://www.fabdigit.com/materials/steel-60cr3/
+6346,1435 (A91435) Aluminum,429,https://www.fabdigit.com/materials/aluminum-1435/
+10322,EN 1.7239 (60CrMo3-1) Chromium-Molybdenum Steel,429,https://www.fabdigit.com/materials/steel-60crmo3-1/
+11011,AISI 310HCb (S31041) Stainless Steel,CONNECTION_ERROR,https://www.forgedproduct.com/forging-materials/aisi-310-ss310-stainless-steel.html
+10162,AWS E309H Weld Metal,TIMEOUT,https://www.washingtonalloy.com/e309-309h-16/
+10412,EN 1.5414 (18MnMo4-5) Molybdenum Steel,TIMEOUT,http://www.ccsteels.com/Structural_steel/3348.html
+10439,"SAE-AISI 9310 (1.6657,G93106) Ni-Cr-Mo Steel",429,https://www.fabdigit.com/materials/steel-9310/
+63,AISI 4140 Alloy Steel,404,https://www.asminternational.org/documents/10192/1849770/02141G_Chapter_1.pdf
+10572,"SAE-AISI 1086 (1.1269,G10860) Carbon Steel",429,https://www.fabdigit.com/materials/steel-1086/
+10034,EN 1.4557 (GX2CrNiMoCuN20-18-6) Cast Stainless Steel,429,https://www.fabdigit.com/materials/stainless-steel-1-4557/
+11801,Silicates,CONNECTION_ERROR,https://www.coorstek.com/en/materials/silicates/
+11808,Rutile TiO2,404,https://crystran.com/media/wysiwyg/Materials/rutile-tio2-data-sheet.pdf
+749,Brass C26000 (Cartridge) (Hot Rolled),404,https://www.copper.org/resources/properties/db/pdf/c26000.pdf
+564,Maple Wood (Dry),CONNECTION_ERROR,https://www.fpl.fs.usda.gov/documnts/fplgtr/fplgtr190/chapter_05.pdf
+11220,UNS S42010 Stainless Steel,429,https://www.fabdigit.com/materials/stainless-steel-s42010/
+10735,EN 1.4529 (X1NiCrMoCuN25-20-7) Stainless Steel,TIMEOUT,https://www.stahlportal.com/en/stock/14529-X1NiCrMoCuN25-20-7-super-austenitic/
+580,Pine Wood (Dry),CONNECTION_ERROR,https://www.fpl.fs.usda.gov/documnts/fplgtr/fplgtr190/chapter_05.pdf
+588,Redwood Wood (Dry),CONNECTION_ERROR,https://www.fpl.fs.usda.gov/documnts/fplgtr/fplgtr190/chapter_05.pdf
+584,Spruce Wood (Dry),CONNECTION_ERROR,https://www.fpl.fs.usda.gov/documnts/fplgtr/fplgtr190/chapter_05.pdf
+578,Teak Wood (Dry),CONNECTION_ERROR,https://www.fpl.fs.usda.gov/documnts/fplgtr/fplgtr190/chapter_05.pdf
+566,Walnut Wood (Dry),CONNECTION_ERROR,https://www.fpl.fs.usda.gov/documnts/fplgtr/fplgtr190/chapter_05.pdf
+11091,EN 1.4439 (X2CrNiMoN17-13-5) Stainless Steel,404,https://www.rostfrei-stahl.com/en/info-centre/material-data-sheet/14439/
+159,AISI 4140 Alloy Steel (Annealed),404,https://www.asminternational.org/documents/10192/1849770/02141G_Chapter_1.pdf
+161,AISI 4140 Alloy Steel (Quenched & Tempered (Q&T)),404,https://www.asminternational.org/documents/10192/1849770/02141G_Chapter_1.pdf
+201,C26000 Cartridge Brass,404,https://www.copper.org/resources/properties/db/pdf/c26000.pdf
+747,Brass C26000 (Cartridge) (Annealed),404,https://www.copper.org/resources/properties/db/pdf/c26000.pdf
+748,Brass C26000 (Cartridge) (Cold Drawn),404,https://www.copper.org/resources/properties/db/pdf/c26000.pdf
+11228,UNS S64512 (XM-32) Stainless Steel,429,https://www.fabdigit.com/materials/stainless-steel-xm-32/
+758,Bronze C51000 (Phosphor) (Cold Drawn),404,https://www.copper.org/resources/properties/db/pdf/c51000.pdf
+11237,EN 1.4035 (X46CrS13) Stainless Steel,TIMEOUT,http://www.ccsteels.com/Stainless_steel/1208.html
+583,Fir Wood (Green),CONNECTION_ERROR,https://www.fpl.fs.usda.gov/documnts/fplgtr/fplgtr190/chapter_05.pdf
+582,Fir Wood (Dry),CONNECTION_ERROR,https://www.fpl.fs.usda.gov/documnts/fplgtr/fplgtr190/chapter_05.pdf
+581,Pine Wood (Green),CONNECTION_ERROR,https://www.fpl.fs.usda.gov/documnts/fplgtr/fplgtr190/chapter_05.pdf
+599,Rosewood Wood (Green),CONNECTION_ERROR,https://www.fpl.fs.usda.gov/documnts/fplgtr/fplgtr190/chapter_05.pdf
+600,Lignum Vitae Wood (Dry),CONNECTION_ERROR,https://www.fpl.fs.usda.gov/documnts/fplgtr/fplgtr190/chapter_05.pdf
+601,Lignum Vitae Wood (Green),CONNECTION_ERROR,https://www.fpl.fs.usda.gov/documnts/fplgtr/fplgtr190/chapter_05.pdf
+11175,UNS S32950 Stainless Steel,TIMEOUT,https://boltport.com/specifications/astm-a182-uns-s32950/
+565,Maple Wood (Green),CONNECTION_ERROR,https://www.fpl.fs.usda.gov/documnts/fplgtr/fplgtr190/chapter_05.pdf
+563,Oak Wood (Green),CONNECTION_ERROR,https://www.fpl.fs.usda.gov/documnts/fplgtr/fplgtr190/chapter_05.pdf
+567,Walnut Wood (Green),CONNECTION_ERROR,https://www.fpl.fs.usda.gov/documnts/fplgtr/fplgtr190/chapter_05.pdf
+562,Oak Wood (Dry),CONNECTION_ERROR,https://www.fpl.fs.usda.gov/documnts/fplgtr/fplgtr190/chapter_05.pdf
+577,Mahogany Wood (Green),CONNECTION_ERROR,https://www.fpl.fs.usda.gov/documnts/fplgtr/fplgtr190/chapter_05.pdf
+589,Redwood Wood (Green),CONNECTION_ERROR,https://www.fpl.fs.usda.gov/documnts/fplgtr/fplgtr190/chapter_05.pdf
+585,Spruce Wood (Green),CONNECTION_ERROR,https://www.fpl.fs.usda.gov/documnts/fplgtr/fplgtr190/chapter_05.pdf
+575,Hickory Wood (Green),CONNECTION_ERROR,https://www.fpl.fs.usda.gov/documnts/fplgtr/fplgtr190/chapter_05.pdf
+576,Mahogany Wood (Dry),CONNECTION_ERROR,https://www.fpl.fs.usda.gov/documnts/fplgtr/fplgtr190/chapter_05.pdf
+579,Teak Wood (Green),CONNECTION_ERROR,https://www.fpl.fs.usda.gov/documnts/fplgtr/fplgtr190/chapter_05.pdf
+590,Hemlock Wood (Dry),CONNECTION_ERROR,https://www.fpl.fs.usda.gov/documnts/fplgtr/fplgtr190/chapter_05.pdf
+591,Hemlock Wood (Green),CONNECTION_ERROR,https://www.fpl.fs.usda.gov/documnts/fplgtr/fplgtr190/chapter_05.pdf
+695,AISI 4140 Steel (Hot Rolled),404,https://www.asminternational.org/documents/10192/1849770/02141G_Chapter_1.pdf
+696,AISI 4140 Steel (Quenched & Tempered),404,https://www.asminternational.org/documents/10192/1849770/02141G_Chapter_1.pdf
+692,AISI 4140 Steel,404,https://www.asminternational.org/documents/10192/1849770/02141G_Chapter_1.pdf
+693,AISI 4140 Steel (Annealed),404,https://www.asminternational.org/documents/10192/1849770/02141G_Chapter_1.pdf
+1047,Austenitic Stainless (Food Grade),CONNECTION_ERROR,https://otke-cdn.outokumpu.com/-/media/files/products/core/outokumpu-core-range-datasheet.pdf
+1048,Austenitic Stainless (Marine Grade),CONNECTION_ERROR,https://otke-cdn.outokumpu.com/-/media/files/products/supra/outokumpu-supra-range-datasheet.pdf
+11914,Silicates,CONNECTION_ERROR,https://www.coorstek.com/en/materials/silicates/
+10727,EN 1.4659 (X1CrNiMoCuNW24-22-6) Stainless Steel,TIMEOUT,https://industeel.arcelormittal.com/product/stainless-steels/
+11918,Aluminum Titanate,TIMEOUT,https://www.kyocera-fineceramics.de/en/materials/aluminium-titanate
+10828,EN 1.3961 (GX3Ni36) Casting Alloy,429,https://www.fabdigit.com/materials/steel-gx3ni36/
+10948,ASTM A387 Grade 22L Class 1 2.25Cr-1Mo Steel,CONNECTION_ERROR,https://www.octalmetals.com/astm-a387-grade-22/
+10951,ASTM A225 Manganese-Vanadium-Nickel Steel,TIMEOUT,https://store.astm.org/a0225_a0225m-17.html
+160,AISI 4140 Alloy Steel (Normalized),404,https://www.asminternational.org/documents/10192/1849770/02141G_Chapter_1.pdf
+11381,Inconel X-750,TIMEOUT,https://www.specialmetals.com/documents/technical-bulletins/inconel/inconel-alloy-x-750.pdf
+10305,EN 1.5501 (15B2) Boron Steel,429,https://www.fabdigit.com/materials/steel-15b2/
+10392,EN 1.5522 (22MnB4) Boron Steel,429,https://www.fabdigit.com/materials/steel-22mnb4/
+11151,UNS S82012 Stainless Steel,429,https://www.fabdigit.com/materials/stainless-steel-s32001/
+10372,EN 1.6311 (20MnMoNi4-5) Molybdenum Steel,TIMEOUT,http://www.ccsteels.com/Structural_steel/2573.html
+10379,EN 1.3519 (100CrMnSi6-6) Through-Hardening Bearing Steel,TIMEOUT,https://steelnavigator.ovako.com/steel-grades/100crmnsi6-6/
+11158,EN 1.4821 (X15CrNiSi25-4) Stainless Steel,TIMEOUT,https://www.tool-die-steels.com/grades/stainless-steels/31/5736/1-4821-steel.html
+11164,EN 1.4655 X2CrNiCuN23 4 Stainless Steel,TIMEOUT,http://www.ccsteels.com/Stainless_steel/1200.html
+11161,EN 1.4062 X2CrNiN22 2 Stainless Steel,TIMEOUT,https://industeel.arcelormittal.com/product/stainless-steels/
+11869,H112 Aluminum,CONNECTION_ERROR,https://www.mfgrobots.com/Article/material/metal/39859.html
+10104,EN 1.4518 (GX2CrNiMo19-11-3) Cast Stainless Steel,429,https://www.fabdigit.com/materials/stainless-steel-1-4518/
+757,Bronze C51000 (Phosphor) (Annealed),404,https://www.copper.org/resources/properties/db/pdf/c51000.pdf
+574,Hickory Wood (Dry),CONNECTION_ERROR,https://www.fpl.fs.usda.gov/documnts/fplgtr/fplgtr190/chapter_05.pdf
+112,Plywood (BWR Grade),404,https://services.bis.gov.in/tmp/1733904079.pdf
+10475,"SAE-AISI 4140 (SCM440,G41400) Cr-Mo Steel",404,https://www.asminternational.org/documents/10192/1849770/02141G_Chapter_1.pdf
+10489,SAE-AISI 4626 (G46260) Nickel Steel,429,https://www.fabdigit.com/materials/steel-4626/
+10706,UNS N08320 Stainless Steel,429,https://www.fabdigit.com/materials/stainless-steel-n08320/
+11122,UNS S30441 Stainless Steel,429,https://www.fabdigit.com/materials/stainless-steel-s30441/
+598,Rosewood Wood (Dry),CONNECTION_ERROR,https://www.fpl.fs.usda.gov/documnts/fplgtr/fplgtr190/chapter_05.pdf
+11246,UNS S42030 Stainless Steel,TIMEOUT,https://www.h2abc.com/material/detail.php?mid=azhlNWIxMzU1NzY=

@@ -1,0 +1,864 @@
+ACI-ASTM CA15M (J91151) Cast Stainless Steel
+ACI-ASTM CA28MWV (J91422) Cast Stainless Steel
+ACI-ASTM CA40F (J91154) Cast Stainless Steel
+ACI-ASTM CA6N (J91650) Cast Stainless Steel
+ACI-ASTM CB30 (J91803) Cast Stainless Steel
+ACI-ASTM CB6 (J91804) Cast Stainless Steel
+ACI-ASTM CC50 (J92615) Cast Stainless Steel
+ACI-ASTM CD3MN (ASTM A890 Grade 4A, J92205) Cast Stainless Steel
+ACI-ASTM CD3MWCuN (ASTM A890 Grade 6A, J93380) Cast Stainless Steel
+ACI-ASTM CD4MCuN (ASTM A890 Grade 1B, J93372) Cast Stainless Steel
+ACI-ASTM CE8MN (ASTM A890 Grade 2A, J93345) Cast Stainless Steel
+ACI-ASTM CH20 (SCS17,J93402) Cast Stainless Steel
+ACI-ASTM CN3M (J94652) Cast Stainless Steel
+AISI 202 (S20200) Stainless Steel
+AISI 205 (S20500) Stainless Steel
+AISI 303Se (S30323) Stainless Steel
+AISI 304H (S30409) Stainless Steel
+AISI 308 (S30800) Stainless Steel
+AISI 309H (S30909) Stainless Steel
+AISI 310H (S31009) Stainless Steel
+AISI 310HCb (S31041) Stainless Steel
+AISI 310MoLN (S31050) Stainless Steel
+AISI 316Cb (S31640) Stainless Steel
+AISI 347 (S34700) Stainless Steel
+AISI 403 (S40300) Stainless Steel
+AISI 410 (S41000) Stainless Steel
+AISI 410S (S41008) Stainless Steel
+AISI 414 (S41400) Stainless Steel
+AISI 416 (S41600) Stainless Steel
+AISI 416Se (S41623) Stainless Steel
+AISI 418 (Alloy 615,S41800) Stainless Steel
+AISI 420 (S42000) Stainless Steel
+AISI 420F (S42020) Stainless Steel
+AISI 422 (Alloy 616,S42200) Stainless Steel
+AISI 431 (S43100) Stainless Steel
+AISI 440A (S44002) Stainless Steel
+AISI 440B (S44003) Stainless Steel
+AISI W1 (T72301) Water-Hardening Steel
+AISI W2 (T72302) Water-Hardening Steel
+ASTM A369 Grade FP21 Cr-Mo Steel
+ASTM Grade 100-70-03 (SAE D7003, ISO 700-2, EN-JS 1070) Ductile Cast Iron
+ASTM Grade 20 or 150 (ISO 150, EN-JL 1020, F11401) Grey Cast Iron
+ASTM Grade 30 or 200 (ISO 200, EN-JL 1030, F12101) Grey Cast Iron
+ASTM Grade 35 or 250 (ISO 250, EN-JL 1040, F12401) Grey Cast Iron
+ASTM Grade 60-42-10 Ductile Cast Iron
+ASTM Grade HC (28Cr,J92605) Cast Stainless Steel
+ASTM Grade HD (28Cr-5Ni,J93005) Cast Stainless Steel
+ASTM Grade LCB (J03003) Cast Carbon Steel
+AWS E110C-K3 or E76C-K3 Weld Metal
+AWS E16-8-2 (W36810) Weld Metal
+AWS E209 (W32210) Weld Metal
+AWS E307 (W30710) Weld Metal
+AWS E309LMo (W30923) Weld Metal
+AWS E310Mo (W31020) Weld Metal
+AWS E312 (W31310) Weld Metal
+AWS E317L (W31713) Weld Metal
+AWS E320 (W88021) Weld Metal
+AWS E33-31 (W33310) Weld Metal
+AWS E410 (W41010) Weld Metal
+AWS E430 (W43010) Weld Metal
+AWS E70C-Ni2 or E49C-Ni2 (W22030) Weld Metal
+AWS E80C-B2 or E55C-B2 (W52030) Weld Metal
+AWS E80C-B3L or E55C-B3L (W53130) Weld Metal
+AWS E80C-Ni1 or E55C-Ni1 (W21030) Weld Metal
+AWS E80C-Ni2 or E55C-Ni2 Weld Metal
+AWS E80C-W2 or E55C-W2 Weld Metal
+AWS E90C-B9 or E55C-B9 Weld Metal
+AWS E90C-D2 or E62C-D2 (W19230) Weld Metal
+AWS E90C-K3 or E62C-K3 Weld Metal
+AWS ER110S-1 or ER76S-1 (K21015) Weld Metal
+AWS ER70S-B2L or ER49S-B2L (K20500) Weld Metal
+AWS ER80S-B2 or ER55S-B2 (K20900) Weld Metal
+AWS ER80S-B3L or ER55S-B3L (K30560) Weld Metal
+AWS ER80S-D2 or ER55S-D2 (K10945) Weld Metal
+AWS ER80S-Ni1 or ER55S-Ni1 (K11260) Weld Metal
+AWS ER80S-Ni3 or ER55S-Ni3 (K31240) Weld Metal
+AWS ER90S-B3 or ER62S-B3 (K30960) Weld Metal
+AWS ER90S-B9 or ER62S-B9 (S50482) Weld Metal
+Ac
+Ac2GaCu
+Ac2SiAu
+AcAg2Sn
+AcCdHg2
+AcMnO3
+AcZn3
+AgAu3
+Al
+Al2CoRu
+Al2FeCo
+Al2FeS4
+Al2IrRh
+AlSiRu2
+AlVOs2
+Aluminium Alloy 6063A T6 Extrusions_339
+Aluminium Alloy 6082 T6 Extrusions_338
+Ba(CrN2)2
+Ba2CrN3
+Ba2Ga2O5
+Ba2InBiS5
+Ba2LaWO6
+BaCaLaBiO6
+BaHfMg14
+BaMg14B
+BaMg14Bi
+BaMg14C
+BaMg14Cd
+BaMg14Cr
+BaMg14Ga
+BaMg14Mo
+BaMg14Nb
+BaMg14W
+BaMnN2
+BaNaH3Pd
+BaNaPrFeO6
+BaSrCeTiO6
+BaSrEuBiO6
+BaSrMg14
+BaSrNdNbO6
+BaSrTbNbO6
+BaYMg14
+Bainidur 7980 CN
+Be2IrPd
+Be2NiIr
+Be2NiRh
+Be3Rh
+Ca(InN)2
+Ca2AgPb
+Ca2NbGaO6
+Ca2PdAu
+Ca2ReN3
+Ca2TaN3
+Ca3W3N5
+Ca7SiN6
+CaEuMnCoO6
+CaLaMg14
+CaMg14Co
+CaMg14Cu
+CaMg14Fe
+CaMg14Mn
+CaMg14Ni
+CaMg14Si
+CaMg14Sn
+CaMg14Ti
+CaMg14V
+CaMg14Zn
+CaMg14Zr
+CaPmPd2
+CaPmPt2
+CaPmRh2
+CaPmZn2
+CaPuRh2
+CaSiO3
+CaTiN2
+CaYMg14
+CaYRh2
+Carbon Black (Polymer Additive)
+CdPPt5
+CeGa3
+CeGaGe
+Co2NiSe4
+Cr2FeTe4
+Cr2NiSe4
+Cs2CaCl4
+Cs2KU2(Si2O7)2
+Cs2Mn(PSe3)2
+Cs3Rb
+CsCaCO3F
+CsCaMg14
+CsHfMg14
+CsKMg6O7
+CsMg14B
+CsMg14Bi
+CsMg14C
+CsMg14Cr
+CsMg14Ga
+CsMg14Mn
+CsMg14Sb
+CsOsN2
+CsSrMg14
+CuH6(NCl)2
+Dy2AgIr
+Dy2AlZn
+Dy2Mg
+Dy2MgAl
+Dy2MgIn
+Dy2Ni12P7
+Dy2NiIr
+Dy2ZnIn
+Dy2ZnOs
+DyAl3
+DyAu
+DyB2Rh3
+DyB4Mo
+DyBr2
+DyBr3
+DyHg3
+DyHoMg2
+DyI3
+DyMgAg2
+DyMgZn2
+EN 1.0420 (GE200) Cast Non-Alloy Steel
+EN 1.0446 (GE240) Cast Non-Alloy Steel
+EN 1.0449 (GS200) Cast Non-Alloy Steel
+EN 1.0454 (GE270) Cast Non-Alloy Steel
+EN 1.0558 (GE300) Cast Non-Alloy Steel
+EN 1.0597 (GE360) Cast Non-Alloy Steel
+EN 1.0601 (C60) Non-Alloy Steel
+EN 1.0625 (GP280GH) Cast Non-Alloy Steel
+EN 1.1118 (G24Mn6) Cast Non-Alloy Steel
+EN 1.1131 (G17Mn5) Cast Non-Alloy Steel
+EN 1.1165 (G28Mn6) Cast Non-Alloy Steel
+EN 1.3523 (19MnCr5) Case-Hardening Bearing Steel
+EN 1.3533 (18NiCrMo14-6) Case-Hardening Bearing Steel
+EN 1.3538 (100CrMo7-4) Through-Hardening Bearing Steel
+EN 1.3541 (X47Cr14) Stainless Bearing Steel
+EN 1.3542 (X65Cr14) Stainless Bearing Steel
+EN 1.3549 (X89CrMoV18-1) Stainless Bearing Steel
+EN 1.3563 (43CrMo4) Induction-Hardening Bearing Steel
+EN 1.3567 (20CrMo4) Case-Hardening Bearing Steel
+EN 1.3576 (20NiCrMo7) Case-Hardening Bearing Steel
+EN 1.3940 (GX2CrNiN18-13) Cast Stainless Steel
+EN 1.3956 (GX4CrNiMnN22-12-5) Cast Stainless Steel
+EN 1.4005 (X12CrS13) Stainless Steel
+EN 1.4006 (X12Cr13) Stainless Steel
+EN 1.4024 (X15Cr13) Stainless Steel
+EN 1.4034 (X46Cr13) Stainless Steel
+EN 1.4104 (X14CrMoS17) Stainless Steel
+EN 1.4107 (GX8CrNi12-1) Cast Stainless Steel
+EN 1.4109 (X70CrMo15) Stainless Steel
+EN 1.4110 (X55CrMo14) Stainless Steel
+EN 1.4112 (X90CrMoV18) Stainless Steel
+EN 1.4116 (X50CrMoV15) Stainless Steel
+EN 1.4122 (X39CrMo17-1) Stainless Steel
+EN 1.4125 (X105CrMo17) Stainless Steel
+EN 1.4301 (X5CrNi18-10) Stainless Steel
+EN 1.4306 (X2CrNi19-11) Stainless Steel
+EN 1.4313 (X3CrNiMo13-4) Stainless Steel
+EN 1.4325 (X9CrNi18-9) Stainless Steel
+EN 1.4335 (X1CrNi25-21) Stainless Steel
+EN 1.4369 (X11CrNiMnN19-8-6) Stainless Steel
+EN 1.4371 (X2CrMnNiN17-7-5) Stainless Steel
+EN 1.4378 (X6CrMnNiN18-13-3) Stainless Steel
+EN 1.4401 (X5CrNiMo17-12-2) Stainless Steel
+EN 1.4404 (X2CrNiMo17-12-2) Stainless Steel
+EN 1.4406 (X2CrNiMoN17-11-2) Stainless Steel
+EN 1.4408 (GX5CrNiMo19-11-2) Cast Stainless Steel
+EN 1.4415 (X2CrNiMoV13-5-2) Stainless Steel
+EN 1.4417 (GX2CrNiMoN25-7-3) Cast Stainless Steel
+EN 1.4419 (X38CrMo14) Stainless Steel
+EN 1.4421 (GX4CrNi16-4) Cast Stainless Steel
+EN 1.4423 (X1CrNiMoCu12-7-3) Stainless Steel
+EN 1.4432 (X2CrNiMo17-12-3) Stainless Steel
+EN 1.4436 (X3CrNiMo17-13-3) Stainless Steel
+EN 1.4438 (X2CrNiMo18-15-4) Stainless Steel
+EN 1.4449 (X3CrNiMo18-12-3) Stainless Steel
+EN 1.4460 (X3CrNiMoN27-5-2) Stainless Steel
+EN 1.4468 (GX2CrNiMoN25-6-3) Cast Stainless Steel
+EN 1.4469 (GX2CrNiMoN26-7-4) Cast Stainless Steel
+EN 1.4470 (GX2CrNiMoN22-5-3) Cast Stainless Steel
+EN 1.4474 (GX4CrNiMoN26-5-2) Cast Stainless Steel
+EN 1.4490 (GX2CrNiMoN19-11-2) Cast Stainless Steel
+EN 1.4508 (GX2CrNiMoN19-11-3) Cast Stainless Steel
+EN 1.4515 (GX3CrNiMoCuN26-6-3) Cast Stainless Steel
+EN 1.4517 (GX2CrNiMoCuN25-6-3-3) Cast Stainless Steel
+EN 1.4518 (GX2CrNiMo19-11-3) Cast Stainless Steel
+EN 1.4537 (X1CrNiMoCuN25-25-5) Stainless Steel
+EN 1.4550 (X6CrNiNb18-10) Stainless Steel
+EN 1.4571 (X6CrNiMoTi17-12-2) Stainless Steel
+EN 1.4580 (X6CrNiMoNb17-12-2) Stainless Steel
+EN 1.4596 (X1CrNiMoAlTi12-10-2) Stainless Steel
+EN 1.4597 (X8CrMnCuN17-8-3) Stainless Steel
+EN 1.4612 (X1CrNiMoAlTi12-11-2) Stainless Steel
+EN 1.4646 (X6CrMnNiCuN18-12-4-2) Stainless Steel
+EN 1.4652 (X1CrNiMoCuN24-22-8) Stainless Steel
+EN 1.4658 (X2CrNiMoCoN28-8-5-1) Stainless Steel
+EN 1.4710 (GX30CrSi7) Cast Stainless Steel
+EN 1.4729 (GX40CrSi13) Cast Stainless Steel
+EN 1.4740 (GX40CrSi17) Cast Stainless Steel
+EN 1.4806 (GX40NiCrSi35-17) Cast Stainless Steel
+EN 1.4818 (X6CrNiSiNCe19-10) Stainless Steel
+EN 1.4823 (GX40CrNiSi27-4) Cast Stainless Steel
+EN 1.4833 (X12CrNi23-13) Stainless Steel
+EN 1.4835 (X9CrNiSiNCe21-11-2) Stainless Steel
+EN 1.4841 (X15CrNiSi25-21) Stainless Steel
+EN 1.4854 (X6NiCrSiNCe35-25) Stainless Steel
+EN 1.4865 (GX40NiCrSi38-19) Cast Stainless Steel
+EN 1.4876 (X10NiCrAlTi32-21) Stainless Steel
+EN 1.4887 (X10NiCrSiNb35-22) Stainless Steel
+EN 1.4903 (X10CrMoVNb9-1) Stainless Steel
+EN 1.4905 (X11CrMoWVNb9-11) Stainless Steel
+EN 1.4910 (X3CrNiMoBN17-13-3) Stainless Steel
+EN 1.4911 (X8CrCoNiMo10-6) Stainless Steel
+EN 1.4912 (X7CrNiNb18-10) Stainless Steel
+EN 1.4913 (X19CrMoNbVN11-1) Stainless Steel
+EN 1.4919 (X6CrNiMoB17-12-2) Stainless Steel
+EN 1.4922 (X20CrMoV11-1) Stainless Steel
+EN 1.4923 (X22CrMoV12-1) Stainless Steel
+EN 1.4935 (X20CrMoWV12-1) Stainless Steel
+EN 1.4938 (X12CrNiMoV12-3) Stainless Steel
+EN 1.4945 (X6CrNiWNbN16-16) Stainless Steel
+EN 1.4948 (X6CrNi18-10) Stainless Steel
+EN 1.4951 (X6CrNi25-20) Stainless Steel
+EN 1.4971 (X12CrCoNi21-20) Stainless Steel
+EN 1.4981 (X8CrNiMoNb16-16) Stainless Steel
+EN 1.4982 (X10CrNiMoMnNbVB15-10-1) Stainless Steel
+EN 1.4983 (X6CrNiMoTiB17-13) Stainless Steel
+EN 1.5662 (X8Ni9) Nickel Steel
+EN 1.5682 (X10Ni9) Nickel Steel
+EN 1.6308 (18MnMoNi5-5) Nickel-Molybdenum Steel
+EN 1.6554 (G25NiCrMo6) Cast Steel
+EN 1.6771 (G30NiCrMo14) Cast Steel
+EN 1.6956 (33NiCrMoV14-5) Nickel-Chromium Steel
+EN 1.7006 (46Cr2) Chromium Steel
+EN 1.7076 (32CrB4) Chromium-Boron Steel
+EN 1.7102 (54SiCr6) Silicon-Chromium Steel
+EN 1.7117 (52SiCrNi5) Steel
+EN 1.7202 (37CrMo4) Chromium-Molybdenum Steel
+EN 1.7225 (42CrMo4) Chromium-Molybdenum Steel
+EN 1.7710 (G15CrMoV6-9) Cast Steel
+EN 1.8152 (54SiCrV6) Steel
+EN 1.8519 (31CrMoV9) Nitriding Steel
+EN 1.8527 (8CrMo16-5) Nitriding Steel
+EN 1.8831 (P460ML2) Steel
+EN 1.8870 (P460Q) Nickel Steel
+EN 1.8896 (E355M) Steel
+EN 1.8903 (S460NL) Steel
+Er2Mg
+Er2MgGe2
+Er2MgIn
+Er2NiIr
+Er4Ga16Co3
+ErAgHg2
+ErGaRh2
+ErMg3
+ErPaTc2
+ErRh2Pb
+ErSnRh2
+Eu
+Eu2TiO4
+EuAgAu2
+EuAl3Cu2
+Fe
+Ga
+Gd2C(NO)2
+Gd2ReC2
+Ge
+Glycol Modified Polyethylene Terephthalate PETG PET G
+Glycol-Modified Polyethylene Terephthalate (PETG, PET-G)
+Grade FDCrV Spring Steel
+H
+H1075 Hardened CB7Cu-1 Cast Stainless Steel
+H900 Hardened CB7Cu-1 Cast Stainless Steel
+H925 Hardened CB7Cu-1 Cast Stainless Steel
+Hf(VGa2)2
+Hf2CoIr
+Hf2CoRe
+Hf2MnIr
+Hf2MoIr
+Hf2MoRh
+Hf2N
+Hf2OsRh
+HfAlRh2
+HfAlRu2
+HfGa5Co
+HfGa5Ni
+HfGaRu2
+HfInCo2
+HfInPd2
+HfMg14Al
+HfMg14Nb
+HfMg6VO8
+HfMgN2
+HfScCo2
+HfScOs2
+HfTaRe2
+HfTc2Sb
+HgPd3
+HgTe
+Ho(TiGa2)2
+Ho2AlZn
+Ho2B4C
+Ho2CoOs
+Ho2Mg
+Ho2MgGe2
+Ho2OsAu
+Ho2OsPd
+Ho3In
+Ho4Ni13C4
+HoAs
+HoCdPt2
+HoCl2
+HoCu4Pd
+HoI3
+HoMgAu2
+HoMgRh2
+HoSbRh2
+HoSnRh2
+InC6(NCl3)2
+InH4NCl4
+InPPd5
+InPd2Au
+Ir
+Ir3Rh
+K2NpO4
+K2Pu2O5
+K2PuO4
+K2ZnH4(I2O7)2
+KAcTe2
+KCaMg14
+KHfNbBiO6
+KLiMg6O7
+KMg14Al
+KMg6BO8
+KMg6CrO8
+KMg6GaO8
+KMg6WO8
+KMnBiWO6
+KNa2Bi
+KNaMg6O7
+KNb2InO6
+KNdHf2O6
+KNdInSbO6
+KPrHf2O6
+KPrHf4O12
+KPuO3
+KRbMg6O7
+KSi2N3
+KSm(NiO3)4
+KSrCeSbO6
+KSrTbSbO6
+KTl
+Kr
+La
+LaCeMg14
+LaCuPb
+Li
+Li2GeN2
+Li4Ti3Fe3(SbO8)2
+LiAc2Ir
+LiAc2Ru
+LiCaMg14
+LiCrN2
+LiHf2Os
+LiIn3
+LiMg14B
+LiMg14Co
+LiMg6BiO8
+LiMg6CrO8
+LiMg6SbO8
+LiMg6WO8
+LiSc2Os
+LiScAu2
+LiScTl2
+LiSiBiO4
+LiSiPd2
+LiSmTl2
+LiTbAu2
+LiTi2N3
+LiTiRh2
+LiV2CrO6
+LiY2Rh
+LiY2Ru
+Lu2Cr2C3
+Lu2MgGe2
+Lu2MgIn
+Lu2MgZrO6
+Lu2TiZnO6
+Lu4Ni13C4
+LuCd
+LuGa5Co
+LuMgRh2
+Mg
+Mg14AlBi
+Mg14AlC
+Mg14AlSb
+Mg14AlSn
+Mg14AlZn
+Mg14CdFe
+Mg14CdSn
+Mg14CrB
+Mg14CrCd
+Mg14CrFe
+Mg14CrGa
+Mg14CrMo
+Mg14CrW
+Mg14CuNi
+Mg14FeB
+Mg14FeBi
+Mg14FeSb
+Mg14FeW
+Mg14MnAl
+Mg14MnCo
+Mg14MnFe
+Mg14MnNb
+Mg14MnNi
+Mg14MnSn
+Mg14MnV
+Mg14NbB
+Mg14NbBi
+Mg14NbC
+Mg14NbCd
+Mg14NbCr
+Mg14NbFe
+Mg14NbGa
+Mg14NbMo
+Mg14NbSb
+Mg14NbW
+Mg14TiCo
+Mg14ZnCu
+Mg14ZrAl
+Mg2AgAu
+Mg2AgIr
+Mg2Cu
+Mg2PdPt
+Mg3Al2(GeO4)3
+Mg6TiSnO8
+MgAlF5
+MgGaPd2
+MgGaRh2
+MgGeIr2
+MgSnIr2
+MgSnPd2
+MgTiIr2
+MgZrPd2
+MgZrRh2
+Mn(CrSe2)2
+Mn2AlCr
+Mn2AlRe
+Mn2AlW
+Mn2NbAl
+Mn2VSi
+Mn3Ir
+MnAlRu2
+MnGaRu2
+MnIr3
+MnNbRu2
+MnV3
+MnVRu2
+MnZnIr2
+MnZnRh2
+Mo2SeS3
+MoI3
+MoW3(SeS3)2
+MoW3S8
+NANOBAIN (Nanostructured / Carbide-Free Bainitic Steel)
+Na
+Na2CeFeO6
+Na2TlBi
+Na3IrN2
+Na3Mo2N5
+Na3Np(HO3)2
+Na3Sn
+NaCaDySeO6
+NaCaMg14
+NaCaNbSnO6
+NaDyTl2
+NaErTl2
+NaLa(NiO3)4
+NaMg14Fe
+NaNdHg2
+NaNdTl2
+NaNiCSO7
+NaPaO3
+NaPr(FeO3)4
+NaPrAu2
+NaPrHfTiO6
+NaPrHg2
+NaPrMnWO6
+NaPrTl2
+NaSmAu2
+NaSr2In
+NaSr2Tl
+NaSrAu2
+NaSrLaSeO6
+NaSrSbWO6
+NaSrSnBiO6
+NaTl2Cd
+NaTlPd2
+NaYMg14
+Nb2VSe4
+Nb4Ni2C
+NbC2NCl8
+NbGeRu2
+NbSiTc2
+NbZn2N3
+NbZnCo2
+NbZnRh2
+Nd2CuRu
+Nd2In8Pd
+Nd2NiIr
+Nd2ReC2
+Nd3MnAlS7
+Nd3SiAgS7
+NdAgAu2
+NdAgHg2
+NdAl
+NdRh3
+NdSnAu2
+NdTlAu2
+Ni
+NpB6
+NpGa5Ni
+NpNi5
+NpP3
+NpSnRh2
+PaAlRu2
+PaAlTc2
+PaCo3
+PaCu2Sn
+PaGaAu2
+PaInAu2
+PaInCu2
+PaInPt2
+PaPbAu2
+PaSi3
+PaSiTc2
+PaSnAu2
+PaTe2Au
+Pm2IrAu
+Pm2IrPd
+Pm2IrPt
+Pm2IrRh
+Pm2MgGa
+Pm2MgSn
+Pm2MgTl
+Pm2NiIr
+Pm2NiRh
+Pm2NiRu
+Pm2PdPt
+Pm2PdRh
+Pm2RuAu
+Pm2RuRh
+Pm2SiAg
+PmCdAg2
+PmCdAu2
+PmHgAu2
+PmHoMg2
+PmIn3
+PmInAu2
+PmInCu2
+PmInHg2
+PmNi3
+Polymethylmethacrylate (PMMA, Acrylic)
+Pr
+Pr(Al2Cu)4
+Pr3AgGeS7
+Pr3Co
+Pr3SiAgS7
+PrBiAu2
+PrEuHfMnO6
+PrEuZrMnO6
+Pt
+Pt3W
+Rb
+Rb2CN2
+Rb2CuF4
+Rb2MgP4(HO2)8
+Rb2NpO4
+Rb2PdCl4
+RbAcTe2
+RbBaTaS4
+RbCaMg14
+RbCeMg6O8
+RbCoN
+RbF2
+RbMg14Al
+RbMg14Fe
+RbMg14Ti
+RbMnN2
+RbSrCO3F
+RbYMg14
+RbZnH2Se2ClO6
+Re
+Rh
+Ru
+RuF6
+SAE-AISI 1037 (G10370) Carbon Steel
+SAE-AISI 4024 (G40240) Molybdenum Steel
+SAE-AISI 4419 (G44190) Molybdenum Steel
+SAE-AISI 4815 (G48150) Nickel Steel
+SAE-AISI 4820 (G48200) Nickel Steel
+SAE-AISI 5132 (G51320) Chromium Steel
+SAE-AISI 5147 (G51470) Chromium Steel
+SAE-AISI 5160 (G51600) Chromium Steel
+SAE-AISI 8637 (G86370) Ni-Cr-Mo Steel
+SAE-AISI 9254 (G92540) Silicon-Chromium Steel
+SAE-AISI A4 (T30104) Air-Hardening Steel
+SAE-AISI A7 (T30107) Air-Hardening Steel
+SAE-AISI D7 (T30407) Chromium Cold-Work Steel
+SAE-AISI H11 (T20811) Chromium Hot-Work Steel
+SAE-AISI H25 (T20825) Tungsten Hot-Work Steel
+SAE-AISI H43 (T20843) Molybdenum Hot-Work Steel
+SAE-AISI M1 (T11301) Molybdenum High-Speed Steel
+SAE-AISI M33 (T11333) Molybdenum High-Speed Steel
+SAE-AISI M34 (T11334) Molybdenum High-Speed Steel
+SAE-AISI M42 (T11342) Molybdenum High-Speed Steel
+SAE-AISI M46 (T11346) Molybdenum High-Speed Steel
+SAE-AISI M48 (T11348) Cobalt High-Speed Steel
+SAE-AISI M52 (T11352) Molybdenum High-Speed Steel
+SAE-AISI M7 (T11307) Molybdenum High-Speed Steel
+SAE-AISI O1 (T31501) Oil-Hardening Steel
+SAE-AISI O6 (T31506) Oil-Hardening Steel
+SAE-AISI O7 (T31507) Oil-Hardening Steel
+SAE-AISI S2 (T41902) Shock-Resisting Steel
+SAE-AISI S6 (T41906) Shock-Resisting Steel
+SAE-AISI S7 (T41907) Shock-Resisting Steel
+SAE-AISI T1 (T12001) Tungsten High-Speed Steel
+SAE-AISI T6 (T12006) Tungsten High-Speed Steel
+Sb
+Sc2AgAu
+Sc2AgHg
+ScCu
+ScGa5Ni
+ScTaOs2
+ScZn2Pt
+Si
+SmCl3
+SmGa2Ni
+Sr3Co(CN)3
+Sr3ReN3
+SrCaMg14
+SrCrN2
+SrHfMg14
+SrHfN2
+SrLiMg14
+SrMg(CoO3)4
+SrMg14B
+SrMg14Bi
+SrMg14C
+SrMg14Cd
+SrMg14Ga
+SrMg14Mn
+SrMg14Mo
+SrMg14Nb
+SrMg14Sb
+SrMg14W
+SrSmV4O12
+SrYMg14
+Stainless Steel Tube
+Swissbain-7MnB8
+T24 / 7CrMoVTiB10-10
+Ta2NbIr
+Ta2NbOs
+Ta2NbRu
+Ta2OsW
+Ta2VOs
+Ta6Pb4O19
+TaZn2
+TaZn2N3
+TaZnRu2
+Tb
+Tb2Re2Si2C
+TbBr3
+TbInRh2
+Tc
+Tc3Os
+Te2Mo3WSe6
+Te3Mo2S
+Te4Mo3WS4
+Te4Mo3WSe4
+Te4Rh3
+Te6Mo3WS2
+TeMo2S3
+TeMo2Se3
+ThF4
+ThInAg2
+Ti
+Ti(MoS2)2
+Ti2B
+Ti2CoTc
+Ti2VSe4
+Ti3B4
+Tl2CoP4(HO2)8
+TlPd2Au
+Tm2Cr2C3
+Tm2ZnIr
+Tm2ZnOs
+TmCuPbSe3
+TmMgZn2
+TmMnSi2
+TmSnGe
+TmTaOs2
+TmUTc2
+U
+U2Mo2C3
+UB2Rh2C
+UF3
+UNS N08320 Stainless Steel
+UNS N08366 Stainless Steel
+UNS N08367 Stainless Steel
+UNS N08800 (Alloy 800) Stainless Steel
+UNS N08801 (Alloy 801) Stainless Steel
+UNS N08810 (Alloy 800H) Stainless Steel
+UNS N08811 (Alloy 800HT) Stainless Steel
+UNS N08904 (904L) Stainless Steel
+UNS R30155 (formerly Grade 661) Iron-Cobalt Alloy
+UNS R30556 (Alloy 556) Fe-Cr-Ni-Co Alloy
+UNS S13800 (PH 13-8 Mo,XM-13) Stainless Steel
+UNS S15700 (PH 15-7 Mo,Alloy 632) Stainless Steel
+UNS S20161 Stainless Steel
+UNS S20431 Stainless Steel
+UNS S20433 Stainless Steel
+UNS S21600 (XM-17) Stainless Steel
+UNS S21603 (XM-18) Stainless Steel
+UNS S30441 Stainless Steel
+UNS S30452 (XM-21) Stainless Steel
+UNS S30530 Stainless Steel
+UNS S30601 (Alloy 611) Stainless Steel
+UNS S31727 Stainless Steel
+UNS S31803 Stainless Steel
+UNS S32050 Stainless Steel
+UNS S32053 Stainless Steel
+UNS S32202 Stainless Steel
+UNS S32906 Stainless Steel
+UNS S33228 Stainless Steel
+UNS S33550 Stainless Steel
+UNS S35000 (Alloy 350,Alloy 633) Stainless Steel
+UNS S35045 (Alloy 803) Stainless Steel
+UNS S35125 Stainless Steel
+UNS S35135 (Alloy 864) Stainless Steel
+UNS S35140 Stainless Steel
+UNS S38815 Stainless Steel
+UNS S41003 (3CR12) Stainless Steel
+UNS S41041 Stainless Steel
+UNS S41425 (13-5-2) Stainless Steel
+UNS S42010 Stainless Steel
+UNS S42030 Stainless Steel
+UNS S42300 (Alloy 619) Stainless Steel
+UNS S45500 (Alloy 455,XM-16) Stainless Steel
+UNS S81921 Stainless Steel
+UNS S82013 Stainless Steel
+UNS S82122 Stainless Steel
+USiSe
+UTl2O4
+V
+V2FeSe4
+VO
+Y2TiZnO6
+YMg14Al
+YMg14Cd
+Yb
+Yb2AlGe3
+Yb2CdGe
+Yb2PdRh
+Yb2TlCd
+Yb2TlPb
+Yb3N2
+YbGaPt
+YbMgCu4
+YbMoClO4
+YbNdHg2
+YbSe
+YbSiPt2
+Zn2NiRh
+Zn2PdRh
+Zn2RhAu
+ZnCuPd2
+ZnGeN2
+ZnNi
+Zr(VGa2)2
+Zr2CoTc
+Zr2CuOs
+ZrAlAu2
+ZrZn3

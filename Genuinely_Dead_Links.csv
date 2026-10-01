@@ -1,0 +1,684 @@
+id,name,category,source_url,error_status
+10005,AWS ER80S-B3L or ER55S-B3L (K30560) Weld Metal,Metal,https://www.meridian-mag.com/magnesium-die-casting/lightweight-alloys/datasheet.pdf,DNS / Connection Error
+10969,ASTM A387 Grade 11 (K11789) 1.25Cr-0.5Mo Steel,Steel,https://www.octalmetals.com/astm-a387-grade-11/,DNS / Connection Error
+10640,ASTM A283 Carbon Steel,Metal,https://www.octalmetals.com/astm-a283-grade-c-d-plate/,DNS / Connection Error
+10573,ASTM A285 Carbon Steel,Metal,https://www.octalmetals.com/astm-a285-grade-c-steel-plate/,DNS / Connection Error
+10970,ASTM A387 Grade 22 (K21590) 2.25Cr-1Mo Steel,Steel,https://www.octalmetals.com/astm-a387-grade-22/,DNS / Connection Error
+11011,AISI 310HCb (S31041) Stainless Steel,Metal,https://www.forgedproduct.com/forging-materials/aisi-310-ss310-stainless-steel.html,DNS / Connection Error
+9870,"ASTM A436 Type 2b (L-NiCr 20 3, F41003) Cast Iron",Metal,https://ftp.dot.state.tx.us/pub/txdot-info/cmd/cserve/standard/bridge/preciron.pdf,DNS / Connection Error
+592,Cypress Wood (Dry),Composite,https://www.fpl.fs.usda.gov/documnts/TechSheets/SoftwoodNA/htmlDocs/taxodiumdisticum.html,DNS / Connection Error
+1103,Lu,Computational Material,https://oqmd.org/materials/entry/1216058,DNS / Connection Error
+1104,Tm,Computational Material,https://oqmd.org/materials/entry/1216098,DNS / Connection Error
+1105,Ne,Computational Material,https://oqmd.org/materials/entry/4698,DNS / Connection Error
+1118,Er,Computational Material,https://oqmd.org/materials/entry/9566,DNS / Connection Error
+1120,Ho,Computational Material,https://oqmd.org/materials/entry/10106,DNS / Connection Error
+1127,Gd,Computational Material,https://oqmd.org/materials/entry/17319,DNS / Connection Error
+1135,SiP,Computational Material,https://oqmd.org/materials/entry/5810,DNS / Connection Error
+1136,SmZn,Computational Material,https://oqmd.org/materials/entry/18114,DNS / Connection Error
+594,Balsa Wood (Dry),Composite,https://www.fpl.fs.usda.gov/documnts/TechSheets/Chudnoff/TropAmerican/htmlDocs_tropamerican/Ochromapyramidale.html,DNS / Connection Error
+571,Ash Wood (Green),Composite,https://www.fpl.fs.usda.gov/documnts/TechSheets/HardwoodNA/htmlDocs/fraxinus.html,DNS / Connection Error
+570,Ash Wood (Dry),Composite,https://www.fpl.fs.usda.gov/documnts/TechSheets/HardwoodNA/htmlDocs/fraxinus.html,DNS / Connection Error
+593,Cypress Wood (Green),Composite,https://www.fpl.fs.usda.gov/documnts/TechSheets/SoftwoodNA/htmlDocs/taxodiumdisticum.html,DNS / Connection Error
+586,Cedar Wood (Dry),Composite,https://www.fpl.fs.usda.gov/documnts/TechSheets/SoftwoodNA/htmlDocs/thujaplicatamet.html,DNS / Connection Error
+4737,FeNiGe,Semiconductor,https://materialsproject.org/materials/mp-1024972,DNS / Connection Error
+587,Cedar Wood (Green),Composite,https://www.fpl.fs.usda.gov/documnts/TechSheets/SoftwoodNA/htmlDocs/thujaplicatamet.html,DNS / Connection Error
+11840,2D CVI C/SiC,Ceramic Matrix Composite,https://ntrs.nasa.gov/api/citations/20020072848/downloads/20020072848.pdf,DNS / Connection Error
+7952,KYGeS4,Semiconductor,https://materialsproject.org/materials/mp-863755,DNS / Connection Error
+4738,YSi2Ru3,Semiconductor,https://materialsproject.org/materials/mp-1024974,DNS / Connection Error
+4739,CeB2Pt2C,Metal,https://materialsproject.org/materials/mp-1024975,DNS / Connection Error
+4740,YbNi4Au,Computational Material,https://materialsproject.org/materials/mp-1024977,DNS / Connection Error
+1140,Os,Computational Material,https://oqmd.org/materials/entry/7520,DNS / Connection Error
+1142,TiAg,Computational Material,https://oqmd.org/materials/entry/10676,DNS / Connection Error
+2860,NaEuZrSbO6,Semiconductor,https://materialsproject.org/materials/mp-1523171,DNS / Connection Error
+1146,UTe,Computational Material,https://oqmd.org/materials/entry/17352,DNS / Connection Error
+1144,YbTe,Computational Material,https://oqmd.org/materials/entry/6320,DNS / Connection Error
+1145,TmAg,Computational Material,https://oqmd.org/materials/entry/10678,DNS / Connection Error
+1148,LiBi,Computational Material,https://oqmd.org/materials/entry/10937,DNS / Connection Error
+1147,YAg,Computational Material,https://oqmd.org/materials/entry/10681,DNS / Connection Error
+1149,TcB,Computational Material,https://oqmd.org/materials/entry/21452,DNS / Connection Error
+1150,LiTl,Computational Material,https://oqmd.org/materials/entry/17610,DNS / Connection Error
+1152,PrTl,Computational Material,https://oqmd.org/materials/entry/18891,DNS / Connection Error
+10948,ASTM A387 Grade 22L Class 1 2.25Cr-1Mo Steel,Metal,https://www.octalmetals.com/astm-a387-grade-22/,DNS / Connection Error
+12039,Pure Magnesium (99.8%),Magnesium,https://matmatch.com/materials/alky2583-astm-b951-grade-9980a,DNS / Connection Error
+10054,"ASTM Grade HN (20Cr-25Ni,J94213) Cast Stainless Steel",Metal,https://www.purdue.edu/bidc/wp-content/uploads/2021/08/ISOGrade.pdf,DNS / Connection Error
+6116,Mg14ZrZn,Computational Material,https://materialsproject.org/materials/mp-1027966,DNS / Connection Error
+6142,Mg14NbZn,Computational Material,https://materialsproject.org/materials/mp-1027996,DNS / Connection Error
+6934,Rb2CN2,Computational Material,https://next-gen.materialsproject.org/materials/mp-1029784,DNS / Connection Error
+4422,YMg6Sn,Computational Material,https://materialsproject.org/materials/mp-1022832,DNS / Connection Error
+6130,Mg14ZnSn,Computational Material,https://materialsproject.org/materials/mp-1027982,DNS / Connection Error
+6123,Mg14VZn,Computational Material,https://materialsproject.org/materials/mp-1027975,DNS / Connection Error
+4420,YMg6Zn,Computational Material,https://materialsproject.org/materials/mp-1022827,DNS / Connection Error
+6141,BaMg14Zn,Computational Material,https://materialsproject.org/materials/mp-1027995,DNS / Connection Error
+6143,SrMg14Zn,Computational Material,https://materialsproject.org/materials/mp-1027997,DNS / Connection Error
+6140,Mg14ZnCo,Computational Material,https://materialsproject.org/materials/mp-1027994,DNS / Connection Error
+4277,SrMg6Zr,Computational Material,https://materialsproject.org/materials/mp-1022492,DNS / Connection Error
+6146,CsMg14Zn,Computational Material,https://materialsproject.org/materials/mp-1028000,DNS / Connection Error
+4419,Mg6MnBi,Computational Material,https://materialsproject.org/materials/mp-1022825,DNS / Connection Error
+6108,KMg14Zn,Computational Material,https://materialsproject.org/materials/mp-1027957,DNS / Connection Error
+4284,BaMg6Zr,Computational Material,https://materialsproject.org/materials/mp-1022514,DNS / Connection Error
+4283,Mg6ZrCo,Computational Material,https://materialsproject.org/materials/mp-1022513,DNS / Connection Error
+6111,NaMg14Zn,Computational Material,https://materialsproject.org/materials/mp-1027960,DNS / Connection Error
+4269,Mg6FeCo,Computational Material,https://materialsproject.org/materials/mp-1022476,DNS / Connection Error
+4273,Mg6ZrW,Computational Material,https://materialsproject.org/materials/mp-1022484,DNS / Connection Error
+4276,Mg6ZrC,Metal,https://materialsproject.org/materials/mp-1022489,DNS / Connection Error
+6112,LaMg14Fe,Computational Material,https://materialsproject.org/materials/mp-1027961,DNS / Connection Error
+6127,Mg14ZnNi,Computational Material,https://materialsproject.org/materials/mp-1027979,DNS / Connection Error
+6129,Mg14ZnFe,Computational Material,https://materialsproject.org/materials/mp-1027981,DNS / Connection Error
+6113,Mg14ZnSi,Semiconductor,https://materialsproject.org/materials/mp-1027962,DNS / Connection Error
+6109,LaMg14Zn,Computational Material,https://materialsproject.org/materials/mp-1027958,DNS / Connection Error
+6137,Mg14ZrFe,Computational Material,https://materialsproject.org/materials/mp-1027991,DNS / Connection Error
+6121,RbMg14Zn,Computational Material,https://materialsproject.org/materials/mp-1027973,DNS / Connection Error
+4286,RbMg6Zr,Computational Material,https://materialsproject.org/materials/mp-1022517,DNS / Connection Error
+11046,AISI 301 (S30100) Stainless Steel,Metal,https://www.atimaterials.com/Products/Documents/datasheets/stainless-specialty-steel/austenitic/ati_301_tds_en_v1.pdf,DNS / Connection Error
+1624,ZnGe(BiO3)2,Semiconductor,https://materialsproject.org/materials/mp-aaaieiti,DNS / Connection Error
+10475,"SAE-AISI 4140 (SCM440,G41400) Cr-Mo Steel",Metal,https://www.forgedproduct.com/forging-materials/astm-sae-aisi-4140-alloy-steel.html,DNS / Connection Error
+11747,ExxonMobil™ EVA 05012FL,Polymer,https://www.exxonmobilchemical.com/en/chemicals/webapi/dps/v1/datasheets/150000000144/0/en,HTTP 400
+11552,Experimental Steel Grade 163,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11390,Experimental Steel Grade 1,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11566,Experimental Steel Grade 177,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11530,Experimental Steel Grade 141,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11612,Experimental Steel Grade 223,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11629,Experimental Steel Grade 240,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11690,Experimental Steel Grade 301,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11581,Experimental Steel Grade 192,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11584,Experimental Steel Grade 195,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11665,Experimental Steel Grade 276,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11668,Experimental Steel Grade 279,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11686,Experimental Steel Grade 297,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11290,Aluminium Alloy 5251 H26 Sheet_152,Metal,https://www.aalco.co.uk/datasheets/Aluminium-Alloy-5251-H26-Sheet_152.ashx,HTTP 404
+11292,Aluminium Alloy 5454 O and H111 Sheet_238,Metal,https://www.aalco.co.uk/datasheets/Aluminium-Alloy-5454-O-and-H111-Sheet_238.ashx,HTTP 404
+11301,Aluminium Alloy 6061 T6 Extrusions_145,Metal,https://www.aalco.co.uk/datasheets/Aalco-Metals-Ltd_Aluminium-Alloy-6061-T6-Extrusions_145.pdf.ashx,HTTP 404
+11305,Aluminium Alloy 6063A T6 Extrusions_339,Metal,https://www.aalco.co.uk/datasheets/Aluminium-Alloy-6063A-T6-Extrusions_339.ashx,HTTP 404
+11303,Aluminium Alloy 6063 T4 Extruded Rod and Bar_159,Metal,https://www.aalco.co.uk/datasheets/Aluminium-Alloy-6063-T4-Extruded-Rod-and-Bar_159.ashx,HTTP 404
+11306,Aluminium Alloy 6082 0 Sheet_146,Metal,https://www.aalco.co.uk/datasheets/Aluminium-Alloy-6082-0-Sheet_146.ashx,HTTP 404
+11309,Aluminium Alloy 6082 T6T651 Plate_148,Metal,https://www.aalco.co.uk/datasheets/Aluminium-Alloy-6082-T6T651-Plate_148.ashx,HTTP 404
+11310,Aluminium Alloy 6082 T6T651 Sheet_335,Metal,https://www.aalco.co.uk/datasheets/Aluminium-Alloy-6082-T6T651-Sheet_335.ashx,HTTP 404
+11304,Aluminium Alloy 6063A T4 Extrusions_161,Metal,https://www.aalco.co.uk/datasheets/Aluminium-Alloy-6063A-T4-Extrusions_161.ashx,HTTP 404
+11312,Aluminium Alloy 6101A T6 Extrusions Bar_357,Metal,https://www.aalco.co.uk/datasheets/Aluminium-Alloy-6101A-T6-Extrusions-Bar_357.ashx,HTTP 404
+11317,Aluminium Alloy GAL C250 Precision Milled Plate_457,Metal,https://www.aalco.co.uk/datasheets/Aalco-Metals-Ltd_Aluminium-Alloy-GAL-C250-Precision-Milled-Plate_457.pdf.ashx,HTTP 404
+11320,Aluminium Alloy Transition Joint_55,Metal,https://www.aalco.co.uk/datasheets/Aluminium-Alloy-Transition-Joint_55.ashx,HTTP 404
+9445,Aluminium Alloy 2011 T3 Rod and Bar_3,Metal,https://www.aalco.co.uk/datasheets/Aluminium-Alloy-2011-T3-Rod-and-Bar_3.ashx,HTTP 404
+11443,Experimental Steel Grade 54,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11444,Experimental Steel Grade 55,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11445,Experimental Steel Grade 56,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11446,Experimental Steel Grade 57,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11447,Experimental Steel Grade 58,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11448,Experimental Steel Grade 59,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11449,Experimental Steel Grade 60,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11442,Experimental Steel Grade 53,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11453,Experimental Steel Grade 64,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11452,Experimental Steel Grade 63,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11451,Experimental Steel Grade 62,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11460,Experimental Steel Grade 71,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11461,Experimental Steel Grade 72,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11454,Experimental Steel Grade 65,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11462,Experimental Steel Grade 73,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11450,Experimental Steel Grade 61,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11463,Experimental Steel Grade 74,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11464,Experimental Steel Grade 75,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11467,Experimental Steel Grade 78,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11465,Experimental Steel Grade 76,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11466,Experimental Steel Grade 77,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11468,Experimental Steel Grade 79,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11470,Experimental Steel Grade 81,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11471,Experimental Steel Grade 82,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11473,Experimental Steel Grade 84,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11472,Experimental Steel Grade 83,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11477,Experimental Steel Grade 88,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11474,Experimental Steel Grade 85,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11475,Experimental Steel Grade 86,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11476,Experimental Steel Grade 87,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11484,Experimental Steel Grade 95,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11480,Experimental Steel Grade 91,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11483,Experimental Steel Grade 94,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11481,Experimental Steel Grade 92,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11482,Experimental Steel Grade 93,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11479,Experimental Steel Grade 90,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11486,Experimental Steel Grade 97,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11487,Experimental Steel Grade 98,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11489,Experimental Steel Grade 100,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11491,Experimental Steel Grade 102,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11490,Experimental Steel Grade 101,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11543,Experimental Steel Grade 154,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11544,Experimental Steel Grade 155,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11548,Experimental Steel Grade 159,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11545,Experimental Steel Grade 156,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11549,Experimental Steel Grade 160,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11550,Experimental Steel Grade 161,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11555,Experimental Steel Grade 166,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11551,Experimental Steel Grade 162,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11558,Experimental Steel Grade 169,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11559,Experimental Steel Grade 170,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11557,Experimental Steel Grade 168,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11572,Experimental Steel Grade 183,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11569,Experimental Steel Grade 180,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11573,Experimental Steel Grade 184,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11574,Experimental Steel Grade 185,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11575,Experimental Steel Grade 186,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11565,Experimental Steel Grade 176,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11576,Experimental Steel Grade 187,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11577,Experimental Steel Grade 188,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11587,Experimental Steel Grade 198,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11580,Experimental Steel Grade 191,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11588,Experimental Steel Grade 199,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11589,Experimental Steel Grade 200,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11579,Experimental Steel Grade 190,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11642,Experimental Steel Grade 253,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11591,Experimental Steel Grade 202,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11590,Experimental Steel Grade 201,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11302,Aluminium Alloy 6063 0 Extrusions_160,Metal,https://www.aalco.co.uk/datasheets/Aalco-Metals-Ltd_Aluminium-Alloy-6063-0-Extrusions_160.pdf.ashx,HTTP 404
+11644,Experimental Steel Grade 255,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11645,Experimental Steel Grade 256,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11643,Experimental Steel Grade 254,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11647,Experimental Steel Grade 258,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11650,Experimental Steel Grade 261,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11651,Experimental Steel Grade 262,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11652,Experimental Steel Grade 263,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11649,Experimental Steel Grade 260,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11654,Experimental Steel Grade 265,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11655,Experimental Steel Grade 266,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11659,Experimental Steel Grade 270,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11660,Experimental Steel Grade 271,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11661,Experimental Steel Grade 272,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11662,Experimental Steel Grade 273,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11663,Experimental Steel Grade 274,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11664,Experimental Steel Grade 275,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11672,Experimental Steel Grade 283,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11674,Experimental Steel Grade 285,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11673,Experimental Steel Grade 284,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11676,Experimental Steel Grade 287,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11677,Experimental Steel Grade 288,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11657,Experimental Steel Grade 268,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11678,Experimental Steel Grade 289,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11679,Experimental Steel Grade 290,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11680,Experimental Steel Grade 291,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11681,Experimental Steel Grade 292,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11314,Aluminium Alloy 6106 T6 Extrusions_154,Metal,https://www.aalco.co.uk/datasheets/Aalco-Metals-Ltd_Aluminium-Alloy-6106-T6-Extrusions_154.pdf.ashx,HTTP 404
+11307,Aluminium Alloy 6082 T4 Extrusions_147,Metal,https://www.aalco.co.uk/datasheets/Aluminium-Alloy-6082-T4-Extrusions_147.ashx,HTTP 404
+9435,1.4542 (17/4 & 630) Bar,Other,https://www.aalco.co.uk/datasheets/Stainless-Steel-14542-Bar_100.ashx,HTTP 404
+11392,Experimental Steel Grade 3,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11391,Experimental Steel Grade 2,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11393,Experimental Steel Grade 4,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11394,Experimental Steel Grade 5,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11397,Experimental Steel Grade 8,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11396,Experimental Steel Grade 7,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11399,Experimental Steel Grade 10,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11398,Experimental Steel Grade 9,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11400,Experimental Steel Grade 11,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11401,Experimental Steel Grade 12,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11403,Experimental Steel Grade 14,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11402,Experimental Steel Grade 13,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11404,Experimental Steel Grade 15,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11406,Experimental Steel Grade 17,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11407,Experimental Steel Grade 18,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11405,Experimental Steel Grade 16,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11409,Experimental Steel Grade 20,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11411,Experimental Steel Grade 22,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11410,Experimental Steel Grade 21,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11412,Experimental Steel Grade 23,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11414,Experimental Steel Grade 25,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11413,Experimental Steel Grade 24,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11415,Experimental Steel Grade 26,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11417,Experimental Steel Grade 28,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11416,Experimental Steel Grade 27,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11418,Experimental Steel Grade 29,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11420,Experimental Steel Grade 31,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11419,Experimental Steel Grade 30,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11423,Experimental Steel Grade 34,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11421,Experimental Steel Grade 32,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11422,Experimental Steel Grade 33,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11424,Experimental Steel Grade 35,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11426,Experimental Steel Grade 37,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11427,Experimental Steel Grade 38,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11425,Experimental Steel Grade 36,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11429,Experimental Steel Grade 40,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11430,Experimental Steel Grade 41,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11431,Experimental Steel Grade 42,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11432,Experimental Steel Grade 43,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11434,Experimental Steel Grade 45,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11436,Experimental Steel Grade 47,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11435,Experimental Steel Grade 46,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11438,Experimental Steel Grade 49,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11440,Experimental Steel Grade 51,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11441,Experimental Steel Grade 52,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11458,Experimental Steel Grade 69,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11457,Experimental Steel Grade 68,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11459,Experimental Steel Grade 70,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11478,Experimental Steel Grade 89,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11493,Experimental Steel Grade 104,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11492,Experimental Steel Grade 103,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11495,Experimental Steel Grade 106,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11494,Experimental Steel Grade 105,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11498,Experimental Steel Grade 109,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11497,Experimental Steel Grade 108,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11496,Experimental Steel Grade 107,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11500,Experimental Steel Grade 111,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11501,Experimental Steel Grade 112,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11502,Experimental Steel Grade 113,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11503,Experimental Steel Grade 114,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11504,Experimental Steel Grade 115,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11505,Experimental Steel Grade 116,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11506,Experimental Steel Grade 117,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11507,Experimental Steel Grade 118,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11508,Experimental Steel Grade 119,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11509,Experimental Steel Grade 120,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11510,Experimental Steel Grade 121,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11511,Experimental Steel Grade 122,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11513,Experimental Steel Grade 124,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11512,Experimental Steel Grade 123,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11515,Experimental Steel Grade 126,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11514,Experimental Steel Grade 125,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11516,Experimental Steel Grade 127,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11517,Experimental Steel Grade 128,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11519,Experimental Steel Grade 130,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11522,Experimental Steel Grade 133,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11521,Experimental Steel Grade 132,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11524,Experimental Steel Grade 135,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11525,Experimental Steel Grade 136,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11526,Experimental Steel Grade 137,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11527,Experimental Steel Grade 138,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11529,Experimental Steel Grade 140,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11532,Experimental Steel Grade 143,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11531,Experimental Steel Grade 142,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11533,Experimental Steel Grade 144,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11534,Experimental Steel Grade 145,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11535,Experimental Steel Grade 146,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11537,Experimental Steel Grade 148,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11538,Experimental Steel Grade 149,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11536,Experimental Steel Grade 147,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11540,Experimental Steel Grade 151,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11541,Experimental Steel Grade 152,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11539,Experimental Steel Grade 150,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11547,Experimental Steel Grade 158,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11553,Experimental Steel Grade 164,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11554,Experimental Steel Grade 165,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11562,Experimental Steel Grade 173,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11568,Experimental Steel Grade 179,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11563,Experimental Steel Grade 174,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11556,Experimental Steel Grade 167,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11567,Experimental Steel Grade 178,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11570,Experimental Steel Grade 181,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11571,Experimental Steel Grade 182,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11582,Experimental Steel Grade 193,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11583,Experimental Steel Grade 194,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+9429,Stainless Steel - Austenitic - 201~201L~202~204,Stainless Steel,https://www.aalco.co.uk/datasheets/Stainless-Steel-201201L202204_97.ashx,HTTP 404
+9440,Aluminium Alloy 5005 H34 Sheet_137,Metal,https://www.aalco.co.uk/datasheets/Aluminium-Alloy-5005-H34-Sheet_137.ashx,HTTP 404
+11585,Experimental Steel Grade 196,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11586,Experimental Steel Grade 197,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11594,Experimental Steel Grade 205,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11593,Experimental Steel Grade 204,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11595,Experimental Steel Grade 206,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11592,Experimental Steel Grade 203,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11597,Experimental Steel Grade 208,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11598,Experimental Steel Grade 209,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11596,Experimental Steel Grade 207,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11600,Experimental Steel Grade 211,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11601,Experimental Steel Grade 212,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11599,Experimental Steel Grade 210,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11602,Experimental Steel Grade 213,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11604,Experimental Steel Grade 215,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11603,Experimental Steel Grade 214,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11606,Experimental Steel Grade 217,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11605,Experimental Steel Grade 216,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11608,Experimental Steel Grade 219,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11607,Experimental Steel Grade 218,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11609,Experimental Steel Grade 220,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11610,Experimental Steel Grade 221,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11611,Experimental Steel Grade 222,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11613,Experimental Steel Grade 224,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11614,Experimental Steel Grade 225,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11615,Experimental Steel Grade 226,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11616,Experimental Steel Grade 227,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11617,Experimental Steel Grade 228,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11618,Experimental Steel Grade 229,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11619,Experimental Steel Grade 230,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11285,Aluminium Alloy 5052 H32 Triple Grip Treadplate_47,Metal,https://www.aalco.co.uk/datasheets/Aluminium-Alloy-5052-H32-Triple-Grip-Treadplate_47.ashx,HTTP 404
+11286,Aluminium Alloy 5083 H32 Sheet_140,Metal,https://www.aalco.co.uk/datasheets/Aluminium-Alloy-5083-H32-Sheet_140.ashx,HTTP 404
+11620,Experimental Steel Grade 231,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11300,Aluminium Alloy 6060 T5  Extrusions_144,Metal,https://www.aalco.co.uk/datasheets/Aalco-Metals-Ltd_Aluminium-Alloy-6060-T5--Extrusions_144.pdf.ashx,HTTP 404
+11297,Aluminium Alloy 5754 H26 Sheet_341,Metal,https://www.aalco.co.uk/datasheets/Aluminium-Alloy-5754-H26-Sheet_341.ashx,HTTP 404
+11299,Aluminium Alloy 6026 T9 Rod and Bar_143,Metal,https://aalco.co.uk/datasheets/Aluminium-Alloy-6026-T9-Rod-and-Bar_143.ashx,HTTP 404
+11623,Experimental Steel Grade 234,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11628,Experimental Steel Grade 239,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11622,Experimental Steel Grade 233,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11625,Experimental Steel Grade 236,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11621,Experimental Steel Grade 232,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11624,Experimental Steel Grade 235,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11627,Experimental Steel Grade 238,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11626,Experimental Steel Grade 237,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+9442,Aluminium Alloy - Aalcopanel Composite Panels,Aluminium,https://www.aalco.co.uk/datasheets/Aluminium-Alloy-Aalcopanel-Composite-Panels_258.ashx,HTTP 404
+9438,Aluminium Alloy 3103 H14 Sheet_298,Metal,https://www.aalco.co.uk/datasheets/Aalco-Metals-Ltd_Aluminium-Alloy-3103-H14-Sheet_298.pdf.ashx,HTTP 404
+11632,Experimental Steel Grade 243,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11633,Experimental Steel Grade 244,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11630,Experimental Steel Grade 241,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11634,Experimental Steel Grade 245,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11631,Experimental Steel Grade 242,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11637,Experimental Steel Grade 248,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11636,Experimental Steel Grade 247,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11635,Experimental Steel Grade 246,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+9444,Aluminium Alloy 1050A H14 Sheet_57,Metal,https://www.aalco.co.uk/datasheets/Aalco-Metals-Ltd_Aluminium-Alloy-1050A-H14-Sheet_57.pdf.ashx,HTTP 404
+9450,Aluminium Alloy 4015 H14 Sheet_60,Metal,https://www.aalco.co.uk/datasheets/Aluminium-Alloy-4015-H14-Sheet_60.ashx,HTTP 404
+11638,Experimental Steel Grade 249,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11639,Experimental Steel Grade 250,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11641,Experimental Steel Grade 252,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11640,Experimental Steel Grade 251,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11658,Experimental Steel Grade 269,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11564,Experimental Steel Grade 175,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11666,Experimental Steel Grade 277,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11646,Experimental Steel Grade 257,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11578,Experimental Steel Grade 189,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11656,Experimental Steel Grade 267,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11653,Experimental Steel Grade 264,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11648,Experimental Steel Grade 259,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11667,Experimental Steel Grade 278,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11669,Experimental Steel Grade 280,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11670,Experimental Steel Grade 281,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11671,Experimental Steel Grade 282,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11675,Experimental Steel Grade 286,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11683,Experimental Steel Grade 294,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11682,Experimental Steel Grade 293,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11684,Experimental Steel Grade 295,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11685,Experimental Steel Grade 296,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11688,Experimental Steel Grade 299,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11689,Experimental Steel Grade 300,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11687,Experimental Steel Grade 298,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11691,Experimental Steel Grade 302,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11692,Experimental Steel Grade 303,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11694,Experimental Steel Grade 305,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11693,Experimental Steel Grade 304,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11695,Experimental Steel Grade 306,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11696,Experimental Steel Grade 307,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11697,Experimental Steel Grade 308,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11698,Experimental Steel Grade 309,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11699,Experimental Steel Grade 310,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11700,Experimental Steel Grade 311,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11701,Experimental Steel Grade 312,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11091,EN 1.4439 (X2CrNiMoN17-13-5) Stainless Steel,Metal,https://www.rostfrei-stahl.com/en/info-centre/material-data-sheet/14439/,HTTP 404
+9443,Aluminium Alloy 1050 0 Sheet_58,Metal,https://www.aalco.co.uk/datasheets/Aluminium-Alloy-1050-0-Sheet_58.ashx,HTTP 404
+9432,201~201L~202~204,Other,https://www.aalco.co.uk/datasheets/Stainless-Steel-201201L202204_97.ashx,HTTP 404
+11455,Experimental Steel Grade 66,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11456,Experimental Steel Grade 67,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11546,Experimental Steel Grade 157,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11542,Experimental Steel Grade 153,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11940,AISI 409 Stainless Steel,Stainless Steel,https://www.azom.com/article.aspx?ArticleID=968,HTTP 404
+11955,Compacted Graphite Iron (CGI),Cast Iron,https://www.sintercast.com/media/1239/compacted-graphite-iron-material-data-sheet.pdf,HTTP 404
+9425,Aluminium Alloy 6063 T6 Extrusions_158,Metal,https://www.aalco.co.uk/datasheets/Aalco-Metals-Ltd_Aluminium-Alloy-6063-T6-Extrusions_158.pdf.ashx,HTTP 404
+11315,Aluminium Alloy 6262 T6 Extrusions_156,Metal,https://www.aalco.co.uk/datasheets/Aluminium-Alloy-6262-T6-Extrusions_156.ashx,HTTP 404
+9434,Stainless Steel - Martensitic - 1.4006 Bar,Stainless Steel,https://www.aalco.co.uk/datasheets/Stainless-Steel-14006-Bar_315.ashx,HTTP 404
+9448,Aluminium Alloy 2014A T6511 Extrusion_342,Metal,https://www.aalco.co.uk/datasheets/Aluminium-Alloy-2014A-T6511-Extrusion_342.ashx,HTTP 404
+9449,Aluminium Alloy 3003 0 Sheet_59,Metal,https://www.aalco.co.uk/datasheets/Aluminium-Alloy-3003-0-Sheet_59.ashx,HTTP 404
+9451,Aluminium Alloy 4925 H12 Sheet_136,Metal,https://www.aalco.co.uk/datasheets/Aluminium-Alloy-4925-H12-Sheet_136.ashx,HTTP 404
+11316,Aluminium Alloy DNV Certified Marine Extrusions Extrusions_419,Metal,https://www.aalco.co.uk/datasheets/Aalco-Metals-Ltd_Aluminium-Alloy-DNV-Certified-Marine-Extrusions-Extrusions_419.pdf.ashx,HTTP 404
+11560,Experimental Steel Grade 171,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11308,Aluminium Alloy 6082 T6 Extrusions_338,Metal,https://www.aalco.co.uk/datasheets/Aluminium-Alloy-6082-T6-Extrusions_338.ashx,HTTP 404
+11488,Experimental Steel Grade 99,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11485,Experimental Steel Grade 96,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+9427,Lariver GRP,GRP,https://www.aalco.co.uk/datasheets/GRP-Lariver-GRP_46.ashx,HTTP 404
+11561,Experimental Steel Grade 172,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11469,Experimental Steel Grade 80,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11395,Experimental Steel Grade 6,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11408,Experimental Steel Grade 19,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11428,Experimental Steel Grade 39,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11433,Experimental Steel Grade 44,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11437,Experimental Steel Grade 48,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11518,Experimental Steel Grade 129,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11520,Experimental Steel Grade 131,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11439,Experimental Steel Grade 50,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11523,Experimental Steel Grade 134,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11499,Experimental Steel Grade 110,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+11528,Experimental Steel Grade 139,Metal,https://www.kaggle.com/datasets/ritwikbasu/steel-properties-and-composition,HTTP 404
+10345,EN 1.7335 (13CrMo4-5) Chromium-Molybdenum  Steel,Metal,https://phi-motion.com/13CrMo4-5-13CrMo4-4-1-7335--F11-35-56,HTTP 500
+11004,EN 1.4982 (X10CrNiMoMnNbVB15-10-1) Stainless Steel,Metal,https://www.tool-die-steels.com/grades/stainless-steels/31/6193/1-4982-steel.html,HTTP 500
+11089,AISI 302B (S30215) Stainless Steel,Metal,https://www.tool-die-steels.com/grades/stainless-steels/31/423/S30215-steel.html,HTTP 500
+1455,PtC,Computational Material,https://oqmd.org/materials/entry/21517,HTTP 502
+1439,ZrS,Computational Material,https://oqmd.org/materials/entry/18905,HTTP 502
+1111,Ta,Computational Material,https://oqmd.org/materials/entry/7517,HTTP 502
+1459,Zn,Metal,https://oqmd.org/materials/entry/9225,HTTP 502
+1119,Zr,Computational Material,https://oqmd.org/materials/entry/9320,HTTP 502
+1485,HfC,Computational Material,https://oqmd.org/materials/entry/4149,HTTP 502
+1406,Sc,Computational Material,https://oqmd.org/materials/entry/8146,HTTP 502
+1482,AlNi,Computational Material,https://oqmd.org/materials/entry/10516,HTTP 502
+1477,MnPt,Computational Material,https://oqmd.org/materials/entry/17680,HTTP 502
+1478,CeCd,Computational Material,https://oqmd.org/materials/entry/11012,HTTP 502
+1479,YN,Computational Material,https://oqmd.org/materials/entry/6913,HTTP 502
+1494,MgAu,Computational Material,https://oqmd.org/materials/entry/10777,HTTP 502
+1500,GeTe,Computational Material,https://oqmd.org/materials/entry/8001,HTTP 502
+1498,CaO,Computational Material,https://oqmd.org/materials/entry/5181,HTTP 502
+1496,LiF,Computational Material,https://oqmd.org/materials/entry/7484,HTTP 502
+1497,TaC,Computational Material,https://oqmd.org/materials/entry/5179,HTTP 502
+1180,ErMg,Computational Material,https://oqmd.org/materials/entry/30004,HTTP 502
+1398,ErTl,Computational Material,https://oqmd.org/materials/entry/30061,HTTP 502
+1153,LuMg,Computational Material,https://oqmd.org/materials/entry/17612,HTTP 502
+1203,HoSe,Computational Material,https://oqmd.org/materials/entry/8122,HTTP 502
+1204,TlSn,Computational Material,https://oqmd.org/materials/entry/18131,HTTP 502
+1207,YbRu,Computational Material,https://oqmd.org/materials/entry/18904,HTTP 502
+1205,LuPd,Computational Material,https://oqmd.org/materials/entry/17621,HTTP 502
+1206,YbRh,Computational Material,https://oqmd.org/materials/entry/18903,HTTP 502
+1208,LuRh,Computational Material,https://oqmd.org/materials/entry/17625,HTTP 502
+1211,SrTl,Computational Material,https://oqmd.org/materials/entry/18140,HTTP 502
+1210,LuRu,Computational Material,https://oqmd.org/materials/entry/17627,HTTP 502
+1213,LuZn,Computational Material,https://oqmd.org/materials/entry/17629,HTTP 502
+1214,NdMg,Computational Material,https://oqmd.org/materials/entry/17630,HTTP 502
+1221,YbSn,Computational Material,https://oqmd.org/materials/entry/18136,HTTP 502
+1223,VOs,Computational Material,https://oqmd.org/materials/entry/19422,HTTP 502
+1222,NbRh,Computational Material,https://oqmd.org/materials/entry/30785,HTTP 502
+1228,TaTc,Computational Material,https://oqmd.org/materials/entry/18145,HTTP 502
+1225,ScP,Computational Material,https://oqmd.org/materials/entry/22243,HTTP 502
+1218,NaH,Computational Material,https://oqmd.org/materials/entry/6318,HTTP 502
+1232,TbTl,Computational Material,https://oqmd.org/materials/entry/18148,HTTP 502
+1231,HfOs,Computational Material,https://oqmd.org/materials/entry/17380,HTTP 502
+1237,CsAu,Computational Material,https://oqmd.org/materials/entry/10711,HTTP 502
+1235,ErPd,Computational Material,https://oqmd.org/materials/entry/30025,HTTP 502
+1227,CdAu,Computational Material,https://oqmd.org/materials/entry/10705,HTTP 502
+1167,CaSe,Computational Material,https://oqmd.org/materials/entry/7648,HTTP 502
+1236,MgPd,Computational Material,https://oqmd.org/materials/entry/17638,HTTP 502
+1234,TiHg,Computational Material,https://oqmd.org/materials/entry/30536,HTTP 502
+1238,RbAu,Computational Material,https://oqmd.org/materials/entry/10712,HTTP 502
+1268,GeC,Computational Material,https://oqmd.org/materials/entry/22473,HTTP 502
+1239,PrMg,Computational Material,https://oqmd.org/materials/entry/17640,HTTP 502
+1242,HfRh,Computational Material,https://oqmd.org/materials/entry/17386,HTTP 502
+1245,CaCd,Computational Material,https://oqmd.org/materials/entry/10972,HTTP 502
+1248,TiTc,Computational Material,https://oqmd.org/materials/entry/18156,HTTP 502
+1240,TbZn,Computational Material,https://oqmd.org/materials/entry/18152,HTTP 502
+1247,FePd,Computational Material,https://oqmd.org/materials/entry/22248,HTTP 502
+1249,HfRu,Computational Material,https://oqmd.org/materials/entry/17389,HTTP 502
+1250,VTc,Computational Material,https://oqmd.org/materials/entry/18157,HTTP 502
+1256,ErAu,Computational Material,https://oqmd.org/materials/entry/10720,HTTP 502
+1253,CeMg,Computational Material,https://oqmd.org/materials/entry/20463,HTTP 502
+1254,PmMg,Computational Material,https://oqmd.org/materials/entry/20464,HTTP 502
+1255,YCu,Computational Material,https://oqmd.org/materials/entry/20721,HTTP 502
+1252,MgRh,Computational Material,https://oqmd.org/materials/entry/17646,HTTP 502
+1251,TbSb,Computational Material,https://oqmd.org/materials/entry/8156,HTTP 502
+1257,HfTc,Computational Material,https://oqmd.org/materials/entry/17392,HTTP 502
+1259,EuMg,Computational Material,https://oqmd.org/materials/entry/20465,HTTP 502
+1258,TiOs,Computational Material,https://oqmd.org/materials/entry/17904,HTTP 502
+1260,GdMg,Computational Material,https://oqmd.org/materials/entry/20466,HTTP 502
+1267,Sn,Computational Material,https://oqmd.org/materials/entry/9297,HTTP 502
+1261,SmMg,Computational Material,https://oqmd.org/materials/entry/17650,HTTP 502
+1263,ZnRh,Computational Material,https://oqmd.org/materials/entry/18674,HTTP 502
+1262,ZrOs,Computational Material,https://oqmd.org/materials/entry/17906,HTTP 502
+1420,NiO,Computational Material,https://oqmd.org/materials/entry/2580,HTTP 502
+1274,HoHg,Computational Material,https://oqmd.org/materials/entry/17397,HTTP 502
+1342,CdPt,Computational Material,https://oqmd.org/materials/entry/29022,HTTP 502
+1327,MgTl,Computational Material,https://oqmd.org/materials/entry/17660,HTTP 502
+1410,NdHg,Computational Material,https://oqmd.org/materials/entry/17419,HTTP 502
+1229,TiAl,Computational Material,https://oqmd.org/materials/entry/27974,HTTP 502
+1283,CuO,Ceramic,https://oqmd.org/materials/entry/11469,HTTP 502
+1217,ScN,Computational Material,https://oqmd.org/materials/entry/22242,HTTP 502
+1209,AgI,Computational Material,https://oqmd.org/materials/entry/20443,HTTP 502
+1216,TiFe,Computational Material,https://oqmd.org/materials/entry/19423,HTTP 502
+1270,ZnO,Computational Material,https://oqmd.org/materials/entry/20684,HTTP 502
+1299,ZnTe,Semiconductor,https://oqmd.org/materials/entry/17353,HTTP 502
+1344,CrN,Computational Material,https://oqmd.org/materials/entry/6912,HTTP 502
+1315,MnSe,Computational Material,https://oqmd.org/materials/entry/4578,HTTP 502
+1436,FeO,Ceramic,https://oqmd.org/materials/entry/5404,HTTP 502
+1399,ZrN,Computational Material,https://oqmd.org/materials/entry/22285,HTTP 502
+1372,NbN,Computational Material,https://oqmd.org/materials/entry/1797,HTTP 502
+1354,BeO,Computational Material,https://oqmd.org/materials/entry/20737,HTTP 502
+1387,WC,Computational Material,https://oqmd.org/materials/entry/3084,HTTP 502
+1393,ZnS,Computational Material,https://oqmd.org/materials/entry/7652,HTTP 502
+1408,HCl,Computational Material,https://oqmd.org/materials/entry/5615,HTTP 502
+1397,ZrC,Computational Material,https://oqmd.org/materials/entry/22284,HTTP 502
+1345,PbSe,Computational Material,https://oqmd.org/materials/entry/14035,HTTP 502
+1486,VC,Computational Material,https://oqmd.org/materials/entry/4150,HTTP 502
+1488,CrTe,Computational Material,https://oqmd.org/materials/entry/22268,HTTP 502
+1341,PrCd,Computational Material,https://oqmd.org/materials/entry/29020,HTTP 502
+1457,AlRu,Computational Material,https://oqmd.org/materials/entry/18193,HTTP 502
+1154,MnAu,Computational Material,https://oqmd.org/materials/entry/19149,HTTP 502
+1155,YbZn,Computational Material,https://oqmd.org/materials/entry/17360,HTTP 502
+1163,TaN,Computational Material,https://oqmd.org/materials/entry/13761,HTTP 502
+1161,Sr,Computational Material,https://oqmd.org/materials/entry/8520,HTTP 502
+1164,ErIr,Computational Material,https://oqmd.org/materials/entry/30000,HTTP 502
+1165,PrZn,Computational Material,https://oqmd.org/materials/entry/18895,HTTP 502
+1168,CaTe,Computational Material,https://oqmd.org/materials/entry/7649,HTTP 502
+1176,TiRh,Computational Material,https://oqmd.org/materials/entry/31023,HTTP 502
+1174,CaPb,Computational Material,https://oqmd.org/materials/entry/28966,HTTP 502
+1172,Se,Computational Material,https://oqmd.org/materials/entry/9277,HTTP 502
+1178,CuAu,Computational Material,https://oqmd.org/materials/entry/31283,HTTP 502
+1177,VRh,Computational Material,https://oqmd.org/materials/entry/31025,HTTP 502
+1175,HPd,Computational Material,https://oqmd.org/materials/entry/30508,HTTP 502
+1179,NaBi,Computational Material,https://oqmd.org/materials/entry/10944,HTTP 502
+1181,SiRh,Computational Material,https://oqmd.org/materials/entry/8386,HTTP 502
+1188,Np,Computational Material,https://oqmd.org/materials/entry/13705,HTTP 502
+1192,VFe,Computational Material,https://oqmd.org/materials/entry/30264,HTTP 502
+1193,TaRu,Computational Material,https://oqmd.org/materials/entry/31032,HTTP 502
+1196,Th,Computational Material,https://oqmd.org/materials/entry/13650,HTTP 502
+1271,ScC,Computational Material,https://oqmd.org/materials/entry/22262,HTTP 502
+1269,HoSb,Computational Material,https://oqmd.org/materials/entry/8119,HTTP 502
+1273,ErRh,Computational Material,https://oqmd.org/materials/entry/30040,HTTP 502
+1296,NdCd,Computational Material,https://oqmd.org/materials/entry/29013,HTTP 502
+1297,GdAs,Computational Material,https://oqmd.org/materials/entry/8162,HTTP 502
+1301,HfPt,Computational Material,https://oqmd.org/materials/entry/17383,HTTP 502
+1308,PrTe,Computational Material,https://oqmd.org/materials/entry/14052,HTTP 502
+1306,ZrHg,Computational Material,https://oqmd.org/materials/entry/30537,HTTP 502
+1302,TbAs,Computational Material,https://oqmd.org/materials/entry/8155,HTTP 502
+1304,TbTe,Computational Material,https://oqmd.org/materials/entry/18147,HTTP 502
+1275,YC,Computational Material,https://oqmd.org/materials/entry/22264,HTTP 502
+1280,SnP,Computational Material,https://oqmd.org/materials/entry/14014,HTTP 502
+1288,SnC,Computational Material,https://oqmd.org/materials/entry/22475,HTTP 502
+1285,CuN,Computational Material,https://oqmd.org/materials/entry/20469,HTTP 502
+1287,HgS,Computational Material,https://oqmd.org/materials/entry/4523,HTTP 502
+1281,HoTe,Computational Material,https://oqmd.org/materials/entry/8123,HTTP 502
+1300,NiC,Computational Material,https://oqmd.org/materials/entry/22221,HTTP 502
+1312,NbS,Computational Material,https://oqmd.org/materials/entry/13784,HTTP 502
+1305,HgPt,Computational Material,https://oqmd.org/materials/entry/30535,HTTP 502
+1311,NiHg,Computational Material,https://oqmd.org/materials/entry/30533,HTTP 502
+1314,NiN,Computational Material,https://oqmd.org/materials/entry/20468,HTTP 502
+1309,GdSb,Computational Material,https://oqmd.org/materials/entry/8163,HTTP 502
+1349,LuHg,Computational Material,https://oqmd.org/materials/entry/17406,HTTP 502
+1343,MgS,Computational Material,https://oqmd.org/materials/entry/5627,HTTP 502
+1284,LaCd,Computational Material,https://oqmd.org/materials/entry/29003,HTTP 502
+1282,HgSe,Computational Material,https://oqmd.org/materials/entry/4543,HTTP 502
+1293,DyAl,Computational Material,https://oqmd.org/materials/entry/10445,HTTP 502
+1295,HgPd,Computational Material,https://oqmd.org/materials/entry/30534,HTTP 502
+1290,CdPd,Computational Material,https://oqmd.org/materials/entry/29018,HTTP 502
+1317,TbMg,Computational Material,https://oqmd.org/materials/entry/17657,HTTP 502
+1319,CaHg,Computational Material,https://oqmd.org/materials/entry/10986,HTTP 502
+1320,LaHg,Computational Material,https://oqmd.org/materials/entry/17402,HTTP 502
+1324,DySb,Computational Material,https://oqmd.org/materials/entry/8165,HTTP 502
+1326,LiHg,Computational Material,https://oqmd.org/materials/entry/17404,HTTP 502
+1318,TmTl,Computational Material,https://oqmd.org/materials/entry/18169,HTTP 502
+1316,GdAu,Computational Material,https://oqmd.org/materials/entry/10729,HTTP 502
+1335,TmMg,Computational Material,https://oqmd.org/materials/entry/17661,HTTP 502
+1328,YTl,Computational Material,https://oqmd.org/materials/entry/18172,HTTP 502
+1336,SrS,Computational Material,https://oqmd.org/materials/entry/5624,HTTP 502
+1334,DyAs,Computational Material,https://oqmd.org/materials/entry/8164,HTTP 502
+1337,SrSe,Computational Material,https://oqmd.org/materials/entry/5625,HTTP 502
+1421,HoP,Computational Material,https://oqmd.org/materials/entry/8117,HTTP 502
+1427,ReC,Computational Material,https://oqmd.org/materials/entry/21515,HTTP 502
+1424,AgO,Computational Material,https://oqmd.org/materials/entry/6628,HTTP 502
+1338,CaS,Computational Material,https://oqmd.org/materials/entry/5626,HTTP 502
+1437,GdBi,Computational Material,https://oqmd.org/materials/entry/10930,HTTP 502
+1438,HoS,Computational Material,https://oqmd.org/materials/entry/8121,HTTP 502
+1463,RbI,Ceramic,https://oqmd.org/materials/entry/11510,HTTP 502
+1469,InAs,Semiconductor,https://oqmd.org/materials/entry/4656,HTTP 502
+1468,LiCl,Halide,https://oqmd.org/materials/entry/5166,HTTP 502
+1472,TbBi,Computational Material,https://oqmd.org/materials/entry/8157,HTTP 502
+1474,CaPd,Computational Material,https://oqmd.org/materials/entry/11000,HTTP 502
+1350,YbTl,Computational Material,https://oqmd.org/materials/entry/18174,HTTP 502
+1351,CaIn,Computational Material,https://oqmd.org/materials/entry/10991,HTTP 502
+1353,YMg,Computational Material,https://oqmd.org/materials/entry/17663,HTTP 502
+1352,MgHg,Computational Material,https://oqmd.org/materials/entry/17407,HTTP 502
+1355,AlIr,Computational Material,https://oqmd.org/materials/entry/10480,HTTP 502
+1357,TmZn,Computational Material,https://oqmd.org/materials/entry/18176,HTTP 502
+1356,HoAu,Computational Material,https://oqmd.org/materials/entry/10736,HTTP 502
+1362,TbSe,Computational Material,https://oqmd.org/materials/entry/8159,HTTP 502
+1364,DyTe,Computational Material,https://oqmd.org/materials/entry/8166,HTTP 502
+1365,ErAs,Computational Material,https://oqmd.org/materials/entry/8167,HTTP 502
+1361,Pa,Computational Material,https://oqmd.org/materials/entry/4672,HTTP 502
+1363,SrMg,Computational Material,https://oqmd.org/materials/entry/17655,HTTP 502
+1366,ScCd,Computational Material,https://oqmd.org/materials/entry/29029,HTTP 502
+1367,GaNi,Computational Material,https://oqmd.org/materials/entry/30309,HTTP 502
+1368,HBr,Computational Material,https://oqmd.org/materials/entry/5613,HTTP 502
+1369,ZrPd,Computational Material,https://oqmd.org/materials/entry/9972,HTTP 502
+1371,MnHg,Computational Material,https://oqmd.org/materials/entry/17413,HTTP 502
+1441,PdN,Computational Material,https://oqmd.org/materials/entry/21508,HTTP 502
+1426,MnNi,Computational Material,https://oqmd.org/materials/entry/17670,HTTP 502
+1380,TmP,Computational Material,https://oqmd.org/materials/entry/14025,HTTP 502
+1381,TbP,Computational Material,https://oqmd.org/materials/entry/8154,HTTP 502
+1382,InHg,Computational Material,https://oqmd.org/materials/entry/17399,HTTP 502
+1384,FePt,Computational Material,https://oqmd.org/materials/entry/31334,HTTP 502
+1395,TmAs,Computational Material,https://oqmd.org/materials/entry/8170,HTTP 502
+1394,ErSb,Computational Material,https://oqmd.org/materials/entry/8168,HTTP 502
+1400,AuC,Computational Material,https://oqmd.org/materials/entry/21518,HTTP 502
+1386,SmCd,Computational Material,https://oqmd.org/materials/entry/29034,HTTP 502
+1392,TbS,Computational Material,https://oqmd.org/materials/entry/8158,HTTP 502
+1396,MgAg,Computational Material,https://oqmd.org/materials/entry/22530,HTTP 502
+1402,TbAl,Computational Material,https://oqmd.org/materials/entry/22287,HTTP 502
+1403,CaTl,Computational Material,https://oqmd.org/materials/entry/11005,HTTP 502
+1401,TmCd,Computational Material,https://oqmd.org/materials/entry/29039,HTTP 502
+1388,CsCl,Computational Material,https://oqmd.org/materials/entry/4110,HTTP 502
+1405,ZrP,Computational Material,https://oqmd.org/materials/entry/14032,HTTP 502
+1414,ErZn,Computational Material,https://oqmd.org/materials/entry/30067,HTTP 502
+1415,YbCd,Computational Material,https://oqmd.org/materials/entry/29044,HTTP 502
+1416,MnAl,Computational Material,https://oqmd.org/materials/entry/10497,HTTP 502
+1413,YCd,Computational Material,https://oqmd.org/materials/entry/29043,HTTP 502
+1407,BaSe,Computational Material,https://oqmd.org/materials/entry/8173,HTTP 502
+1417,MoN,Computational Material,https://oqmd.org/materials/entry/20242,HTTP 502
+1418,MgO,Computational Material,https://oqmd.org/materials/entry/2577,HTTP 502
+1419,MnO,Computational Material,https://oqmd.org/materials/entry/2578,HTTP 502
+1412,YbPb,Computational Material,https://oqmd.org/materials/entry/17935,HTTP 502
+1339,He,Computational Material,https://oqmd.org/materials/entry/4177,HTTP 502
+1340,TePb,Computational Material,https://oqmd.org/materials/entry/14036,HTTP 502
+1429,MnPd,Computational Material,https://oqmd.org/materials/entry/17676,HTTP 502
+1431,PrHg,Computational Material,https://oqmd.org/materials/entry/17424,HTTP 502
+1433,SrHg,Computational Material,https://oqmd.org/materials/entry/17429,HTTP 502
+1442,SmTl,Computational Material,https://oqmd.org/materials/entry/31079,HTTP 502
+1434,MnRh,Computational Material,https://oqmd.org/materials/entry/17686,HTTP 502
+1444,AlBi,Computational Material,https://oqmd.org/materials/entry/22537,HTTP 502
+1446,TbCu,Computational Material,https://oqmd.org/materials/entry/29816,HTTP 502
+1447,TbHg,Computational Material,https://oqmd.org/materials/entry/17432,HTTP 502
+1448,ScPd,Computational Material,https://oqmd.org/materials/entry/17944,HTTP 502
+1449,DyCd,Computational Material,https://oqmd.org/materials/entry/11019,HTTP 502
+1453,TmSb,Computational Material,https://oqmd.org/materials/entry/8171,HTTP 502
+1450,BP,Computational Material,https://oqmd.org/materials/entry/5664,HTTP 502
+1451,AlP,Computational Material,https://oqmd.org/materials/entry/4641,HTTP 502
+1428,MgTe,Computational Material,https://oqmd.org/materials/entry/20235,HTTP 502
+1445,IrC,Computational Material,https://oqmd.org/materials/entry/21516,HTTP 502
+1465,ScS,Computational Material,https://oqmd.org/materials/entry/4138,HTTP 502
+1462,ErTe,Computational Material,https://oqmd.org/materials/entry/8169,HTTP 502
+1470,LiBr,Computational Material,https://oqmd.org/materials/entry/5426,HTTP 502
+1480,TmCu,Computational Material,https://oqmd.org/materials/entry/29826,HTTP 502
+1484,YbHg,Computational Material,https://oqmd.org/materials/entry/17446,HTTP 502
+1492,AlO,Computational Material,https://oqmd.org/materials/entry/5632,HTTP 502
+1481,TmHg,Computational Material,https://oqmd.org/materials/entry/17441,HTTP 502
+1471,LiI,Computational Material,https://oqmd.org/materials/entry/5427,HTTP 502
+1483,MnV,Computational Material,https://oqmd.org/materials/entry/17700,HTTP 502
+1490,KBr,Computational Material,https://oqmd.org/materials/entry/11512,HTTP 502
+1458,NiPt,Computational Material,https://oqmd.org/materials/entry/30843,HTTP 502
+1461,ErCd,Computational Material,https://oqmd.org/materials/entry/11022,HTTP 502
+1313,PrSb,Computational Material,https://oqmd.org/materials/entry/14051,HTTP 502
+1404,CsBr,Computational Material,https://oqmd.org/materials/entry/4111,HTTP 502
+1137,SiC,Computational Material,https://oqmd.org/materials/entry/22472,Timeout
+1151,YbAg,Computational Material,https://oqmd.org/materials/entry/10683,Timeout
+10745,ASTM A356 Grade 9 (J21610) Cast Steel,Metal,https://www.h2abc.com/material/detail.php?mid=azhlNWIxMzQzNTM=,Timeout
+11154,UNS S82122 Stainless Steel,Metal,https://www.h2abc.com/material/detail.php?mid=azhlNWIxNDE2MA==,Timeout
+564,Maple Wood (Dry),Wood,https://www.novausawood.com/wood-species/maple-hardwood-lumber,Timeout
+575,Hickory Wood (Green),Wood,https://www.novausawood.com/wood-species/hickory-hardwood-lumber,Timeout
+565,Maple Wood (Green),Composite,https://www.novausawood.com/wood-species/maple-hardwood-lumber,Timeout
+11959,Aluminum 2014 Alloy,Aluminum,https://asm.matweb.com/search/SpecificMaterial.asp?bassnum=MA2014T6,Timeout
+10940,ASTM A232 Chromium-Vanadium Spring Steel,Metal,https://store.astm.org/a0232_a0232m-18.html,Timeout
+9890,ASTM A439 Type D-5S Cast Iron,Metal,https://www.pentictonfoundry.com/news/austenitic-ductile-iron-astm-a439-grade-d2-58-30-8/,Timeout
+9902,SAE-ASTM Grade G4000 (F10008) Grey Cast Iron,Metal,https://www.pentictonfoundry.com/news/gray-iron-astm-a48-class-30/,Timeout
+9949,ASTM Grade 80-55-06 (SAE D5506) Ductile Cast Iron,Metal,https://www.pentictonfoundry.com/news/ductile-iron-astm-a536-grade-80-55-06/,Timeout
+11055,UNS S31730 Stainless Steel,Stainless Steel,https://www.h2abc.com/material/detail.php?mid=azhlNWIxMzkxMDU=,Timeout

@@ -1,0 +1,17 @@
+category,subcategory,name,density,tensile_strength_min,yield_strength_min,elongation,hardness,elastic_modulus,thermal_conductivity,specific_heat,melting_point_min,composition,description
+Titanium,Commercially Pure Titanium,Titanium Grade 3,,,,,,,,,,,Please manually fill data for this grade.
+Titanium,Commercially Pure Titanium,Titanium Grade 4,,,,,,,,,,,Please manually fill data for this grade.
+Titanium,Commercially Pure Titanium,Titanium Grade 7 (Pd-enhanced),,,,,,,,,,,Please manually fill data for this grade.
+Titanium,Commercially Pure Titanium,Titanium Grade 11 (Pd-enhanced),,,,,,,,,,,Please manually fill data for this grade.
+Magnesium,Wrought Magnesium,AZ31B Magnesium Alloy,,,,,,,,,,,Please manually fill data for this grade.
+Magnesium,Cast Magnesium,AZ91D Magnesium Alloy,,,,,,,,,,,Please manually fill data for this grade.
+Magnesium,Cast Magnesium,AM60B Magnesium Alloy,,,,,,,,,,,Please manually fill data for this grade.
+Magnesium,Wrought Magnesium,ZK60A Magnesium Alloy,,,,,,,,,,,Please manually fill data for this grade.
+Magnesium,Wrought Magnesium,AZ80A Magnesium Alloy,,,,,,,,,,,Please manually fill data for this grade.
+Magnesium,Cast Magnesium,AS41B Magnesium Alloy,,,,,,,,,,,Please manually fill data for this grade.
+Magnesium,High-Temp Magnesium,WE43 Magnesium Alloy,,,,,,,,,,,Please manually fill data for this grade.
+Magnesium,High-Temp Magnesium,Elektron 21 Magnesium Alloy,,,,,,,,,,,Please manually fill data for this grade.
+Magnesium,Pure Magnesium,Pure Magnesium (99.8%),,,,,,,,,,,Please manually fill data for this grade.
+Beryllium,Pure Beryllium,Pure Beryllium (S-65 Structural Grade),,,,,,,,,,,Please manually fill data for this grade.
+Beryllium,Pure Beryllium,Pure Beryllium (I-70 Instrument Grade),,,,,,,,,,,Please manually fill data for this grade.
+Beryllium,Beryllium-Aluminum Alloy,Beryllium-Aluminum Alloy (AlBeMet 162),,,,,,,,,,,Please manually fill data for this grade.

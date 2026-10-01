@@ -1,0 +1,20 @@
+id,name,category,source_url,error_status
+10573,ASTM A285 Carbon Steel,Metal,https://www.octalmetals.com/astm-a285-grade-c-steel-plate/,Connection Error
+10969,ASTM A387 Grade 11 (K11789) 1.25Cr-0.5Mo Steel,Steel,https://www.octalmetals.com/astm-a387-grade-11/,Connection Error
+11011,AISI 310HCb (S31041) Stainless Steel,Metal,https://www.forgedproduct.com/forging-materials/aisi-310-ss310-stainless-steel.html,Connection Error
+10970,ASTM A387 Grade 22 (K21590) 2.25Cr-1Mo Steel,Steel,https://www.octalmetals.com/astm-a387-grade-22/,Connection Error
+9870,"ASTM A436 Type 2b (L-NiCr 20 3, F41003) Cast Iron",Metal,https://ftp.dot.state.tx.us/pub/txdot-info/cmd/cserve/standard/bridge/preciron.pdf,Connection Error
+10005,AWS ER80S-B3L or ER55S-B3L (K30560) Weld Metal,Metal,https://www.meridian-mag.com/magnesium-die-casting/lightweight-alloys/datasheet.pdf,Connection Error
+10640,ASTM A283 Carbon Steel,Metal,https://www.octalmetals.com/astm-a283-grade-c-d-plate/,Connection Error
+10948,ASTM A387 Grade 22L Class 1 2.25Cr-1Mo Steel,Metal,https://www.octalmetals.com/astm-a387-grade-22/,Connection Error
+10475,"SAE-AISI 4140 (SCM440,G41400) Cr-Mo Steel",Metal,https://www.forgedproduct.com/forging-materials/astm-sae-aisi-4140-alloy-steel.html,Connection Error
+12039,Pure Magnesium (99.8%),Magnesium,https://matmatch.com/materials/alky2583-astm-b951-grade-9980a,DNS Dead
+11940,AISI 409 Stainless Steel,Stainless Steel,https://www.azom.com/article.aspx?ArticleID=968,HTTP 404
+11955,Compacted Graphite Iron (CGI),Cast Iron,https://www.sintercast.com/media/1239/compacted-graphite-iron-material-data-sheet.pdf,HTTP 404
+11091,EN 1.4439 (X2CrNiMoN17-13-5) Stainless Steel,Metal,https://www.rostfrei-stahl.com/en/info-centre/material-data-sheet/14439/,HTTP 404
+11004,EN 1.4982 (X10CrNiMoMnNbVB15-10-1) Stainless Steel,Metal,https://www.tool-die-steels.com/grades/stainless-steels/31/6193/1-4982-steel.html,HTTP 500
+10345,EN 1.7335 (13CrMo4-5) Chromium-Molybdenum  Steel,Metal,https://phi-motion.com/13CrMo4-5-13CrMo4-4-1-7335--F11-35-56,Timeout (3 retries)
+564,Maple Wood (Dry),Wood,https://www.novausawood.com/wood-species/maple-hardwood-lumber,Timeout (3 retries)
+575,Hickory Wood (Green),Wood,https://www.novausawood.com/wood-species/hickory-hardwood-lumber,Timeout (3 retries)
+565,Maple Wood (Green),Composite,https://www.novausawood.com/wood-species/maple-hardwood-lumber,Timeout (3 retries)
+11959,Aluminum 2014 Alloy,Aluminum,https://asm.matweb.com/search/SpecificMaterial.asp?bassnum=MA2014T6,Timeout (3 retries)

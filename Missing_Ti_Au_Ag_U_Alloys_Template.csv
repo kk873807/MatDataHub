@@ -1,0 +1,43 @@
+category,subcategory,name,density,tensile_strength_min,yield_strength_min,elongation,hardness,elastic_modulus,thermal_conductivity,specific_heat,melting_point_min,composition,description
+Titanium,Near-Alpha Titanium Alloy,Ti-8Al-1Mo-1V,,,,,,,,,,,Please manually fill data for this grade.
+Titanium,Near-Alpha Titanium Alloy,Ti-6Al-2Sn-4Zr-2Mo (Ti-6242),,,,,,,,,,,Please manually fill data for this grade.
+Titanium,Near-Alpha Titanium Alloy,IMI 834,,,,,,,,,,,Please manually fill data for this grade.
+Titanium,Alpha-Beta Titanium Alloy,Ti-6Al-6V-2Sn,,,,,,,,,,,Please manually fill data for this grade.
+Titanium,Alpha-Beta Titanium Alloy,Ti-6Al-2Sn-4Zr-6Mo (Ti-6246),,,,,,,,,,,Please manually fill data for this grade.
+Titanium,Alpha-Beta Titanium Alloy,Ti-6Al-7Nb,,,,,,,,,,,Please manually fill data for this grade.
+Titanium,Beta Titanium Alloy,Ti-10V-2Fe-3Al (Ti-10-2-3),,,,,,,,,,,Please manually fill data for this grade.
+Titanium,Beta Titanium Alloy,Ti-15V-3Cr-3Al-3Sn (Ti-15-3),,,,,,,,,,,Please manually fill data for this grade.
+Titanium,Beta Titanium Alloy,Ti-3Al-8V-6Cr-4Mo-4Zr (Beta C),,,,,,,,,,,Please manually fill data for this grade.
+Titanium,Beta Titanium Alloy,Ti-5Al-5V-5Mo-3Cr (Ti-5553),,,,,,,,,,,Please manually fill data for this grade.
+Titanium,Titanium Aluminide,Gamma TiAl (Ti-48Al-2Cr-2Nb),,,,,,,,,,,Please manually fill data for this grade.
+Gold,Pure Gold,"Pure Gold (24K, 99.99%)",,,,,,,,,,,Please manually fill data for this grade.
+Gold,Gold Alloy,22K Gold Alloy (91.7% Au),,,,,,,,,,,Please manually fill data for this grade.
+Gold,Gold Alloy,18K Yellow Gold Alloy (75% Au),,,,,,,,,,,Please manually fill data for this grade.
+Gold,Gold Alloy,18K White Gold Alloy (75% Au),,,,,,,,,,,Please manually fill data for this grade.
+Gold,Gold Alloy,18K Rose Gold Alloy (75% Au),,,,,,,,,,,Please manually fill data for this grade.
+Gold,Gold Alloy,14K Yellow Gold Alloy (58.5% Au),,,,,,,,,,,Please manually fill data for this grade.
+Gold,Gold Alloy,14K White Gold Alloy (58.5% Au),,,,,,,,,,,Please manually fill data for this grade.
+Gold,Gold Alloy,10K Gold Alloy (41.7% Au),,,,,,,,,,,Please manually fill data for this grade.
+Gold,Gold-Copper Alloy,Gold-Copper Alloy (Au-Cu),,,,,,,,,,,Please manually fill data for this grade.
+Gold,Dental Gold,Dental Gold Alloy Type III,,,,,,,,,,,Please manually fill data for this grade.
+Gold,Gold Wire,Gold Bonding Wire (99.99% Au),,,,,,,,,,,Please manually fill data for this grade.
+Silver,Pure Silver,"Pure Silver (99.99% Ag, Fine Silver)",,,,,,,,,,,Please manually fill data for this grade.
+Silver,Silver Alloy,Sterling Silver (92.5% Ag),,,,,,,,,,,Please manually fill data for this grade.
+Silver,Silver Alloy,Argentium Silver (93.5% Ag),,,,,,,,,,,Please manually fill data for this grade.
+Silver,Silver Alloy,Coin Silver (90% Ag),,,,,,,,,,,Please manually fill data for this grade.
+Silver,Silver Brazing Alloy,"Silver-Copper Brazing Alloy (BAg-1, 45% Ag)",,,,,,,,,,,Please manually fill data for this grade.
+Silver,Silver Brazing Alloy,"Silver-Copper Brazing Alloy (BAg-7, 56% Ag)",,,,,,,,,,,Please manually fill data for this grade.
+Silver,Silver-Copper Alloy,Silver-Copper Eutectic (72Ag-28Cu),,,,,,,,,,,Please manually fill data for this grade.
+Silver,Silver-Palladium Alloy,Silver-Palladium Alloy (70Ag-30Pd),,,,,,,,,,,Please manually fill data for this grade.
+Silver,Silver Paste,Silver Thick Film Paste (Conductor),,,,,,,,,,,Please manually fill data for this grade.
+Silver,Electrical Contact,Silver-Cadmium Oxide (AgCdO) Contact Material,,,,,,,,,,,Please manually fill data for this grade.
+Silver,Electrical Contact,Silver-Tungsten (AgW) Contact Material,,,,,,,,,,,Please manually fill data for this grade.
+Uranium,Depleted Uranium,Depleted Uranium (DU),,,,,,,,,,,Please manually fill data for this grade.
+Uranium,Natural Uranium,Natural Uranium Metal,,,,,,,,,,,Please manually fill data for this grade.
+Uranium,Enriched Uranium,"Enriched Uranium (LEU, 3-5% U-235)",,,,,,,,,,,Please manually fill data for this grade.
+Uranium,Uranium-Titanium Alloy,Uranium-0.75Ti (U-0.75Ti) Alloy,,,,,,,,,,,Please manually fill data for this grade.
+Uranium,Uranium-Niobium Alloy,"Uranium-6Nb (U-6Nb, Mulberry) Alloy",,,,,,,,,,,Please manually fill data for this grade.
+Uranium,Uranium-Molybdenum Alloy,Uranium-2Mo (U-2Mo) Alloy,,,,,,,,,,,Please manually fill data for this grade.
+Uranium,Uranium-Molybdenum Alloy,Uranium-10Mo (U-10Mo) Alloy,,,,,,,,,,,Please manually fill data for this grade.
+Uranium,Uranium-Zirconium Alloy,Uranium-Zirconium (U-Zr) Alloy,,,,,,,,,,,Please manually fill data for this grade.
+Uranium,Nuclear Fuel Alloy,Uranium-Plutonium-Zirconium (U-Pu-Zr) Fuel,,,,,,,,,,,Please manually fill data for this grade.

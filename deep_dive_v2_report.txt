@@ -1,0 +1,291 @@
+
+============================================================
+Session started: 2026-09-20T18:15:37.223234
+Targets this session: 294
+
+[OK] HTTP 404 [Not Found] -> https://pmc.ncbi.nlm.nih.gov/articles/PMC7696086
+[OK] Bainidur 1300 -> https://swisssteel-group.com/content-media/documents/_import/2018-0002_DEW_Bainidur1300_EN.pdf
+[OK] Swissbain-7MnB8 -> https://swisssteel-group.com/content-media/documents/_import/Swissbain-7MnB8c_EN.pdf
+[OK] Zn -> https://oqmd.org/materials/entry/9225
+[OK] NEMA Grade G 10 GEE Glass Epoxy Laminate -> https://thegundcompany.com/wp-content/uploads/2024/03/NEMA-G-10-Glass-Epoxy-Laminate-by-The-Gund-Co.pdf
+[OK] Aged Grade 200 Maraging Steel -> https://www.makeitfrom.com/material-properties/Aged-Grade-200-Maraging-Steel
+[OK] EN 1.3551 (80MoCrV42-16) High-Temperature Bearing Steel -> https://www.makeitfrom.com/material-properties/EN-1.3551-80MoCrV42-16-High-Temperature-Bearing-Steel
+[OK] Grade TDC Spring Steel -> https://www.makeitfrom.com/material-properties/Grade-TDC-Spring-Steel
+[OK] EN 1.7149 (20MnCrS5) Chromium Steel -> https://www.makeitfrom.com/material-properties/EN-1.7149-20MnCrS5-Chromium-Steel
+[OK] EN 1.7035 (41Cr4) Chromium Steel -> https://www.makeitfrom.com/material-properties/EN-1.7035-41Cr4-Chromium-Steel
+[OK] EN 1.5526 (30MnB4) Boron Steel -> https://www.makeitfrom.com/material-properties/EN-1.5526-30MnB4-Boron-Steel
+[OK] EN 1.3536 (100CrMo7-3) Through-Hardening Bearing Steel -> https://www.makeitfrom.com/material-properties/EN-1.3536-100CrMo7-3-Through-Hardening-Bearing-Steel
+[OK] EN 1.5701 (12NiCr3-2) Nickel-Chromium Steel -> https://www.makeitfrom.com/material-properties/EN-1.5701-12NiCr3-2-Nickel-Chromium-Steel
+[OK] Grade FDC Spring Steel -> https://www.makeitfrom.com/material-properties/Grade-FDC-Spring-Steel
+[OK] EN 1.7241 (60CrMo3-3) Chromium-Molybdenum Steel -> https://www.makeitfrom.com/material-properties/EN-1.7241-60CrMo3-3-Chromium-Molybdenum-Steel
+[OK] EN 1.6523 (20NiCrMo2-2) Steel -> https://www.makeitfrom.com/material-properties/EN-1.6523-20NiCrMo2-2-Steel
+[OK] EN 1.6587 (18CrNiMo7-6) Case-Hardening Bearing Steel -> https://www.makeitfrom.com/material-properties/EN-1.6587-18CrNiMo7-6-Case-Hardening-Bearing-Steel
+[OK] CFRP (Standard Modulus UD / Epoxy) -> https://www.toraycma.com/wp-content/uploads/T300-Data-Sheet.pdf
+[OK] CFRP (High Modulus UD / Epoxy) -> https://www.toraycma.com/wp-content/uploads/M46J-Data-Sheet.pdf
+[OK] Zylon (PBO) Fiber Composite -> https://www.toyobo-mc.jp/wordpress/wp-content/uploads/2023/09/hp_fiber_data_zylon_en.pdf
+[OK] Graphene / Polymer Nanocomposite -> https://www2.mdpi.com/2073-4360/9/9/437
+[OK] Aluminium Alloy - Commercial Alloy - Transition Joint -> https://www.aalco.co.uk/datasheets/Aluminium-Alloy-Transition-Joint_55.ashx
+[OK] Aluminium Alloy - General Information - Temper Designations -> https://www.aalco.co.uk/datasheets/Aluminium-Alloy-Temper-Designations_93.ashx
+[OK] Buckypaper / Resin Composite -> https://pmc.ncbi.nlm.nih.gov/articles/PMC7696086
+
+============================================================
+Session started: 2026-09-20T18:39:25.404315
+Targets this session: 271
+
+[OK] Buckypaper / Resin Composite -> https://pmc.ncbi.nlm.nih.gov/articles/PMC7696086
+[OK] Aluminium Alloy - General Information - EN Standards for Aluminium Extrusions -> https://www.aalco.co.uk/datasheets/Aluminium-Alloy-EN-Standards-for-Aluminium-Extrusions_48.ashx
+[OK] Aluminium Alloy - General Information - EN Standards for Rolled Aluminium -> https://www.aalco.co.uk/datasheets/Aluminium-Alloy-EN-Standards-for-Rolled-Aluminium_51.ashx
+[OK] Aluminium Alloy - Material Safety -> https://www.aalco.co.uk/datasheets/Aluminium-Alloy-Material-Safety-Aluminium_251.ashx
+[OK] 404 - 找不到文件或目录。 -> https://www.mfgrobots.com/Article/material/metal/38876.html
+[OK] 4043 Aluminium Alloy -> https://www.azom.com/article.aspx?ArticleID=8685
+[OK] 4145 Aluminum Welding Filler Wire -> https://aircraftmaterials.com/data/weld/4145.html
+[OK] EN 1.7034 (37Cr4) Chromium Steel -> https://www.makeitfrom.com/material-properties/EN-1.7034-37Cr4-Chromium-Steel
+
+============================================================
+Session started: 2026-09-20T18:50:51.357325
+Targets this session: 263
+
+[OK] EN 1.8063 (50SiCrMo6) Steel -> https://www.makeitfrom.com/material-properties/EN-1.8063-50SiCrMo6-Steel
+[OK] EN 1.5537 (36MnB4) Boron Steel -> https://www.makeitfrom.com/material-properties/EN-1.5537-36MnB4-Boron-Steel
+[OK] EN 1.7244 (18CrMoS4) Chromium-Molybdenum Steel -> https://www.makeitfrom.com/material-properties/EN-1.7244-18CrMoS4-Chromium-Molybdenum-Steel
+[OK] EN 1.8159 (51CrV4) Chromium-Vanadium Steel -> https://www.makeitfrom.com/material-properties/EN-1.8159-51CrV4-Chromium-Vanadium-Steel
+[OK] EN 1.3555 (13MoCrNi42-16-14) High-Temperature Bearing Steel -> https://www.makeitfrom.com/material-properties/EN-1.3555-13MoCrNi42-16-14-High-Temperature-Bearing-Steel
+[OK] Alcotec Weld Filler Wire 4643 -> https://dl.asminternational.org/alloy-digest/article/51/3/Al-324/6484/ALCOTEC-WELD-FILLER-WIRE-4643Silicon-Magnesium
+[OK] SAE-AISI P4 (T51604) Low-Carbon Mould Steel -> https://www.makeitfrom.com/material-properties/SAE-AISI-P4-T51604-Low-Carbon-Mould-Steel
+[OK] 5154-H14 Aluminum -> https://www.makeitfrom.com/material-properties/5154-H14-Aluminum
+[OK] 5456-H112 Aluminum -> https://makeitfrom.com/material-properties/5456-H112-Aluminum
+[OK] 1145 Aluminum -> https://www.matweb.com/search/datasheettext.aspx?matid=8761
+[OK] 2099 T83 Aluminum -> https://www.smithmetal.com/pdf/lithium/2099-lithium.pdf
+[OK] 2024_aluminium_alloy -> https://makeitfrom.com/material-properties/2024-T351-Aluminum
+[OK] 2324 T39 Aluminum -> https://dl.asminternational.org/alloy-digest/article/6342/ALCOA-2324-T39-PLATEHigh-Strength-Aerospace-Plate
+[OK] Materials Information | AZoM.com - Page not found -> https://www.azom.com/article.aspx?ArticleID=8715
+[OK] Materials Information | AZoM.com - Page not found -> https://www.azom.com/article.aspx?ArticleID=8721
+[OK] ALCOA 2124 PLATEAerospace Aluminum Alloy -> https://www.makeitfrom.com/material-properties/2124-2124-T851-AlCu4Mg1A-3.1354-Aluminum
+[OK] 1199 Aluminum -> https://www.goodfellow.com/eu/1199-aluminium-coil-group
+[OK] 404 - 找不到文件或目录。 -> https://www.mfgrobots.com/Article/material/metal/38876.html
+[OK] 404 Page Not Found :: MakeItFrom.com -> https://www.makeitfrom.com/compare/1200-H14-Aluminum/3005-H14-Aluminum
+[OK] 4032 aluminium english.pdf -> https://www.makeitfrom.com/material-properties/4032-4032-T6-AlSi12.5MgCuNi-Aluminum
+[OK] 4043 Aluminum -> https://www.azom.com/article.aspx?ArticleID=8685
+[OK] 4145 Aluminum -> https://aircraftmaterials.com/data/weld/4145.html
+[OK] 5356 Aluminum -> https://prodcd.harrisproductsgroup.com/en/Products/53566033pop
+[OK] 4643 Aluminum -> https://dl.asminternational.org/alloy-digest/article/51/3/Al-324/6484/ALCOTEC-WELD-FILLER-WIRE-4643Silicon-Magnesium
+[OK] 5154 H14 Aluminum -> https://www.makeitfrom.com/material-properties/5154-H14-Aluminum
+[OK] 5456 H112 Aluminum -> https://makeitfrom.com/material-properties/5456-H112-Aluminum
+[OK] 6013_aluminium_alloy -> https://makeitfrom.com/material-properties/6013-T6-Aluminum
+[OK] 5182_aluminium_alloy -> https://makeitfrom.com/material-properties/5182-H19-Aluminum
+[OK] Grade 350 Maraging Steel -> https://www.makeitfrom.com/material-properties/Grade-350-Maraging-Steel
+[OK] 6463 T6 Aluminum -> https://www.makeitfrom.com/material-properties/6463-T6-Aluminum
+[OK] 7039 Aluminum -> https://www.azom.com/article.aspx?ArticleID=8764
+[OK] 7049 T73 Aluminum -> https://makeitfrom.com/material-properties/7049-T73-Aluminum
+[OK] 7068 T6511 Aluminum -> https://www.smithmetal.com/pdf/aluminium/7xxx/7068.pdf
+[OK] 7150 T7751 Aluminum -> https://saemobilus.sae.org/standards/ams4252c-aluminum-alloy-plate-64zn-24mg-22cu-012zr-7150-t7751-solution-heat-treated-stress-relieved-overaged
+[OK] 7175 T7352 Aluminum -> https://www.aubertduval.com/wp-content/uploads/2024/12/7175_GB.pdf
+[OK] 7475 T7351 Aluminum -> https://www.makeitfrom.com/material-properties/7475-T7351-Aluminum
+[OK] 8006 H18 Aluminum -> https://www.mfgrobots.com/Article/material/metal/37378.html
+[OK] 8090 Aluminum -> https://www.makeitfrom.com/material-properties/8090-AlLi2.5Cu1.5Mg1-Aluminum
+[OK] 404 Page Not Found -> https://www.makeitfrom.com/material-properties/7050-T7451-Aluminum
+[OK] Aluminium 7005 Data Sheet BlueScope Distribution.pdf -> https://www.makeitfrom.com/material-properties/7005-T6-Aluminum
+[OK] Annealed Grade 200 Maraging Steel -> https://www.makeitfrom.com/material-properties/Annealed-Grade-200-Maraging-Steel
+[OK] Grade 250 Maraging Steel -> https://www.makeitfrom.com/material-properties/Grade-250-Maraging-Steel
+[OK] UNS N08031 (Alloy 31,1.4562) Stainless Steel -> https://www.makeitfrom.com/material-properties/UNS-N08031-Alloy-31-1.4562-Stainless-Steel
+[OK] LLDPE (Linear Low-Density Polyethylene) -> https://productsandsolutions.pttgcgroup.com/customer-support/files/LL6420A-BROCHURE-TH.pdf
+[OK] 7039 Aluminium Alloy -> https://www.azom.com/article.aspx?ArticleID=8764
+[OK] PET (Polyethylene Terephthalate) -> https://apm.matweb.com/reference/polyester.aspx
+[OK] 7049-T73 Aluminum -> https://makeitfrom.com/material-properties/7049-T73-Aluminum
+[OK] UHMWPE (Ultra-High-Molecular-Weight Polyethylene) -> https://quickparts.com/wp-content/uploads/2024/05/UHMW-PE.pdf
+[OK] DURANEX® PBT 209AW EF2001 (ISO) -> https://datasheets.globalspec.com/ds/polyplastics-usa/209aw-ef2001-iso/4b2c758b-c3f7-4046-8f93-bbfc86ecd0ba
+[OK] General Purpose Polystyrene GPPS -> https://www.makeitfrom.com/material-properties/General-Purpose-Polystyrene-GPPS
+[OK] SAE-AISI M47 (T11347) Molybdenum High-Speed Steel -> https://www.makeitfrom.com/material-properties/SAE-AISI-M47-T11347-Molybdenum-High-Speed-Steel
+[OK] SAE-AISI M3 Class 1 (T11313) Molybdenum High-Speed Steel -> https://www.makeitfrom.com/material-properties/SAE-AISI-M3-Class-1-T11313-Molybdenum-High-Speed-Steel
+[OK] SAE-AISI D4 (T30404) Chromium Cold-Work Steel -> https://www.makeitfrom.com/material-properties/SAE-AISI-D4-T30404-Chromium-Cold-Work-Steel
+[OK] 404 Not Found -> https://www.goodfellow.com/usa/rilsan-bmntld-nylon-11-rod-group
+[OK] PA 12 (Nylon 12) -> https://www.bopla.de/fileadmin/product_data/00_Materialdatenblaetter/PA_12_LR7MHI_Vestamid/PA_DB_12_LR7MHI_Vestamid.pdf
+[OK] SAE-AISI D2 (T30402) Chromium Cold-Work Steel -> https://www.bohler-edelstahl.com/app/uploads/sites/248/productdb/api/k110_en_gb.pdf
+[OK] SAE-AISI H42 (T20842) Molybdenum Hot-Work Steel -> https://www.makeitfrom.com/material-properties/SAE-AISI-H42-T20842-Molybdenum-Hot-Work-Steel
+[OK] SAE-AISI P6 (T51606) Low-Carbon Mould Steel -> https://www.makeitfrom.com/material-properties/SAE-AISI-P6-T51606-Low-Carbon-Mould-Steel
+[OK] SAE-AISI D3 (T30403) Chromium Cold-Work Steel -> https://www.makeitfrom.com/material-properties/SAE-AISI-D3-T30403-Chromium-Cold-Work-Steel
+[OK] SAE-AISI M2 (T11302) Molybdenum High-Speed Steel -> https://www.carpentertechnology.com/hubfs/7407324/Material%20Saftey%20Data%20Sheets/M2%20.pdf
+[OK] SAE-AISI H10 (T20810) Chromium Hot-Work Steel -> https://www.makeitfrom.com/material-properties/SAE-AISI-H10-T20810-Chromium-Hot-Work-Steel
+[OK] PC/ABS (Polycarbonate/ABS Blend) -> https://plasticker.de/docs/recybase/4089_1768399051.pdf
+[OK] PPE/PS (Polyphenylene Ether / Noryl) -> https://www.protolabs.com/media/ipwe0ehh/2026-026-cnc-material-data-sheet_ppe-ps-noryl-265.pdf
+[OK] SAE-AISI A8 (T30108) Air-Hardening Steel -> https://www.makeitfrom.com/material-properties/SAE-AISI-A8-T30108-Air-Hardening-Steel
+[OK] SAE-AISI A2 (T30102) Air-Hardening Steel -> https://www.carpentertechnology.com/hubfs/7407324/Material%20Saftey%20Data%20Sheets/A2.pdf
+[OK] POM-H (Acetal Homopolymer / Delrin) -> https://www.protolabs.com/media/zlknjwmd/2026-026-cnc-material-data-sheet_pom-h.pdf
+[OK] SAE-AISI M43 (T11343) Molybdenum High-Speed Steel -> https://www.makeitfrom.com/material-properties/SAE-AISI-M43-T11343-Molybdenum-High-Speed-Steel
+[OK] SAE-AISI L2 (T61202) Low-Alloy Tool Steel -> https://www.makeitfrom.com/material-properties/SAE-AISI-L2-T61202-Low-Alloy-Tool-Steel
+[OK] SAE-AISI P21 (T51621) Low-Carbon Mould Steel -> https://www.makeitfrom.com/material-properties/SAE-AISI-P21-T51621-Low-Carbon-Mould-Steel
+[OK] SAE-AISI H41 (T20841) Molybdenum Hot-Work Steel -> https://www.makeitfrom.com/material-properties/SAE-AISI-H41-T20841-Molybdenum-Hot-Work-Steel
+[OK] SAE-AISI P20 (T51620) Low-Carbon Mould Steel -> https://uddeholm.com/app/uploads/sites/230/2024/05/Tech-Uddeholm-Impax-Supreme-EN.pdf.pdf
+[OK] SAE-AISI A9 (T30109) Air-Hardening Steel -> https://www.makeitfrom.com/material-properties/SAE-AISI-A9-T30109-Air-Hardening-Steel
+[OK] SAE-AISI H26 (T20826) Tungsten Hot-Work Steel -> https://www.makeitfrom.com/material-properties/SAE-AISI-H26-T20826-Tungsten-Hot-Work-Steel
+[OK] SAE-AISI H23 (T20823) Tungsten Hot-Work Steel -> https://www.makeitfrom.com/material-properties/SAE-AISI-H23-T20823-Tungsten-Hot-Work-Steel
+[OK] SAE-AISI H14 (T20814) Chromium Hot-Work Steel -> https://www.makeitfrom.com/material-properties/SAE-AISI-H14-T20814-Chromium-Hot-Work-Steel
+[OK] SAE-AISI M62 (T11362) Molybdenum High-Speed Steel -> https://www.makeitfrom.com/material-properties/SAE-AISI-M62-T11362-Molybdenum-High-Speed-Steel
+[OK] Acrylonitrile Styrene Acrylate ASA -> https://www.makeitfrom.com/material-properties/Acrylonitrile-Styrene-Acrylate-ASA
+[OK] SAE-AISI O2 (T31502) Oil-Hardening Steel -> https://www.makeitfrom.com/material-properties/SAE-AISI-O2-T31502-Oil-Hardening-Steel
+[OK] SAE-AISI H13 (T20813) Chromium Hot-Work Steel -> https://www.uddeholm.com/app/uploads/sites/41/2023/05/Tech-Uddeholm-Orvar-Supreme-EN.pdf
+[OK] SAE-AISI H19 (T20819) Chromium Hot-Work Steel -> https://www.makeitfrom.com/material-properties/SAE-AISI-H19-T20819-Chromium-Hot-Work-Steel
+[OK] SAE-AISI A6 (T30106) Air-Hardening Steel -> https://www.makeitfrom.com/material-properties/SAE-AISI-A6-T30106-Air-Hardening-Steel
+[OK] SAE-AISI M36 (T11336) Cobalt High-Speed Steel -> https://www.makeitfrom.com/material-properties/SAE-AISI-M36-T11336-Cobalt-High-Speed-Steel
+[OK] SAE-AISI P3 (T51603) Low-Carbon Mould Steel -> https://www.makeitfrom.com/material-properties/SAE-AISI-P3-T51603-Low-Carbon-Mould-Steel
+[OK] PFA (Perfluoroalkoxy) -> https://www.professionalplastics.com/professionalplastics/content/downloads/PTFE_FEP_PFA.pdf
+[OK] ETFE (Ethylene Tetrafluoroethylene / Tefzel) -> https://www.makeitfrom.com/compare/Ethylene-Tetrafluoroethylene-ETFE/Polyvinyl-Fluoride-PVF
+[OK] PPSU (Polyphenylsulfone / Radel) -> https://plasticker.de/docs/recybase/943_1756291360.pdf
+[OK] PFA (Perfluoroalkoxy) -> https://www.professionalplastics.com/professionalplastics/content/downloads/PTFE_FEP_PFA.pdf
+[OK] Polyvinylidene Fluoride PVDF -> https://www.makeitfrom.com/material-properties/Polyvinylidene-Fluoride-PVDF
+[OK] Aluminum Alloy 7150-T7751 -> https://saemobilus.sae.org/standards/ams4252c-aluminum-alloy-plate-64zn-24mg-22cu-012zr-7150-t7751-solution-heat-treated-stress-relieved-overaged
+[OK] Epoxy (Unfilled) -> https://www.makeitfrom.com/material-properties/Epoxy
+[OK] Epoxy (Carbon Fiber Reinforced) -> http://www.performance-composites.com/carbonfibre/mechanicalproperties_2.asp
+[OK] PUR (Polyurethane, Rigid) -> https://www.makeitfrom.com/material-properties/Rigid-Thermoset-Polyurethane-RPU
+[OK] 7475-T7351 Aluminum -> https://www.makeitfrom.com/material-properties/7475-T7351-Aluminum
+[OK] melamine formaldehyde resin -> https://www.makeitfrom.com/material-properties/Melamine-Formaldehyde-MF
+[OK] Polyurethane Rubber (AU, EU) -> https://www.makeitfrom.com/material-properties/Polyurethane-Rubber-AU-EU
+[OK] Vinyl Ester -> https://romar-voss.nl/downloads/tds/tds-derakane-signia-411-resin.pdf
+[OK] Unsaturated Polyester (UP) -> https://www.makeitfrom.com/material-properties/Unsaturated-Polyester-UP
+[OK] Default.aspx -> https://www.makeitfrom.com/material-properties/Urea-Formaldehyde-UF
+[OK] Nitrile Rubber (NBR) -> https://www.makeitfrom.com/material-properties/Acrylonitrile-Nitrile-Butadiene-Rubber-NBR-Buna-N
+[OK] HNBR (Hydrogenated Nitrile Butadiene Rubber) -> https://www.makeitfrom.com/material-properties/Hydrogenated-Acrylonitrile-Butadiene-Rubber-HNBR-HSN
+[OK] FKM (Viton / Fluoroelastomer) -> https://www.makeitfrom.com/material-properties/Fluorocarbon-Rubber-FKM-FPM
+[OK] 03_Elastomers Materials.pdf -> https://www.makeitfrom.com/material-properties/Styrene-Butadiene-Rubber-SBR-Buna-S
+[OK] Parr_DuPont Kalrez O ring Materials Corrosion Info.pdf -> https://www.makeitfrom.com/material-properties/Perfluoroelastomer-FFKM
+[OK] material selection guide.html -> https://www.makeitfrom.com/material-properties/Polyacrylate-Rubber-ACM
+[OK] IIR (Butyl Rubber) -> https://www.matweb.com/Search/MaterialGroupSearch.aspx?GroupID=93
+[OK] CSM (Chlorosulfonated Polyethylene / Hypalon) -> https://www.makeitfrom.com/material-properties/Chlorosulfonated-Polyethylene-Rubber-CSM
+[OK] TPU (Thermoplastic Polyurethane) -> https://download.basf.com/p1/8a8082587fd4b608017fd6411cdd6d63/en/Elastollan%3Csup%3E%C2%AE%3Csup%3E_%E2%80%93_Thermoplastic_Polyurethane_Elastomers_%28TPU%29_-_Product_Range_Range_Chart_English.pdf
+[OK] TPE (Thermoplastic Elastomer) -> https://www.hexpol.com/tpe/?p=3884
+[OK] AISI 384 (S38400) Stainless Steel -> https://www.makeitfrom.com/material-properties/AISI-384-S38400-Stainless-Steel
+[OK] EN 1.5536 (27MnB4) Boron Steel -> https://www.makeitfrom.com/material-properties/EN-1.5536-27MnB4-Boron-Steel
+[OK] LL6420A -> https://productsandsolutions.pttgcgroup.com/customer-support/files/LL6420A-BROCHURE-TH.pdf
+[OK] UHMW-PE -> https://quickparts.com/wp-content/uploads/2024/05/UHMW-PE.pdf
+
+============================================================
+Session started: 2026-09-20T21:18:33.017079
+Targets this session: 136
+
+[OK] Styrene Butadiene Rubber (SBR, Buna-S) -> https://www.makeitfrom.com/material-properties/Styrene-Butadiene-Rubber-SBR-Buna-S
+[OK] Perfluoroelastomer (FFKM) -> https://www.makeitfrom.com/material-properties/Perfluoroelastomer-FFKM
+[OK] Polyacrylate Rubber (ACM) -> https://www.makeitfrom.com/material-properties/Polyacrylate-Rubber-ACM
+[OK] UHMW-PE -> https://quickparts.com/wp-content/uploads/2024/05/UHMW-PE.pdf
+[OK] ASTM A436 Type 6 (F41007) Cast Iron -> https://www.makeitfrom.com/material-properties/ASTM-A436-Type-6-F41007-Cast-Iron
+[OK] AWS E120C-K4 or E83C-K4 Weld Metal -> https://www.makeitfrom.com/material-properties/AWS-E120C-K4-or-E83C-K4-Weld-Metal
+[OK] AWS E80C-B8 or E55C-B8 Weld Metal -> https://www.makeitfrom.com/material-properties/AWS-E80C-B8-or-E55C-B8-Weld-Metal
+
+============================================================
+Session started: 2026-09-21T13:23:11.150820
+Targets this session: 112
+
+[OK] Macor (Machinable Glass Ceramic) -> https://www.corning.com/media/worldwide/csm/documents/71759a443535431395eb34ebead091cb.pdf
+[OK] Zerodur (Low Expansion Glass Ceramic) -> https://www.schott.com/en-us/products/zerodur-p1000269/technical-details
+[OK] Barium Titanate (BaTiO3) -> https://www.chemistrylearner.com/barium-titanate.html
+[OK] Lead Zirconate Titanate (PZT) -> https://www.americanpiezo.com/knowledge-center/piezo-theory/pzt/
+[OK] Sialon -> https://www.chemicalbook.com/ChemicalProductProperty_EN_CB5258019.htm
+[OK] Titanium Dioxide (Titania / TiO2) -> https://crystran.com/media/wysiwyg/Materials/rutile-tio2-data-sheet.pdf
+[OK] Aluminum Titanate (Al2TiO5) -> https://www.makeitfrom.com/material-properties/Aluminum-Titanate-Al2TiO5
+[OK] Spinel (MgAl2O4) -> https://www.sciencedirect.com/science/article/abs/pii/S0272884222008525
+[OK] Tantalum Carbide (TaC) -> https://www.goodfellow.com/usa/resources/tantalum-carbide-tac-material-information/
+[OK] Hafnium Carbide (HfC) -> https://www.goodfellow.com/usa/resources/hafnium-carbide-hfc-material-information/
+[OK] Hafnium Diboride (HfB2) -> https://www.sciencedirect.com/science/article/abs/pii/S0272884214002582
+[OK] Zirconium diboride -> https://research.birmingham.ac.uk/files/75972834/Sonber_CS_2016_0006.pdf
+[OK] ASTM A436 Type 4 (L-NiSiCr 30 5 5, F41005) Cast Iron -> https://www.makeitfrom.com/material-properties/ASTM-A436-Type-4-L-NiSiCr-30-5-5-F41005-Cast-Iron
+[OK] ASTM A436 Type 1 (L-NiCuCr 15 6 2, F41000) Cast Iron -> https://www.makeitfrom.com/material-properties/ASTM-A436-Type-1-L-NiCuCr-15-6-2-F41000-Cast-Iron
+[OK] Yttrium Barium Copper Oxide (YBCO - Superconductor) -> https://advancematerialslab.com/ybco-superconductor-properties-application/
+[OK] Bismuth Strontium Calcium Copper Oxide (BSCCO - Superconductor) -> https://en.wikipedia.org/wiki/Bismuth_strontium_calcium_copper_oxide
+[OK] ASTM A436 Type 1b (L-NiCuCr 15 6 3, F41001) Cast Iron -> https://www.makeitfrom.com/material-properties/ASTM-A436-Type-1b-L-NiCuCr-15-6-3-F41001-Cast-Iron
+[OK] ASTM F15 (1.3981,K94610) Fe-Ni-Co Sealing Alloy -> https://www.makeitfrom.com/material-properties/ASTM-F15-1.3981-K94610-Fe-Ni-Co-Sealing-Alloy
+[OK] CFRP (Woven 3K 2x2 Twill / Epoxy) -> https://acpcomposites.com/shop/carbon-fiber/carbon-prepregs/5-8-oz-carbon-fiber-2x2-twill-weave-rts-prepreg
+[OK] Carbon-Carbon Composite (C/C) -> https://www.semcocarbon.com/file-downloads-folder/carbon-composite-spec-sheet-REV2.pdf
+[OK] GFRP (Chopped Strand Mat / Polyester Resin) -> https://www.fibreglast.com/blogs/learning-center/physical-properties-of-laminates
+[OK] GFRP (E-Glass Woven / Epoxy) -> https://acpcomposites.com/wp-content/uploads/2024/05/Mechanical-Properties-of-Carbon-Fiber-Composite-Materials.pdf
+[OK] EPS (Expanded Polystyrene) -> https://xometry.pro/wp-content/uploads/2025/07/EPS-Expanded-Polystyrene.pdf
+[OK] Stainless Steel Optisheen Polished Sheet_129 -> https://www.aalco.co.uk/datasheets/Stainless-Steel-Optisheen-Polished-Sheet_129.ashx
+[OK] Aluminium Alloy Introduction to Aluminium and its alloys_9 -> https://www.aalco.co.uk/datasheets/Aluminium-Alloy-Introduction-to-Aluminium-and-its-alloys_9.ashx
+[OK] KUMHO SAN -> https://www.kkpc.com/download/?seq=7273
+[OK] Kevlar 49 / Epoxy (Aramid Fabric Composite) -> https://www.dupont.com/content/dam/aramids/amer/us/en/safety/public/documents/en/Kevlar_Technical_Guide_0319.pdf
+[OK] Kevlar 49 / Epoxy (Aramid UD Composite) -> https://www.dupont.com/content/dam/aramids/amer/us/en/safety/public/documents/en/Kevlar_Technical_Guide_0319.pdf
+[OK] Dyneema / UHMWPE Composite -> https://norwegen-angelfreunde.de/attachment/26938-zugfestigkeit-pdf
+[OK] PEEK-CF30 (PEEK + 30% Carbon Fiber) -> https://www.victrex.com/en/downloads/datasheets/victrex-peek-90ca30
+[OK] AlSiC-12 (Al-SiC Metal Matrix Composite) -> https://cpstechnologysolutions.com/wp-content/uploads/2025/09/CPS-Alsic-2025-Final.pdf
+[OK] Ti-SiC (Ti-6Al-4V / SCS-6 Composite) -> https://www.cambridge.org/core/product/F001DC9D9AA326DAA1F522F327C8788A
+[OK] B4C-Al (Metamic / Neutron Absorber Composite) -> https://ww2.nrc.gov/docs/ML1307/ML13079A685.pdf
+[OK] SiC/SiC (Ceramic Matrix Composite) -> https://technology.nasa.gov/patent/LEW-TOPS-25
+[OK] Swissbain 7MnB8c -> https://swisssteel-group.com/content-media/documents/_import/Swissbain-7MnB8c_EN.pdf
+[OK] CuO -> https://oqmd.org/materials/entry/11469
+[OK] ZnTe -> https://oqmd.org/materials/entry/17353
+[OK] Nomex Honeycomb (Aramid Core) -> https://hexcel.com/wp-content/uploads/2026/01/HexWeb_HRH10_DataSheet_us.pdf
+[OK] TiO -> https://oqmd.org/materials/entry/17898
+[OK] FeO -> https://oqmd.org/materials/entry/5404
+[OK] Aluminum Honeycomb (Core) -> https://hexcel.com/wp-content/uploads/2025/12/HexWeb_CRIII_DataSheet.pdf
+[OK] Rohacell (PMI) Core -> https://products.evonik.com/assets/35/22/ROHACELL_HERO_2022_April_EN_243522.pdf
+[OK] MDF (Medium Density Fiberboard) -> https://www.compositepanel.org/products/medium-density-fiberboard/
+[OK] OSB (Oriented Strand Board) -> https://apawood.org/osb
+[OK] Materials Information -> https://www.azom.com/article.aspx?ArticleID=8721
+[OK] Glulam (Glued Laminated Timber) -> https://awc.org/wp-content/uploads/2021/10/AWC_NDS2018-withCommentary_20200827_AWCWebsite_Chapter05.pdf
+[OK] Concrete (Steel Reinforced) -> https://www.fhwa.dot.gov/publications/research/infrastructure/bridge/05056/chapt3c.cfm
+[OK] EN 1.5805 (10NiCr5-4) Nickel-Chromium Steel -> https://www.makeitfrom.com/material-properties/EN-1.5805-10NiCr5-4-Nickel-Chromium-Steel
+[OK] UHPC (Ultra-High Performance Concrete) -> https://www.fhwa.dot.gov/publications/research/infrastructure/structures/06103/06103.pdf
+[OK] PI (Polyimide / Kapton / Vespel) -> https://www.synflex.com/tr/insulate/syntherm-isolierstoffe/ayrinti/datasheets/kaptonr-hn-polyimidfolie-46/
+[OK] Aluminum Alloy 2099 -> https://www.smithmetal.com/pdf/lithium/2099-lithium.pdf
+[OK] CNT / Epoxy (Carbon Nanotube Composite) -> https://khazna.ku.ac.ae/en/publications/effects-of-carbon-nanotube-alignment-on-electrical-and-mechanical/
+[OK] 2124 2124 T851 AlCu4Mg1A 3.1354 Aluminum -> https://www.makeitfrom.com/material-properties/2124-2124-T851-AlCu4Mg1A-3.1354-Aluminum
+[OK] Alcoa 2324-T39 -> https://dl.asminternational.org/alloy-digest/article/6342/ALCOA-2324-T39-PLATEHigh-Strength-Aerospace-Plate
+[OK] C/SiC (Ceramic Matrix Composite) -> https://ntrs.nasa.gov/api/citations/20020072848/downloads/20020072848.pdf
+[OK] Aluminium Alloy Fabrication of Aluminium_53 -> https://www.aalco.co.uk/datasheets/Aluminium-Alloy-Fabrication-of-Aluminium_53.ashx
+[OK] AlSiC-8 (Al-SiC Metal Matrix Composite) -> https://www.lookpolymers.com/polymer_CPS-Technologies-AlSiC-8-Metal-Matrix-Composite.php
+[OK] Rigid Thermoset Polyurethane (RPU) -> https://www.makeitfrom.com/material-properties/Rigid-Thermoset-Polyurethane-RPU
+[OK] Derakane Signia 411 Resin -> https://romar-voss.nl/downloads/tds/tds-derakane-signia-411-resin.pdf
+[OK] EPDM_rubber -> https://www.makeitfrom.com/material-properties/Ethylene-Propylene-Diene-Rubber-EPDM-EPT
+[OK] Acrylonitrile Nitrile Butadiene Rubber (NBR / Buna-N) -> https://www.makeitfrom.com/material-properties/Acrylonitrile-Nitrile-Butadiene-Rubber-NBR-Buna-N
+[OK] Hydrogenated Acrylonitrile Butadiene Rubber (HNBR, HSN) -> https://www.makeitfrom.com/material-properties/Hydrogenated-Acrylonitrile-Butadiene-Rubber-HNBR-HSN
+[OK] Fluorocarbon Rubber (FKM/FPM) -> https://www.makeitfrom.com/material-properties/Fluorocarbon-Rubber-FKM-FPM
+[OK] Metal, Plastic, and Ceramic Search Index -> https://www.matweb.com/Search/MaterialGroupSearch.aspx?GroupID=93
+[OK] Chlorosulfonated Polyethylene Rubber (CSM) -> https://www.makeitfrom.com/material-properties/Chlorosulfonated-Polyethylene-Rubber-CSM
+[OK] Beryllium Oxide (BeO) -> https://www.osti.gov/biblio/1635499
+[OK] Silicates -> https://www.coorstek.com/en/materials/silicates/
+[OK] Materials Information -> https://www.azom.com/article.aspx?ArticleID=78
+[OK] PbS -> https://oqmd.org/materials/entry/14034
+[OK] Barium Titanate -> https://www.chemistrylearner.com/barium-titanate.html
+[OK] Aluminum Titanate -> https://www.makeitfrom.com/material-properties/Aluminum-Titanate-Al2TiO5
+[OK] TlBr -> https://oqmd.org/materials/entry/11508
+[OK] RbI -> https://oqmd.org/materials/entry/11510
+[OK] TlCl -> https://oqmd.org/materials/entry/5677
+[OK] InAs -> https://oqmd.org/materials/entry/4656
+[OK] LiCl -> https://oqmd.org/materials/entry/5166
+[OK] Toray T300 Carbon Fiber -> https://www.toraycma.com/wp-content/uploads/T300-Data-Sheet.pdf
+[OK] Aluminium Alloy R0HS Aluminium_123 -> https://www.aalco.co.uk/datasheets/Aluminium-Alloy-R0HS-Aluminium_123.ashx
+[OK] Stainless Steel Tube_134 -> https://www.aalco.co.uk/datasheets/Stainless-Steel-Tube_134.ashx
+[OK] Aluminium Alloy Cleaning Aluminium_52 -> https://www.aalco.co.uk/datasheets/Aluminium-Alloy-Cleaning-Aluminium_52.ashx
+[OK] Stainless Steel ANSI Pipe_130 -> https://www.aalco.co.uk/datasheets/Stainless-Steel-ANSI-Pipe_130.ashx
+[OK] EN 1.4542 (X5CrNiCuNb16-4) Stainless Steel -> https://www.makeitfrom.com/material-properties/EN-1.4542-X5CrNiCuNb16-4-Stainless-Steel
+[OK] EN 1.4594 (X5CrNiMoCuNb14-5) Stainless Steel -> https://www.makeitfrom.com/material-properties/EN-1.4594-X5CrNiMoCuNb14-5-Stainless-Steel
+[OK] Annealed Grade 250 Maraging Steel -> https://www.makeitfrom.com/material-properties/Annealed-Grade-250-Maraging-Steel
+[OK] Grade 200 Maraging Steel -> https://www.makeitfrom.com/material-properties/Grade-200-Maraging-Steel
+[OK] Aged Grade 250 Maraging Steel -> https://www.makeitfrom.com/material-properties/Aged-Grade-250-Maraging-Steel
+[OK] Annealed Grade 300 Maraging Steel -> https://www.makeitfrom.com/material-properties/Annealed-Grade-300-Maraging-Steel
+[OK] Aged Grade 300 Maraging Steel -> https://www.makeitfrom.com/material-properties/Aged-Grade-300-Maraging-Steel
+[OK] EN 1.4525 (GX5CrNiCu16-4) Cast Stainless Steel -> https://www.makeitfrom.com/material-properties/EN-1.4525-GX5CrNiCu16-4-Cast-Stainless-Steel
+[OK] EN 1.3521 (17MnCr5) Case-Hardening Bearing Steel -> https://www.makeitfrom.com/material-properties/EN-1.3521-17MnCr5-Case-Hardening-Bearing-Steel
+[OK] EN 1.5511 (35B2) Boron Steel -> https://www.makeitfrom.com/material-properties/EN-1.5511-35B2-Boron-Steel
+[OK] EN 1.7077 (36CrB4) Chromium-Boron Steel -> https://www.makeitfrom.com/material-properties/EN-1.7077-36CrB4-Chromium-Boron-Steel
+[OK] Grade VDSiCr Spring Steel -> https://www.makeitfrom.com/material-properties/Grade-VDSiCr-Spring-Steel
+[OK] EN 1.3553 (X82WMoCrV6-5-4) High-Temperature Bearing Steel -> https://www.makeitfrom.com/material-properties/EN-1.3553-X82WMoCrV6-5-4-High-Temperature-Bearing-Steel
+[OK] EN 1.7106 (56SiCr7) Silicon-Chromium Steel -> https://www.makeitfrom.com/material-properties/EN-1.7106-56SiCr7-Silicon-Chromium-Steel
+[OK] EN 1.5514 (33B2) Boron Steel -> https://www.makeitfrom.com/material-properties/EN-1.5514-33B2-Boron-Steel
+[OK] EN 1.4901 (X10CrWMoVNb9-2) Stainless Steel -> https://www.makeitfrom.com/material-properties/EN-1.4901-X10CrWMoVNb9-2-Stainless-Steel
+[OK] EN 1.4062 (X2CrNiN22-2) Stainless Steel -> https://www.makeitfrom.com/material-properties/EN-1.4062-X2CrNiN22-2-Stainless-Steel
+[OK] EN 1.4655 (X2CrNiCuN23-4) Stainless Steel -> https://www.makeitfrom.com/material-properties/EN-1.4655-X2CrNiCuN23-4-Stainless-Steel
+[OK] EN 1.4482 (X2CrMnNiMoN21-5-3) Stainless Steel -> https://www.makeitfrom.com/material-properties/EN-1.4482-X2CrMnNiMoN21-5-3-Stainless-Steel
+[OK] UNS S32001 Stainless Steel -> https://www.makeitfrom.com/material-properties/UNS-S32001-Stainless-Steel
+[OK] 6463 Aluminum -> https://www.makeitfrom.com/material-properties/6463-T6-Aluminum
+[OK] Zinc -> https://oqmd.org/materials/entry/9225
+[OK] Udel® P-1700 -> https://protolabs.com/media/b2rj51rq/udel-p1700.pdf
+[OK] Thermoplastic Polyurethane (TPU) -> https://www.hexpol.com/tpe/?p=3884
+[OK] NANOBAIN (Nanostructured / Carbide-Free Bainitic Steel) -> http://www.phase-trans.msm.cam.ac.uk/2010/nano.html
+[OK] TPV (Thermoplastic Vulcanizate / Santoprene) -> https://upmold.com/wp-content/uploads/data-sheet/TPV-Santoprene_101-73.pdf
+[OK] PA66-GF30 (Nylon 66 + 30% Glass Fiber) -> https://download.basf.com/p1/8a8082587fd4b608017fd6587a9757d9/en/ULTRAMID%3Csup%3E%C2%AE%3Csup%3E_A3EG6
+[OK] PC-GF20 (Polycarbonate + 20% Glass Fiber) -> https://materialdatacenter.com/ms/zh/Makrolon/Covestro+Deutschland+AG/Makrolon%C2%AE+9125/640afdd0/410
+[OK] AlSiC-9 (Al-SiC Metal Matrix Composite) -> https://cpstechnologysolutions.com/wp-content/uploads/2025/09/CPS-Alsic-2025-Final.pdf
+[OK] Alumina/Alumina (Oxide/Oxide CMC) -> https://etheses.bham.ac.uk/id/eprint/5924/
+[OK] SAE-AISI S5 (T41905) Shock-Resisting Steel -> https://www.makeitfrom.com/material-properties/SAE-AISI-S5-T41905-Shock-Resisting-Steel
+
+Session complete: 2026-09-21T15:31:46.780617
+Success: 112 | Failed: 0

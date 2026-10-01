@@ -1,0 +1,28 @@
+category,subcategory,name,density,tensile_strength_min,yield_strength_min,elongation,hardness,elastic_modulus,thermal_conductivity,specific_heat,melting_point_min,composition,description
+Aluminum,Pure Aluminum,Aluminum 1199 Alloy,,,,,,,,,,,Please manually fill data for this grade.
+Aluminum,Aluminum-Copper,Aluminum 2014 Alloy,,,,,,,,,,,Please manually fill data for this grade.
+Aluminum,Cast Aluminum,Aluminum 319.0 Cast Alloy,,,,,,,,,,,Please manually fill data for this grade.
+Aluminum,Cast Aluminum,Aluminum 380.0 Cast Alloy,,,,,,,,,,,Please manually fill data for this grade.
+Aluminum,Cast Aluminum,Aluminum 390.0 Cast Alloy,,,,,,,,,,,Please manually fill data for this grade.
+Copper,Pure Copper,Phosphorus-Deoxidized (DHP) Copper (UNS C12200),,,,,,,,,,,Please manually fill data for this grade.
+Copper,Free-Machining Copper,Tellurium Copper (UNS C14500),,,,,,,,,,,Please manually fill data for this grade.
+Copper,Beryllium Copper,Beryllium Copper (UNS C17200),,,,,,,,,,,Please manually fill data for this grade.
+Copper,Brass,Muntz Metal (60/40 Brass) (UNS C28000),,,,,,,,,,,Please manually fill data for this grade.
+Copper,Brass,Naval Brass (UNS C46400),,,,,,,,,,,Please manually fill data for this grade.
+Copper,Bronze,Nickel Aluminum Bronze (UNS C63000),,,,,,,,,,,Please manually fill data for this grade.
+Copper,Bronze,High Silicon Bronze (UNS C65500),,,,,,,,,,,Please manually fill data for this grade.
+Copper,Cupronickel,Copper-Nickel 90/10 (UNS C70600),,,,,,,,,,,Please manually fill data for this grade.
+Copper,Cupronickel,Copper-Nickel 70/30 (UNS C71500),,,,,,,,,,,Please manually fill data for this grade.
+Copper,Nickel Silver,Nickel Silver (65-18) (UNS C75200),,,,,,,,,,,Please manually fill data for this grade.
+Zinc,Zinc Die Cast Alloy,Zamak 3,,,,,,,,,,,Please manually fill data for this grade.
+Zinc,Zinc Die Cast Alloy,Zamak 5,,,,,,,,,,,Please manually fill data for this grade.
+Zinc,Zinc Die Cast Alloy,Zamak 2,,,,,,,,,,,Please manually fill data for this grade.
+Zinc,Zinc Die Cast Alloy,Zamak 7,,,,,,,,,,,Please manually fill data for this grade.
+Zinc,Zinc-Aluminum Alloy,ZA-8,,,,,,,,,,,Please manually fill data for this grade.
+Zinc,Zinc-Aluminum Alloy,ZA-12,,,,,,,,,,,Please manually fill data for this grade.
+Zinc,Zinc-Aluminum Alloy,ZA-27,,,,,,,,,,,Please manually fill data for this grade.
+Lead,Pure Lead,Chemical Lead (Pure Lead),,,,,,,,,,,Please manually fill data for this grade.
+Lead,Antimonial Lead,Antimonial Lead (4% Sb),,,,,,,,,,,Please manually fill data for this grade.
+Lead,Antimonial Lead,Antimonial Lead (6% Sb),,,,,,,,,,,Please manually fill data for this grade.
+Lead,Babbitt Metal,Lead Babbitt (ASTM B23 Grade 7),,,,,,,,,,,Please manually fill data for this grade.
+Lead,Lead-Calcium Alloy,Lead-Calcium-Tin Alloy,,,,,,,,,,,Please manually fill data for this grade.

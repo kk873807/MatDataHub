@@ -1,0 +1,26 @@
+# Missing Engineering, Advanced & Futuristic Ceramics
+
+- Silicon Carbide (SiC)
+- Tungsten Carbide (WC)
+- Titanium Carbide (TiC)
+- Beryllium Oxide (BeO)
+- Steatite
+- Cordierite
+- Mullite
+- Sialon
+- Macor (Machinable Glass Ceramic)
+- Boron Nitride (Hexagonal / h-BN)
+- Boron Nitride (Cubic / c-BN)
+- Titanium Dioxide (Titania / TiO2)
+- Barium Titanate (BaTiO3)
+- Lead Zirconate Titanate (PZT)
+- Hafnium Carbide (HfC)
+- Tantalum Carbide (TaC)
+- Zirconium Diboride (ZrB2)
+- Hafnium Diboride (HfB2)
+- Titanium Silicon Carbide (MAX Phase Ti3SiC2)
+- Spinel (MgAl2O4)
+- Aluminum Titanate (Al2TiO5)
+- Yttrium Barium Copper Oxide (YBCO - Superconductor)
+- Bismuth Strontium Calcium Copper Oxide (BSCCO - Superconductor)
+- Zerodur (Low Expansion Glass Ceramic)

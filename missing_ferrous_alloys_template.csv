@@ -1,0 +1,30 @@
+category,subcategory,name,density,tensile_strength_min,yield_strength_min,elongation,hardness,elastic_modulus,thermal_conductivity,specific_heat,melting_point_min,composition,description
+Steel,Free Machining Steel,AISI 1215 Free Machining Steel,,,,,,,,,,,Please manually fill data for this grade.
+Steel,HSLA Steel,Hy-100 High-Yield Steel,,,,,,,,,,,Please manually fill data for this grade.
+Steel,HSLA Steel,Hy-80 High-Yield Steel,,,,,,,,,,,Please manually fill data for this grade.
+Steel,Maraging Steel,Maraging Steel 250,,,,,,,,,,,Please manually fill data for this grade.
+Steel,Maraging Steel,Maraging Steel 300,,,,,,,,,,,Please manually fill data for this grade.
+Steel,Maraging Steel,Maraging Steel 350,,,,,,,,,,,Please manually fill data for this grade.
+Steel,Low Expansion Alloy,Invar 36 (Fe-Ni Alloy),,,,,,,,,,,Please manually fill data for this grade.
+Steel,Controlled Expansion Alloy,Kovar (Fe-Ni-Co Alloy),,,,,,,,,,,Please manually fill data for this grade.
+Stainless Steel,Austenitic Stainless Steel,AISI Nitronic 50 Stainless Steel,,,,,,,,,,,Please manually fill data for this grade.
+Stainless Steel,Ferritic Stainless Steel,AISI 405 Stainless Steel,,,,,,,,,,,Please manually fill data for this grade.
+Stainless Steel,Ferritic Stainless Steel,AISI 409 Stainless Steel,,,,,,,,,,,Please manually fill data for this grade.
+Stainless Steel,Ferritic Stainless Steel,AISI 434 Stainless Steel,,,,,,,,,,,Please manually fill data for this grade.
+Stainless Steel,Ferritic Stainless Steel,AISI 446 Stainless Steel,,,,,,,,,,,Please manually fill data for this grade.
+Stainless Steel,Duplex Stainless Steel,2101 Duplex Stainless Steel,,,,,,,,,,,Please manually fill data for this grade.
+Tool Steel,Air-Hardening Tool Steel,A2 Tool Steel,,,,,,,,,,,Please manually fill data for this grade.
+Tool Steel,Hot-Work Tool Steel,H13 Tool Steel,,,,,,,,,,,Please manually fill data for this grade.
+Tool Steel,High-Speed Tool Steel,M2 Tool Steel,,,,,,,,,,,Please manually fill data for this grade.
+Cast Iron,Gray Iron,Gray Cast Iron (Class 20),,,,,,,,,,,Please manually fill data for this grade.
+Cast Iron,Gray Iron,Gray Cast Iron (Class 30),,,,,,,,,,,Please manually fill data for this grade.
+Cast Iron,Gray Iron,Gray Cast Iron (Class 40),,,,,,,,,,,Please manually fill data for this grade.
+Cast Iron,Gray Iron,Gray Cast Iron (Class 50),,,,,,,,,,,Please manually fill data for this grade.
+Cast Iron,Gray Iron,Gray Cast Iron (Class 60),,,,,,,,,,,Please manually fill data for this grade.
+Cast Iron,Ductile Iron,Ductile Iron (60-40-18),,,,,,,,,,,Please manually fill data for this grade.
+Cast Iron,Ductile Iron,Ductile Iron (100-70-03),,,,,,,,,,,Please manually fill data for this grade.
+Cast Iron,Austempered Ductile Iron,Austempered Ductile Iron (ADI),,,,,,,,,,,Please manually fill data for this grade.
+Cast Iron,Malleable Iron,Malleable Iron,,,,,,,,,,,Please manually fill data for this grade.
+Cast Iron,CGI,Compacted Graphite Iron (CGI),,,,,,,,,,,Please manually fill data for this grade.
+Cast Iron,White Iron,Ni-Hard Cast Iron,,,,,,,,,,,Please manually fill data for this grade.
+Cast Iron,Austenitic Cast Iron,Ni-Resist Cast Iron,,,,,,,,,,,Please manually fill data for this grade.

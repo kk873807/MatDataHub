@@ -115,26 +115,11 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass`
     URL.revokeObjectURL(url);
   };
 
-  const generatePDF = async () => {
-    try {
-      // @ts-ignore
-      const html2pdf = (await import('html2pdf.js')).default;
-      const element = document.getElementById('cbam-report');
-      if (!element) return;
-      
-      const opt = {
-        margin: 0.5,
-        filename: 'CBAM_Executive_Report.pdf',
-        image: { type: 'jpeg' as const, quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' as const }
-      };
-      
-      html2pdf().set(opt).from(element).save();
-    } catch (error) {
-      console.error("PDF generation failed", error);
-      alert("Failed to generate PDF. Make sure you are in a modern browser.");
-    }
+  const generatePDF = () => {
+    // We use native browser printing because html2canvas does not support
+    // modern CSS color functions (like oklch) used by Tailwind v4.
+    // print:hidden classes will ensure only the report is visible.
+    window.print();
   };
 
 
@@ -309,11 +294,11 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass`
     <main className="flex flex-col p-6 lg:p-10 w-full h-full overflow-y-auto">
       <div className="w-full max-w-5xl mx-auto space-y-8">
         
-        <Link href="/analytics" className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white transition-colors">
+        <Link href="/analytics" className="print:hidden inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white transition-colors">
           <ArrowLeft className="w-4 h-4" /> Back to Analytics
         </Link>
 
-        <div>
+        <div className="print:hidden">
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white font-heading flex items-center gap-3">
             <Factory className="w-8 h-8 text-amber-500" />
             CBAM Calculator & ESG Analyzer
@@ -329,7 +314,7 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass`
           </div>
         </div>
 
-        <div className="bg-white dark:bg-slate-900 p-8 rounded-2xl border border-slate-200 dark:border-slate-800">
+        <div className="print:hidden bg-white dark:bg-slate-900 p-8 rounded-2xl border border-slate-200 dark:border-slate-800">
           
           {/* Tabs */}
           <div className="flex gap-4 mb-6 border-b border-slate-200 dark:border-slate-800 pb-4">
@@ -485,7 +470,7 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass`
               </div>
               <button
                 onClick={generatePDF}
-                className="px-4 py-2.5 bg-slate-800 dark:bg-slate-700 hover:bg-slate-900 dark:hover:bg-slate-600 text-white rounded-xl text-sm font-semibold transition-colors flex items-center gap-2 shadow-sm"
+                className="print:hidden px-4 py-2.5 bg-slate-800 dark:bg-slate-700 hover:bg-slate-900 dark:hover:bg-slate-600 text-white rounded-xl text-sm font-semibold transition-colors flex items-center gap-2 shadow-sm"
               >
                 <Download className="w-4 h-4" /> Download PDF Report
               </button>

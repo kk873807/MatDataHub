@@ -1,0 +1,75 @@
+
+{
+  "dataset_info": {
+    "title": "Bainitic Steel Reference Dataset",
+    "generated_date": "2026-09-19",
+    "materials_count": 3
+  },
+  "materials": [
+    {
+      "id": "bainidur-1300",
+      "name": "Bainidur 1300",
+      "steel_class": "Bainitic forging steel (low-carbon, Mo-alloyed, air-hardening)",
+      "chemical_composition_wt_pct": {
+        "Fe": "balance", "C": 0.17, "Si": 0.70, "Mn": 1.50, "Cr": 1.00, "Mo": 0.70, "V": 0.10
+      },
+      "conditions": [
+        {
+          "mechanical_properties": {
+            "tensile_strength_MPa": { "typical": 1200 },
+            "yield_strength_MPa": { "min": 600 }
+          }
+        }
+      ],
+      "source_links": [
+        { "url": "https://swisssteel-group.com/content-media/documents/_import/2018-0002_DEW_Bainidur1300_EN.pdf" },
+        { "url": "https://matmatch.com/materials/destbainidur1300-bainidur-1300" },
+        { "url": "https://swisssteel-group.com/en/products/engineering-steels/bainitic-steels" }
+      ]
+    },
+    {
+      "id": "swissbain-7mnb8",
+      "name": "Swissbain-7MnB8",
+      "steel_class": "Carbide-free, microalloyed bainitic cold-heading steel",
+      "chemical_composition_wt_pct": {
+        "Fe": "balance", "C": "0.06-0.09", "Si": "0.15-0.25", "Mn": "1.85-1.95", "V": "0.03-0.05", "Ti": "0.06-0.10"
+      },
+      "conditions": [
+        {
+          "mechanical_properties": {
+            "yield_strength_MPa_Rp0_2": { "min": 500 },
+            "tensile_strength_MPa_Rm": { "min": 600 },
+            "elongation_at_fracture_pct_A5": { "min": 18 }
+          }
+        }
+      ],
+      "source_links": [
+        { "url": "https://swisssteel-group.com/content-media/documents/_import/Swissbain-7MnB8c_EN.pdf" },
+        { "url": "https://swisssteel-group.com/en/products/engineering-steels/cold-upsetting-and-cold-extrusion-steels" },
+        { "url": "https://op.europa.eu/en/publication-detail/-/publication/370eb6d1-b699-4420-a1f4-bd70eea9afde" }
+      ]
+    },
+    {
+      "id": "nanobain-family",
+      "name": "NANOBAIN (Nanostructured / Carbide-Free Bainitic Steel)",
+      "steel_class": "High-carbon, high-silicon carbide-free nanostructured bainitic steel",
+      "chemical_composition_wt_pct": {
+        "Fe": "balance", "C": 0.98, "Si": 1.46, "Mn": 1.89, "Mo": 0.26, "Cr": 1.26, "V": 0.09
+      },
+      "conditions": [
+        {
+          "mechanical_properties": {
+            "tensile_strength_MPa": 2500,
+            "total_elongation_pct": { "min": 20 }
+          }
+        }
+      ],
+      "source_links": [
+        { "url": "http://www.phase-trans.msm.cam.ac.uk/2010/nano.html" },
+        { "url": "https://www.phase-trans.msm.cam.ac.uk/2002/low.temperature.bainite.mst.2002.pdf" },
+        { "url": "https://digital.csic.es/bitstream/10261/101943/1/221_MST_CGM.pdf" }
+      ]
+    }
+  ]
+}
+

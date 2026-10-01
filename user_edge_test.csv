@@ -1,0 +1,22 @@
+material_id,material_name,cbam_sector,cn_code,supplier_name,supplier_country,destination_country,quantity_tonnes,direct_emissions_tco2_per_tonne,indirect_emissions_tco2_per_tonne,electricity_consumed_mwh_per_tonne,grid_emission_factor_kgco2_per_kwh,carbon_price_paid_eur_per_tco2,data_quality,supplier_risk_score,single_source_flag,lead_time_days,geopolitical_risk,last_shipment_date
+EDGE-001,Hot-Rolled Steel Coil,Iron & Steel,7208,Baosteel Group,China,Germany,,2.01,0.27,0.45,0.6,0,Default Values,74,Yes,46,High,2026-08-14
+EDGE-002,Hot-Rolled Steel Coil,Iron & Steel,7208,Baosteel Group,China,Germany,0,2.01,0.27,0.45,0.6,0,Default Values,74,Yes,46,High,2026-08-14
+EDGE-003,Hot-Rolled Steel Coil,Iron & Steel,7208,Baosteel Group,China,Germany,-50,2.01,0.27,0.45,0.6,0,Default Values,74,Yes,46,High,2026-08-14
+EDGE-004,Hot-Rolled Steel Coil,Iron & Steel,7208,Baosteel Group,China,Germany,300,,0.27,0.45,0.6,0,Default Values,74,Yes,46,High,2026-08-14
+EDGE-005,Hot-Rolled Steel Coil,Iron & Steel,7208,Baosteel Group,China,Germany,300,2.01,unknown,0.45,0.6,0,Default Values,74,Yes,46,High,2026-08-14
+EDGE-006,Hot-Rolled Steel Coil,Iron & Steel,7208,Baosteel Group,China,Germany,50000000,2.01,0.27,0.45,0.6,0,Default Values,74,Yes,46,High,2026-08-14
+EDGE-007,Hot-Rolled Steel Coil,Iron & Steel,7208,Baosteel Group,China,Germany,0.004,2.01,0.27,0.45,0.6,0,Default Values,74,Yes,46,High,2026-08-14
+EDGE-008,Steel Rebar (Deformed Bars),Iron & Steel,7214.20,Erdemir,Turkey,Italy,380,1.89,0.32,0.74,0.43,,Verified,38,No,22,Medium,2026-09-02
+EDGE-009,Cotton Fabric Roll,Textiles,5208,Global Textile Mills,Bangladesh,Netherlands,400,0.85,0.05,0.2,0.55,0,Estimated,45,No,35,Medium,2026-08-11
+EDGE-010,Hot-Rolled Steel Coil, iron & steel ,7208,Baosteel Group,China,Germany,300,2.01,0.27,0.45,0.6,0,Default Values,74,Yes,46,High,2026-08-14
+EDGE-011,Portland Cement (Grey),Cement,2523.29,Titan Cement,Nowhereland,Netherlands,150,1.16,0.1,0.21,0.47,0,Estimated,48,No,25,Medium,2026-08-09
+EDGE-012,Urea,Fertilisers,3102.10,PT Pupuk Indonesia,,Netherlands,420,1.78,0.12,0.17,0.72,0,Estimated,55,No,42,Medium,2026-08-13
+EDGE-DUP,Steel Wire Rod,Iron & Steel,7213,Tata Steel,India,Belgium,210,1.89,0.32,0.41,0.79,0,Estimated,40,No,34,Medium,2026-08-17
+EDGE-DUP,Cement Clinker,Cement,2523.10,Dangote Cement,Nigeria,France,600,0.83,0.04,0.1,0.4,0,Default Values,70,Yes,46,High,2026-07-19
+EDGE-014,,Aluminium,7601,Rusal,Russia,Poland,160,2.36,8.14,25.44,0.32,0,Default Values,93,Yes,58,High,2026-07-11
+EDGE-015,Ammonium Nitrate,Fertilisers,ABCD-XYZ,Uralchem,Russia,Germany,240,2.32,0.07,0.22,0.32,0,Default Values,89,Yes,50,High,2026-07-08
+EDGE-016,Hot-Rolled Steel Coil,Iron & Steel,7208,Baosteel Group,China,Germany,300,2.01,0.27,0.45,0.6,0,Default Values,74,Yes,46,High,14/08/2026
+EDGE-017,Hot-Rolled Steel Coil,Iron & Steel,7208,Baosteel Group,China,Germany,300,2.01,0.27,0.45,0.6,0,Default Values,74,Yes,46,High,2026-12-25
+EDGE-018,Hot-Rolled Steel Coil,Iron & Steel,7208,Baosteel Group,China,Germany,300,2.01,0.27,0.45,0.6,0,Default Values,74,Maybe,46,High,2026-08-14
+EDGE-019,Hot-Rolled Steel Coil,Iron & Steel,7208,Baosteel Group,China,Germany,300,2.01,0.27,0.45,0.6,0,Default Values,74,Yes,46,Extreme,2026-08-14
+EDGE-020,,,,,,,,,,,,,,,,,,
