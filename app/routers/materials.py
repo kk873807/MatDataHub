@@ -846,14 +846,23 @@ def analyze_bom(
         )
 
     from app.workflows import BOMProcessor
+    print("=== ANALYZE_BOM ENDPOINT HIT ===", flush=True)
+    import time
+    t0 = time.time()
     contents = file.file.read()
+    print(f"File read in {time.time()-t0:.2f}s", flush=True)
     try:
         df = pd.read_csv(io.BytesIO(contents))
+        print(f"CSV read in {time.time()-t0:.2f}s, rows: {len(df)}", flush=True)
     except Exception as e:
         raise HTTPException(status_code=400, detail="Invalid CSV format: unable to parse file.")
     
     processor = BOMProcessor(db)
+    print(f"BOMProcessor initialized in {time.time()-t0:.2f}s", flush=True)
+    
+    t1 = time.time()
     enriched_df = processor.process_bom(df, material_col, weight_col, strict_mode=strict_mode)
+    print(f"process_bom finished in {time.time()-t1:.2f}s", flush=True)
     
     from app.models import BOMAnalysis
     try:
@@ -872,6 +881,10 @@ def analyze_bom(
         available_cols = [c for c in detail_cols if c in enriched_df.columns]
         results_for_storage = enriched_df[available_cols].fillna("").to_dict(orient="records")
         
+        t_json = time.time()
+        json_str = json.dumps(results_for_storage)
+        print(f"JSON dumps took {time.time()-t_json:.2f}s, size: {len(json_str)}", flush=True)
+        
         bom_record = BOMAnalysis(
             user_id=current_user.id,
             filename=file.filename or "unknown.csv",
@@ -880,10 +893,12 @@ def analyze_bom(
             cbam_cost_eur=float(cbam_eur) if pd.notnull(cbam_eur) else 0.0,
             total_rows=len(enriched_df),
             quarantined_rows=quarantined,
-            results_json=json.dumps(results_for_storage)
+            results_json=json_str
         )
+        t_db = time.time()
         db.add(bom_record)
         db.commit()
+        print(f"DB commit took {time.time()-t_db:.2f}s", flush=True)
     except Exception as e:
         # Don't fail the request if logging fails
         db.rollback()

@@ -144,9 +144,8 @@ class BOMProcessor:
 
     def __init__(self, db: Session):
         self.db = db
-        all_mats = self.db.query(Material.id, Material.name, Material.category).all()
-        self.mat_dict = {m.id: m.name for m in all_mats}
-        # Filter out names shorter than MIN_CANDIDATE_LENGTH
+        all_mats = self.db.query(Material.id, Material.name, Material.category, Material.embodied_carbon, Material.is_obsolete, Material.replacement_standard, Material.recyclability_index).all()
+        self.mat_dict = {m.name: m for m in all_mats}
         self.mat_names = [m.name for m in all_mats if len(m.name) >= self.MIN_CANDIDATE_LENGTH]
         # Build category → [name, ...] for sector-aware pre-filtering
         self.cat_to_names = {}
@@ -158,6 +157,10 @@ class BOMProcessor:
         # Preload CBAM defaults into memory for fast lookups
         self.cbam_defaults_cache = {}
         self.cbam_defaults_stale = False
+        
+        # Cache for fuzzy matching to massively speed up large BOMs with repeated materials
+        self.fuzzy_match_cache = {}
+        
         try:
             all_defaults = self.db.query(CBAMDefault).all()
             for d in all_defaults:
@@ -232,7 +235,13 @@ class BOMProcessor:
 
         enriched_rows = []
         seen_ids = set()
-        for index, row in df.iterrows():
+        
+        # Convert to list of dicts for orders-of-magnitude faster iteration than iterrows()
+        records = df.to_dict(orient='records')
+        
+        for i, row in enumerate(records):
+            if i > 0 and i % 5000 == 0:
+                print(f"Processed {i} rows...", flush=True)
             errors = []
             quarantine_reasons = []
             notes = []
@@ -478,9 +487,16 @@ class BOMProcessor:
                     # Guessed valid via CN code
                     sector_valid = True
 
-            match_tuple = process.extractOne(
-                raw_name, candidates, scorer=fuzz.token_sort_ratio
-            ) if candidates else None
+            # Use allowed_cats as part of the cache key since candidates is newly generated
+            cache_key = (raw_name, tuple(allowed_cats) if allowed_cats else None)
+            if cache_key in self.fuzzy_match_cache:
+                match_tuple = self.fuzzy_match_cache[cache_key]
+            else:
+                match_tuple = process.extractOne(
+                    raw_name, candidates, scorer=fuzz.token_sort_ratio
+                ) if candidates else None
+                self.fuzzy_match_cache[cache_key] = match_tuple
+                
             is_match = match_tuple and match_tuple[1] > 60
 
             provided_carbon_factor = None
@@ -550,8 +566,8 @@ class BOMProcessor:
             if is_match:
                 matched_name = match_tuple[0]
                 confidence = match_tuple[1]
-                mat = self.db.query(Material).filter(Material.name == matched_name).first()
-                db_carbon = mat.embodied_carbon if mat.embodied_carbon else 0.0
+                mat = self.mat_dict.get(matched_name)
+                db_carbon = mat.embodied_carbon if (mat and mat.embodied_carbon) else 0.0
                 
                 if provided_carbon_factor is not None:
                     carbon_factor = provided_carbon_factor
@@ -571,9 +587,9 @@ class BOMProcessor:
                     else:
                         carbon_factor = _estimate_carbon_factor(mat.name, mat.category)
                         emissions_basis = "LEGACY_FALLBACK"
-                obsolete_flag = "YES" if mat.is_obsolete else "NO"
-                replacement = mat.replacement_standard if mat.replacement_standard else "N/A"
-                recyclability = mat.recyclability_index if mat.recyclability_index else 0.5
+                obsolete_flag = "YES" if (mat and mat.is_obsolete) else "NO"
+                replacement = mat.replacement_standard if (mat and mat.replacement_standard) else "N/A"
+                recyclability = mat.recyclability_index if (mat and mat.recyclability_index) else 0.5
             else:
                 matched_name = "NO MATCH FOUND"
                 confidence = 0
@@ -651,7 +667,7 @@ class BOMProcessor:
                 included_str = "YES"
 
             clean_row = {}
-            for k, v in row.to_dict().items():
+            for k, v in row.items():
                 if isinstance(v, str) and str(v).startswith(('=', '+', '-', '@')):
                     clean_row[k] = f"'{v}"
                 else:
