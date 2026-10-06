@@ -861,6 +861,16 @@ def analyze_bom(
         total_co2 = enriched_df.loc[included_mask, "Total_CO2_tonnes"].sum()
         cbam_eur = enriched_df.loc[included_mask, "CBAM_Cost_EUR"].sum()
         quarantined = int((~included_mask).sum())
+        # Store enriched results as JSON for detail view (limit to key columns to save space)
+        import json
+        detail_cols = ["material_id", "Material", "Parsed_Weight_kg", "cbam_sector", "cn_code",
+                       "country_of_origin", "destination", "shipment_date",
+                       "Carbon_Factor_kgCO2e_per_kg", "Emissions_Basis",
+                       "Total_CO2_kg", "Total_CO2_tonnes", "CBAM_Cost_EUR",
+                       "Net_CBAM_Price_EUR", "ESG_Risk_Score",
+                       "Notes", "Validation_Errors", "Included_In_Total"]
+        available_cols = [c for c in detail_cols if c in enriched_df.columns]
+        results_for_storage = enriched_df[available_cols].fillna("").to_dict(orient="records")
         
         bom_record = BOMAnalysis(
             user_id=current_user.id,
@@ -869,7 +879,8 @@ def analyze_bom(
             total_co2_tonnes=float(total_co2) if pd.notnull(total_co2) else 0.0,
             cbam_cost_eur=float(cbam_eur) if pd.notnull(cbam_eur) else 0.0,
             total_rows=len(enriched_df),
-            quarantined_rows=quarantined
+            quarantined_rows=quarantined,
+            results_json=json.dumps(results_for_storage)
         )
         db.add(bom_record)
         db.commit()

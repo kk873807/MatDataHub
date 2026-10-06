@@ -330,11 +330,9 @@ class BOMAnalysis(Base):
     total_co2_tonnes = Column(Float, default=0.0)
     cbam_cost_eur = Column(Float, default=0.0)
     
-    # Optional: we can store the full enriched results as JSON, but for large BOMs
-    # it's better to store just the summary and let users re-upload, or store the CSV in S3.
-    # For now, we'll store basic aggregate stats for the dashboard.
     total_rows = Column(Integer, default=0)
     quarantined_rows = Column(Integer, default=0)
+    results_json = Column(Text, nullable=True)  # Full enriched results as JSON for detail view
     
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 

@@ -46,6 +46,80 @@ export default function CBAMAnalytics() {
     }
   }, [activeTab]);
 
+  const loadHistoryItem = async (bomId: number) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+      const res = await fetch(`${API}/account/bom-history/${bomId}`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.results_data && data.results_data.length > 0) {
+          // Re-calculate the metrics from the JSON data
+          const parsedData = data.results_data;
+          let total = 0;
+          let totalCbamEur = 0;
+          let revCount = 0;
+          let revTonnes = 0;
+          let fallbackKg = 0;
+          let eligibleMassKg = 0;
+          let totalCo2Kg = 0;
+          
+          parsedData.forEach((rowObj: any) => {
+            const included = rowObj["Included_In_Total"];
+            if (included && included.startsWith("YES")) {
+              const rowKg = parseFloat(rowObj["Total_CO2_kg"] || "0");
+              total += rowKg;
+              const co2Tonnes = parseFloat(rowObj["Total_CO2_tonnes"] || "0");
+              totalCo2Kg += (co2Tonnes * 1000);
+              const rowEur = parseFloat(rowObj["CBAM_Cost_EUR"] || "0");
+              totalCbamEur += rowEur;
+              const elMass = parseFloat(rowObj["DeMinimis_Eligible_Mass_kg"] || "0");
+              if (elMass > 0) eligibleMassKg += elMass;
+              const basis = rowObj["Emissions_Basis"];
+              if (basis === "DEFAULT_FALLBACK" || basis === "COMMISSION_DEFAULT" || basis === "LEGACY_FALLBACK") {
+                  fallbackKg += rowKg;
+              }
+            } else if (included && included.startsWith("NO")) {
+              revCount += 1;
+              if (rowObj["Parsed_Weight_kg"]) {
+                  revTonnes += parseFloat(rowObj["Parsed_Weight_kg"] || "0") / 1000.0;
+              }
+            }
+          });
+          
+          const elMassTonnes = eligibleMassKg / 1000.0;
+          const isExempt = elMassTonnes <= 50 && elMassTonnes > 0;
+          
+          setResultsData(parsedData);
+          setTotalCO2(total);
+          setTotalCbamCost(totalCbamEur);
+          setPendingReviewCount(revCount);
+          setPendingReviewTonnes(revTonnes);
+          setFallbackTonnes(fallbackKg / 1000.0);
+          setTaxableTonnes(isExempt ? 0 : totalCo2Kg / 1000.0);
+          setIsDeMinimisExempt(isExempt);
+          setEligibleMassTonnes(elMassTonnes);
+          
+          // Switch to results view
+          setActiveTab("upload"); // Re-use the upload view to show the table
+          
+          // Scroll to results
+          setTimeout(() => {
+            const el = document.getElementById('cbam-report');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }, 100);
+        } else {
+          alert("Detailed results are not available for this legacy analysis.");
+        }
+      }
+    } catch (e) {
+      console.error(e);
+      alert("Failed to load details.");
+    }
+  };
+
   // Results state
   const [loading, setLoading] = useState(false);
   const [isLocked, setIsLocked] = useState(true);
@@ -523,7 +597,11 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass`
                       </thead>
                       <tbody>
                         {historyData.map((item: any, idx: number) => (
-                          <tr key={item.id} className="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                          <tr 
+                            key={item.id} 
+                            onClick={() => loadHistoryItem(item.id)}
+                            className="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer"
+                          >
                             <td className="px-4 py-3 text-slate-500 dark:text-slate-400 font-mono text-xs">{idx + 1}</td>
                             <td className="px-4 py-3 text-slate-900 dark:text-white font-semibold truncate max-w-[200px]">{item.filename}</td>
                             <td className="px-4 py-3 text-slate-500 dark:text-slate-400 text-xs whitespace-nowrap">

@@ -58,3 +58,31 @@ def get_bom_history(db: Session = Depends(get_db), current_user: User = Depends(
         }
         for item in history
     ]
+
+import json
+
+@router.get("/bom-history/{bom_id}")
+def get_bom_history_detail(bom_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    """Fetch the detailed results (JSON) for a specific BOM analysis."""
+    bom = db.query(BOMAnalysis).filter(BOMAnalysis.id == bom_id, BOMAnalysis.user_id == current_user.id).first()
+    if not bom:
+        raise HTTPException(status_code=404, detail="BOM analysis not found")
+        
+    results_data = []
+    if bom.results_json:
+        try:
+            results_data = json.loads(bom.results_json)
+        except json.JSONDecodeError:
+            pass
+            
+    return {
+        "id": bom.id,
+        "filename": bom.filename,
+        "strict_mode": bom.strict_mode,
+        "total_co2_tonnes": bom.total_co2_tonnes,
+        "cbam_cost_eur": bom.cbam_cost_eur,
+        "total_rows": bom.total_rows,
+        "quarantined_rows": bom.quarantined_rows,
+        "created_at": bom.created_at,
+        "results_data": results_data
+    }
