@@ -68,13 +68,6 @@ def get_bom_history_detail(bom_id: int, db: Session = Depends(get_db), current_u
     if not bom:
         raise HTTPException(status_code=404, detail="BOM analysis not found")
         
-    results_data = []
-    if bom.results_json:
-        try:
-            results_data = json.loads(bom.results_json)
-        except json.JSONDecodeError:
-            pass
-            
     return {
         "id": bom.id,
         "filename": bom.filename,
@@ -84,5 +77,5 @@ def get_bom_history_detail(bom_id: int, db: Session = Depends(get_db), current_u
         "total_rows": bom.total_rows,
         "quarantined_rows": bom.quarantined_rows,
         "created_at": bom.created_at,
-        "results_data": results_data
+        "results_json": bom.results_json
     }

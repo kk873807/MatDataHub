@@ -592,7 +592,7 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass`
                             </tr>
                           </thead>
                           <tbody>
-                            {historyDetailData.map((row: any, i: number) => {
+                            {historyDetailData.slice(0, 500).map((row: any, i: number) => {
                               const included = (row.Included_In_Total || "").toString();
                               const isYes = included.startsWith("YES");
                               const isNo = included.startsWith("NO") || included.startsWith("QUARANTINE");
@@ -623,6 +623,11 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass`
                           </tbody>
                         </table>
                       </div>
+                      {historyDetailData.length > 500 && (
+                        <div className="p-3 text-center text-sm text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-950/50 border-t border-slate-200 dark:border-slate-800">
+                          Showing first 500 of {historyDetailData.length.toLocaleString()} rows. Download the full CSV from the upload tab for complete data.
+                        </div>
+                      )}
                     </div>
                   ) : historyDetailData && historyDetailData.length === 0 ? (
                     <div className="text-center py-8 text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">

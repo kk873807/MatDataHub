@@ -275,7 +275,13 @@ class BOMProcessor:
                 else:
                     seen_ids.add(mat_id_lower)
 
-            raw_name = str(row.get(actual_mat_col, ""))
+            val_name = row.get(actual_mat_col)
+            if pd.notna(val_name) and str(val_name).strip() != "" and str(val_name).lower() != "nan":
+                raw_name = str(val_name).strip()
+            else:
+                raw_name = ""
+                errors.append("Missing material name")
+                quarantine_reasons.append("Missing material name")
             raw_weight = row.get(actual_weight_col, None)
             if pd.isna(raw_weight) or str(raw_weight).strip() == "" or str(raw_weight).lower() == "nan":
                 errors.append("Missing quantity")
