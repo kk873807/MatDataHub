@@ -11,6 +11,9 @@ export default function CBAMAnalytics() {
   const [activeTab, setActiveTab] = useState<"upload" | "manual" | "history">("upload");
   const [historyData, setHistoryData] = useState<any[]>([]);
   const [historyLoading, setHistoryLoading] = useState(false);
+  const [selectedHistoryItem, setSelectedHistoryItem] = useState<any | null>(null);
+  const [historyDetailData, setHistoryDetailData] = useState<any[] | null>(null);
+  const [historyDetailLoading, setHistoryDetailLoading] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   
   // CSV Configuration
@@ -46,77 +49,29 @@ export default function CBAMAnalytics() {
     }
   }, [activeTab]);
 
-  const loadHistoryItem = async (bomId: number) => {
+  const loadHistoryItem = async (item: any) => {
+    setSelectedHistoryItem(item);
+    setHistoryDetailLoading(true);
+    setHistoryDetailData(null);
     try {
       const token = localStorage.getItem("token");
       if (!token) return;
-      const res = await fetch(`${API}/account/bom-history/${bomId}`, {
+      const res = await fetch(`${API}/account/bom-history/${item.id}`, {
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (res.ok) {
         const data = await res.json();
         if (data.results_data && data.results_data.length > 0) {
-          // Re-calculate the metrics from the JSON data
-          const parsedData = data.results_data;
-          let total = 0;
-          let totalCbamEur = 0;
-          let revCount = 0;
-          let revTonnes = 0;
-          let fallbackKg = 0;
-          let eligibleMassKg = 0;
-          let totalCo2Kg = 0;
-          
-          parsedData.forEach((rowObj: any) => {
-            const included = rowObj["Included_In_Total"];
-            if (included && included.startsWith("YES")) {
-              const rowKg = parseFloat(rowObj["Total_CO2_kg"] || "0");
-              total += rowKg;
-              const co2Tonnes = parseFloat(rowObj["Total_CO2_tonnes"] || "0");
-              totalCo2Kg += (co2Tonnes * 1000);
-              const rowEur = parseFloat(rowObj["CBAM_Cost_EUR"] || "0");
-              totalCbamEur += rowEur;
-              const elMass = parseFloat(rowObj["DeMinimis_Eligible_Mass_kg"] || "0");
-              if (elMass > 0) eligibleMassKg += elMass;
-              const basis = rowObj["Emissions_Basis"];
-              if (basis === "DEFAULT_FALLBACK" || basis === "COMMISSION_DEFAULT" || basis === "LEGACY_FALLBACK") {
-                  fallbackKg += rowKg;
-              }
-            } else if (included && included.startsWith("NO")) {
-              revCount += 1;
-              if (rowObj["Parsed_Weight_kg"]) {
-                  revTonnes += parseFloat(rowObj["Parsed_Weight_kg"] || "0") / 1000.0;
-              }
-            }
-          });
-          
-          const elMassTonnes = eligibleMassKg / 1000.0;
-          const isExempt = elMassTonnes <= 50 && elMassTonnes > 0;
-          
-          setResultsData(parsedData);
-          setTotalCO2(total);
-          setTotalCbamCost(totalCbamEur);
-          setPendingReviewCount(revCount);
-          setPendingReviewTonnes(revTonnes);
-          setFallbackTonnes(fallbackKg / 1000.0);
-          setTaxableTonnes(isExempt ? 0 : totalCo2Kg / 1000.0);
-          setIsDeMinimisExempt(isExempt);
-          setEligibleMassTonnes(elMassTonnes);
-          
-          // Switch to results view
-          setActiveTab("upload"); // Re-use the upload view to show the table
-          
-          // Scroll to results
-          setTimeout(() => {
-            const el = document.getElementById('cbam-report');
-            if (el) el.scrollIntoView({ behavior: 'smooth' });
-          }, 100);
+          setHistoryDetailData(data.results_data);
         } else {
-          alert("Detailed results are not available for this legacy analysis.");
+          setHistoryDetailData([]);
         }
       }
     } catch (e) {
       console.error(e);
-      alert("Failed to load details.");
+      setHistoryDetailData([]);
+    } finally {
+      setHistoryDetailLoading(false);
     }
   };
 
@@ -565,7 +520,122 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass`
 
           {activeTab === "history" && (
             <div className="space-y-4">
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              {/* Detail View */}
+              {selectedHistoryItem ? (
+                <div className="space-y-6">
+                  {/* Header with back button */}
+                  <div className="flex items-center gap-4">
+                    <button
+                      onClick={() => { setSelectedHistoryItem(null); setHistoryDetailData(null); }}
+                      className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
+                    >
+                      <ArrowLeft className="w-5 h-5 text-slate-600 dark:text-slate-400" />
+                    </button>
+                    <div>
+                      <h3 className="text-lg font-bold text-slate-900 dark:text-white">{selectedHistoryItem.filename}</h3>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">
+                        {new Date(selectedHistoryItem.created_at).toLocaleDateString()} {new Date(selectedHistoryItem.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                        {" · "}
+                        <span className={`font-bold ${selectedHistoryItem.strict_mode ? 'text-red-500' : 'text-emerald-500'}`}>
+                          {selectedHistoryItem.strict_mode ? 'Strict Mode' : 'Normal Mode'}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Summary Cards */}
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4">
+                      <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total CO₂</p>
+                      <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{(selectedHistoryItem.total_co2_tonnes || 0).toFixed(2)} <span className="text-sm font-normal text-slate-500">t</span></p>
+                    </div>
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4">
+                      <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">CBAM Cost</p>
+                      <p className="text-2xl font-bold text-amber-600 dark:text-amber-400 mt-1">€{(selectedHistoryItem.cbam_cost_eur || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                    </div>
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4">
+                      <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total Rows</p>
+                      <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{selectedHistoryItem.total_rows}</p>
+                    </div>
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4">
+                      <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Quarantined</p>
+                      <p className={`text-2xl font-bold mt-1 ${selectedHistoryItem.quarantined_rows > 0 ? 'text-red-500' : 'text-emerald-500'}`}>{selectedHistoryItem.quarantined_rows}</p>
+                    </div>
+                  </div>
+
+                  {/* Results Table */}
+                  {historyDetailLoading ? (
+                    <div className="flex items-center justify-center py-12">
+                      <Loader2 className="w-6 h-6 animate-spin text-amber-500" />
+                      <span className="ml-2 text-slate-500 dark:text-slate-400">Loading detailed results...</span>
+                    </div>
+                  ) : historyDetailData && historyDetailData.length > 0 ? (
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden">
+                      <div className="p-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/50">
+                        <h4 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                          <Table className="w-4 h-4 text-amber-500" /> Line-by-Line Breakdown
+                        </h4>
+                      </div>
+                      <div className="overflow-x-auto max-h-[500px] overflow-y-auto">
+                        <table className="w-full text-xs">
+                          <thead className="sticky top-0 bg-slate-100 dark:bg-slate-950">
+                            <tr>
+                              <th className="text-left px-3 py-2 font-bold text-slate-600 dark:text-slate-400">Material</th>
+                              <th className="text-right px-3 py-2 font-bold text-slate-600 dark:text-slate-400">Weight (kg)</th>
+                              <th className="text-left px-3 py-2 font-bold text-slate-600 dark:text-slate-400">Sector</th>
+                              <th className="text-left px-3 py-2 font-bold text-slate-600 dark:text-slate-400">Origin</th>
+                              <th className="text-right px-3 py-2 font-bold text-slate-600 dark:text-slate-400">CO₂ (t)</th>
+                              <th className="text-right px-3 py-2 font-bold text-slate-600 dark:text-slate-400">CBAM (€)</th>
+                              <th className="text-left px-3 py-2 font-bold text-slate-600 dark:text-slate-400">Basis</th>
+                              <th className="text-left px-3 py-2 font-bold text-slate-600 dark:text-slate-400">Status</th>
+                              <th className="text-left px-3 py-2 font-bold text-slate-600 dark:text-slate-400 min-w-[200px]">Notes</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {historyDetailData.map((row: any, i: number) => {
+                              const included = (row.Included_In_Total || "").toString();
+                              const isYes = included.startsWith("YES");
+                              const isNo = included.startsWith("NO") || included.startsWith("QUARANTINE");
+                              return (
+                                <tr key={i} className={`border-b border-slate-100 dark:border-slate-800 ${isNo ? 'bg-red-50/50 dark:bg-red-950/10' : ''}`}>
+                                  <td className="px-3 py-2 text-slate-900 dark:text-white font-semibold max-w-[180px] truncate">{row.Material || row.material_id || '-'}</td>
+                                  <td className="px-3 py-2 text-right text-slate-700 dark:text-slate-300 font-mono">{parseFloat(row.Parsed_Weight_kg || 0).toLocaleString()}</td>
+                                  <td className="px-3 py-2 text-slate-600 dark:text-slate-400">{row.cbam_sector || '-'}</td>
+                                  <td className="px-3 py-2 text-slate-600 dark:text-slate-400">{row.country_of_origin || '-'}</td>
+                                  <td className="px-3 py-2 text-right text-slate-700 dark:text-slate-300 font-mono">{parseFloat(row.Total_CO2_tonnes || 0).toFixed(3)}</td>
+                                  <td className="px-3 py-2 text-right font-bold text-slate-900 dark:text-white font-mono">€{parseFloat(row.CBAM_Cost_EUR || 0).toFixed(2)}</td>
+                                  <td className="px-3 py-2">
+                                    <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
+                                      row.Emissions_Basis === 'VERIFIED' ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400' :
+                                      'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
+                                    }`}>{row.Emissions_Basis || '-'}</span>
+                                  </td>
+                                  <td className="px-3 py-2">
+                                    <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
+                                      isYes ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400' :
+                                      'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
+                                    }`}>{isYes ? 'INCLUDED' : 'EXCLUDED'}</span>
+                                  </td>
+                                  <td className="px-3 py-2 text-slate-500 dark:text-slate-400 text-[11px] max-w-[250px] truncate" title={row.Notes || ''}>{row.Notes || '-'}</td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  ) : historyDetailData && historyDetailData.length === 0 ? (
+                    <div className="text-center py-8 text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
+                      <AlertTriangle className="w-8 h-8 mx-auto mb-2 text-amber-500" />
+                      <p className="font-semibold">Detailed results unavailable</p>
+                      <p className="text-sm mt-1">This analysis was run before detailed logging was enabled.</p>
+                    </div>
+                  ) : null}
+                </div>
+              ) : (
+              /* History List View */
+              <div>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 mb-4">
                 <Clock className="w-5 h-5 text-amber-500" /> Analysis History
               </h3>
               {historyLoading ? (
@@ -599,7 +669,7 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass`
                         {historyData.map((item: any, idx: number) => (
                           <tr 
                             key={item.id} 
-                            onClick={() => loadHistoryItem(item.id)}
+                            onClick={() => loadHistoryItem(item)}
                             className="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer"
                           >
                             <td className="px-4 py-3 text-slate-500 dark:text-slate-400 font-mono text-xs">{idx + 1}</td>
@@ -626,6 +696,8 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass`
                     </table>
                   </div>
                 </div>
+              )}
+              </div>
               )}
             </div>
           )}
