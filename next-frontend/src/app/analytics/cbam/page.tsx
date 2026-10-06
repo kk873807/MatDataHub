@@ -185,11 +185,17 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass`
         let eligibleTaxEur = 0;
         let ineligibleTaxEur = 0;
         
+        let totalCo2Kg = 0;
+        
         parsedData.forEach((rowObj: any) => {
           const included = rowObj["Included_In_Total"];
           if (included && included.startsWith("YES")) {
             const rowKg = parseFloat(rowObj["Total_CO2_kg"] || "0");
             total += rowKg;
+            
+            const co2Tonnes = parseFloat(rowObj["Total_CO2_tonnes"] || "0");
+            totalCo2Kg += (co2Tonnes * 1000); // Track exact CO2 mass for taxable calculation
+            
             const rowEur = parseFloat(rowObj["CBAM_Cost_EUR"] || "0");
             totalCbamEur += rowEur;
             
@@ -201,7 +207,8 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass`
               ineligibleTaxEur += rowEur;
             }
             
-            if (rowObj["Emissions_Basis"] === "DEFAULT_FALLBACK") {
+            const basis = rowObj["Emissions_Basis"];
+            if (basis === "DEFAULT_FALLBACK" || basis === "COMMISSION_DEFAULT" || basis === "LEGACY_FALLBACK") {
                 fallbackKg += rowKg;
             }
           } else if (included && included.startsWith("NO")) {
@@ -217,8 +224,8 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass`
         // Tax is now fully processed by the backend per-row, so totalCbamEur is inherently correct
         const activeTaxEur = totalCbamEur;
         
-        // Reverse engineer taxable equivalent kg (Tax = Tonnes * €75)
-        taxableKg = activeTaxEur / 0.075;
+        // Use exact CO2 sum from backend (eliminates carbon-price division errors)
+        taxableKg = isExempt ? 0 : totalCo2Kg;
 
         setResultsData(parsedData);
         setTotalCO2(total);
