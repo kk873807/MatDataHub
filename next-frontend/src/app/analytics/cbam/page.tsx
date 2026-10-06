@@ -1,14 +1,16 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeft, Factory, UploadCloud, Loader2, FileSpreadsheet, Lock, Download, FileText, Table, AlertTriangle } from "lucide-react";
+import { ArrowLeft, Factory, UploadCloud, Loader2, FileSpreadsheet, Lock, Download, FileText, Table, AlertTriangle, Clock } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { API } from "@/lib/api";
 import Papa from "papaparse";
 
 export default function CBAMAnalytics() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<"upload" | "manual">("upload");
+  const [activeTab, setActiveTab] = useState<"upload" | "manual" | "history">("upload");
+  const [historyData, setHistoryData] = useState<any[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   
   // CSV Configuration
@@ -19,6 +21,30 @@ export default function CBAMAnalytics() {
   // Manual Entry State
   const [manualMaterial, setManualMaterial] = useState("");
   const [manualWeight, setManualWeight] = useState("");
+
+  const fetchHistory = async () => {
+    setHistoryLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+      const res = await fetch(`${API}/account/bom-history`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      if (res.ok) {
+        setHistoryData(await res.json());
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setHistoryLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === "history") {
+      fetchHistory();
+    }
+  }, [activeTab]);
 
   // Results state
   const [loading, setLoading] = useState(false);
@@ -336,9 +362,17 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass`
             </button>
             <button
               onClick={() => setActiveTab("manual")}
-              className={`px-4 py-2 font-bold rounded-2xl transition-colors ${activeTab === "manual" ? "bg-amber-100 dark:bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400" : "text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white"}`}
+              className={`px-4 py-2 font-bold rounded-2xl transition-colors ${activeTab === "manual" ? "bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400" : "text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white"}`}
             >
               Manual Entry
+            </button>
+            <button
+              onClick={() => setActiveTab("history")}
+              className={`px-4 py-2 font-bold rounded-2xl transition-colors ${activeTab === "history" ? "bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400" : "text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white"}`}
+            >
+              <span className="flex items-center gap-2">
+                <Clock className="w-4 h-4" /> History
+              </span>
             </button>
           </div>
 
@@ -455,6 +489,70 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass`
             </div>
           )}
 
+          {activeTab === "history" && (
+            <div className="space-y-4">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <Clock className="w-5 h-5 text-amber-500" /> Analysis History
+              </h3>
+              {historyLoading ? (
+                <div className="flex items-center justify-center py-12">
+                  <Loader2 className="w-6 h-6 animate-spin text-amber-500" />
+                  <span className="ml-2 text-slate-500 dark:text-slate-400">Loading history...</span>
+                </div>
+              ) : historyData.length === 0 ? (
+                <div className="text-center py-12 text-slate-500 dark:text-slate-400">
+                  <FileSpreadsheet className="w-12 h-12 mx-auto mb-3 opacity-40" />
+                  <p className="font-semibold">No analyses yet</p>
+                  <p className="text-sm mt-1">Upload a BOM CSV or try demo data to get started.</p>
+                </div>
+              ) : (
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="bg-slate-50 dark:bg-slate-950/50 border-b border-slate-200 dark:border-slate-800">
+                          <th className="text-left px-4 py-3 font-bold text-slate-700 dark:text-slate-300">#</th>
+                          <th className="text-left px-4 py-3 font-bold text-slate-700 dark:text-slate-300">File</th>
+                          <th className="text-left px-4 py-3 font-bold text-slate-700 dark:text-slate-300">Date</th>
+                          <th className="text-right px-4 py-3 font-bold text-slate-700 dark:text-slate-300">Rows</th>
+                          <th className="text-right px-4 py-3 font-bold text-slate-700 dark:text-slate-300">Quarantined</th>
+                          <th className="text-right px-4 py-3 font-bold text-slate-700 dark:text-slate-300">CO₂ (t)</th>
+                          <th className="text-right px-4 py-3 font-bold text-slate-700 dark:text-slate-300">CBAM Cost (€)</th>
+                          <th className="text-center px-4 py-3 font-bold text-slate-700 dark:text-slate-300">Mode</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {historyData.map((item: any, idx: number) => (
+                          <tr key={item.id} className="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                            <td className="px-4 py-3 text-slate-500 dark:text-slate-400 font-mono text-xs">{idx + 1}</td>
+                            <td className="px-4 py-3 text-slate-900 dark:text-white font-semibold truncate max-w-[200px]">{item.filename}</td>
+                            <td className="px-4 py-3 text-slate-500 dark:text-slate-400 text-xs whitespace-nowrap">
+                              {new Date(item.created_at).toLocaleDateString()} {new Date(item.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                            </td>
+                            <td className="px-4 py-3 text-right text-slate-700 dark:text-slate-300 font-mono">{item.total_rows}</td>
+                            <td className="px-4 py-3 text-right">
+                              <span className={`font-mono ${item.quarantined_rows > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
+                                {item.quarantined_rows}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3 text-right text-slate-700 dark:text-slate-300 font-mono">{(item.total_co2_tonnes || 0).toFixed(2)}</td>
+                            <td className="px-4 py-3 text-right font-bold text-slate-900 dark:text-white font-mono">€{(item.cbam_cost_eur || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                            <td className="px-4 py-3 text-center">
+                              <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${item.strict_mode ? 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400' : 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400'}`}>
+                                {item.strict_mode ? 'Strict' : 'Normal'}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {activeTab !== "history" && (
           <div className="mt-8 flex justify-end">
             <button
               onClick={processBOM}
@@ -465,6 +563,7 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass`
               {loading ? "Analyzing..." : "Calculate CBAM & ESG"}
             </button>
           </div>
+          )}
         </div>
 
         {/* Live Preview Results */}

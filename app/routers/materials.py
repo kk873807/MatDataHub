@@ -855,6 +855,29 @@ def analyze_bom(
     processor = BOMProcessor(db)
     enriched_df = processor.process_bom(df, material_col, weight_col, strict_mode=strict_mode)
     
+    from app.models import BOMAnalysis
+    try:
+        included_mask = enriched_df["Included_In_Total"].astype(str).str.startswith("YES")
+        total_co2 = enriched_df.loc[included_mask, "Total_CO2_tonnes"].sum()
+        cbam_eur = enriched_df.loc[included_mask, "CBAM_Cost_EUR"].sum()
+        quarantined = int((~included_mask).sum())
+        
+        bom_record = BOMAnalysis(
+            user_id=current_user.id,
+            filename=file.filename or "unknown.csv",
+            strict_mode=strict_mode,
+            total_co2_tonnes=float(total_co2) if pd.notnull(total_co2) else 0.0,
+            cbam_cost_eur=float(cbam_eur) if pd.notnull(cbam_eur) else 0.0,
+            total_rows=len(enriched_df),
+            quarantined_rows=quarantined
+        )
+        db.add(bom_record)
+        db.commit()
+    except Exception as e:
+        # Don't fail the request if logging fails
+        db.rollback()
+        print(f"Failed to log BOMAnalysis: {e}")
+    
     # Return as CSV
     stream = io.StringIO()
     enriched_df.to_csv(stream, index=False)

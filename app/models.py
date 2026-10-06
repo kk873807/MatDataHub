@@ -315,3 +315,32 @@ class CBAMDefault(Base):
         Index('ix_cbam_defaults_lookup', 'cn_prefix', 'year', 'origin_country'),
     )
 
+class BOMAnalysis(Base):
+    """
+    Tracks a user's uploaded BOM and the resulting CBAM/ESG analysis summary.
+    Allows users to view history and track carbon costs over time.
+    """
+    __tablename__ = "bom_analyses"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    filename = Column(String(255), nullable=False)
+    
+    strict_mode = Column(Boolean, default=False)
+    total_co2_tonnes = Column(Float, default=0.0)
+    cbam_cost_eur = Column(Float, default=0.0)
+    
+    # Optional: we can store the full enriched results as JSON, but for large BOMs
+    # it's better to store just the summary and let users re-upload, or store the CSV in S3.
+    # For now, we'll store basic aggregate stats for the dashboard.
+    total_rows = Column(Integer, default=0)
+    quarantined_rows = Column(Integer, default=0)
+    
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    user = relationship("User")
+
+    def __repr__(self):
+        return f"<BOMAnalysis(id={self.id}, user_id={self.user_id}, file='{self.filename}', cost={self.cbam_cost_eur})>"
+
+

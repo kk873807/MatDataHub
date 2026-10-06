@@ -37,3 +37,24 @@ def generate_api_key(
         "api_secret": raw_secret,
         "message": "API Key generated successfully!"
     }
+
+from app.models import BOMAnalysis
+
+@router.get("/bom-history")
+def get_bom_history(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    """Fetch the CBAM/ESG BOM analysis history for the logged-in user."""
+    history = db.query(BOMAnalysis).filter(BOMAnalysis.user_id == current_user.id).order_by(BOMAnalysis.created_at.desc()).all()
+    
+    return [
+        {
+            "id": item.id,
+            "filename": item.filename,
+            "strict_mode": item.strict_mode,
+            "total_co2_tonnes": item.total_co2_tonnes,
+            "cbam_cost_eur": item.cbam_cost_eur,
+            "total_rows": item.total_rows,
+            "quarantined_rows": item.quarantined_rows,
+            "created_at": item.created_at
+        }
+        for item in history
+    ]
