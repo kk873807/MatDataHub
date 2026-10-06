@@ -827,7 +827,9 @@ import io
 from fastapi.responses import StreamingResponse
 
 @router.post("/bom_analyze", tags=["Enterprise Features"])
+@limiter.limit("5/minute")
 def analyze_bom(
+    request: Request,
     file: UploadFile = File(...),
     material_col: str = Form(...),
     weight_col: str = Form(...),
