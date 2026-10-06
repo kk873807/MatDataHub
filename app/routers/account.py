@@ -79,3 +79,14 @@ def get_bom_history_detail(bom_id: int, db: Session = Depends(get_db), current_u
         "created_at": bom.created_at,
         "results_json": bom.results_json
     }
+
+@router.delete("/bom-history/{bom_id}")
+def delete_bom_history(bom_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    """Delete a specific BOM analysis record."""
+    bom = db.query(BOMAnalysis).filter(BOMAnalysis.id == bom_id, BOMAnalysis.user_id == current_user.id).first()
+    if not bom:
+        raise HTTPException(status_code=404, detail="BOM analysis not found")
+        
+    db.delete(bom)
+    db.commit()
+    return {"status": "success", "message": "BOM analysis deleted successfully"}

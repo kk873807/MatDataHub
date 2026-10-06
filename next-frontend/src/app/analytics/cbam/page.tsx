@@ -1,7 +1,7 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeft, Factory, UploadCloud, Loader2, FileSpreadsheet, Lock, Download, FileText, Table, AlertTriangle, Clock } from "lucide-react";
+import { ArrowLeft, Factory, UploadCloud, Loader2, FileSpreadsheet, Lock, Download, FileText, Table, AlertTriangle, Clock, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { API } from "@/lib/api";
 import Papa from "papaparse";
@@ -81,6 +81,27 @@ export default function CBAMAnalytics() {
       setHistoryDetailData([]);
     } finally {
       setHistoryDetailLoading(false);
+    }
+  };
+
+  const deleteHistoryItem = async (e: React.MouseEvent, id: number) => {
+    e.stopPropagation(); // Prevent opening the detail view
+    if (!confirm("Are you sure you want to delete this BOM analysis history?")) return;
+    
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API}/account/bom-history/${id}`, {
+        method: "DELETE",
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      if (res.ok) {
+        setHistoryData(prev => prev.filter(item => item.id !== id));
+      } else {
+        alert("Failed to delete history item.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error deleting history item.");
     }
   };
 
@@ -677,6 +698,7 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass`
                           <th className="text-right px-4 py-3 font-bold text-slate-700 dark:text-slate-300">CO₂ (t)</th>
                           <th className="text-right px-4 py-3 font-bold text-slate-700 dark:text-slate-300">CBAM Cost (€)</th>
                           <th className="text-center px-4 py-3 font-bold text-slate-700 dark:text-slate-300">Mode</th>
+                          <th className="text-center px-4 py-3 font-bold text-slate-700 dark:text-slate-300">Actions</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -684,7 +706,7 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass`
                           <tr 
                             key={item.id} 
                             onClick={() => loadHistoryItem(item)}
-                            className="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer"
+                            className="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group"
                           >
                             <td className="px-4 py-3 text-slate-500 dark:text-slate-400 font-mono text-xs">{idx + 1}</td>
                             <td className="px-4 py-3 text-slate-900 dark:text-white font-semibold truncate max-w-[200px]">{item.filename}</td>
@@ -703,6 +725,15 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass`
                               <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${item.strict_mode ? 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400' : 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400'}`}>
                                 {item.strict_mode ? 'Strict' : 'Normal'}
                               </span>
+                            </td>
+                            <td className="px-4 py-3 text-center">
+                              <button 
+                                onClick={(e) => deleteHistoryItem(e, item.id)}
+                                className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
+                                title="Delete analysis"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
                             </td>
                           </tr>
                         ))}
