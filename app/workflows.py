@@ -448,7 +448,7 @@ class BOMProcessor:
             cbam_sector = extract_string(['cbam_sector', 'sector'])
             candidates = self.mat_names
 
-            sector_valid = True
+            sector_valid = False
             sector_lower = ""
             allowed_cats = None
             if cbam_sector and cbam_sector.lower() not in ('nan', ''):
@@ -461,21 +461,22 @@ class BOMProcessor:
                 if allowed_cats is None:
                     quarantine_reasons.append("Sector not covered by CBAM")
                     errors.append("Sector not covered by CBAM")
-                    sector_valid = False
-                elif allowed_cats:
-                    candidates = []
-                    for cat in allowed_cats:
-                        candidates.extend(self.cat_to_names.get(cat, []))
-                    if not candidates:
+                else:
+                    sector_valid = True
+                    if allowed_cats:
                         candidates = []
-                elif allowed_cats == []:
-                    candidates = []
+                        for cat in allowed_cats:
+                            candidates.extend(self.cat_to_names.get(cat, []))
+                    elif allowed_cats == []:
+                        candidates = []
             else:
-                sector_valid = True
-                if cbam_sector: 
-                    quarantine_reasons.append("Sector not covered by CBAM")
-                    errors.append("Sector not covered by CBAM")
-                    sector_valid = False
+                # No sector provided. See if CN code can rescue it, otherwise quarantine.
+                if not cn_code or not any(cn_code.replace(" ", "").startswith(p) for p in ['72','73','2523','76','31','2814','2804']):
+                    quarantine_reasons.append("Sector missing and CN code not covered by CBAM")
+                    errors.append("Sector missing and CN code not covered by CBAM")
+                else:
+                    # Guessed valid via CN code
+                    sector_valid = True
 
             match_tuple = process.extractOne(
                 raw_name, candidates, scorer=fuzz.token_sort_ratio
@@ -630,8 +631,14 @@ class BOMProcessor:
             raw_cbam_cost_eur = cbam_cost_eur
             
             if strict_mode:
+                cbam_critical_errors = [
+                    "Missing material ID", "Missing material name", "Missing quantity", "Non-numeric quantity",
+                    "Missing CN Code", "Invalid CN Code format", "Missing supplier country",
+                    "Unrecognized country", "Missing destination country", "Unrecognized destination country",
+                    "Missing shipment date", "Shipment date cannot be in the future", "Invalid date format"
+                ]
                 for err in errors:
-                    if err not in quarantine_reasons:
+                    if err not in quarantine_reasons and any(err.startswith(c) for c in cbam_critical_errors):
                         quarantine_reasons.append(f"Strict Mode: {err}")
             
             if quarantine_reasons:
