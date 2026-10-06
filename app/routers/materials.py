@@ -847,7 +847,10 @@ def analyze_bom(
 
     from app.workflows import BOMProcessor
     contents = file.file.read()
-    df = pd.read_csv(io.BytesIO(contents))
+    try:
+        df = pd.read_csv(io.BytesIO(contents))
+    except Exception as e:
+        raise HTTPException(status_code=400, detail="Invalid CSV format: unable to parse file.")
     
     processor = BOMProcessor(db)
     enriched_df = processor.process_bom(df, material_col, weight_col, strict_mode=strict_mode)
