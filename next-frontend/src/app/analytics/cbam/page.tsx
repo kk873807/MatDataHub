@@ -61,7 +61,16 @@ export default function CBAMAnalytics() {
       });
       if (res.ok) {
         const data = await res.json();
-        if (data.results_data && data.results_data.length > 0) {
+        if (data.results_json) {
+          try {
+            const parsed = JSON.parse(data.results_json);
+            setHistoryDetailData(parsed);
+          } catch (err) {
+            console.error("Failed to parse history json", err);
+            setHistoryDetailData([]);
+          }
+        } else if (data.results_data && data.results_data.length > 0) {
+          // Fallback for old API format
           setHistoryDetailData(data.results_data);
         } else {
           setHistoryDetailData([]);
