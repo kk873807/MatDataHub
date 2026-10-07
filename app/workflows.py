@@ -146,81 +146,109 @@ class BOMProcessor:
     
     # ── Annex I Rule Table (Regulation (EU) 2023/956) ──
     # Evaluated top-down; first matching prefix wins.
-    # (prefix, action, sector)  action: "include" or "exclude"
+    # Rules list the exact string prefix to match.
     ANNEX_I_RULES = [
-        # Exclusions first (more specific beats less specific)
-        ("7204",   "exclude", None),       # Ferrous waste and scrap
-        ("72022",  "exclude", None),       # Ferro-silicon >55% Si
-        ("7602",   "exclude", None),       # Aluminium waste and scrap
+        # Explicit exclusions in Chapter 72
+        ("72022", "exclude", None),        # Ferro-silicon
+        ("7204", "exclude", None),         # Ferrous waste and scrap
 
         # Cement
-        ("2507",   "include", "cement"),
-        ("2523",   "include", "cement"),
+        ("25070080", "include", "cement"), # Kaolinitic clays
+        ("25231000", "include", "cement"),
+        ("25232100", "include", "cement"),
+        ("25232900", "include", "cement"),
+        ("25233000", "include", "cement"),
+        ("25239000", "include", "cement"),
 
         # Electricity
-        ("2716",   "include", "electricity"),
+        ("27160000", "include", "electricity"),
 
-        # Hydrogen — only hydrogen gas subheading, not all of 2804
+        # Hydrogen
         ("28041000", "include", "hydrogen"),
 
         # Fertilisers
-        ("2808",     "include", "fertiliser"),
-        ("2814",     "include", "fertiliser"),
+        ("28080000", "include", "fertiliser"),
+        ("2814", "include", "fertiliser"),
         ("28342100", "include", "fertiliser"),
-        ("3102",     "include", "fertiliser"),
-        ("3105",     "include", "fertiliser"),
+        ("3102", "include", "fertiliser"),
+        ("31056000", "exclude", None),     # Excluded from 3105
+        ("3105", "include", "fertiliser"),
 
         # Iron ores (agglomerated)
         ("26011200", "include", "iron & steel"),
 
-        # Iron & Steel: Chapter 72 (broad include, after exclusions above)
-        ("72",     "include", "iron & steel"),
+        # Iron & Steel: Chapter 72 (after exclusions)
+        ("72", "include", "iron & steel"),
 
-        # Iron & Steel: Chapter 73 (specific headings only)
-        ("7301",   "include", "iron & steel"),
-        ("7302",   "include", "iron & steel"),
-        ("7303",   "include", "iron & steel"),
-        ("7304",   "include", "iron & steel"),
-        ("7305",   "include", "iron & steel"),
-        ("7306",   "include", "iron & steel"),
-        ("7307",   "include", "iron & steel"),
-        ("7308",   "include", "iron & steel"),
-        ("7309",   "include", "iron & steel"),
-        ("7310",   "include", "iron & steel"),
-        ("7311",   "include", "iron & steel"),
-        ("7318",   "include", "iron & steel"),
-        # 7326: Only selected subheadings are covered
+        # Iron & Steel: Chapter 73
+        ("7301", "include", "iron & steel"),
+        ("7302", "include", "iron & steel"),
+        ("730300", "include", "iron & steel"),
+        ("7304", "include", "iron & steel"),
+        ("7305", "include", "iron & steel"),
+        ("7306", "include", "iron & steel"),
+        ("7307", "include", "iron & steel"),
+        ("7308", "include", "iron & steel"),
+        ("730900", "include", "iron & steel"),
+        ("7310", "include", "iron & steel"),
+        ("731100", "include", "iron & steel"),
+        ("7318", "include", "iron & steel"),
         ("73261100", "include", "iron & steel"),
+        ("73261910", "include", "iron & steel"),
         ("73261990", "include", "iron & steel"),
-        ("73262090", "include", "iron & steel"),
+        ("73262000", "include", "iron & steel"),
+        ("73269030", "include", "iron & steel"),
+        ("73269040", "include", "iron & steel"),
+        ("73269050", "include", "iron & steel"),
+        ("73269060", "include", "iron & steel"),
+        ("73269092", "include", "iron & steel"),
+        ("73269094", "include", "iron & steel"),
+        ("73269096", "include", "iron & steel"),
+        ("73269098", "include", "iron & steel"),
 
-        # Aluminium: Chapter 76 (specific headings, after exclusions above)
-        ("7601",   "include", "aluminium"),
-        ("7603",   "include", "aluminium"),
-        ("7604",   "include", "aluminium"),
-        ("7605",   "include", "aluminium"),
-        ("7606",   "include", "aluminium"),
-        ("7607",   "include", "aluminium"),
-        ("7608",   "include", "aluminium"),
-        ("7609",   "include", "aluminium"),
-        ("7610",   "include", "aluminium"),
-        ("7611",   "include", "aluminium"),
-        ("7612",   "include", "aluminium"),
-        ("7613",   "include", "aluminium"),
-        ("7614",   "include", "aluminium"),
-        ("7616",   "include", "aluminium"),
+        # Aluminium
+        ("7602", "exclude", None),         # Waste and scrap
+        ("7601", "include", "aluminium"),
+        ("7603", "include", "aluminium"),
+        ("7604", "include", "aluminium"),
+        ("7605", "include", "aluminium"),
+        ("7606", "include", "aluminium"),
+        ("7607", "include", "aluminium"),
+        ("7608", "include", "aluminium"),
+        ("76090000", "include", "aluminium"),
+        ("7610", "include", "aluminium"),
+        ("76110000", "include", "aluminium"),
+        ("7612", "include", "aluminium"),
+        ("76130000", "include", "aluminium"),
+        ("7614", "include", "aluminium"),
+        ("76169990", "include", "aluminium"),
     ]
 
     @classmethod
     def get_sector_from_cn(cls, clean_cn: str):
-        """Data-driven Annex I lookup. First matching prefix wins."""
-        if not clean_cn: return None
+        """
+        Data-driven Annex I lookup returning a detailed status.
+        Returns (status, sector)
+        status in ["EXACT_MATCH", "EXCLUDED", "INCOMPLETE", "NOT_COVERED"]
+        """
+        if not clean_cn:
+            return ("NOT_COVERED", None)
+            
+        # 1. Does the CN code fully match a rule prefix?
         for prefix, action, sector in cls.ANNEX_I_RULES:
             if clean_cn.startswith(prefix):
                 if action == "exclude":
-                    return None
-                return sector
-        return None
+                    return ("EXCLUDED", None)
+                return ("EXACT_MATCH", sector)
+                
+        # 2. Is the CN code a partial string of an INCLUDED rule? (e.g. '280410' against '28041000')
+        # This handles short HS codes.
+        for prefix, action, sector in cls.ANNEX_I_RULES:
+            if prefix.startswith(clean_cn) and len(clean_cn) < len(prefix):
+                if action == "include":
+                    return ("INCOMPLETE", sector)
+                    
+        return ("NOT_COVERED", None)
 
     # Country name aliases for normalisation
     COUNTRY_ALIASES = {
@@ -316,6 +344,10 @@ class BOMProcessor:
         cache_key = (raw_name, allowed_cats_tuple)
         if cache_key in self._match_cache:
             return self._match_cache[cache_key]
+        
+        # Cap the cache size for memory safety in long-running processes
+        if len(self._match_cache) > 5000:
+            self._match_cache.clear()
         
         candidates = self.mat_names
         if allowed_cats_tuple is not None:
@@ -586,18 +618,18 @@ class BOMProcessor:
                 elif d_lower not in self.EU_DESTINATION_COUNTRIES:
                     notes.append("Destination outside EU (exempt)")
                     
-            shipment_date = extract_string(['last_shipment_date', 'shipment_date', 'date'])
-            if not shipment_date:
-                errors.append("Missing shipment date")
-                quarantine_reasons.append("Missing shipment date")
+            release_date = extract_string(['release_for_free_circulation_date', 'release_date', 'last_shipment_date', 'shipment_date', 'date'])
+            if not release_date:
+                errors.append("Missing release/shipment date")
+                quarantine_reasons.append("Missing date")
             else:
                 try:
-                    dt = datetime.datetime.strptime(shipment_date, "%Y-%m-%d")
+                    dt = datetime.datetime.strptime(release_date, "%Y-%m-%d")
                     if dt > datetime.datetime.now():
-                        errors.append("Shipment date cannot be in the future")
-                        quarantine_reasons.append("Shipment date cannot be in the future")
+                        errors.append("Date cannot be in the future")
+                        quarantine_reasons.append("Date cannot be in the future")
                     elif dt < datetime.datetime(2026, 1, 1):
-                        notes.append("Pre-2026 shipment (reporting-only phase, no financial liability)")
+                        notes.append("Pre-2026 release (reporting-only phase, no financial liability)")
                 except ValueError:
                     errors.append("Invalid date format (requires YYYY-MM-DD)")
                     quarantine_reasons.append("Invalid date format")
@@ -609,7 +641,8 @@ class BOMProcessor:
             sector_lower = ""
             allowed_cats = None
             is_out_of_scope = False
-            cn_derived_sector = self.get_sector_from_cn(clean_cn) if clean_cn else None
+            
+            cn_status, cn_derived_sector = self.get_sector_from_cn(clean_cn) if clean_cn else ("NOT_COVERED", None)
             
             invalid_sector_vals = {"nan", "n/a", "none", "null", "-", ""}
             declared_sector = None
@@ -617,35 +650,36 @@ class BOMProcessor:
                 declared_sector = cbam_sector.strip().lower()
             
             missing_scope_msg = None
-            if cn_derived_sector:
-                # CN code maps to a known CBAM sector
+            if cn_status == "EXACT_MATCH":
                 sector_lower = cn_derived_sector
                 sector_valid = True
-                # Look up category pre-filter from the derived sector
                 for keyword, cats in self.CBAM_SECTOR_CATEGORY_MAP.items():
                     if keyword in sector_lower:
                         allowed_cats = cats
                         break
-                # Cross-check: if user also declared a sector, warn if mismatch
                 if declared_sector and declared_sector != sector_lower:
                     if not any(k in declared_sector for k in sector_lower.split()):
                         errors.append(f"Declared sector '{declared_sector}' differs from CN-derived sector '{sector_lower}'")
+            elif cn_status == "INCOMPLETE":
+                errors.append("Incomplete CN code (need 8-digit EU CN)")
+                quarantine_reasons.append("Incomplete CN code, needs 8-digit EU CN")
+            elif cn_status == "EXCLUDED":
+                is_out_of_scope = True
+                notes.append("CN code is explicitly excluded from CBAM Annex I (e.g., scrap/waste)")
             elif declared_sector:
-                # CN code not in Annex I, but user declared a sector
+                # cn_status == "NOT_COVERED", but user declared a sector
                 for keyword, cats in self.CBAM_SECTOR_CATEGORY_MAP.items():
                     if keyword == declared_sector or keyword in declared_sector:
                         allowed_cats = cats
                         sector_lower = declared_sector
                         break
                 if allowed_cats is not None or sector_lower:
-                    # Declared sector is a known CBAM sector but CN doesn't match Annex I
                     errors.append(f"CN code '{clean_cn}' not found in Annex I for declared sector '{declared_sector}'")
                     quarantine_reasons.append("CN code not found in Annex I for declared sector")
                 else:
                     is_out_of_scope = True
                     notes.append(f"Sector '{declared_sector}' is not covered by CBAM")
             else:
-                # Neither CN nor declared sector resolve (or both are missing)
                 missing_scope_msg = "Cannot determine CBAM scope"
                 if clean_cn:
                     errors.append("CN code not in CBAM Annex I")
@@ -697,13 +731,11 @@ class BOMProcessor:
             
             emissions_basis = "SUPPLIED"
             
-            # Determine the lookup year from shipment date (default to current year)
-            # NOTE: Calendar year should ideally be the date goods are released for free
-            # circulation, not shipment date. We warn near year boundaries.
+            # Determine the lookup year from release date (default to current year)
             lookup_year = datetime.datetime.now().year
-            if shipment_date:
+            if release_date:
                 try:
-                    dt_ship = datetime.datetime.strptime(shipment_date, "%Y-%m-%d")
+                    dt_ship = datetime.datetime.strptime(release_date, "%Y-%m-%d")
                     lookup_year = dt_ship.year
                     if lookup_year < 2026:
                         lookup_year = 2026  # Use 2026 defaults for pre-2026 dates
@@ -844,17 +876,27 @@ class BOMProcessor:
 
             
             is_deminimis_eligible = "NO"
-            if sector_valid and sector_lower and not any(x in sector_lower for x in ['electric', 'hydrogen']):
+            if cn_status == "EXACT_MATCH" and sector_lower and not any(x in sector_lower for x in ['electric', 'hydrogen']):
                 # Wait, EU/EEA origin rows and non-EU destinations are exempt from CBAM, so they shouldn't count towards the 50t threshold
                 if "Origin is exempt" not in " | ".join(notes) and "Destination outside EU" not in " | ".join(notes):
                     is_deminimis_eligible = "YES"
 
-            importer = extract_string(['importer', 'eori', 'importer_id', 'importer_name']) or "UNKNOWN_IMPORTER"
+            raw_importer = extract_string(['importer', 'eori', 'importer_id', 'importer_name'])
+            importer = raw_importer.strip().upper() if raw_importer else "UNKNOWN_IMPORTER"
+            
+            other_imports_t = 0.0
+            other_imports_str = extract_string(['other_cbam_imports_this_year_t', 'other_cbam_imports_t', 'other_imports_t'])
+            if other_imports_str:
+                try:
+                    other_imports_t = float(other_imports_str.replace(',', ''))
+                except ValueError:
+                    pass
                 
             enriched_rows.append({
                 **clean_row,
                 "Parsed_Weight_kg": round(weight_kg, 2),
                 "Importer": importer,
+                "Other_Imports_t": other_imports_t,
                 "Lookup_Year": lookup_year,
                 "DeMinimis_Eligible_Mass_kg": weight_kg if is_deminimis_eligible == "YES" else 0.0,
                 "Matched_Material": matched_name,
@@ -877,45 +919,49 @@ class BOMProcessor:
                 "Included_In_Total": included_str
             })
 
-        # Group by Importer and Calendar Year for De Minimis
-        mass_by_importer_year = defaultdict(float)
+        # Group by Importer and Calendar Year for De Minimis (use integer grams for precision)
+        grams_by_importer_year = defaultdict(int)
         for r in enriched_rows:
-            mass = r.get("DeMinimis_Eligible_Mass_kg", 0.0)
-            if mass > 0:
+            mass_kg = r.get("DeMinimis_Eligible_Mass_kg", 0.0)
+            if mass_kg > 0:
                 key = (r["Importer"], r["Lookup_Year"])
-                mass_by_importer_year[key] += mass
+                grams_by_importer_year[key] += int(round(mass_kg * 1000))
         
         for r in enriched_rows:
             r["CBAM_Cost_If_Not_Exempt_EUR"] = r.get("CBAM_Cost_EUR", 0.0)
             if r.get("DeMinimis_Eligible_Mass_kg", 0.0) > 0:
                 key = (r["Importer"], r["Lookup_Year"])
-                total_mass = mass_by_importer_year[key]
-                headroom_kg = max(50000.0 - total_mass, 0.0)
-                headroom_t = headroom_kg / 1000.0
+                total_grams = grams_by_importer_year[key]
+                other_imports_grams = int(round(r.get("Other_Imports_t", 0.0) * 1000000))
+                grand_total_grams = total_grams + other_imports_grams
+                
+                headroom_grams = max(50000000 - grand_total_grams, 0)
+                headroom_t = headroom_grams / 1000000.0
                 
                 importer_label = r["Importer"]
                 if importer_label == "UNKNOWN_IMPORTER":
                     importer_label = "importer unknown, grouped together"
                 
-                # Allow strictly <= 50,000 kg (exactly 50t is exempt)
-                if total_mass <= 50000.0:
+                # Allow strictly <= 50,000,000 grams (exactly 50t is exempt)
+                if grand_total_grams <= 50000000:
                     r["DeMinimis_Status"] = f"Possibly exempt (headroom: {headroom_t:.1f}t, verify annual total <= 50t)"
-                    new_note = f"Possibly exempt ({importer_label} in {r['Lookup_Year']}: {total_mass/1000:.1f}t in file, headroom {headroom_t:.1f}t. This file cannot see other imports.)"
+                    new_note = f"Possibly exempt ({importer_label} in {r['Lookup_Year']}: {total_grams/1000000:.1f}t in file, {other_imports_grams/1000000:.1f}t other, headroom {headroom_t:.1f}t.)"
                     current_notes = r.get("Notes", "None")
                     if current_notes == "None":
                         r["Notes"] = new_note
                     elif "Possibly exempt" not in current_notes:
                         r["Notes"] = current_notes + " | " + new_note
-                    # Warn if close to threshold
+                    
                     if headroom_t <= 5.0:
                         r["Notes"] = r["Notes"] + " | WARNING: Very close to 50t threshold"
                 else:
-                    r["DeMinimis_Status"] = "Not exempt"
+                    r["DeMinimis_Status"] = "Not exempt (Once >50t, all embedded emissions for the year are in scope)"
             else:
                 r["DeMinimis_Status"] = "N/A"
         
-        # Add defaults diagnostics to every row for CSV/PDF traceability
-        defaults_info = f"CBAM defaults loaded: {self.cbam_defaults_count} entries"
+        # Add diagnostics to every row for CSV/PDF traceability
+        annex_version = "Regulation (EU) 2023/956 Annex I"
+        defaults_info = f"CBAM rules: {annex_version} | Defaults loaded: {self.cbam_defaults_count} entries"
         if self.cbam_defaults_version:
             defaults_info += f", version: {self.cbam_defaults_version}"
         if self.cbam_defaults_load_error:
