@@ -107,17 +107,17 @@ else:
 
 # Check row 4 (missing name) is quarantined
 r4 = rows[3]
-if r4.get("Included_In_Total", "").startswith("NO"):
+if r4.get("Included_In_Total", "").startswith("QUARANTINE"):
     log_pass("Row 4 (missing material name): Correctly quarantined ✓")
 else:
-    log_fail("Row 4 quarantine", f"Expected NO/quarantined, got: {r4.get('Included_In_Total')}")
+    log_fail("Row 4 quarantine", f"Expected QUARANTINED, got: {r4.get('Included_In_Total')}")
 
 # Check row 5 (non-numeric weight "abc") is quarantined
 r5 = rows[4]
-if r5.get("Included_In_Total", "").startswith("NO"):
+if r5.get("Included_In_Total", "").startswith("QUARANTINE"):
     log_pass("Row 5 (non-numeric weight): Correctly quarantined ✓")
 else:
-    log_fail("Row 5 quarantine", f"Expected NO/quarantined, got: {r5.get('Included_In_Total')}")
+    log_fail("Row 5 quarantine", f"Expected QUARANTINED, got: {r5.get('Included_In_Total')}")
 
 # Check CO2 calculation for row 1
 try:
@@ -163,7 +163,7 @@ strict_rows = list(csv.DictReader(io.StringIO(res2.text)))
 # Row 2 missing destination — should be quarantined in strict mode
 if len(strict_rows) >= 2:
     sr2 = strict_rows[1]
-    if sr2.get("Included_In_Total", "").startswith("NO"):
+    if sr2.get("Included_In_Total", "").startswith("QUARANTINE"):
         log_pass("Strict mode: Missing destination correctly quarantined ✓")
     else:
         log_fail("Strict mode quarantine", f"Expected quarantine, got: {sr2.get('Included_In_Total')}")

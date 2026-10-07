@@ -643,8 +643,9 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass`
                                   <td className="px-3 py-2">
                                     <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
                                       isYes ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400' :
+                                      included.startsWith("OUT OF SCOPE") ? 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400' :
                                       'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
-                                    }`}>{isYes ? 'INCLUDED' : 'EXCLUDED'}</span>
+                                    }`}>{isYes ? 'INCLUDED' : included.startsWith("OUT OF SCOPE") ? 'OUT OF SCOPE' : 'QUARANTINE'}</span>
                                   </td>
                                   <td className="px-3 py-2 text-slate-500 dark:text-slate-400 text-[11px] max-w-[250px] truncate" title={row.Notes || ''}>{row.Notes || '-'}</td>
                                 </tr>

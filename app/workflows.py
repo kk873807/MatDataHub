@@ -2,6 +2,7 @@ import pandas as pd
 import math
 import datetime
 from thefuzz import process, fuzz
+from functools import lru_cache
 from sqlalchemy.orm import Session
 from app.models import Material, CBAMDefault
 
@@ -158,9 +159,7 @@ class BOMProcessor:
         self.cbam_defaults_cache = {}
         self.cbam_defaults_stale = False
         
-        # Cache for fuzzy matching to massively speed up large BOMs with repeated materials
-        self.fuzzy_match_cache = {}
-        
+
         try:
             all_defaults = self.db.query(CBAMDefault).all()
             for d in all_defaults:
@@ -209,6 +208,40 @@ class BOMProcessor:
         
         return None, None, None
 
+    @lru_cache(maxsize=10000)
+    def _get_best_match(self, raw_name: str, allowed_cats_tuple: tuple | None):
+        """Robust fuzzy matcher looking at top 5 candidates to bypass false-positive hurdles like 'stainless'."""
+        candidates = self.mat_names
+        if allowed_cats_tuple is not None:
+            if not allowed_cats_tuple:
+                candidates = []
+            else:
+                candidates = []
+                for cat in allowed_cats_tuple:
+                    candidates.extend(self.cat_to_names.get(cat, []))
+        if not candidates:
+            return None
+        
+        matches = process.extract(raw_name, candidates, scorer=fuzz.token_sort_ratio, limit=5)
+        
+        q_lower = raw_name.lower()
+        q_is_stainless = "stainless" in q_lower
+        is_steel_query = "steel" in q_lower
+        
+        for m in matches:
+            m_name, m_score = m[0], m[1]
+            if m_score < 75:  # Stronger cutoff than 60
+                continue
+                
+            # Guard: If query is steel, don't mismatch stainless vs non-stainless
+            m_lower = m_name.lower()
+            m_is_stainless = "stainless" in m_lower
+            if is_steel_query and q_is_stainless != m_is_stainless:
+                continue
+                
+            return m
+        return None
+
     def process_bom(self, df, material_col, weight_col, strict_mode=False):
         # Auto-detect column mappings if the explicit ones are missing
         actual_mat_col = material_col
@@ -247,12 +280,13 @@ class BOMProcessor:
             notes = []
             
             def extract_string(aliases):
+                invalid_vals = {"nan", "n/a", "none", "null", "-", ""}
                 # Pass 1: exact column name match (highest priority)
                 for k in row.keys():
                     k_lower = str(k).lower().strip()
                     if any(a == k_lower for a in aliases):
                         val = row[k]
-                        if pd.notna(val) and str(val).strip() != "" and str(val).lower() != "nan":
+                        if pd.notna(val) and str(val).strip() != "" and str(val).lower().strip() not in invalid_vals:
                             return str(val).strip()
                         return None  # Exact match found but value is blank
                 # Pass 2: prefix/suffix boundary match (e.g. 'id' matches 'material_id')
@@ -260,7 +294,7 @@ class BOMProcessor:
                     k_lower = str(k).lower().strip()
                     if any(k_lower.startswith(a + '_') or k_lower.endswith('_' + a) for a in aliases):
                         val = row[k]
-                        if pd.notna(val) and str(val).strip() != "" and str(val).lower() != "nan":
+                        if pd.notna(val) and str(val).strip() != "" and str(val).lower().strip() not in invalid_vals:
                             return str(val).strip()
                 return None
             
@@ -461,12 +495,14 @@ class BOMProcessor:
                     quarantine_reasons.append("Invalid date format")
             
             cbam_sector = extract_string(['cbam_sector', 'sector'])
-            candidates = self.mat_names
-
+            
             sector_valid = False
             sector_lower = ""
             allowed_cats = None
-            if cbam_sector and cbam_sector.lower() not in ('nan', ''):
+            is_out_of_scope = False
+            
+            invalid_sector_vals = {"nan", "n/a", "none", "null", "-", ""}
+            if cbam_sector and cbam_sector.strip().lower() not in invalid_sector_vals:
                 sector_lower = cbam_sector.strip().lower()
                 for keyword, cats in self.CBAM_SECTOR_CATEGORY_MAP.items():
                     if keyword in sector_lower:
@@ -474,18 +510,11 @@ class BOMProcessor:
                         break
                 
                 if allowed_cats is None:
-                    quarantine_reasons.append("Sector not covered by CBAM")
-                    errors.append("Sector not covered by CBAM")
+                    is_out_of_scope = True
                 else:
                     sector_valid = True
-                    if allowed_cats:
-                        candidates = []
-                        for cat in allowed_cats:
-                            candidates.extend(self.cat_to_names.get(cat, []))
-                    elif allowed_cats == []:
-                        candidates = []
             else:
-                # No sector provided. See if CN code can rescue it, otherwise quarantine.
+                # No sector provided. See if CN code can rescue it, otherwise it's missing/review.
                 if not cn_code or not any(cn_code.replace(" ", "").startswith(p) for p in ['72','73','2523','76','31','2814','2804']):
                     quarantine_reasons.append("Sector missing and CN code not covered by CBAM")
                     errors.append("Sector missing and CN code not covered by CBAM")
@@ -493,17 +522,8 @@ class BOMProcessor:
                     # Guessed valid via CN code
                     sector_valid = True
 
-            # Use allowed_cats as part of the cache key since candidates is newly generated
-            cache_key = (raw_name, tuple(allowed_cats) if allowed_cats else None)
-            if cache_key in self.fuzzy_match_cache:
-                match_tuple = self.fuzzy_match_cache[cache_key]
-            else:
-                match_tuple = process.extractOne(
-                    raw_name, candidates, scorer=fuzz.token_sort_ratio
-                ) if candidates else None
-                self.fuzzy_match_cache[cache_key] = match_tuple
-                
-            is_match = match_tuple and match_tuple[1] > 60
+            match_tuple = self._get_best_match(raw_name, tuple(allowed_cats) if allowed_cats else None)
+            is_match = match_tuple is not None
 
             provided_carbon_factor = None
             includes_indirect = False
@@ -664,11 +684,17 @@ class BOMProcessor:
                         quarantine_reasons.append(f"Strict Mode: {err}")
             
             if quarantine_reasons:
-                included_str = "NO: " + " | ".join(quarantine_reasons)
+                included_str = "QUARANTINED: " + " | ".join(quarantine_reasons)
                 total_co2_kg = 0.0
                 total_co2_tonnes = 0.0
                 cbam_cost_eur = 0.0
                 esg_risk = 0.0
+            elif is_out_of_scope:
+                included_str = "OUT OF SCOPE"
+                total_co2_kg = 0.0
+                total_co2_tonnes = 0.0
+                cbam_cost_eur = 0.0
+                # ESG risk is still calculated for out of scope
             else:
                 included_str = "YES"
 
@@ -708,27 +734,23 @@ class BOMProcessor:
                 "Included_In_Total": included_str
             })
 
-        total_eligible_mass_kg = sum(r.get("DeMinimis_Eligible_Mass_kg", 0.0) for r in enriched_rows if r.get("Included_In_Total", "").startswith("YES"))
+        # Count all potentially in-scope mass, including quarantined rows
+        total_eligible_mass_kg = sum(r.get("DeMinimis_Eligible_Mass_kg", 0.0) for r in enriched_rows)
         
-        if 0 < total_eligible_mass_kg <= 50000.0 and not strict_mode:
-            for r in enriched_rows:
-                if r.get("Included_In_Total", "").startswith("YES") and r.get("DeMinimis_Eligible_Mass_kg", 0.0) > 0:
-                    r["CBAM_Cost_EUR"] = 0.0
+        for r in enriched_rows:
+            r["CBAM_Cost_If_Not_Exempt_EUR"] = r.get("CBAM_Cost_EUR", 0.0)
+            if r.get("DeMinimis_Eligible_Mass_kg", 0.0) > 0:
+                if total_eligible_mass_kg < 50000.0:
+                    r["DeMinimis_Status"] = "Possibly exempt (verify annual total < 50t)"
+                    new_note = "Possibly exempt from CBAM (file total < 50t, verify annual importer total)"
                     current_notes = r.get("Notes", "None")
-                    new_note = "De minimis exemption applies (annual eligible total <= 50t)"
                     if current_notes == "None":
                         r["Notes"] = new_note
-                    else:
-                        if "De minimis exemption applies" not in current_notes:
-                            r["Notes"] = current_notes + " | " + new_note
-        elif 0 < total_eligible_mass_kg <= 50000.0 and strict_mode:
-            for r in enriched_rows:
-                if r.get("Included_In_Total", "").startswith("YES") and r.get("DeMinimis_Eligible_Mass_kg", 0.0) > 0:
-                    current_notes = r.get("Notes", "None")
-                    new_note = "Strict Mode: De minimis exemption disabled (annual compliance unverified)"
-                    if current_notes == "None":
-                        r["Notes"] = new_note
-                    else:
+                    elif "Possibly exempt" not in current_notes:
                         r["Notes"] = current_notes + " | " + new_note
+                else:
+                    r["DeMinimis_Status"] = "Not exempt"
+            else:
+                r["DeMinimis_Status"] = "N/A"
 
         return pd.DataFrame(enriched_rows)
