@@ -87,10 +87,10 @@ csv_text = res.text
 reader = csv.DictReader(io.StringIO(csv_text))
 rows = list(reader)
 
-if len(rows) == 5:
+if len(rows) == 9:
     log_pass(f"Response contains {len(rows)} rows (correct)")
 else:
-    log_fail("Row count", f"Expected 5 rows, got {len(rows)}")
+    log_fail("Row count", f"Expected 9 rows, got {len(rows)}")
 
 # Check enriched columns exist
 expected_cols = ["Matched_Material", "Carbon_Factor_kgCO2e_per_kg", "Total_CO2_kg", "Total_CO2_tonnes",
