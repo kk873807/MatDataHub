@@ -121,7 +121,7 @@ export default function CBAMAnalytics() {
   const [resultsData, setResultsData] = useState<any[] | null>(null);
   const [totalCO2, setTotalCO2] = useState(0);
   const [totalCbamCost, setTotalCbamCost] = useState(0);
-  const [selectedYear, setSelectedYear] = useState<"2034" | "2027" | "2026">("2034");
+  const [selectedYear, setSelectedYear] = useState<"2034" | "2027" | "2026">("2026");
   const [pendingReviewCount, setPendingReviewCount] = useState(0);
   const [pendingReviewTonnes, setPendingReviewTonnes] = useState(0);
   const [fallbackTonnes, setFallbackTonnes] = useState(0);
@@ -199,7 +199,7 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
   };
 
   const downloadTemplate = () => {
-    const csvContent = "material_id,Material,Weight_kg,cbam_sector,cn_code,country_of_origin,destination,release_date,supplier,importer,carbon_price_paid\nMAT-001,Hot-Rolled Steel Plate,10000,Iron & Steel,7208 51 00,China,Germany,2026-06-15,Example Supplier,DE0000000000000,0\n";
+    const csvContent = "material_id,Material,Weight_kg,cbam_sector,cn_code,country_of_origin,destination,release_date,supplier,importer,carbon_price_paid_eur_per_tco2e\nMAT-001,Hot-Rolled Steel Plate,10000,Iron & Steel,7208 51 00,China,Germany,2026-06-15,Example Supplier,DE0000000000000,0\n";
     const blob = new Blob([csvContent], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -520,7 +520,7 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
                   <div className="flex flex-col items-center">
                     <UploadCloud className="w-12 h-12 text-slate-500 dark:text-slate-400 mb-3" />
                     <p className="font-bold text-slate-900 dark:text-white text-lg">Click or drag BOM CSV file here</p>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Must contain material and weight columns</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Must contain material and weight columns (Max 5,000 rows / 10MB)</p>
                   </div>
                 )}
               </div>

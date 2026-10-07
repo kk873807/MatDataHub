@@ -522,7 +522,7 @@ class BOMProcessor:
                 errors.append("Indirect emissions cannot be negative")
                 indirect_em = 0.0
                 
-            price_paid_val = extract_float(['carbon_price_paid', 'price_paid', 'domestic_carbon'], None)
+            price_paid_val = extract_float(['carbon_price_paid_eur_per_tco2e', 'carbon_price_paid', 'price_paid', 'domestic_carbon'], None)
             price_paid = price_paid_val or 0.0
             if price_paid < 0:
                 errors.append("Carbon price cannot be negative")
@@ -688,31 +688,17 @@ class BOMProcessor:
                     is_out_of_scope = True
                     notes.append(f"Sector '{declared_sector}' is not covered by CBAM")
             else:
-                missing_scope_msg = "Cannot determine CBAM scope"
+                # No valid CN code and no declared sector.
+                # This means it's simply out of scope (e.g., electronics, plastics, etc.)
+                is_out_of_scope = True
                 if clean_cn:
-                    errors.append("CN code not in CBAM Annex I")
-                    missing_scope_msg = "CN code not in CBAM Annex I"
+                    notes.append("CN code is not covered by CBAM Annex I")
                 else:
-                    errors.append("Both sector and CN code missing")
-                    missing_scope_msg = "Both sector and CN code missing"
-                quarantine_reasons.append(missing_scope_msg)
+                    notes.append("No CBAM sector or CN code provided; assuming out of scope")
 
             match_tuple = self._get_best_match(raw_name, tuple(allowed_cats) if allowed_cats else None)
             is_match = match_tuple is not None
             
-            # If quarantined due to missing scope, but we matched a Polymer, soften to OUT OF SCOPE.
-            # GUARD: Only fire when there's NO in-scope CN code AND no recognised CBAM sector.
-            # A "plastic-coated steel pipe" with CN 7306 must stay in scope because CN evidence wins.
-            if missing_scope_msg and not sector_valid and not is_out_of_scope and not cn_derived_sector and missing_scope_msg in quarantine_reasons:
-                if is_match:
-                    mat_obj = self.mat_dict.get(match_tuple[0])
-                    mat_cat = mat_obj.category if mat_obj else None
-                    if mat_cat and "polymer" in mat_cat.lower():
-                        quarantine_reasons.remove(missing_scope_msg)
-                        if missing_scope_msg in errors: errors.remove(missing_scope_msg)
-                        is_out_of_scope = True
-                        notes.append("Likely out of scope (matched material is a polymer, no CBAM CN code), please confirm")
-
             provided_carbon_factor = None
             # Indirect emissions: only for cement and fertilisers (CBAM definitive rules)
             # Steel and aluminium are direct emissions only
@@ -827,9 +813,9 @@ class BOMProcessor:
             
             net_cbam_price = max(CBAM_REFERENCE_PRICE_EUR - price_paid, 0.0)
             if price_paid > 0 and net_cbam_price == 0:
-                notes.append(f"Full carbon price already paid at origin ({price_paid} EUR/t)")
+                notes.append(f"Full carbon price already paid at origin ({price_paid} EUR/t) — documentary evidence required")
             elif price_paid > 0:
-                notes.append(f"Partial carbon price paid at origin ({price_paid} EUR/t); net price {net_cbam_price} EUR/t")
+                notes.append(f"Partial carbon price paid at origin ({price_paid} EUR/t) — documentary evidence required; net price {net_cbam_price} EUR/t")
             
             is_exempt = False
             if "Origin is exempt from CBAM (EU/EEA)" in notes or "Destination outside EU (exempt)" in notes or "Pre-2026 shipment (reporting-only phase, no financial liability)" in notes:
@@ -873,7 +859,7 @@ class BOMProcessor:
             raw_total_co2_tonnes = total_co2_tonnes
             raw_cbam_cost_eur = cbam_cost_eur
             
-            if strict_mode:
+            if strict_mode and not is_out_of_scope:
                 cbam_critical_errors = [
                     "Missing material ID", "Missing material name", "Missing quantity", "Non-numeric quantity",
                     "Missing CN Code", "Invalid CN Code format", "Missing supplier country",
@@ -915,7 +901,11 @@ class BOMProcessor:
                     is_deminimis_eligible = "YES"
 
             raw_importer = extract_string(['importer', 'eori', 'importer_id', 'importer_name'])
-            importer = raw_importer.strip().upper() if raw_importer else "UNKNOWN_IMPORTER"
+            if raw_importer:
+                # Normalize case, whitespace and punctuation
+                importer = re.sub(r'[\W_]+', '', raw_importer).upper()
+            else:
+                importer = "UNKNOWN_IMPORTER"
             
             other_imports_t = 0.0
             other_imports_str = extract_string(['other_cbam_imports_this_year_t', 'other_cbam_imports_t', 'other_imports_t'])

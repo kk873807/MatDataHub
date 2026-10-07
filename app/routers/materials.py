@@ -861,22 +861,26 @@ def analyze_bom(
     
     print(f"File read in {time.time()-t0:.2f}s, size: {len(contents)} bytes", flush=True)
     
-    # --- Encoding detection: try UTF-8, then latin-1 ---
+    # --- Encoding detection: try UTF-8, then cp1252 ---
     try:
         text = contents.decode("utf-8-sig")  # handles BOM
     except UnicodeDecodeError:
         try:
-            text = contents.decode("latin-1")
+            text = contents.decode("cp1252")
         except UnicodeDecodeError:
             raise HTTPException(status_code=400, detail="Unable to decode file. Please save as UTF-8.")
     
-    # --- Delimiter detection: semicolons (European Excel) vs commas ---
-    first_line = text.split("\n")[0] if text else ""
-    if first_line.count(";") > first_line.count(","):
-        sep = ";"
-    else:
-        sep = ","
-    
+    # --- Delimiter sniffing ---
+    import csv
+    try:
+        # Sniff up to first 4KB
+        sample = text[:4096]
+        sniffer = csv.Sniffer()
+        dialect = sniffer.sniff(sample, delimiters=[',', ';', '\t'])
+        sep = dialect.delimiter
+    except Exception:
+        sep = ','
+        
     try:
         df = pd.read_csv(io.StringIO(text), sep=sep)
         # --- Row limit: 5000 ---
@@ -914,6 +918,11 @@ def analyze_bom(
         available_cols = [c for c in detail_cols if c in enriched_df.columns]
         results_for_storage = enriched_df[available_cols].fillna("").to_dict(orient="records")
         
+        import hashlib
+        import os
+        file_hash = hashlib.sha256(contents).hexdigest()
+        engine_version = os.environ.get("RENDER_GIT_COMMIT", "dev-local")
+        
         # Embed audit metadata
         run_metadata = {
             "strict_mode": strict_mode,
@@ -922,6 +931,11 @@ def analyze_bom(
             "cbam_defaults_version": str(processor.cbam_defaults_version) if processor.cbam_defaults_version else None,
             "cbam_reference_price_eur": 75.0,
             "annex_version": getattr(processor, 'annex_version', 'unknown'),
+            "engine_version": engine_version,
+            "input_file_hash_sha256": file_hash,
+            "phase_in_factor_2026": 0.025,
+            "default_markup_fertiliser": 1.01,
+            "default_markup_other": 1.20
         }
         
         t_json = time.time()
@@ -950,7 +964,7 @@ def analyze_bom(
     # --- CSV formula injection guard: prefix dangerous cells ---
     for col in enriched_df.select_dtypes(include='object').columns:
         enriched_df[col] = enriched_df[col].apply(
-            lambda v: "'" + str(v) if isinstance(v, str) and len(v) > 0 and v[0] in ('=', '+', '-', '@') else v
+            lambda v: "'" + str(v) if isinstance(v, str) and len(v.strip()) > 0 and v.strip() != "-" and v.lstrip()[0] in ('=', '+', '-', '@', '\t', '\r') else v
         )
     
     # Return as CSV
