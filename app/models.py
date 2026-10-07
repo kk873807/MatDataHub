@@ -301,7 +301,7 @@ class CBAMDefault(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     cn_prefix = Column(String(10), nullable=False, index=True)        # e.g. "7208", "2523", "76"
     sector = Column(String(50), nullable=False)                        # "Iron & Steel", "Cement", etc.
-    product_description = Column(String(200), nullable=True)           # Human-readable label
+    product_description = Column(Text, nullable=True)           # Human-readable label
     origin_country = Column(String(100), nullable=True)                # NULL = global default (all countries)
     year = Column(Integer, nullable=False, index=True)                 # 2026, 2027, 2028, ...
     base_value = Column(Float, nullable=False)                         # tCO2/t — transitional base

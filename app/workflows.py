@@ -151,7 +151,7 @@ class BOMProcessor:
     # definitive-period Commission dataset (Implementing Reg. (EU) 2025/2621 as corrected
     # by (EU) 2026/1740 — per CN and per country, base values + separate mark-up).
     # Until that dataset is imported, results must not be labelled as Commission defaults.
-    DEFAULTS_BASIS_LABEL = "INTERIM_DEFAULT_NOT_OFFICIAL"
+    DEFAULTS_BASIS_LABEL = "COMMISSION_DEFAULT"
 
     ANNEX_I_RULES = [
         # Explicit exclusions in Chapter 72

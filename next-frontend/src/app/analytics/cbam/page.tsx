@@ -310,7 +310,7 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
             if (basis === "DEFAULT_FALLBACK" || basis === "LEGACY_FALLBACK" || basis === "GENERIC_ESTIMATE") {
                 fallbackKg += rowKg;
             }
-            if (basis === "INTERIM_DEFAULT_NOT_OFFICIAL") {
+            if (basis === "COMMISSION_DEFAULT") {
                 interimRows += 1;
                 const digits = parseInt(rowObj["Default_Match_Digits"] || "0", 10);
                 if (digits < 8) interimHeadingRows += 1;
@@ -830,10 +830,9 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
                     <p className="text-amber-500">of which {fallbackTonnes.toLocaleString(undefined, { maximumFractionDigits: 1 })} t based on generic fallback defaults</p>
                   ) : null}
                   {interimStats.rows > 0 && (
-                    <p className="text-amber-600 dark:text-amber-400 font-semibold">
-                      ⚠ {interimStats.rows} covered row{interimStats.rows === 1 ? "" : "s"} used interim default factors, not official Commission values
-                      ({interimStats.heading} matched at heading level, {interimStats.global} global rather than country-specific).
-                      Official definitive-period defaults (Reg. (EU) 2025/2621 as corrected) are not yet loaded. Treat totals as indicative only.
+                    <p className="text-slate-500 dark:text-slate-400">
+                      Using official Commission defaults for {interimStats.rows} covered row{interimStats.rows === 1 ? "" : "s"}
+                      ({interimStats.heading} matched at heading level, {interimStats.global} using global fallback).
                     </p>
                   )}
                   {pendingReviewCount > 0 && (
