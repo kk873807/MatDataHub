@@ -147,6 +147,12 @@ class BOMProcessor:
     # ── Annex I Rule Table (Regulation (EU) 2023/956) ──
     # Evaluated top-down; first matching prefix wins.
     # Rules list the exact string prefix to match.
+    # The seeded cbam_defaults table is a hand-built INTERIM approximation, NOT the
+    # definitive-period Commission dataset (Implementing Reg. (EU) 2025/2621 as corrected
+    # by (EU) 2026/1740 — per CN and per country, base values + separate mark-up).
+    # Until that dataset is imported, results must not be labelled as Commission defaults.
+    DEFAULTS_BASIS_LABEL = "INTERIM_DEFAULT_NOT_OFFICIAL"
+
     ANNEX_I_RULES = [
         # Explicit exclusions in Chapter 72
         ("72022", "exclude", None),        # Ferro-silicon
@@ -309,10 +315,11 @@ class BOMProcessor:
         Tries progressively shorter CN prefixes (e.g. 72085100 → 720851 → 7208 → 72)
         to find the most specific match. Tries country-specific first, then global.
         
-        Returns (effective_value, includes_indirect, source_label, match_level) or (None, None, None, None).
+        Returns (effective_value, includes_indirect, basis_label, match_digits, meta) or all None.
+        meta = {geography: COUNTRY|GLOBAL, markup_pct, base_value, dataset}
         """
         if not self.cbam_defaults_cache or not cn_code:
-            return None, None, None, None
+            return None, None, None, None, None
         
         clean_cn = re.sub(r"\D", "", cn_code)
         country_lower = origin_country.lower().strip() if origin_country else None
@@ -329,16 +336,18 @@ class BOMProcessor:
                 key = (prefix, year, country_lower)
                 if key in self.cbam_defaults_cache:
                     d = self.cbam_defaults_cache[key]
-                    label = "COMMISSION_DEFAULT (Country-Specific)"
-                    return d.effective_value, d.includes_indirect, label, match_digits
+                    return d.effective_value, d.includes_indirect, self.DEFAULTS_BASIS_LABEL, match_digits, {
+                        "geography": "COUNTRY", "markup_pct": d.markup_pct, "base_value": d.base_value, "dataset": "INTERIM hand-built table (unverified)",
+                    }
             # Then try global default (origin_country = NULL)
             key = (prefix, year, None)
             if key in self.cbam_defaults_cache:
                 d = self.cbam_defaults_cache[key]
-                label = "COMMISSION_DEFAULT (Global Average)"
-                return d.effective_value, d.includes_indirect, label, match_digits
+                return d.effective_value, d.includes_indirect, self.DEFAULTS_BASIS_LABEL, match_digits, {
+                    "geography": "GLOBAL", "markup_pct": d.markup_pct, "base_value": d.base_value, "dataset": "INTERIM hand-built table (unverified)",
+                }
         
-        return None, None, None, None
+        return None, None, None, None, None
 
     def _get_best_match(self, raw_name: str, allowed_cats_tuple: tuple | None):
         """Robust fuzzy matcher: top-5 candidates with stainless/SS304/inox guard. Per-instance cached."""
@@ -722,6 +731,8 @@ class BOMProcessor:
                     notes.append("Indirect emissions excluded for this sector (CBAM definitive rules)")
             
             emissions_basis = "SUPPLIED"
+            default_match_digits = None
+            default_meta = None
             
             # Determine the lookup year from release date (default to current year)
             lookup_year = datetime.datetime.now().year
@@ -750,16 +761,19 @@ class BOMProcessor:
                     carbon_factor = provided_carbon_factor
                 else:
                     # Try DB-backed Commission defaults first (by CN code + country + year)
-                    db_default, db_incl_indirect, db_source, match_level = self._lookup_cbam_default(
+                    db_default, db_incl_indirect, db_source, match_level, default_meta = self._lookup_cbam_default(
                         cn_code or "", origin_country_raw or "", lookup_year
                     )
                     if db_default is not None:
                         carbon_factor = db_default
                         emissions_basis = db_source
+                        default_match_digits = match_level
                         if self.cbam_defaults_stale:
                             notes.append("CBAM default values may be outdated (>90 days since last refresh)")
-                        if match_level and match_level < 8:
-                            notes.append(f"Commission default matched at {match_level}-digit heading level")
+                        notes.append(
+                            f"Interim default (not official Commission value): matched at {match_level}-digit level, "
+                            f"{default_meta['geography'].lower()}, mark-up {round((default_meta['markup_pct'] or 0)*100)}% included"
+                        )
                     elif db_carbon > 0:
                         carbon_factor = db_carbon
                         emissions_basis = "DEFAULT_FALLBACK"
@@ -779,16 +793,19 @@ class BOMProcessor:
                     carbon_factor = provided_carbon_factor
                 else:
                     # Try DB-backed Commission defaults first
-                    db_default, db_incl_indirect, db_source, match_level = self._lookup_cbam_default(
+                    db_default, db_incl_indirect, db_source, match_level, default_meta = self._lookup_cbam_default(
                         cn_code or "", origin_country_raw or "", lookup_year
                     )
                     if db_default is not None:
                         carbon_factor = db_default
                         emissions_basis = db_source
+                        default_match_digits = match_level
                         if self.cbam_defaults_stale:
                             notes.append("CBAM default values may be outdated (>90 days since last refresh)")
-                        if match_level and match_level < 8:
-                            notes.append(f"Commission default matched at {match_level}-digit heading level")
+                        notes.append(
+                            f"Interim default (not official Commission value): matched at {match_level}-digit level, "
+                            f"{default_meta['geography'].lower()}, mark-up {round((default_meta['markup_pct'] or 0)*100)}% included"
+                        )
                     else:
                         carbon_factor = _estimate_carbon_factor(raw_name, "")
                         emissions_basis = "GENERIC_ESTIMATE"
@@ -918,10 +935,15 @@ class BOMProcessor:
                 "Other_Imports_t": other_imports_t,
                 "Lookup_Year": lookup_year,
                 "DeMinimis_Eligible_Mass_kg": weight_kg if is_deminimis_eligible == "YES" else 0.0,
-                "Matched_Material": matched_name if is_match else ("N/A (Commission default used)" if emissions_basis == "COMMISSION_DEFAULT" else "NO MATCH FOUND"),
-                "Match_Confidence": f"{confidence}%" if is_match else ("N/A" if emissions_basis == "COMMISSION_DEFAULT" else "0%"),
+                "Matched_Material": matched_name if is_match else ("N/A (default factor used)" if default_meta else "NO MATCH FOUND"),
+                "Match_Confidence": f"{confidence}%" if is_match else ("N/A" if default_meta else "0%"),
                 "Carbon_Factor_kgCO2e_per_kg": round(carbon_factor, 3),
                 "Emissions_Basis": emissions_basis,
+                "Default_Dataset": default_meta["dataset"] if default_meta else "N/A",
+                "Default_Match_Digits": default_match_digits if default_meta else "N/A",
+                "Default_Geography": default_meta["geography"] if default_meta else "N/A",
+                "Default_Base_Value": default_meta["base_value"] if default_meta else "N/A",
+                "Default_Markup_Pct": round((default_meta["markup_pct"] or 0) * 100, 1) if default_meta else "N/A",
                 "Total_CO2_kg": round(total_co2_kg, 3) if total_co2_kg > 0 else 0.0,
                 "Total_CO2_tonnes": round(total_co2_tonnes, 4) if total_co2_tonnes > 0 else 0.0,
                 "CBAM_Cost_EUR": cbam_cost_eur if cbam_cost_eur > 0 else 0.0,

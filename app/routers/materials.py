@@ -939,7 +939,9 @@ def analyze_bom(
             "phase_in_factor_2026": 0.025,
             "cbam_price_source": "European Energy Exchange (EEX)",
             "cbam_price_date": "2026-Q1 (projected)",
-            "cbam_defaults_source": "Commission Implementing Regulation (EU) 2023/2122 (Transitional Period)"
+            "cbam_defaults_source": "INTERIM hand-built approximation (scripts/seed_cbam_defaults.py), NOT an official Commission dataset",
+            "cbam_defaults_official_target": "Implementing Regulation (EU) 2025/2621 as corrected by (EU) 2026/1740 — pending import and verification",
+            "cbam_defaults_markup_handling": "mark-up pre-applied in effective_value at seed time (10%/20%/30% by year); not re-applied in engine"
 
         }
         

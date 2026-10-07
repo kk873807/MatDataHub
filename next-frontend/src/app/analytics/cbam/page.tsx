@@ -125,6 +125,7 @@ export default function CBAMAnalytics() {
   const [pendingReviewCount, setPendingReviewCount] = useState(0);
   const [pendingReviewTonnes, setPendingReviewTonnes] = useState(0);
   const [fallbackTonnes, setFallbackTonnes] = useState(0);
+  const [interimStats, setInterimStats] = useState({ rows: 0, heading: 0, global: 0 });
   const [taxableTonnes, setTaxableTonnes] = useState(0);
   const [deMinimisThreshold, setDeMinimisThreshold] = useState(50);
   const [isDeMinimisExempt, setIsDeMinimisExempt] = useState(false);
@@ -274,6 +275,9 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
         let revCount = 0;
         let revTonnes = 0;
         let fallbackKg = 0;
+        let interimRows = 0;
+        let interimHeadingRows = 0;
+        let interimGlobalRows = 0;
         let taxableKg = 0;
         
         let eligibleMassKg = 0;
@@ -306,6 +310,12 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
             if (basis === "DEFAULT_FALLBACK" || basis === "LEGACY_FALLBACK" || basis === "GENERIC_ESTIMATE") {
                 fallbackKg += rowKg;
             }
+            if (basis === "INTERIM_DEFAULT_NOT_OFFICIAL") {
+                interimRows += 1;
+                const digits = parseInt(rowObj["Default_Match_Digits"] || "0", 10);
+                if (digits < 8) interimHeadingRows += 1;
+                if (rowObj["Default_Geography"] !== "COUNTRY") interimGlobalRows += 1;
+            }
           } else if (included && included.startsWith("NO")) {
             revCount += 1;
             if (rowObj["Parsed_Weight_kg"]) {
@@ -328,6 +338,7 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
         setPendingReviewCount(revCount);
         setPendingReviewTonnes(revTonnes);
         setFallbackTonnes(fallbackKg / 1000.0);
+        setInterimStats({ rows: interimRows, heading: interimHeadingRows, global: interimGlobalRows });
         setTaxableTonnes(taxableKg / 1000.0);
         setIsDeMinimisExempt(isExempt);
         setEligibleMassTonnes(elMassTonnes);
@@ -817,8 +828,13 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
                     <p className="text-red-500 font-bold">⚠ {fallbackTonnes.toLocaleString(undefined, { maximumFractionDigits: 1 })} t ({Math.round(fallbackTonnes / (totalCO2/1000) * 100)}%) estimated with generic fallback factors, not Commission defaults. These figures should not be used for declarations.</p>
                   ) : fallbackTonnes > 0 ? (
                     <p className="text-amber-500">of which {fallbackTonnes.toLocaleString(undefined, { maximumFractionDigits: 1 })} t based on generic fallback defaults</p>
-                  ) : (
-                    <p>All rows used Commission defaults or supplied emissions</p>
+                  ) : null}
+                  {interimStats.rows > 0 && (
+                    <p className="text-amber-600 dark:text-amber-400 font-semibold">
+                      ⚠ {interimStats.rows} covered row{interimStats.rows === 1 ? "" : "s"} used interim default factors, not official Commission values
+                      ({interimStats.heading} matched at heading level, {interimStats.global} global rather than country-specific).
+                      Official definitive-period defaults (Reg. (EU) 2025/2621 as corrected) are not yet loaded. Treat totals as indicative only.
+                    </p>
                   )}
                   {pendingReviewCount > 0 && (
                     <p className="text-amber-500">{pendingReviewTonnes.toLocaleString(undefined, { maximumFractionDigits: 1 })} t (material mass) in {pendingReviewCount} rows pending review</p>
