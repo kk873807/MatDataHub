@@ -874,9 +874,10 @@ def analyze_bom(
         quarantined = int((~included_mask).sum())
         # Store enriched results as JSON for detail view (limit to key columns to save space)
         import json
-        detail_cols = ["material_id", "Material", "Parsed_Weight_kg", "cbam_sector", "cn_code",
-                       "country_of_origin", "destination", "shipment_date",
+        detail_cols = ["material_id", "Material", "Parsed_Weight_kg", "Importer", "Lookup_Year", 
+                       "cbam_sector", "cn_code", "country_of_origin", "destination", "shipment_date",
                        "Carbon_Factor_kgCO2e_per_kg", "Emissions_Basis",
+                       "DeMinimis_Eligible_Mass_kg", "CBAM_Cost_If_Not_Exempt_EUR", "DeMinimis_Status",
                        "Total_CO2_kg", "Total_CO2_tonnes", "CBAM_Cost_EUR",
                        "Net_CBAM_Price_EUR", "ESG_Risk_Score",
                        "Notes", "Validation_Errors", "Included_In_Total"]
@@ -911,6 +912,9 @@ def analyze_bom(
     enriched_df.to_csv(stream, index=False)
     response = StreamingResponse(iter([stream.getvalue()]), media_type="text/csv")
     response.headers["Content-Disposition"] = "attachment; filename=enriched_bom.csv"
+    response.headers["X-CBAM-Defaults-Count"] = str(processor.cbam_defaults_count)
+    if processor.cbam_defaults_version:
+        response.headers["X-CBAM-Defaults-Version"] = str(processor.cbam_defaults_version)
     return response
 
 # ──────────────────────────────────────────────

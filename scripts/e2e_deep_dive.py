@@ -56,12 +56,16 @@ db.close()
 
 # ── Step 1: Upload a small BOM (normal mode) ──
 print("\n📤 STEP 1: Small BOM Upload (Normal Mode)")
-small_csv = """material_id,Material,Weight_kg,cbam_sector,cn_code,country_of_origin,destination,shipment_date,supplier,direct_emissions,indirect_emissions,carbon_price_paid
-MAT-001,Hot-Rolled Steel Coil,50000,Iron & Steel,7208 51 00,China,Germany,2026-06-15,Acme Metals,1.25,0.60,25.0
-MAT-002,Portland Cement,30000,Cement,2523 29 00,Turkey,France,2026-08-01,EuroCement,0.62,0.21,15.0
-MAT-003,Aluminium Extrusion,10000,Aluminium,7604 29 10,Norway,Germany,2026-06-15,Norsk Hydro,5.80,2.44,50.0
-MAT-004,,5000,Iron & Steel,7208 51 00,China,Germany,2026-06-15,Missing Name Corp,1.0,0.5,10.0
-MAT-005,Steel Rebar,abc,Iron & Steel,7214 20 00,India,Germany,2026-06-15,SteelCo,1.1,0.4,20.0
+small_csv = """material_id,Material,Weight_kg,cbam_sector,cn_code,country_of_origin,destination,shipment_date,supplier,importer,direct_emissions,indirect_emissions,carbon_price_paid
+MAT-001,Hot-Rolled Steel Coil,50000,Iron & Steel,7208 51 00,China,Germany,2026-06-15,Acme Metals,Imp-A,1.25,0.60,25.0
+MAT-002,Portland Cement,30000,Cement,2523 29 00,Turkey,France,2026-08-01,EuroCement,Imp-B,0.62,0.21,15.0
+MAT-003,Aluminium Extrusion,10000,Aluminium,7604 29 10,Norway,Germany,2026-06-15,Norsk Hydro,Imp-B,5.80,2.44,50.0
+MAT-004,,5000,Iron & Steel,7208 51 00,China,Germany,2026-06-15,Missing Name Corp,Imp-B,1.0,0.5,10.0
+MAT-005,Steel Rebar,abc,Iron & Steel,7214 20 00,India,Germany,2026-06-15,SteelCo,Imp-B,1.1,0.4,20.0
+MAT-006,Rescued Good,10000,,7208.51.00,China,Germany,2026-06-15,Rescued,Imp-C,,,
+MAT-007,Stainless Bolts M8,5000,Iron & Steel,7318 15 68,China,Germany,2026-06-15,StainlessCorp,Imp-D,,,
+MAT-008,Scrap Steel,10000,Iron & Steel,7204 21 10,China,Germany,2026-06-15,Scrappy,Imp-D,,,
+MAT-009,Plastic Polymer,2000,,3901 10 90,China,Germany,2026-06-15,Plastics,Imp-D,,,
 """
 
 t0 = time.time()

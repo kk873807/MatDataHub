@@ -1,6 +1,7 @@
 import pandas as pd
 import math
 import datetime
+import re
 from thefuzz import process, fuzz
 from functools import lru_cache
 from sqlalchemy.orm import Session
@@ -142,6 +143,39 @@ class BOMProcessor:
         "hydrogen": [],
         "electricity": [],         # No natural DB category — skip pre-filter
     }
+    
+    @classmethod
+    def get_sector_from_cn(cls, clean_cn: str):
+        """Returns the CBAM sector based on Annex I CN code rules."""
+        if not clean_cn: return None
+        
+        # Exact prefixes based on Annex I of the CBAM regulation
+        if clean_cn.startswith(('25231000', '25232100', '25232900', '25233000', '25239000')): return "cement"
+        if clean_cn.startswith('25070080'): return "cement" # Kaolinitic clays
+        
+        if clean_cn.startswith('28041000'): return "hydrogen"
+        
+        if clean_cn.startswith(('28080000', '2814', '28342100', '3102', '3105')): return "fertiliser"
+        
+        # Iron and steel (Chapter 72 and 73, with specific exclusions)
+        if clean_cn.startswith('72'):
+            if clean_cn.startswith(('7204', '72022')): return None # Scrap and certain ferro-alloys excluded
+            return "iron & steel"
+        if clean_cn.startswith('73'):
+            # Specific headings only
+            if any(clean_cn.startswith(p) for p in ['7301', '7302', '7303', '7304', '7305', '7306', '7307', '7308', '7309', '7310', '7311', '7318', '7326']):
+                return "iron & steel"
+                
+        # Aluminium (Chapter 76, specific headings)
+        if clean_cn.startswith('76'):
+            if clean_cn.startswith('7602'): return None # Waste and scrap excluded
+            if any(clean_cn.startswith(p) for p in ['7601', '7603', '7604', '7605', '7606', '7607', '7608', '7609', '7610', '7611', '7612', '7613', '7614', '7616']):
+                return "aluminium"
+                
+        if clean_cn.startswith('27160000'): return "electricity"
+        if clean_cn.startswith('26011200'): return "iron & steel" # Agglomerated iron ores
+        
+        return None
 
     def __init__(self, db: Session):
         self.db = db
@@ -158,20 +192,27 @@ class BOMProcessor:
         # Preload CBAM defaults into memory for fast lookups
         self.cbam_defaults_cache = {}
         self.cbam_defaults_stale = False
+        self.cbam_defaults_count = 0
+        self.cbam_defaults_version = None
         
+        # Clear any stale lru_cache from previous instance
+        self._get_best_match.cache_clear()
 
         try:
             all_defaults = self.db.query(CBAMDefault).all()
             for d in all_defaults:
                 key = (d.cn_prefix, d.year, (d.origin_country or "").lower() if d.origin_country else None)
                 self.cbam_defaults_cache[key] = d
+            self.cbam_defaults_count = len(all_defaults)
             if all_defaults:
                 latest = max(d.updated_at for d in all_defaults if d.updated_at)
+                self.cbam_defaults_version = latest.isoformat() if latest else None
                 if latest and (datetime.datetime.now(latest.tzinfo) - latest).days > 90:
                     self.cbam_defaults_stale = True
         except Exception:
             # Table may not exist yet — fall back gracefully
             self.cbam_defaults_cache = {}
+            self.cbam_defaults_count = 0
 
     def _lookup_cbam_default(self, cn_code: str, origin_country: str, year: int):
         """
@@ -180,12 +221,12 @@ class BOMProcessor:
         Tries progressively shorter CN prefixes (e.g. 72085100 → 720851 → 7208 → 72)
         to find the most specific match. Tries country-specific first, then global.
         
-        Returns (effective_value, includes_indirect, source_label) or (None, None, None).
+        Returns (effective_value, includes_indirect, source_label, match_level) or (None, None, None, None).
         """
         if not self.cbam_defaults_cache or not cn_code:
-            return None, None, None
+            return None, None, None, None
         
-        clean_cn = cn_code.replace(" ", "").replace(".", "").replace("-", "")
+        clean_cn = re.sub(r"\D", "", cn_code)
         country_lower = origin_country.lower().strip() if origin_country else None
         
         # Try progressively shorter CN prefixes
@@ -194,23 +235,25 @@ class BOMProcessor:
             prefixes.append(clean_cn[:length])
         
         for prefix in prefixes:
+            match_digits = len(prefix)
+            label = "COMMISSION_DEFAULT" if match_digits >= 8 else f"COMMISSION_DEFAULT_APPROX_{match_digits}D"
             # Try country-specific first
             if country_lower:
                 key = (prefix, year, country_lower)
                 if key in self.cbam_defaults_cache:
                     d = self.cbam_defaults_cache[key]
-                    return d.effective_value, d.includes_indirect, "COMMISSION_DEFAULT"
+                    return d.effective_value, d.includes_indirect, label, match_digits
             # Then try global default (origin_country = NULL)
             key = (prefix, year, None)
             if key in self.cbam_defaults_cache:
                 d = self.cbam_defaults_cache[key]
-                return d.effective_value, d.includes_indirect, "COMMISSION_DEFAULT"
+                return d.effective_value, d.includes_indirect, label, match_digits
         
-        return None, None, None
+        return None, None, None, None
 
     @lru_cache(maxsize=10000)
     def _get_best_match(self, raw_name: str, allowed_cats_tuple: tuple | None):
-        """Robust fuzzy matcher looking at top 5 candidates to bypass false-positive hurdles like 'stainless'."""
+        """Robust fuzzy matcher: top-5 candidates with stainless/SS304/inox guard."""
         candidates = self.mat_names
         if allowed_cats_tuple is not None:
             if not allowed_cats_tuple:
@@ -225,18 +268,18 @@ class BOMProcessor:
         matches = process.extract(raw_name, candidates, scorer=fuzz.token_sort_ratio, limit=5)
         
         q_lower = raw_name.lower()
-        q_is_stainless = "stainless" in q_lower
-        is_steel_query = "steel" in q_lower
+        stainless_aliases = {"stainless", "ss304", "ss316", "ss201", "inox", "304", "316", "201"}
+        q_is_stainless = any(alias in q_lower for alias in stainless_aliases)
         
         for m in matches:
             m_name, m_score = m[0], m[1]
-            if m_score < 75:  # Stronger cutoff than 60
+            if m_score < 75:
                 continue
                 
-            # Guard: If query is steel, don't mismatch stainless vs non-stainless
+            # Guard: Don't mismatch stainless vs non-stainless (either direction)
             m_lower = m_name.lower()
-            m_is_stainless = "stainless" in m_lower
-            if is_steel_query and q_is_stainless != m_is_stainless:
+            m_is_stainless = any(alias in m_lower for alias in stainless_aliases)
+            if q_is_stainless != m_is_stainless:
                 continue
                 
             return m
@@ -432,16 +475,18 @@ class BOMProcessor:
             if not cn_code:
                 errors.append("Missing CN Code")
             else:
-                clean_cn = cn_code.replace(" ", "").replace(".", "").replace("-", "")
-                if not clean_cn.isdigit() or len(clean_cn) < 4:
+                # Normalise once: strip all non-digits (handles "7208.51.00", "7208 51 00", 72085100.0)
+                clean_cn = re.sub(r"\D", "", str(cn_code))
+                if len(clean_cn) < 4 or not clean_cn.isdigit():
                     errors.append("Invalid CN Code format")
                     quarantine_reasons.append("Invalid CN Code format")
                 
             def extract_exact_string(aliases):
+                invalid_vals = {"nan", "n/a", "none", "null", "-", ""}
                 for k in row.keys():
                     if any(a == str(k).lower().strip() for a in aliases):
                         val = row[k]
-                        if pd.notna(val) and str(val).strip() != "" and str(val).lower() != "nan":
+                        if pd.notna(val) and str(val).strip() != "" and str(val).lower().strip() not in invalid_vals:
                             return str(val).strip()
                 return None
 
@@ -494,42 +539,78 @@ class BOMProcessor:
                     errors.append("Invalid date format (requires YYYY-MM-DD)")
                     quarantine_reasons.append("Invalid date format")
             
+            # ── Sector determination: CN code is the source of truth ──
             cbam_sector = extract_string(['cbam_sector', 'sector'])
             
             sector_valid = False
             sector_lower = ""
             allowed_cats = None
             is_out_of_scope = False
+            cn_derived_sector = self.get_sector_from_cn(clean_cn) if clean_cn else None
             
             invalid_sector_vals = {"nan", "n/a", "none", "null", "-", ""}
+            declared_sector = None
             if cbam_sector and cbam_sector.strip().lower() not in invalid_sector_vals:
-                sector_lower = cbam_sector.strip().lower()
+                declared_sector = cbam_sector.strip().lower()
+            
+            missing_scope_msg = None
+            if cn_derived_sector:
+                # CN code maps to a known CBAM sector
+                sector_lower = cn_derived_sector
+                sector_valid = True
+                # Look up category pre-filter from the derived sector
                 for keyword, cats in self.CBAM_SECTOR_CATEGORY_MAP.items():
                     if keyword in sector_lower:
                         allowed_cats = cats
                         break
-                
-                if allowed_cats is None:
+                # Cross-check: if user also declared a sector, warn if mismatch
+                if declared_sector and declared_sector != sector_lower:
+                    if not any(k in declared_sector for k in sector_lower.split()):
+                        errors.append(f"Declared sector '{declared_sector}' differs from CN-derived sector '{sector_lower}'")
+            elif declared_sector:
+                # CN code not in Annex I, but user declared a sector
+                for keyword, cats in self.CBAM_SECTOR_CATEGORY_MAP.items():
+                    if keyword == declared_sector or keyword in declared_sector:
+                        allowed_cats = cats
+                        sector_lower = declared_sector
+                        break
+                if allowed_cats is not None or sector_lower:
+                    # Declared sector is a known CBAM sector but CN doesn't match Annex I
+                    errors.append(f"CN code '{clean_cn}' not found in Annex I for declared sector '{declared_sector}'")
+                    quarantine_reasons.append("CN code not found in Annex I for declared sector")
+                else:
                     is_out_of_scope = True
-                else:
-                    sector_valid = True
+                    notes.append(f"Sector '{declared_sector}' is not covered by CBAM")
             else:
-                # No sector provided. See if CN code can rescue it, otherwise it's missing/review.
-                if not cn_code or not any(cn_code.replace(" ", "").startswith(p) for p in ['72','73','2523','76','31','2814','2804']):
-                    quarantine_reasons.append("Sector missing and CN code not covered by CBAM")
-                    errors.append("Sector missing and CN code not covered by CBAM")
+                # Neither CN nor declared sector resolve (or both are missing)
+                missing_scope_msg = "Cannot determine CBAM scope"
+                if clean_cn:
+                    errors.append("CN code not in CBAM Annex I")
+                    missing_scope_msg = "CN code not in CBAM Annex I"
                 else:
-                    # Guessed valid via CN code
-                    sector_valid = True
+                    errors.append("Both sector and CN code missing")
+                    missing_scope_msg = "Both sector and CN code missing"
+                quarantine_reasons.append(missing_scope_msg)
 
             match_tuple = self._get_best_match(raw_name, tuple(allowed_cats) if allowed_cats else None)
             is_match = match_tuple is not None
+            
+            # If quarantined due to missing scope, but we matched a Polymer, soften to OUT OF SCOPE
+            if missing_scope_msg and not sector_valid and not is_out_of_scope and missing_scope_msg in quarantine_reasons:
+                if is_match:
+                    mat_cat = self.mat_dict.get(match_tuple[0]).category
+                    if mat_cat and "polymer" in mat_cat.lower():
+                        quarantine_reasons.remove(missing_scope_msg)
+                        if missing_scope_msg in errors: errors.remove(missing_scope_msg)
+                        is_out_of_scope = True
+                        notes.append("Likely out of scope (matched material is a polymer), please confirm")
 
             provided_carbon_factor = None
+            # Indirect emissions: only for cement and fertilisers (CBAM definitive rules)
+            # Steel and aluminium are direct emissions only
             includes_indirect = False
-            if allowed_cats is not None:
-                if any(k in sector_lower for k in ['cement', 'fertili']):
-                    includes_indirect = True
+            if sector_lower and any(k in sector_lower for k in ['cement', 'fertili']):
+                includes_indirect = True
             
             if direct_em is not None and direct_em > 50.0:
                 quarantine_reasons.append("Emissions exceed plausibility bound (50 t/t)")
@@ -547,32 +628,6 @@ class BOMProcessor:
                         provided_carbon_factor = None # Invalidate so it uses full db/fallback factor
                 elif not includes_indirect and indirect_em is not None:
                     notes.append("Indirect emissions excluded for this sector (CBAM definitive rules)")
-
-            if clean_cn and sector_lower:
-                if "steel" in sector_lower or "iron" in sector_lower:
-                    if not clean_cn.startswith(("72", "73", "26")):
-                        errors.append("CN Code does not match Iron & Steel sector")
-                        quarantine_reasons.append("CN Code does not match Iron & Steel sector")
-                elif "cement" in sector_lower:
-                    if not clean_cn.startswith(("2523", "2507")):
-                        errors.append("CN Code does not match Cement sector")
-                        quarantine_reasons.append("CN Code does not match Cement sector")
-                elif "alumin" in sector_lower:
-                    if not clean_cn.startswith("76"):
-                        errors.append("CN Code does not match Aluminium sector")
-                        quarantine_reasons.append("CN Code does not match Aluminium sector")
-                elif "fertil" in sector_lower:
-                    if not clean_cn.startswith(("2808", "2814", "2834", "3102", "3105")):
-                        errors.append("CN Code does not match Fertilisers sector")
-                        quarantine_reasons.append("CN Code does not match Fertilisers sector")
-
-            if is_match:
-                q_lower = raw_name.lower()
-                m_lower = match_tuple[0].lower()
-                q_is_stainless = "stainless" in q_lower
-                m_is_stainless = "stainless" in m_lower
-                if q_is_stainless != m_is_stainless and "steel" in q_lower:
-                    is_match = False
             
             emissions_basis = "SUPPLIED"
             
@@ -599,14 +654,16 @@ class BOMProcessor:
                     carbon_factor = provided_carbon_factor
                 else:
                     # Try DB-backed Commission defaults first (by CN code + country + year)
-                    db_default, db_incl_indirect, db_source = self._lookup_cbam_default(
+                    db_default, db_incl_indirect, db_source, match_level = self._lookup_cbam_default(
                         cn_code or "", origin_country_raw or "", lookup_year
                     )
                     if db_default is not None:
                         carbon_factor = db_default
-                        emissions_basis = "COMMISSION_DEFAULT"
+                        emissions_basis = db_source
                         if self.cbam_defaults_stale:
                             notes.append("CBAM default values may be outdated (>90 days since last refresh)")
+                        if match_level and match_level < 8:
+                            notes.append(f"Using approximate {match_level}-digit CN default (exact 8-digit match not found)")
                     elif db_carbon > 0:
                         carbon_factor = db_carbon
                         emissions_basis = "DEFAULT_FALLBACK"
@@ -623,14 +680,16 @@ class BOMProcessor:
                     carbon_factor = provided_carbon_factor
                 else:
                     # Try DB-backed Commission defaults first
-                    db_default, db_incl_indirect, db_source = self._lookup_cbam_default(
+                    db_default, db_incl_indirect, db_source, match_level = self._lookup_cbam_default(
                         cn_code or "", origin_country_raw or "", lookup_year
                     )
                     if db_default is not None:
                         carbon_factor = db_default
-                        emissions_basis = "COMMISSION_DEFAULT"
+                        emissions_basis = db_source
                         if self.cbam_defaults_stale:
                             notes.append("CBAM default values may be outdated (>90 days since last refresh)")
+                        if match_level and match_level < 8:
+                            notes.append(f"Using approximate {match_level}-digit CN default (exact 8-digit match not found)")
                     else:
                         carbon_factor = _estimate_carbon_factor(raw_name, "")
                         emissions_basis = "LEGACY_FALLBACK"
@@ -708,11 +767,17 @@ class BOMProcessor:
             
             is_deminimis_eligible = "NO"
             if sector_valid and sector_lower and not any(x in sector_lower for x in ['electric', 'hydrogen']):
-                is_deminimis_eligible = "YES"
+                # Wait, EU/EEA origin rows and non-EU destinations are exempt from CBAM, so they shouldn't count towards the 50t threshold
+                if "Origin is exempt" not in " | ".join(notes) and "Destination outside EU" not in " | ".join(notes):
+                    is_deminimis_eligible = "YES"
+
+            importer = extract_string(['importer', 'eori', 'importer_id', 'importer_name']) or "UNKNOWN_IMPORTER"
                 
             enriched_rows.append({
                 **clean_row,
                 "Parsed_Weight_kg": round(weight_kg, 2),
+                "Importer": importer,
+                "Lookup_Year": lookup_year,
                 "DeMinimis_Eligible_Mass_kg": weight_kg if is_deminimis_eligible == "YES" else 0.0,
                 "Matched_Material": matched_name,
                 "Match_Confidence": f"{confidence}%" if is_match else "0%",
@@ -734,15 +799,24 @@ class BOMProcessor:
                 "Included_In_Total": included_str
             })
 
-        # Count all potentially in-scope mass, including quarantined rows
-        total_eligible_mass_kg = sum(r.get("DeMinimis_Eligible_Mass_kg", 0.0) for r in enriched_rows)
+        # Group by Importer and Calendar Year for De Minimis
+        from collections import defaultdict
+        mass_by_importer_year = defaultdict(float)
+        for r in enriched_rows:
+            mass = r.get("DeMinimis_Eligible_Mass_kg", 0.0)
+            if mass > 0:
+                key = (r["Importer"], r["Lookup_Year"])
+                mass_by_importer_year[key] += mass
         
         for r in enriched_rows:
             r["CBAM_Cost_If_Not_Exempt_EUR"] = r.get("CBAM_Cost_EUR", 0.0)
             if r.get("DeMinimis_Eligible_Mass_kg", 0.0) > 0:
-                if total_eligible_mass_kg < 50000.0:
-                    r["DeMinimis_Status"] = "Possibly exempt (verify annual total < 50t)"
-                    new_note = "Possibly exempt from CBAM (file total < 50t, verify annual importer total)"
+                key = (r["Importer"], r["Lookup_Year"])
+                total_mass = mass_by_importer_year[key]
+                # Allow strictly <= 50,000 kg (exactly 50t is exempt)
+                if total_mass <= 50000.0:
+                    r["DeMinimis_Status"] = "Possibly exempt (verify annual total <= 50t)"
+                    new_note = f"Possibly exempt from CBAM (file total for {r['Importer']} in {r['Lookup_Year']} is <= 50t. Verify annual net imports)"
                     current_notes = r.get("Notes", "None")
                     if current_notes == "None":
                         r["Notes"] = new_note
