@@ -383,7 +383,7 @@ class BOMProcessor:
         self._match_cache[cache_key] = None
         return None
 
-    def process_bom(self, df, material_col, weight_col, strict_mode=False):
+    def process_bom(self, df, material_col, weight_col, strict_mode=True, disable_deminimis=False):
         # Auto-detect column mappings if the explicit ones are missing
         actual_mat_col = material_col
         if material_col not in df.columns:
@@ -976,7 +976,9 @@ class BOMProcessor:
         
         for r in enriched_rows:
             r["CBAM_Cost_If_Not_Exempt_EUR"] = r.get("CBAM_Cost_EUR", 0.0)
-            if r.get("DeMinimis_Eligible_Mass_kg", 0.0) > 0:
+            if disable_deminimis:
+                r["DeMinimis_Status"] = "Disabled by user"
+            elif r.get("DeMinimis_Eligible_Mass_kg", 0.0) > 0:
                 key = (r["Importer"], r["Lookup_Year"])
                 total_grams = grams_by_importer_year[key]
                 other_imports_grams = other_imports_by_group.get(key, 0)

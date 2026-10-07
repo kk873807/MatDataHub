@@ -833,12 +833,13 @@ def analyze_bom(
     file: UploadFile = File(...),
     material_col: str = Form(...),
     weight_col: str = Form(...),
-    strict_mode: bool = Form(False),
+    strict_mode: bool = Form(True),
+    disable_deminimis: bool = Form(False),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """
-    Enterprise feature: Analyze a BOM CSV for ESG and Obsolescence.
+    Enterprise feature: Analyze a BOM CSV for CBAM cost estimation and supply chain risk.
     Requires Admin or Advanced tier.
     """
     if not current_user.is_admin and current_user.tier != "advanced":
@@ -852,10 +853,39 @@ def analyze_bom(
     import time
     t0 = time.time()
     contents = file.file.read()
-    print(f"File read in {time.time()-t0:.2f}s", flush=True)
+    
+    # --- Size limit: 10 MB ---
+    MAX_FILE_SIZE = 10 * 1024 * 1024
+    if len(contents) > MAX_FILE_SIZE:
+        raise HTTPException(status_code=413, detail=f"File too large ({len(contents)/(1024*1024):.1f} MB). Maximum is 10 MB.")
+    
+    print(f"File read in {time.time()-t0:.2f}s, size: {len(contents)} bytes", flush=True)
+    
+    # --- Encoding detection: try UTF-8, then latin-1 ---
     try:
-        df = pd.read_csv(io.BytesIO(contents))
-        print(f"CSV read in {time.time()-t0:.2f}s, rows: {len(df)}", flush=True)
+        text = contents.decode("utf-8-sig")  # handles BOM
+    except UnicodeDecodeError:
+        try:
+            text = contents.decode("latin-1")
+        except UnicodeDecodeError:
+            raise HTTPException(status_code=400, detail="Unable to decode file. Please save as UTF-8.")
+    
+    # --- Delimiter detection: semicolons (European Excel) vs commas ---
+    first_line = text.split("\n")[0] if text else ""
+    if first_line.count(";") > first_line.count(","):
+        sep = ";"
+    else:
+        sep = ","
+    
+    try:
+        df = pd.read_csv(io.StringIO(text), sep=sep)
+        # --- Row limit: 5000 ---
+        MAX_ROWS = 5000
+        if len(df) > MAX_ROWS:
+            raise HTTPException(status_code=413, detail=f"Too many rows ({len(df)}). Maximum is {MAX_ROWS}.")
+        print(f"CSV read in {time.time()-t0:.2f}s, rows: {len(df)}, delimiter: '{sep}'", flush=True)
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=400, detail="Invalid CSV format: unable to parse file.")
     
@@ -863,7 +893,7 @@ def analyze_bom(
     print(f"BOMProcessor initialized in {time.time()-t0:.2f}s", flush=True)
     
     t1 = time.time()
-    enriched_df = processor.process_bom(df, material_col, weight_col, strict_mode=strict_mode)
+    enriched_df = processor.process_bom(df, material_col, weight_col, strict_mode=strict_mode, disable_deminimis=disable_deminimis)
     print(f"process_bom finished in {time.time()-t1:.2f}s", flush=True)
     
     from app.models import BOMAnalysis
@@ -880,12 +910,22 @@ def analyze_bom(
                        "DeMinimis_Eligible_Mass_kg", "CBAM_Cost_If_Not_Exempt_EUR", "DeMinimis_Status",
                        "Total_CO2_kg", "Total_CO2_tonnes", "CBAM_Cost_EUR",
                        "Net_CBAM_Price_EUR", "ESG_Risk_Score",
-                       "Notes", "Validation_Errors", "Included_In_Total"]
+                       "Notes", "Validation_Errors", "Included_In_Total", "CBAM_Estimate_Notice"]
         available_cols = [c for c in detail_cols if c in enriched_df.columns]
         results_for_storage = enriched_df[available_cols].fillna("").to_dict(orient="records")
         
+        # Embed audit metadata
+        run_metadata = {
+            "strict_mode": strict_mode,
+            "disable_deminimis": disable_deminimis,
+            "cbam_defaults_count": processor.cbam_defaults_count,
+            "cbam_defaults_version": str(processor.cbam_defaults_version) if processor.cbam_defaults_version else None,
+            "cbam_reference_price_eur": 75.0,
+            "annex_version": getattr(processor, 'annex_version', 'unknown'),
+        }
+        
         t_json = time.time()
-        json_str = json.dumps(results_for_storage)
+        json_str = json.dumps({"metadata": run_metadata, "rows": results_for_storage})
         print(f"JSON dumps took {time.time()-t_json:.2f}s, size: {len(json_str)}", flush=True)
         
         bom_record = BOMAnalysis(
@@ -907,12 +947,19 @@ def analyze_bom(
         db.rollback()
         print(f"Failed to log BOMAnalysis: {e}")
     
+    # --- CSV formula injection guard: prefix dangerous cells ---
+    for col in enriched_df.select_dtypes(include='object').columns:
+        enriched_df[col] = enriched_df[col].apply(
+            lambda v: "'" + str(v) if isinstance(v, str) and len(v) > 0 and v[0] in ('=', '+', '-', '@') else v
+        )
+    
     # Return as CSV
     stream = io.StringIO()
     enriched_df.to_csv(stream, index=False)
     response = StreamingResponse(iter([stream.getvalue()]), media_type="text/csv")
     response.headers["Content-Disposition"] = "attachment; filename=enriched_bom.csv"
     response.headers["X-CBAM-Defaults-Count"] = str(processor.cbam_defaults_count)
+    response.headers["X-CBAM-Mode"] = f"strict={strict_mode},deminimis_disabled={disable_deminimis}"
     if processor.cbam_defaults_version:
         response.headers["X-CBAM-Defaults-Version"] = str(processor.cbam_defaults_version)
     return response

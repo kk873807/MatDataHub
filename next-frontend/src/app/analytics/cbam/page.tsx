@@ -19,7 +19,8 @@ export default function CBAMAnalytics() {
   // CSV Configuration
   const [materialCol, setMaterialCol] = useState("Material");
   const [weightCol, setWeightCol] = useState("Weight_kg");
-  const [strictMode, setStrictMode] = useState(false);
+  const [hardQuarantine, setHardQuarantine] = useState(true);
+  const [disableDeMinimis, setDisableDeMinimis] = useState(false);
   
   // Manual Entry State
   const [manualMaterial, setManualMaterial] = useState("");
@@ -64,7 +65,15 @@ export default function CBAMAnalytics() {
         if (data.results_json) {
           try {
             const parsed = JSON.parse(data.results_json);
-            setHistoryDetailData(parsed);
+            // New format: {metadata: {...}, rows: [...]}
+            // Old format: [...]
+            if (parsed.rows && Array.isArray(parsed.rows)) {
+              setHistoryDetailData(parsed.rows);
+            } else if (Array.isArray(parsed)) {
+              setHistoryDetailData(parsed);
+            } else {
+              setHistoryDetailData([]);
+            }
           } catch (err) {
             console.error("Failed to parse history json", err);
             setHistoryDetailData([]);
@@ -170,16 +179,16 @@ export default function CBAMAnalytics() {
   };
 
   const DEMO_BOMS = {
-    automotive: `material_id,Material,Weight_kg,cbam_sector,cn_code,country_of_origin,destination,shipment_date,supplier
-MAT-A1,Hot-Rolled Steel Coil,50000,Iron & Steel,7208 51 00,China,Germany,2026-06-15,Acme Metals
-MAT-A2,Aluminium Engine Block,15000,Aluminium,7601 20 00,India,Germany,2026-06-15,Global Alum
-MAT-A3,Plastic Dashboard,5000,,,Vietnam,Germany,2026-06-15,PolyCorp
-MAT-A4,Stainless Steel Fasteners,2000,Iron & Steel,7318 15 00,Taiwan,Germany,2026-06-15,FastenTech`,
-    construction: `material_id,Material,Weight_kg,cbam_sector,cn_code,country_of_origin,destination,shipment_date,supplier
-MAT-C1,Portland Cement,200000,Cement,2523 29 00,Turkey,France,2026-08-01,EuroCement
-MAT-C2,Steel Rebar,100000,Iron & Steel,7214 20 00,China,France,2026-08-01,SteelCo
-MAT-C3,Aluminium Window Frames,10000,Aluminium,7610 10 00,China,France,2026-08-01,AlumBuild
-MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass`
+    automotive: `material_id,Material,Weight_kg,cbam_sector,cn_code,country_of_origin,destination,release_date,supplier,importer
+MAT-A1,Hot-Rolled Steel Coil,50000,Iron & Steel,7208 51 00,China,Germany,2026-06-15,Acme Metals,DE1234567890123
+MAT-A2,Aluminium Extrusion Profile,15000,Aluminium,7604 29 10,India,Germany,2026-06-15,Global Alum,DE1234567890123
+MAT-A3,Plastic Dashboard,5000,,,Vietnam,Germany,2026-06-15,PolyCorp,DE1234567890123
+MAT-A4,Stainless Steel Fasteners,2000,Iron & Steel,7318 15 00,Taiwan,Germany,2026-06-15,FastenTech,DE1234567890123`,
+    construction: `material_id,Material,Weight_kg,cbam_sector,cn_code,country_of_origin,destination,release_date,supplier,importer
+MAT-C1,Portland Cement,200000,Cement,2523 29 00,Turkey,France,2026-08-01,EuroCement,FR9876543210987
+MAT-C2,Steel Rebar,100000,Iron & Steel,7214 20 00,China,France,2026-08-01,SteelCo,FR9876543210987
+MAT-C3,Aluminium Window Frames,10000,Aluminium,7610 10 00,China,France,2026-08-01,AlumBuild,FR9876543210987
+MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
   };
 
   const handleLoadDemo = (type: "automotive" | "construction") => {
@@ -190,7 +199,7 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass`
   };
 
   const downloadTemplate = () => {
-    const csvContent = "Material,Weight_kg\nSteel 304L,100\nAluminum 6061,50\n";
+    const csvContent = "material_id,Material,Weight_kg,cbam_sector,cn_code,country_of_origin,destination,release_date,supplier,importer,carbon_price_paid\nMAT-001,Hot-Rolled Steel Plate,10000,Iron & Steel,7208 51 00,China,Germany,2026-06-15,Example Supplier,DE0000000000000,0\n";
     const blob = new Blob([csvContent], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -238,7 +247,8 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass`
       formData.append("file", payloadFile as File);
       formData.append("material_col", payloadMatCol);
       formData.append("weight_col", payloadWeightCol);
-      formData.append("strict_mode", strictMode.toString());
+      formData.append("strict_mode", hardQuarantine.toString());
+      formData.append("disable_deminimis", disableDeMinimis.toString());
 
       // Note: Make sure the backend doesn't expect authentication, or send token if needed
       const token = localStorage.getItem("token");
@@ -396,9 +406,9 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass`
         <div className="print:hidden">
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white font-heading flex items-center gap-3">
             <Factory className="w-8 h-8 text-amber-500" />
-            CBAM Calculator & ESG Analyzer
+            CBAM Estimate & Supply Chain Risk
           </h1>
-          <p className="text-slate-600 dark:text-slate-300 mt-2">Upload your Bill of Materials or enter manually to calculate ESG impact and carbon tax estimates.</p>
+          <p className="text-slate-600 dark:text-slate-300 mt-2">Upload your Bill of Materials or enter manually to estimate CBAM carbon costs and supply chain risk.</p>
           
           <div className="mt-4 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg flex items-start gap-3 text-amber-800 dark:text-amber-200 text-sm max-w-4xl">
             <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5" />
@@ -464,13 +474,26 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass`
                   <Download className="w-4 h-4" /> Template
                 </button>
               </div>
-              <div className="flex items-center pt-2">
+              <div className="space-y-3 pt-2">
                 <label className="flex items-center gap-3 cursor-pointer group">
-                  <div className={`w-11 h-6 flex items-center rounded-full p-1 transition-colors ${strictMode ? 'bg-amber-500' : 'bg-slate-300 dark:bg-slate-700'}`}>
-                    <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${strictMode ? 'translate-x-5' : ''}`}></div>
+                  <div className={`w-11 h-6 flex items-center rounded-full p-1 transition-colors ${hardQuarantine ? 'bg-amber-500' : 'bg-slate-300 dark:bg-slate-700'}`}>
+                    <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${hardQuarantine ? 'translate-x-5' : ''}`}></div>
                   </div>
-                  <input type="checkbox" className="hidden" checked={strictMode} onChange={e => setStrictMode(e.target.checked)} />
-                  <span className="text-sm font-semibold text-slate-700 dark:text-slate-300 group-hover:text-amber-600 transition-colors">Strict Compliance Mode (Disable De Minimis Exemption, Hard Quarantine on Missing Compliance Data)</span>
+                  <input type="checkbox" className="hidden" checked={hardQuarantine} onChange={e => setHardQuarantine(e.target.checked)} />
+                  <div>
+                    <span className="text-sm font-semibold text-slate-700 dark:text-slate-300 group-hover:text-amber-600 transition-colors">Strict Quarantine</span>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Quarantine rows with missing CN code, country, date or emissions data.</p>
+                  </div>
+                </label>
+                <label className="flex items-center gap-3 cursor-pointer group">
+                  <div className={`w-11 h-6 flex items-center rounded-full p-1 transition-colors ${disableDeMinimis ? 'bg-red-500' : 'bg-slate-300 dark:bg-slate-700'}`}>
+                    <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${disableDeMinimis ? 'translate-x-5' : ''}`}></div>
+                  </div>
+                  <input type="checkbox" className="hidden" checked={disableDeMinimis} onChange={e => setDisableDeMinimis(e.target.checked)} />
+                  <div>
+                    <span className="text-sm font-semibold text-slate-700 dark:text-slate-300 group-hover:text-red-600 transition-colors">Ignore De Minimis Exemption</span>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Treat all in-scope goods as chargeable regardless of the 50 t threshold.</p>
+                  </div>
                 </label>
               </div>
 
@@ -566,8 +589,8 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass`
                       <p className="text-sm text-slate-500 dark:text-slate-400">
                         {new Date(selectedHistoryItem.created_at).toLocaleDateString()} {new Date(selectedHistoryItem.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                         {" · "}
-                        <span className={`font-bold ${selectedHistoryItem.strict_mode ? 'text-red-500' : 'text-emerald-500'}`}>
-                          {selectedHistoryItem.strict_mode ? 'Strict Mode' : 'Normal Mode'}
+                        <span className={`font-bold ${selectedHistoryItem.strict_mode ? 'text-amber-500' : 'text-emerald-500'}`}>
+                          {selectedHistoryItem.strict_mode ? 'Strict Quarantine' : 'Normal'}
                         </span>
                       </p>
                     </div>
@@ -723,7 +746,7 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass`
                             <td className="px-4 py-3 text-right text-slate-700 dark:text-slate-300 font-mono">{(item.total_co2_tonnes || 0).toFixed(2)}</td>
                             <td className="px-4 py-3 text-right font-bold text-slate-900 dark:text-white font-mono">€{(item.cbam_cost_eur || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                             <td className="px-4 py-3 text-center">
-                              <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${item.strict_mode ? 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400' : 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400'}`}>
+                              <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${item.strict_mode ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400' : 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400'}`}>
                                 {item.strict_mode ? 'Strict' : 'Normal'}
                               </span>
                             </td>
@@ -756,7 +779,7 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass`
               className="px-8 py-3 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 text-white rounded-2xl font-bold transition-colors flex items-center gap-2 shadow-lg shadow-amber-900/20"
             >
               {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Factory className="w-5 h-5" />}
-              {loading ? "Analyzing..." : "Calculate CBAM & ESG"}
+              {loading ? "Analyzing..." : "Estimate CBAM Cost"}
             </button>
           </div>
           )}
