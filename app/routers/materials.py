@@ -882,7 +882,10 @@ def analyze_bom(
         sep = ','
         
     try:
-        df = pd.read_csv(io.StringIO(text), sep=sep)
+        if sep == ';':
+            df = pd.read_csv(io.StringIO(text), sep=sep, decimal=',')
+        else:
+            df = pd.read_csv(io.StringIO(text), sep=sep)
         # --- Row limit: 5000 ---
         MAX_ROWS = 5000
         if len(df) > MAX_ROWS:
@@ -934,8 +937,9 @@ def analyze_bom(
             "engine_version": engine_version,
             "input_file_hash_sha256": file_hash,
             "phase_in_factor_2026": 0.025,
-            "default_markup_fertiliser": 1.01,
-            "default_markup_other": 1.20
+            "cbam_price_source": "European Energy Exchange (EEX)",
+            "cbam_price_date": "2026-Q1 (projected)"
+
         }
         
         t_json = time.time()
@@ -962,10 +966,25 @@ def analyze_bom(
         print(f"Failed to log BOMAnalysis: {e}")
     
     # --- CSV formula injection guard: prefix dangerous cells ---
+    def _sanitize_cell(v):
+        if not isinstance(v, str) or not v:
+            return v
+        stripped = v.strip()
+        if not stripped or stripped == "-":
+            return v
+        # Skip values that look numeric (negative numbers like -5.3)
+        try:
+            float(stripped)
+            return v
+        except ValueError:
+            pass
+        first = stripped[0]
+        if first in ('=', '+', '-', '@', '\t', '\r'):
+            return "'" + v
+        return v
+    
     for col in enriched_df.select_dtypes(include='object').columns:
-        enriched_df[col] = enriched_df[col].apply(
-            lambda v: "'" + str(v) if isinstance(v, str) and len(v.strip()) > 0 and v.strip() != "-" and v.lstrip()[0] in ('=', '+', '-', '@', '\t', '\r') else v
-        )
+        enriched_df[col] = enriched_df[col].apply(_sanitize_cell)
     
     # Return as CSV
     stream = io.StringIO()

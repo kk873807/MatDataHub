@@ -121,7 +121,7 @@ export default function CBAMAnalytics() {
   const [resultsData, setResultsData] = useState<any[] | null>(null);
   const [totalCO2, setTotalCO2] = useState(0);
   const [totalCbamCost, setTotalCbamCost] = useState(0);
-  const [selectedYear, setSelectedYear] = useState<"2034" | "2027" | "2026">("2026");
+  const [selectedYear, setSelectedYear] = useState<"ACTUAL" | "2034" | "2027" | "2026">("ACTUAL");
   const [pendingReviewCount, setPendingReviewCount] = useState(0);
   const [pendingReviewTonnes, setPendingReviewTonnes] = useState(0);
   const [fallbackTonnes, setFallbackTonnes] = useState(0);
@@ -181,7 +181,7 @@ export default function CBAMAnalytics() {
   const DEMO_BOMS = {
     automotive: `material_id,Material,Weight_kg,cbam_sector,cn_code,country_of_origin,destination,release_date,supplier,importer
 MAT-A1,Hot-Rolled Steel Coil,50000,Iron & Steel,7208 51 00,China,Germany,2026-06-15,Acme Metals,DE1234567890123
-MAT-A2,Aluminium Extrusion Profile,15000,Aluminium,7604 29 10,India,Germany,2026-06-15,Global Alum,DE1234567890123
+MAT-A2,Aluminium Alloy Bar,15000,Aluminium,7604 21 00,India,Germany,2026-06-15,Global Alum,DE1234567890123
 MAT-A3,Plastic Dashboard,5000,,,Vietnam,Germany,2026-06-15,PolyCorp,DE1234567890123
 MAT-A4,Stainless Steel Fasteners,2000,Iron & Steel,7318 15 00,Taiwan,Germany,2026-06-15,FastenTech,DE1234567890123`,
     construction: `material_id,Material,Weight_kg,cbam_sector,cn_code,country_of_origin,destination,release_date,supplier,importer
@@ -303,7 +303,7 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
             }
             
             const basis = rowObj["Emissions_Basis"];
-            if (basis === "DEFAULT_FALLBACK" || basis === "COMMISSION_DEFAULT" || basis === "LEGACY_FALLBACK") {
+            if (basis === "DEFAULT_FALLBACK" || basis === "LEGACY_FALLBACK" || basis === "GENERIC_ESTIMATE") {
                 fallbackKg += rowKg;
             }
           } else if (included && included.startsWith("NO")) {
@@ -390,7 +390,9 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
 
   // CBAM cost now comes from backend (€75/tCO2e reference price)
   const phaseInFactor = selectedYear === "2026" ? 0.025 : selectedYear === "2027" ? 0.05 : 1.0;
-  const estimatedTaxEUR = totalCbamCost * phaseInFactor;
+  // If the user selects a specific what-if year, recalculate based on the raw taxable tonnes.
+  // Otherwise, if they just uploaded, `totalCbamCost` contains the EXACT row-by-row computed tax.
+  const estimatedTaxEUR = selectedYear === "ACTUAL" ? totalCbamCost : taxableTonnes * 75.0 * phaseInFactor;
 
   return (
     <main 
@@ -811,7 +813,13 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
                 <p className="text-slate-500 dark:text-slate-400 font-medium mb-1 flex items-center gap-2"><Factory className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> Total Embodied Carbon (Included)</p>
                 <h3 className="text-3xl font-bold text-slate-900 dark:text-white font-heading">{(totalCO2/1000).toLocaleString(undefined, { maximumFractionDigits: 1 })} <span className="text-lg text-slate-500 dark:text-slate-400 font-normal">t CO₂</span></h3>
                 <div className="text-xs text-slate-400 mt-2 font-medium space-y-1">
-                  <p>of which {fallbackTonnes.toLocaleString(undefined, { maximumFractionDigits: 1 })} t based on fallback defaults</p>
+                  {fallbackTonnes > 0 && totalCO2 > 0 && (fallbackTonnes / (totalCO2/1000)) > 0.5 ? (
+                    <p className="text-red-500 font-bold">⚠ {fallbackTonnes.toLocaleString(undefined, { maximumFractionDigits: 1 })} t ({Math.round(fallbackTonnes / (totalCO2/1000) * 100)}%) estimated with generic fallback factors, not Commission defaults. These figures should not be used for declarations.</p>
+                  ) : fallbackTonnes > 0 ? (
+                    <p className="text-amber-500">of which {fallbackTonnes.toLocaleString(undefined, { maximumFractionDigits: 1 })} t based on generic fallback defaults</p>
+                  ) : (
+                    <p>All rows used Commission defaults or supplied emissions</p>
+                  )}
                   {pendingReviewCount > 0 && (
                     <p className="text-amber-500">{pendingReviewTonnes.toLocaleString(undefined, { maximumFractionDigits: 1 })} t (material mass) in {pendingReviewCount} rows pending review</p>
                   )}
@@ -834,13 +842,15 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
                     onChange={e => setSelectedYear(e.target.value as any)}
                     className="text-xs bg-slate-100 dark:bg-slate-800 border-none rounded p-1 font-bold text-slate-700 dark:text-slate-300 outline-none cursor-pointer max-w-[160px]"
                   >
-                    <option value="2034">If imported in 2034 (100%)</option>
-                    <option value="2027">If imported in 2027 (~5%)</option>
-                    <option value="2026">If imported in 2026 (~2.5%)</option>
+                    <option value="ACTUAL">Actual Shipment Year</option>
+                    <option disabled>──────────</option>
+                    <option value="2034">What-if: 2034 (100%)</option>
+                    <option value="2027">What-if: 2027 (~5%)</option>
+                    <option value="2026">What-if: 2026 (~2.5%)</option>
                   </select>
                 </div>
                 <h3 className="text-3xl font-bold text-amber-500">€{estimatedTaxEUR.toLocaleString(undefined, { maximumFractionDigits: 2 })}</h3>
-                <p className="text-xs text-slate-400 mt-2 font-medium">@ €75/tCO₂e · assumes emissions near benchmark</p>
+                <p className="text-xs text-slate-400 mt-2 font-medium">@ €75/tCO₂e (assumed — actual CBAM certificate price is a published quarterly EEX average)</p>
                 {isDeMinimisExempt && (
                   <div className="mt-3 bg-emerald-50 dark:bg-emerald-900/20 p-2 rounded border border-emerald-100 dark:border-emerald-800">
                     <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">

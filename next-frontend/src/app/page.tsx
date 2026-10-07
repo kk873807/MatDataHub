@@ -238,9 +238,9 @@ export default function LandingPage() {
             ) : (
               // Fallback if no feedbacks loaded yet
               [
-                { quote: "MatDataHub completely changed how we estimate aerospace BOM costs. The multi-objective substitution tool saved us months of R&D.", author: "Dr. Sarah Jenkins", role: "Lead Materials Scientist, AeroTech Corp" },
-                { quote: "Finally, a platform that understands both the physics and the economics of materials. The CBAM calculator is a lifesaver for EU imports.", author: "Marcus Thorne", role: "Supply Chain Director, EuroManufacturing Ltd" },
-                { quote: "The clean, academic interface makes it a joy to use. It feels like having an expert metallurgist sitting right next to you.", author: "Elena Rodriguez", role: "Mechanical Engineer, Precision Dynamics" }
+                { quote: "MatDataHub's material database saves hours of cross-referencing datasheets. Having mechanical properties alongside environmental data in one place is exactly what we needed.", author: "Early Adopter", role: "Materials Engineering" },
+                { quote: "The CBAM estimation tool gave us a quick first pass on our EU import exposure. Good starting point before bringing in consultants for formal declarations.", author: "Early Adopter", role: "Supply Chain Management" },
+                { quote: "Clean interface, fast search. We use it for quick property lookups and comparative analysis across alloy families.", author: "Early Adopter", role: "Mechanical Engineering" }
               ].map((test, i) => (
                 <div key={i} className="p-8 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl relative">
                   <div className="text-4xl text-indigo-500/20 absolute top-4 left-4 font-serif">"</div>

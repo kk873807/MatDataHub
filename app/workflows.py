@@ -688,13 +688,15 @@ class BOMProcessor:
                     is_out_of_scope = True
                     notes.append(f"Sector '{declared_sector}' is not covered by CBAM")
             else:
-                # No valid CN code and no declared sector.
-                # This means it's simply out of scope (e.g., electronics, plastics, etc.)
-                is_out_of_scope = True
                 if clean_cn:
+                    # CN code positively identified as not in Annex I
+                    is_out_of_scope = True
                     notes.append("CN code is not covered by CBAM Annex I")
                 else:
-                    notes.append("No CBAM sector or CN code provided; assuming out of scope")
+                    # No CN code AND no declared sector — cannot determine scope.
+                    # This is NOT positively out of scope; it needs data.
+                    errors.append("Missing CN code and sector — cannot determine CBAM scope")
+                    quarantine_reasons.append("Needs data: provide CN code or CBAM sector")
 
             match_tuple = self._get_best_match(raw_name, tuple(allowed_cats) if allowed_cats else None)
             is_match = match_tuple is not None
@@ -803,10 +805,6 @@ class BOMProcessor:
                 
             # Apply regulatory mark-ups if using Commission Defaults (e.g. 1% for fertilisers, 20% for others)
             # This penalises importers who don't use actual verified emissions.
-            if emissions_basis == "COMMISSION_DEFAULT":
-                markup = 1.01 if sector_lower == "fertiliser" else 1.20
-                carbon_factor = carbon_factor * markup
-                notes.append(f"Applied {int(round((markup-1)*100))}% regulatory mark-up for using default values")
 
             total_co2_kg = round(weight_kg * carbon_factor, 3)
             total_co2_tonnes = total_co2_kg / 1000.0
@@ -872,6 +870,8 @@ class BOMProcessor:
             
             if quarantine_reasons:
                 included_str = "QUARANTINED: " + " | ".join(quarantine_reasons)
+                # Keep provisional values for visibility but don't include in totals
+                # (provisional values are stored separately as Provisional_CO2_kg etc.)
                 total_co2_kg = 0.0
                 total_co2_tonnes = 0.0
                 cbam_cost_eur = 0.0
