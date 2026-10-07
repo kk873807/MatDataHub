@@ -42,6 +42,8 @@ EX-O2,Test Mat,20000,Iron & Steel,7208 51 00,China,Germany,2026-06-16,Acme,Imp-O
 EX-CN,Test Mat,30000,Unrecognized,7208 51 00,China,Germany,2026-06-15,Acme,Imp-CN-Rescue,0,,,
 EX-PLA,Plastic-Coated Pipe,30000,Iron & Steel,7306 11 00,China,Germany,2026-06-15,Acme,Imp-PlasticGuard,0,,,
 EX-SHORT,Short CN,10000,Iron & Steel,7202,China,Germany,2026-06-15,Acme,Imp-Short,0,,,
+EX-PRICE,Carbon Price Paid,10000,Iron & Steel,7208 51 00,China,Germany,2026-06-15,Acme,Imp-Price,0,,,10
+EX-H2,Hydrogen excluded,10000,Hydrogen,2804 10 00,China,Germany,2026-06-15,Acme,Imp-H2,0,,,
 """
 
 df = pd.read_csv(io.StringIO(CSV), dtype=str)
@@ -89,6 +91,15 @@ check("CN evidence wins over fuzzy polymer", "OUT OF SCOPE" not in str(rpla.get(
 print("\n=== Short CN Code ===")
 rsh = row("EX-SHORT")
 check("Short CN is quarantined as incomplete", "Incomplete" in str(rsh.get("Validation_Errors", "")), f"{rsh.get('Validation_Errors')}")
+
+print("\n=== Carbon Price Paid Deduction ===")
+rprice = row("EX-PRICE")
+check("Carbon price deduction reduces net price", "Partial carbon price paid at origin" in str(rprice.get("Notes", "")), f"{rprice.get('Notes')}")
+
+print("\n=== Hydrogen De Minimis Exclusion ===")
+rh2 = row("EX-H2")
+check("Hydrogen is excluded from de minimis", "De minimis exemption does not apply to Hydrogen" in str(rh2.get("Notes", "")), f"{rh2.get('Notes')}")
+check("Hydrogen eligible mass is 0", rh2.get("DeMinimis_Eligible_Mass_kg", 1.0) == 0.0, f"{rh2.get('DeMinimis_Eligible_Mass_kg')}")
 
 print("\n=== Regulatory Diagnostics Output ===")
 check("Outputs Annex I Reg Version", "Regulation (EU) 2023/956 Annex I" in str(r50a.get("CBAM_Defaults_Info", "")), f"{r50a.get('CBAM_Defaults_Info')}")

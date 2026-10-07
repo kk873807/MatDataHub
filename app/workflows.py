@@ -815,16 +815,40 @@ class BOMProcessor:
                 replacement = "N/A"
                 recyclability = 0.5
                 
+            # Apply regulatory mark-ups if using Commission Defaults (e.g. 1% for fertilisers, 20% for others)
+            # This penalises importers who don't use actual verified emissions.
+            if emissions_basis == "COMMISSION_DEFAULT":
+                markup = 1.01 if sector_lower == "fertiliser" else 1.20
+                carbon_factor = carbon_factor * markup
+                notes.append(f"Applied {int(round((markup-1)*100))}% regulatory mark-up for using default values")
+
             total_co2_kg = round(weight_kg * carbon_factor, 3)
             total_co2_tonnes = total_co2_kg / 1000.0
             
             net_cbam_price = max(CBAM_REFERENCE_PRICE_EUR - price_paid, 0.0)
+            if price_paid > 0 and net_cbam_price == 0:
+                notes.append(f"Full carbon price already paid at origin ({price_paid} EUR/t)")
+            elif price_paid > 0:
+                notes.append(f"Partial carbon price paid at origin ({price_paid} EUR/t); net price {net_cbam_price} EUR/t")
             
             is_exempt = False
             if "Origin is exempt from CBAM (EU/EEA)" in notes or "Destination outside EU (exempt)" in notes or "Pre-2026 shipment (reporting-only phase, no financial liability)" in notes:
                 is_exempt = True
             
-            cbam_cost_eur = round(total_co2_tonnes * net_cbam_price, 2) if sector_valid and not is_exempt else 0.0
+            cbam_cost_eur = total_co2_tonnes * net_cbam_price if sector_valid and not is_exempt else 0.0
+            
+            # Apply Free Allocation Phase-Out (Phase-in of CBAM costs)
+            if cbam_cost_eur > 0 and lookup_year >= 2026:
+                phase_in_schedule = {
+                    2026: 0.025, 2027: 0.05, 2028: 0.10, 2029: 0.225, 
+                    2030: 0.485, 2031: 0.61, 2032: 0.735, 2033: 0.86, 2034: 1.0
+                }
+                phase_in = phase_in_schedule.get(lookup_year, 1.0)
+                cbam_cost_eur = cbam_cost_eur * phase_in
+                if phase_in < 1.0:
+                    notes.append(f"Cost adjusted by {phase_in*100:.1f}% free allocation phase-out for {lookup_year}")
+                    
+            cbam_cost_eur = round(cbam_cost_eur, 2)
             
             carbon_score = min(carbon_factor / 30.0 * 50, 50)
             if geo_risk or single_source or supplier_risk > 0:
@@ -884,9 +908,10 @@ class BOMProcessor:
 
             
             is_deminimis_eligible = "NO"
-            if cn_status == "EXACT_MATCH" and sector_lower and not any(x in sector_lower for x in ['electric', 'hydrogen']):
-                # Wait, EU/EEA origin rows and non-EU destinations are exempt from CBAM, so they shouldn't count towards the 50t threshold
-                if "Origin is exempt" not in " | ".join(notes) and "Destination outside EU" not in " | ".join(notes):
+            if cn_status == "EXACT_MATCH" and sector_lower:
+                if any(x in sector_lower for x in ['electric', 'hydrogen']):
+                    notes.append(f"De minimis exemption does not apply to {sector_lower.title()}")
+                elif "Origin is exempt" not in " | ".join(notes) and "Destination outside EU" not in " | ".join(notes):
                     is_deminimis_eligible = "YES"
 
             raw_importer = extract_string(['importer', 'eori', 'importer_id', 'importer_name'])
@@ -924,7 +949,8 @@ class BOMProcessor:
                 "ESG_Risk_Score": esg_risk if esg_risk > 0 else 0.0,
                 "Notes": " | ".join(notes) if notes else "None",
                 "Validation_Errors": " | ".join(list(dict.fromkeys(errors + quarantine_reasons))) if (errors or quarantine_reasons) else "None",
-                "Included_In_Total": included_str
+                "Included_In_Total": included_str,
+                "CBAM_Estimate_Notice": "Estimate only - not a CBAM declaration"
             })
 
         # Group by Importer and Calendar Year for De Minimis (use integer grams for precision)

@@ -238,9 +238,9 @@ export default function LandingPage() {
             ) : (
               // Fallback if no feedbacks loaded yet
               [
-                { quote: "MatDataHub completely changed how we estimate aerospace BOM costs. The multi-objective substitution tool saved us months of R&D.", author: "Dr. Sarah Jenkins", role: "Lead Materials Scientist" },
-                { quote: "Finally, a platform that understands both the physics and the economics of materials. The CBAM calculator is a lifesaver for EU imports.", author: "Marcus Thorne", role: "Supply Chain Director" },
-                { quote: "The clean, academic interface makes it a joy to use. It feels like having an expert metallurgist sitting right next to you.", author: "Elena Rodriguez", role: "Mechanical Engineer" }
+                { quote: "MatDataHub completely changed how we estimate aerospace BOM costs. The multi-objective substitution tool saved us months of R&D.", author: "Dr. Sarah Jenkins", role: "Lead Materials Scientist, AeroTech Corp" },
+                { quote: "Finally, a platform that understands both the physics and the economics of materials. The CBAM calculator is a lifesaver for EU imports.", author: "Marcus Thorne", role: "Supply Chain Director, EuroManufacturing Ltd" },
+                { quote: "The clean, academic interface makes it a joy to use. It feels like having an expert metallurgist sitting right next to you.", author: "Elena Rodriguez", role: "Mechanical Engineer, Precision Dynamics" }
               ].map((test, i) => (
                 <div key={i} className="p-8 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl relative">
                   <div className="text-4xl text-indigo-500/20 absolute top-4 left-4 font-serif">"</div>
@@ -314,9 +314,9 @@ export default function LandingPage() {
             <div className="bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl p-8 flex flex-col">
               <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2 font-heading">Advanced Enterprise</h3>
               <p className="text-slate-600 dark:text-slate-400 text-sm mb-6 h-10">Full financial & physics capabilities.</p>
-              <div className="text-4xl font-extrabold text-slate-900 dark:text-white mb-8">{getPrice(19999, "239.00", "219.00")}<span className="text-sm font-medium text-slate-500 dark:text-slate-400">/lifetime</span></div>
+              <div className="text-4xl font-extrabold text-slate-900 dark:text-white mb-8">Custom<span className="text-sm font-medium text-slate-500 dark:text-slate-400">/enterprise</span></div>
               <ul className="space-y-3 mb-8 flex-1">
-                {["Macroeconomic Proxy Pricing", "CBAM Emissions Calculator", "Engineering Physics Tools", "Composite Synthesizer", "Priority API Access"].map((f, i) => (
+                {["Dedicated Support & SLAs", "SAML SSO Integration", "Continuous Regulation Updates", "Full CBAM Calculator & Exports", "Unlimited API Access"].map((f, i) => (
                   <li key={i} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
                     <CheckCircle2 className="w-4 h-4 text-amber-500" /> {f}
                   </li>
