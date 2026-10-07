@@ -865,9 +865,12 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
                   </select>
                 </div>
                 <h3 className="text-3xl font-bold text-amber-500">€{estimatedTaxEUR.toLocaleString(undefined, { maximumFractionDigits: 2 })}</h3>
+                  <div className="bg-amber-50 dark:bg-amber-900/20 px-2 py-1 rounded inline-block mt-1 border border-amber-100 dark:border-amber-800/50">
+                    <p className="text-xs text-amber-700 dark:text-amber-400 font-medium">Ref 2034 (100%): €{(taxableTonnes * 75.0).toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                  </div>
                 <p className="text-xs text-slate-400 mt-2 font-medium">@ €75/tCO₂e (assumed — actual CBAM certificate price is a published quarterly EEX average)</p>
                   <p className="text-xs text-amber-500 mt-1 font-semibold text-balance">
-                    ⚠️ Warning: The phase-in model assumes product emissions equal the free-allocation benchmark. Because default values exceed benchmarks, actual 2026-2027 costs using defaults will be substantially higher.
+                    ⚠️ Warning (simplified lower estimate): The phase-in model assumes product emissions equal the free-allocation benchmark. Because default values typically exceed benchmarks, actual 2026-2027 costs using defaults will likely be substantially higher.
                   </p>
                 {isDeMinimisExempt && (
                   <div className="mt-3 bg-emerald-50 dark:bg-emerald-900/20 p-2 rounded border border-emerald-100 dark:border-emerald-800">

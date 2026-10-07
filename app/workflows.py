@@ -858,7 +858,7 @@ class BOMProcessor:
                 phase_in = phase_in_schedule.get(lookup_year, 1.0)
                 cbam_cost_eur = cbam_cost_eur * phase_in
                 if phase_in < 1.0:
-                    notes.append(f"Cost estimated as {phase_in*100:.1f}% of emissions (CAVEAT: assumes emissions ≈ benchmark. Actual cost will be higher if using defaults)")
+                    notes.append(f"Cost estimated as {phase_in*100:.1f}% of emissions (Simplified lower estimate: assumes emissions ≈ benchmark. Actual cost will be higher if using defaults)")
                     
             cbam_cost_eur = round(cbam_cost_eur, 2)
             
