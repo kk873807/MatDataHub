@@ -329,7 +329,12 @@ class BOMProcessor:
         for length in range(len(clean_cn), 1, -1):
             prefixes.append(clean_cn[:length])
         
+        # Hardcoded ambiguous prefixes found via database crawl
+        ambiguous_prefixes = {'761090'}
+        
         for prefix in prefixes:
+            if prefix in ambiguous_prefixes and prefix != clean_cn:
+                return None, None, 'AMBIGUOUS', None, None
             match_digits = len(prefix)
             # Try country-specific first
             if country_lower:
@@ -486,6 +491,10 @@ class BOMProcessor:
                                 rw_str = rw_str.replace('.', '').replace(',', '.')
                             elif re.match(r'^\d+,\d+$', rw_str):
                                 rw_str = rw_str.replace(',', '.')
+                            elif re.match(r'^\d{1,3}\.\d{3}$', rw_str):
+                                rw_str = rw_str.replace('.', '')
+                                errors.append(f"Ambiguous weight format: '{raw_weight}'")
+                                quarantine_reasons.append(f"Ambiguous weight format '{raw_weight}' - confirm if thousand or decimal")
                             elif re.match(r'^\d{1,3}(?:\.\d{3})+$', rw_str):
                                 rw_str = rw_str.replace('.', '')
                             else:
@@ -494,6 +503,10 @@ class BOMProcessor:
                             # US convention: comma is thousands, dot is decimal
                             if re.match(r'^\d{1,3}(?:,\d{3})*\.\d+$', rw_str):
                                 rw_str = rw_str.replace(',', '')
+                            elif re.match(r'^\d{1,3},\d{3}$', rw_str):
+                                rw_str = rw_str.replace(',', '')
+                                errors.append(f"Ambiguous weight format: '{raw_weight}'")
+                                quarantine_reasons.append(f"Ambiguous weight format '{raw_weight}' - confirm if thousand or decimal")
                             elif re.match(r'^\d{1,3}(?:,\d{3})+$', rw_str):
                                 rw_str = rw_str.replace(',', '')
                             else:
@@ -716,16 +729,22 @@ class BOMProcessor:
                     notes.append(f"Sector '{declared_sector}' is not covered by CBAM")
             else:
                 if clean_cn:
-                    # CN code positively identified as not in Annex I
-                    is_out_of_scope = True
-                    notes.append("CN code is not covered by CBAM Annex I")
+                    if clean_cn.startswith('2716'):
+                        errors.append("No default values published for Electricity. Need actual data.")
+                        quarantine_reasons.append("Electricity needs actual emissions data")
+                    else:
+                        # CN code positively identified as not in Annex I
+                        is_out_of_scope = True
+                        notes.append("CN code is not covered by CBAM Annex I")
                 else:
                     # Coarse non-CBAM class check based on material name
                     mat_name_lower = str(raw_name).lower() if raw_name else ""
                     non_cbam_keywords = ["plastic", "glass", "textile", "electronic", "polymer", "wood", "paper", "copper", "pcb", "battery", "rubber", "leather", "ceramic"]
-                    if any(kw in mat_name_lower for kw in non_cbam_keywords):
+                    cbam_terms = ["steel", "iron", "aluminium", "aluminum", "cement", "fertiliser", "fertilizer", "hydrogen"]
+                    
+                    if any(kw in mat_name_lower for kw in non_cbam_keywords) and not any(term in mat_name_lower for term in cbam_terms):
                         is_out_of_scope = True
-                        notes.append("Positive non-CBAM material identified (e.g., polymer, glass, electronics)")
+                        notes.append("OUT OF SCOPE (assumed from name)")
                         errors = [e for e in errors if "Missing CN Code" not in e and "Missing CN code" not in e]
                         # Remove quarantine reasons too
                         quarantine_reasons = [q for q in quarantine_reasons if "Missing CN Code" not in q]
@@ -794,6 +813,11 @@ class BOMProcessor:
                     db_default, db_incl_indirect, db_source, match_level, default_meta = self._lookup_cbam_default(
                         cn_code or "", origin_country_raw or "", lookup_year
                     )
+                    if db_source == 'AMBIGUOUS':
+                        errors.append(f"CN code '{cn_code}' matches an ambiguous prefix. Needs exact 8-digit CN code.")
+                        quarantine_reasons.append("Needs exact 8-digit CN code (ambiguous prefix)")
+                        db_default = None
+                        db_source = None
                     if db_default is not None:
                         carbon_factor = db_default
                         emissions_basis = db_source
@@ -826,6 +850,11 @@ class BOMProcessor:
                     db_default, db_incl_indirect, db_source, match_level, default_meta = self._lookup_cbam_default(
                         cn_code or "", origin_country_raw or "", lookup_year
                     )
+                    if db_source == 'AMBIGUOUS':
+                        errors.append(f"CN code '{cn_code}' matches an ambiguous prefix. Needs exact 8-digit CN code.")
+                        quarantine_reasons.append("Needs exact 8-digit CN code (ambiguous prefix)")
+                        db_default = None
+                        db_source = None
                     if db_default is not None:
                         carbon_factor = db_default
                         emissions_basis = db_source
@@ -940,11 +969,24 @@ class BOMProcessor:
 
             
             is_deminimis_eligible = "NO"
-            if cn_status == "EXACT_MATCH" and sector_lower:
-                if any(x in sector_lower for x in ['electric', 'hydrogen']):
+            is_exempt = "Origin is exempt" in " | ".join(notes) or "Destination outside EU" in " | ".join(notes)
+            
+            is_elec_or_hydro = False
+            if clean_cn:
+                if clean_cn.startswith('2716'):
+                    is_elec_or_hydro = True
+                    notes.append("De minimis exemption does not apply to Electricity")
+                elif clean_cn.startswith('2804'):
+                    is_elec_or_hydro = True
+                    notes.append("De minimis exemption does not apply to Hydrogen")
+            
+            if not is_elec_or_hydro:
+                if cn_status == "EXACT_MATCH" and sector_lower and any(x in sector_lower for x in ['electric', 'hydrogen']):
+                    is_elec_or_hydro = True
                     notes.append(f"De minimis exemption does not apply to {sector_lower.title()}")
-                elif "Origin is exempt" not in " | ".join(notes) and "Destination outside EU" not in " | ".join(notes):
-                    is_deminimis_eligible = "YES"
+
+            if not is_exempt and not is_elec_or_hydro and not is_out_of_scope and clean_cn:
+                is_deminimis_eligible = "YES"
 
             raw_importer = extract_string(['importer', 'eori', 'importer_id', 'importer_name'])
             if raw_importer:
