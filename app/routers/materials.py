@@ -890,7 +890,7 @@ def analyze_bom(
         MAX_ROWS = 5000
         if len(df) > MAX_ROWS:
             raise HTTPException(status_code=413, detail=f"Too many rows ({len(df)}). Maximum is {MAX_ROWS}.")
-        print(f"CSV read in {time.time()-t0:.2f}s, rows: {len(df)}, delimiter: '{sep}'", flush=True)
+        print(f"Parsed {len(df)} rows. Delimiter: '{sep}'. Proceeding to calculate.", flush=True)
     except HTTPException:
         raise
     except Exception as e:

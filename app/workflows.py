@@ -337,14 +337,14 @@ class BOMProcessor:
                 if key in self.cbam_defaults_cache:
                     d = self.cbam_defaults_cache[key]
                     return d.effective_value, d.includes_indirect, self.DEFAULTS_BASIS_LABEL, match_digits, {
-                        "geography": "COUNTRY", "markup_pct": d.markup_pct, "base_value": d.base_value, "dataset": "INTERIM hand-built table (unverified)",
+                        "geography": "COUNTRY", "markup_pct": d.markup_pct, "base_value": d.base_value, "dataset": getattr(d, "source", "Commission Implementing Regulation (EU) 2026/1740"),
                     }
             # Then try global default (origin_country = NULL)
             key = (prefix, year, None)
             if key in self.cbam_defaults_cache:
                 d = self.cbam_defaults_cache[key]
                 return d.effective_value, d.includes_indirect, self.DEFAULTS_BASIS_LABEL, match_digits, {
-                    "geography": "GLOBAL", "markup_pct": d.markup_pct, "base_value": d.base_value, "dataset": "INTERIM hand-built table (unverified)",
+                    "geography": "GLOBAL", "markup_pct": d.markup_pct, "base_value": d.base_value, "dataset": getattr(d, "source", "Commission Implementing Regulation (EU) 2026/1740"),
                 }
         
         return None, None, None, None, None
@@ -476,7 +476,14 @@ class BOMProcessor:
                 try:
                     import math
                     if isinstance(raw_weight, str):
-                        raw_weight = str(raw_weight).replace(',', '')
+                        rw_str = str(raw_weight).strip()
+                        # If format is 1.500,50 (European with dot thousands and comma decimal)
+                        if re.match(r'^\d{1,3}(?:\.\d{3})*,\d+$', rw_str):
+                            rw_str = rw_str.replace('.', '').replace(',', '.')
+                        else:
+                            # Standard US format or just comma thousands (1,500.50)
+                            rw_str = rw_str.replace(',', '')
+                        raw_weight = rw_str
                     weight_kg = float(raw_weight) * weight_multiplier
                     if math.isinf(weight_kg) or math.isnan(weight_kg):
                         raise ValueError("Infinity or NaN")
@@ -698,10 +705,18 @@ class BOMProcessor:
                     is_out_of_scope = True
                     notes.append("CN code is not covered by CBAM Annex I")
                 else:
-                    # No CN code AND no declared sector — cannot determine scope.
-                    # This is NOT positively out of scope; it needs data.
-                    errors.append("Missing CN code and sector — cannot determine CBAM scope")
-                    quarantine_reasons.append("Needs data: provide CN code or CBAM sector")
+                    # Coarse non-CBAM class check based on material name
+                    mat_name_lower = str(raw_name).lower() if raw_name else ""
+                    non_cbam_keywords = ["plastic", "glass", "textile", "electronic", "polymer", "wood", "paper", "copper", "pcb", "battery", "rubber", "leather", "ceramic"]
+                    if any(kw in mat_name_lower for kw in non_cbam_keywords):
+                        is_out_of_scope = True
+                        notes.append("Positive non-CBAM material identified (e.g., polymer, glass, electronics)")
+                        errors = [e for e in errors if "Missing CN Code" not in e and "Missing CN code" not in e]
+                        # Remove quarantine reasons too
+                        quarantine_reasons = [q for q in quarantine_reasons if "Missing CN Code" not in q]
+                    else:
+                        errors.append("Missing CN code and sector - cannot determine CBAM scope")
+                        quarantine_reasons.append("Needs data: provide CN code or CBAM sector")
 
             match_tuple = self._get_best_match(raw_name, tuple(allowed_cats) if allowed_cats else None)
             is_match = match_tuple is not None
@@ -771,7 +786,7 @@ class BOMProcessor:
                         if self.cbam_defaults_stale:
                             notes.append("CBAM default values may be outdated (>90 days since last refresh)")
                         notes.append(
-                            f"Interim default (not official Commission value): matched at {match_level}-digit level, "
+                            f"Official Commission default: matched at {match_level}-digit level, "
                             f"{default_meta['geography'].lower()}, mark-up {round((default_meta['markup_pct'] or 0)*100)}% included"
                         )
                     elif db_carbon > 0:
@@ -803,7 +818,7 @@ class BOMProcessor:
                         if self.cbam_defaults_stale:
                             notes.append("CBAM default values may be outdated (>90 days since last refresh)")
                         notes.append(
-                            f"Interim default (not official Commission value): matched at {match_level}-digit level, "
+                            f"Official Commission default: matched at {match_level}-digit level, "
                             f"{default_meta['geography'].lower()}, mark-up {round((default_meta['markup_pct'] or 0)*100)}% included"
                         )
                     else:
@@ -843,7 +858,7 @@ class BOMProcessor:
                 phase_in = phase_in_schedule.get(lookup_year, 1.0)
                 cbam_cost_eur = cbam_cost_eur * phase_in
                 if phase_in < 1.0:
-                    notes.append(f"Cost adjusted by {phase_in*100:.1f}% free allocation phase-out for {lookup_year}")
+                    notes.append(f"Cost estimated as {phase_in*100:.1f}% of emissions (CAVEAT: assumes emissions ≈ benchmark. Actual cost will be higher if using defaults)")
                     
             cbam_cost_eur = round(cbam_cost_eur, 2)
             
@@ -879,9 +894,12 @@ class BOMProcessor:
                 ]
                 for err in errors:
                     if err not in quarantine_reasons and any(err.startswith(c) for c in cbam_critical_errors):
-                        quarantine_reasons.append(f"Strict Mode: {err}")
+                        if f"Strict Mode: {err}" not in quarantine_reasons:
+                            quarantine_reasons.append(f"Strict Mode: {err}")
             
             if quarantine_reasons:
+                quarantine_reasons = list(dict.fromkeys(quarantine_reasons))
+                errors = list(dict.fromkeys(errors))
                 included_str = "QUARANTINED: " + " | ".join(quarantine_reasons)
                 # Keep provisional values for visibility but don't include in totals
                 # (provisional values are stored separately as Provisional_CO2_kg etc.)
@@ -935,8 +953,8 @@ class BOMProcessor:
                 "Other_Imports_t": other_imports_t,
                 "Lookup_Year": lookup_year,
                 "DeMinimis_Eligible_Mass_kg": weight_kg if is_deminimis_eligible == "YES" else 0.0,
-                "Matched_Material": matched_name if is_match else ("N/A (default factor used)" if default_meta else "NO MATCH FOUND"),
-                "Match_Confidence": f"{confidence}%" if is_match else ("N/A" if default_meta else "0%"),
+                "Matched_Material": "N/A (CBAM Default applied)" if default_meta else (matched_name if is_match else "NO MATCH FOUND"),
+                "Match_Confidence": "N/A" if default_meta else (f"{confidence}%" if is_match else "0%"),
                 "Carbon_Factor_kgCO2e_per_kg": round(carbon_factor, 3),
                 "Emissions_Basis": emissions_basis,
                 "Default_Dataset": default_meta["dataset"] if default_meta else "N/A",

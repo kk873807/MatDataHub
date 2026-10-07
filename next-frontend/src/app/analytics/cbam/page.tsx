@@ -181,8 +181,8 @@ export default function CBAMAnalytics() {
 
   const DEMO_BOMS = {
     automotive: `material_id,Material,Weight_kg,cbam_sector,cn_code,country_of_origin,destination,release_date,supplier,importer
-MAT-A1,Hot-Rolled Steel Coil,50000,Iron & Steel,7208 51 00,China,Germany,2026-06-15,Acme Metals,DE1234567890123
-MAT-A2,Aluminium Alloy Bar,15000,Aluminium,7604 21 00,India,Germany,2026-06-15,Global Alum,DE1234567890123
+MAT-A1,Hot-Rolled Steel Coil,50000,Iron & Steel,7208 39 00,China,Germany,2026-06-15,Acme Metals,DE1234567890123
+MAT-A2,Aluminium Alloy Bar,15000,Aluminium,7604 29 10,India,Germany,2026-06-15,Global Alum,DE1234567890123
 MAT-A3,Plastic Dashboard,5000,,,Vietnam,Germany,2026-06-15,PolyCorp,DE1234567890123
 MAT-A4,Stainless Steel Fasteners,2000,Iron & Steel,7318 15 00,Taiwan,Germany,2026-06-15,FastenTech,DE1234567890123`,
     construction: `material_id,Material,Weight_kg,cbam_sector,cn_code,country_of_origin,destination,release_date,supplier,importer
@@ -200,7 +200,7 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
   };
 
   const downloadTemplate = () => {
-    const csvContent = "material_id,Material,Weight_kg,cbam_sector,cn_code,country_of_origin,destination,release_date,supplier,importer,carbon_price_paid_eur_per_tco2e\nMAT-001,Hot-Rolled Steel Plate,10000,Iron & Steel,7208 51 00,China,Germany,2026-06-15,Example Supplier,DE0000000000000,0\n";
+    const csvContent = "material_id,Material,Weight_kg,cbam_sector,cn_code,country_of_origin,destination,release_date,supplier,importer,carbon_price_paid_eur_per_tco2e\nMAT-001,Hot-Rolled Steel Plate,10000,Iron & Steel,7208 39 00,China,Germany,2026-06-15,Example Supplier,DE0000000000000,0\n";
     const blob = new Blob([csvContent], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -866,6 +866,9 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
                 </div>
                 <h3 className="text-3xl font-bold text-amber-500">€{estimatedTaxEUR.toLocaleString(undefined, { maximumFractionDigits: 2 })}</h3>
                 <p className="text-xs text-slate-400 mt-2 font-medium">@ €75/tCO₂e (assumed — actual CBAM certificate price is a published quarterly EEX average)</p>
+                  <p className="text-xs text-amber-500 mt-1 font-semibold text-balance">
+                    ⚠️ Warning: The phase-in model assumes product emissions equal the free-allocation benchmark. Because default values exceed benchmarks, actual 2026-2027 costs using defaults will be substantially higher.
+                  </p>
                 {isDeMinimisExempt && (
                   <div className="mt-3 bg-emerald-50 dark:bg-emerald-900/20 p-2 rounded border border-emerald-100 dark:border-emerald-800">
                     <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">
