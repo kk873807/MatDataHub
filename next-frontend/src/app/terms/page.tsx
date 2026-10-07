@@ -31,6 +31,16 @@ export default function TermsPage() {
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white font-heading mb-3">4. Pricing and Data Reliability</h2>
           <p>All macroeconomic pricing and CBAM calculations are derived from proxy indices for trend analysis. They do not constitute live commercial quotes.</p>
         </section>
+
+        <section>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white font-heading mb-3">5. EU CBAM & Regulatory Disclaimer</h2>
+          <p>The CBAM analytics and reporting tools provided by MatDataHub are designed for estimation and internal planning purposes only.</p>
+          <ul className="list-disc pl-6 mt-3 space-y-2">
+            <li><strong>Not Legal Advice:</strong> Our outputs do not constitute professional compliance, tax, or legal advice.</li>
+            <li><strong>Data Accuracy:</strong> While we strive to map CN codes to EU Commission default factors accurately, you are solely responsible for the final declarations submitted to customs authorities.</li>
+            <li><strong>Liability:</strong> MatDataHub is not liable for any fines, penalties, or compliance failures resulting from the use of our estimates. Importers must independently verify their CN codes, origin countries, and emissions data.</li>
+          </ul>
+        </section>
       </div>
     </div>
   );

@@ -31,18 +31,27 @@ export function CbamLeadMagnet() {
             
             <div className="flex justify-between text-sm mb-5">
               <span className="text-emerald-200">Material Imported:</span>
-              <span className="font-bold text-white">1,000 kg (Steel)</span>
+              <span className="font-bold text-white">1,000 kg (Steel, CN 72085100)</span>
             </div>
             <div className="flex justify-between text-sm mb-5">
               <span className="text-emerald-200">EU Default Carbon Factor:</span>
-              <span className="font-bold text-white">2.01 kg CO₂e / kg</span>
+              <span className="font-bold text-white">2.23 kg CO₂e / kg</span>
             </div>
-            <div className="w-full h-px bg-white/10 my-5"></div>
-            <div className="flex flex-col gap-1 mb-2">
-              <span className="text-emerald-300/80 font-bold text-xs uppercase">Est. CBAM Cost (estimate, 2026 defaults):</span>
-              <div className="flex justify-between items-end">
-                 <span className="text-4xl font-black text-white">~€151</span>
-                 <span className="text-xs text-emerald-200 mb-2">@ €75/tCO₂e</span>
+            <div className="w-full h-px bg-white/10 my-4"></div>
+            <div className="flex flex-col gap-3 mb-2">
+              <div>
+                <span className="text-emerald-300/80 font-bold text-xs uppercase block mb-1">Est. 2026 CBAM Cost (~2.5% phase-in):</span>
+                <div className="flex justify-between items-end">
+                   <span className="text-4xl font-black text-white">~€4</span>
+                   <span className="text-xs text-emerald-200 mb-2">@ €75/tCO₂e</span>
+                </div>
+              </div>
+              <div className="bg-black/20 rounded-lg p-3 mt-2">
+                <span className="text-emerald-400/80 font-bold text-xs uppercase block mb-1">Est. 2034 CBAM Cost (100% phase-in):</span>
+                <div className="flex justify-between items-end">
+                   <span className="text-2xl font-bold text-white">~€167</span>
+                   <span className="text-xs text-emerald-200/80 mb-1">illustrative</span>
+                </div>
               </div>
             </div>
           </div>

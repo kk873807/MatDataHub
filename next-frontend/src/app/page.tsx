@@ -285,7 +285,7 @@ export default function LandingPage() {
               <p className="text-slate-600 dark:text-slate-400 text-sm mb-6 h-10">Perfect for students and open research.</p>
               <div className="text-4xl font-extrabold text-slate-900 dark:text-white mb-8">{getPrice(0, "0", "0")}<span className="text-sm font-medium text-slate-500 dark:text-slate-400">/lifetime</span></div>
               <ul className="space-y-3 mb-8 flex-1">
-                {["Search limited basic materials", "View mechanical properties", "Basic AI Adviser", "Community Support"].map((f, i) => (
+                {["Search 100+ basic materials", "View mechanical properties", "Basic AI Adviser", "Community Support"].map((f, i) => (
                   <li key={i} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500" /> {f}
                   </li>
@@ -301,7 +301,7 @@ export default function LandingPage() {
               <p className="text-slate-600 dark:text-slate-400 text-sm mb-6 h-10">For independent engineers and small firms.</p>
               <div className="text-4xl font-extrabold text-slate-900 dark:text-white mb-8">{getPrice(499, "5.99", "5.49")}<span className="text-sm font-medium text-slate-500 dark:text-slate-400">/lifetime</span></div>
               <ul className="space-y-3 mb-8 flex-1">
-                {["Full 1000+ material database", "Export detailed PDFs", "Advanced AI Adviser", "Unlimited Workspaces"].map((f, i) => (
+                {["Full 1,000+ material database", "Export detailed PDFs", "Advanced AI Adviser", "Unlimited Workspaces"].map((f, i) => (
                   <li key={i} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
                     <CheckCircle2 className="w-4 h-4 text-indigo-600 dark:text-indigo-600 dark:text-indigo-400" /> {f}
                   </li>
