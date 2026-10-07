@@ -938,7 +938,8 @@ def analyze_bom(
             "input_file_hash_sha256": file_hash,
             "phase_in_factor_2026": 0.025,
             "cbam_price_source": "European Energy Exchange (EEX)",
-            "cbam_price_date": "2026-Q1 (projected)"
+            "cbam_price_date": "2026-Q1 (projected)",
+            "cbam_defaults_source": "Commission Implementing Regulation (EU) 2023/2122 (Transitional Period)"
 
         }
         

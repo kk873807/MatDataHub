@@ -324,17 +324,18 @@ class BOMProcessor:
         
         for prefix in prefixes:
             match_digits = len(prefix)
-            label = "COMMISSION_DEFAULT" if match_digits >= 8 else f"COMMISSION_DEFAULT_APPROX_{match_digits}D"
             # Try country-specific first
             if country_lower:
                 key = (prefix, year, country_lower)
                 if key in self.cbam_defaults_cache:
                     d = self.cbam_defaults_cache[key]
+                    label = "COMMISSION_DEFAULT (Country-Specific)"
                     return d.effective_value, d.includes_indirect, label, match_digits
             # Then try global default (origin_country = NULL)
             key = (prefix, year, None)
             if key in self.cbam_defaults_cache:
                 d = self.cbam_defaults_cache[key]
+                label = "COMMISSION_DEFAULT (Global Average)"
                 return d.effective_value, d.includes_indirect, label, match_digits
         
         return None, None, None, None
@@ -541,27 +542,22 @@ class BOMProcessor:
                 supplier_risk = 0.0
                 
             lead_time = extract_float(['lead_time', 'lead time'], None)
-            if lead_time is None:
-                errors.append("Missing lead time")
-            elif lead_time < 0 or lead_time > 3650:
-                errors.append("Lead time out of plausible bounds")
+            if lead_time is not None:
+                if lead_time < 0 or lead_time > 3650:
+                    errors.append("Lead time out of plausible bounds")
 
             single_source = extract_string(['single_source', 'sole_source'])
-            if not single_source:
-                errors.append("Missing single_source_flag")
-            elif single_source.lower() not in ('yes', 'no', 'true', 'false', 'y', 'n'):
-                errors.append("Invalid single_source_flag")
+            if single_source:
+                if single_source.lower() not in ('yes', 'no', 'true', 'false', 'y', 'n'):
+                    errors.append("Invalid single_source_flag")
                 
             geo_risk = extract_string(['geopolitical', 'geo_risk', 'country_risk'])
-            if not geo_risk:
-                errors.append("Missing geopolitical_risk")
-            elif geo_risk.lower() not in ('low', 'medium', 'high'):
-                errors.append("Invalid geopolitical_risk")
+            if geo_risk:
+                if geo_risk.lower() not in ('low', 'medium', 'high'):
+                    errors.append("Invalid geopolitical_risk")
                 
             data_quality = extract_string(['data_quality', 'data quality'])
-            if not data_quality:
-                errors.append("Missing data quality")
-            else:
+            if data_quality:
                 dq_lower = data_quality.lower()
                 if not any(x in dq_lower for x in ['verified', 'default', 'estimated', 'measured']):
                     errors.append("Invalid data quality")
@@ -763,7 +759,7 @@ class BOMProcessor:
                         if self.cbam_defaults_stale:
                             notes.append("CBAM default values may be outdated (>90 days since last refresh)")
                         if match_level and match_level < 8:
-                            notes.append(f"Using approximate {match_level}-digit CN default (exact 8-digit match not found)")
+                            notes.append(f"Commission default matched at {match_level}-digit heading level")
                     elif db_carbon > 0:
                         carbon_factor = db_carbon
                         emissions_basis = "DEFAULT_FALLBACK"
@@ -792,7 +788,7 @@ class BOMProcessor:
                         if self.cbam_defaults_stale:
                             notes.append("CBAM default values may be outdated (>90 days since last refresh)")
                         if match_level and match_level < 8:
-                            notes.append(f"Using approximate {match_level}-digit CN default (exact 8-digit match not found)")
+                            notes.append(f"Commission default matched at {match_level}-digit heading level")
                     else:
                         carbon_factor = _estimate_carbon_factor(raw_name, "")
                         emissions_basis = "GENERIC_ESTIMATE"
@@ -922,8 +918,8 @@ class BOMProcessor:
                 "Other_Imports_t": other_imports_t,
                 "Lookup_Year": lookup_year,
                 "DeMinimis_Eligible_Mass_kg": weight_kg if is_deminimis_eligible == "YES" else 0.0,
-                "Matched_Material": matched_name,
-                "Match_Confidence": f"{confidence}%" if is_match else "0%",
+                "Matched_Material": matched_name if is_match else ("N/A (Commission default used)" if emissions_basis == "COMMISSION_DEFAULT" else "NO MATCH FOUND"),
+                "Match_Confidence": f"{confidence}%" if is_match else ("N/A" if emissions_basis == "COMMISSION_DEFAULT" else "0%"),
                 "Carbon_Factor_kgCO2e_per_kg": round(carbon_factor, 3),
                 "Emissions_Basis": emissions_basis,
                 "Total_CO2_kg": round(total_co2_kg, 3) if total_co2_kg > 0 else 0.0,
@@ -933,10 +929,10 @@ class BOMProcessor:
                 "Provisional_CO2_tonnes": round(raw_total_co2_tonnes, 4),
                 "Provisional_CBAM_Cost_EUR": round(raw_cbam_cost_eur, 2),
                 "Domestic_Carbon_Price_Paid_EUR": price_paid,
-                "Net_CBAM_Price_EUR": net_cbam_price,
+                "Reference_Price_EUR_per_tCO2e": net_cbam_price,
                 "Is_Obsolete": obsolete_flag,
                 "Replacement_Standard": replacement,
-                "ESG_Risk_Score": esg_risk if esg_risk > 0 else 0.0,
+                "ESG_Risk_Score": esg_risk if esg_risk > 0 and (supplier_risk > 0 or geo_risk) else "Insufficient Data",
                 "Notes": " | ".join(notes) if notes else "None",
                 "Validation_Errors": " | ".join(list(dict.fromkeys(errors + quarantine_reasons))) if (errors or quarantine_reasons) else "None",
                 "Included_In_Total": included_str,
