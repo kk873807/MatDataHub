@@ -31,7 +31,7 @@ export function CbamLeadMagnet() {
             
             <div className="flex justify-between text-sm mb-5">
               <span className="text-emerald-200">Material Imported:</span>
-              <span className="font-bold text-white">1,000 kg (Steel, CN 72085100)</span>
+              <span className="font-bold text-white">1,000 kg (Thick steel plate, CN 72085100)</span>
             </div>
             <div className="flex justify-between text-sm mb-5">
               <span className="text-emerald-200">EU Default Carbon Factor:</span>
@@ -42,8 +42,8 @@ export function CbamLeadMagnet() {
               <div>
                 <span className="text-emerald-300/80 font-bold text-xs uppercase block mb-1">Est. 2026 CBAM Cost (~2.5% phase-in):</span>
                 <div className="flex justify-between items-end">
-                   <span className="text-4xl font-black text-white">~€4</span>
-                   <span className="text-xs text-emerald-200 mb-2">@ €75/tCO₂e</span>
+                   <span className="text-4xl font-black text-white">~€4.20</span>
+                   <span className="text-xs text-emerald-200 mb-2">@ €75.36/tCO₂e (2026 Q1 avg)</span>
                 </div>
               </div>
               <div className="bg-black/20 rounded-lg p-3 mt-2">

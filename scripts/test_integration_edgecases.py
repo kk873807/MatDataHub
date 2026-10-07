@@ -38,9 +38,10 @@ EX-Y4,Test Mat,30000,Iron & Steel,7208 51 00,China,Germany,2026-12-15,Acme,Imp-S
 EX-I1,Test Mat,40000,Iron & Steel,7208 51 00,China,Germany,2026-06-15,Acme,Imp-A,0,,,
 EX-I2,Test Mat,40000,Iron & Steel,7208 51 00,China,Germany,2026-06-15,Acme,Imp-B,0,,,
 EX-O1,Test Mat,30000,Iron & Steel,7208 51 00,China,Germany,2026-06-15,Acme,Imp-Other,30.0,,,
+EX-O2,Test Mat,20000,Iron & Steel,7208 51 00,China,Germany,2026-06-16,Acme,Imp-Other,30.0,,,
 EX-CN,Test Mat,30000,Unrecognized,7208 51 00,China,Germany,2026-06-15,Acme,Imp-CN-Rescue,0,,,
 EX-PLA,Plastic-Coated Pipe,30000,Iron & Steel,7306 11 00,China,Germany,2026-06-15,Acme,Imp-PlasticGuard,0,,,
-EX-SHORT,Short CN,10000,Iron & Steel,7326 11,China,Germany,2026-06-15,Acme,Imp-Short,0,,,
+EX-SHORT,Short CN,10000,Iron & Steel,7202,China,Germany,2026-06-15,Acme,Imp-Short,0,,,
 """
 
 df = pd.read_csv(io.StringIO(CSV), dtype=str)
@@ -71,7 +72,9 @@ check("Two importers at 40t each separate", "Possibly exempt" in str(ri1.get("De
 
 print("\n=== De Minimis Other Imports Input ===")
 ro1 = row("EX-O1")
+ro2 = row("EX-O2")
 check("Other imports correctly push over 50t limit", "Not exempt" in str(ro1.get("DeMinimis_Status", "")), f"{ro1.get('DeMinimis_Status')}")
+check("Repeated other imports count only once per group", "50.0t in file, 30.0t other" in str(ro1.get("Notes", "")), f"{ro1.get('Notes')}")
 
 print("\n=== CN-Rescued Row Counts Toward Threshold ===")
 rcn = row("EX-CN")

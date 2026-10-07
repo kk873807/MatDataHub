@@ -193,18 +193,7 @@ class BOMProcessor:
         ("7310", "include", "iron & steel"),
         ("731100", "include", "iron & steel"),
         ("7318", "include", "iron & steel"),
-        ("73261100", "include", "iron & steel"),
-        ("73261910", "include", "iron & steel"),
-        ("73261990", "include", "iron & steel"),
-        ("73262000", "include", "iron & steel"),
-        ("73269030", "include", "iron & steel"),
-        ("73269040", "include", "iron & steel"),
-        ("73269050", "include", "iron & steel"),
-        ("73269060", "include", "iron & steel"),
-        ("73269092", "include", "iron & steel"),
-        ("73269094", "include", "iron & steel"),
-        ("73269096", "include", "iron & steel"),
-        ("73269098", "include", "iron & steel"),
+        ("7326", "include", "iron & steel"),
 
         # Aluminium
         ("7602", "exclude", None),         # Waste and scrap
@@ -234,21 +223,32 @@ class BOMProcessor:
         if not clean_cn:
             return ("NOT_COVERED", None)
             
-        # 1. Does the CN code fully match a rule prefix?
+        # 1. Find what the input WOULD match if it were fully specified
+        matched_action = "not_covered"
+        matched_sector = None
         for prefix, action, sector in cls.ANNEX_I_RULES:
             if clean_cn.startswith(prefix):
-                if action == "exclude":
-                    return ("EXCLUDED", None)
-                return ("EXACT_MATCH", sector)
+                matched_action = action
+                matched_sector = sector
+                break
                 
-        # 2. Is the CN code a partial string of an INCLUDED rule? (e.g. '280410' against '28041000')
-        # This handles short HS codes.
+        # 2. Check for ambiguity: does any longer rule (that extends our input) have a DIFFERENT action?
+        # E.g. input `3105` matches `3105` (include), but `31056000` (exclude) extends it.
+        # E.g. input `7202` matches `72` (include), but `72022` (exclude) extends it.
+        # E.g. input `2507` matches nothing (not_covered), but `25070080` (include) extends it.
         for prefix, action, sector in cls.ANNEX_I_RULES:
-            if prefix.startswith(clean_cn) and len(clean_cn) < len(prefix):
-                if action == "include":
-                    return ("INCOMPLETE", sector)
+            if prefix.startswith(clean_cn) and len(prefix) > len(clean_cn):
+                if action != matched_action:
+                    # Ambiguous! We need more digits.
+                    return ("INCOMPLETE", sector if action == "include" else matched_sector)
                     
-        return ("NOT_COVERED", None)
+        # 3. If no ambiguity, return the matched outcome
+        if matched_action == "not_covered":
+            return ("NOT_COVERED", None)
+        elif matched_action == "exclude":
+            return ("EXCLUDED", None)
+        else:
+            return ("EXACT_MATCH", matched_sector)
 
     # Country name aliases for normalisation
     COUNTRY_ALIASES = {
@@ -618,11 +618,19 @@ class BOMProcessor:
                 elif d_lower not in self.EU_DESTINATION_COUNTRIES:
                     notes.append("Destination outside EU (exempt)")
                     
-            release_date = extract_string(['release_for_free_circulation_date', 'release_date', 'last_shipment_date', 'shipment_date', 'date'])
+            release_date = extract_string(['release_for_free_circulation_date', 'release_date'])
+            is_fallback_date = False
+            if not release_date:
+                release_date = extract_string(['last_shipment_date', 'shipment_date', 'date'])
+                if release_date:
+                    is_fallback_date = True
+                    
             if not release_date:
                 errors.append("Missing release/shipment date")
                 quarantine_reasons.append("Missing date")
             else:
+                if is_fallback_date:
+                    notes.append("Using shipment date as fallback. Year grouping should ideally use release-for-free-circulation date.")
                 try:
                     dt = datetime.datetime.strptime(release_date, "%Y-%m-%d")
                     if dt > datetime.datetime.now():
@@ -921,18 +929,31 @@ class BOMProcessor:
 
         # Group by Importer and Calendar Year for De Minimis (use integer grams for precision)
         grams_by_importer_year = defaultdict(int)
+        other_imports_by_group = {}
+        other_imports_conflict = set()
+        
         for r in enriched_rows:
+            key = (r["Importer"], r["Lookup_Year"])
             mass_kg = r.get("DeMinimis_Eligible_Mass_kg", 0.0)
             if mass_kg > 0:
-                key = (r["Importer"], r["Lookup_Year"])
                 grams_by_importer_year[key] += int(round(mass_kg * 1000))
+                
+            # Track other imports
+            other_t = r.get("Other_Imports_t", 0.0)
+            other_g = int(round(other_t * 1000000))
+            if other_g > 0:
+                if key in other_imports_by_group and other_imports_by_group[key] != other_g:
+                    other_imports_conflict.add(key)
+                    other_imports_by_group[key] = max(other_imports_by_group[key], other_g)
+                else:
+                    other_imports_by_group[key] = other_g
         
         for r in enriched_rows:
             r["CBAM_Cost_If_Not_Exempt_EUR"] = r.get("CBAM_Cost_EUR", 0.0)
             if r.get("DeMinimis_Eligible_Mass_kg", 0.0) > 0:
                 key = (r["Importer"], r["Lookup_Year"])
                 total_grams = grams_by_importer_year[key]
-                other_imports_grams = int(round(r.get("Other_Imports_t", 0.0) * 1000000))
+                other_imports_grams = other_imports_by_group.get(key, 0)
                 grand_total_grams = total_grams + other_imports_grams
                 
                 headroom_grams = max(50000000 - grand_total_grams, 0)
@@ -941,17 +962,22 @@ class BOMProcessor:
                 importer_label = r["Importer"]
                 if importer_label == "UNKNOWN_IMPORTER":
                     importer_label = "importer unknown, grouped together"
+                    
+                conflict_warn = ""
+                if key in other_imports_conflict:
+                    conflict_warn = f"WARNING: Conflicting 'other_imports' values for {importer_label}. Using highest ({other_imports_grams/1000000:.1f}t). | "
                 
+                # Build the breakdown note
+                breakdown_note = f"{conflict_warn}De minimis tally ({importer_label} in {r['Lookup_Year']}): {total_grams/1000000:.1f}t in file, {other_imports_grams/1000000:.1f}t other."
+                current_notes = r.get("Notes", "None")
+                if current_notes == "None":
+                    r["Notes"] = breakdown_note
+                elif "De minimis tally" not in current_notes:
+                    r["Notes"] = current_notes + " | " + breakdown_note
+
                 # Allow strictly <= 50,000,000 grams (exactly 50t is exempt)
                 if grand_total_grams <= 50000000:
                     r["DeMinimis_Status"] = f"Possibly exempt (headroom: {headroom_t:.1f}t, verify annual total <= 50t)"
-                    new_note = f"Possibly exempt ({importer_label} in {r['Lookup_Year']}: {total_grams/1000000:.1f}t in file, {other_imports_grams/1000000:.1f}t other, headroom {headroom_t:.1f}t.)"
-                    current_notes = r.get("Notes", "None")
-                    if current_notes == "None":
-                        r["Notes"] = new_note
-                    elif "Possibly exempt" not in current_notes:
-                        r["Notes"] = current_notes + " | " + new_note
-                    
                     if headroom_t <= 5.0:
                         r["Notes"] = r["Notes"] + " | WARNING: Very close to 50t threshold"
                 else:

@@ -1,0 +1,52 @@
+1. Cement
+2507 00 80 - Other kaolinic clays
+2523 10 00 - Cement clinkers
+2523 21 00 - White Portland cement
+2523 29 00 - Other Portland cement
+2523 30 00 - Aluminous cement
+2523 90 00 - Other hydraulic cements
+2. Electricity
+2716 00 00 - Electrical energy
+3. Fertilisers
+2808 00 00 - Nitric acid
+2814 - Ammonia
+2834 21 00 - Nitrates of potassium
+3102 - Mineral or chemical fertilisers, nitrogenous
+3105 - Mineral or chemical fertilisers
+Except: 3105 60 00 - Mineral or chemical fertilisers containing two fertilising elements
+4. Iron and Steel
+2601 12 00 - Agglomerated iron ores
+72 - Iron and steel
+Except: 7202 2 - Ferro-silicon
+Except: 7204 - Ferrous waste and scrap
+7301 - Sheet piling
+7302 - Railway
+7303 00 - Tubes, pipes and hollow profiles, cast iron
+7304 - Tubes, pipes and hollow profiles, seamless
+7305 - Other tubes and pipes
+7306 - Other tubes, pipes and hollow profiles
+7307 - Tube or pipe fittings
+7308 - Structures
+7309 00 - Reservoirs, tanks
+7310 - Tanks, casks
+7311 00 - Containers for gas
+7318 - Screws, bolts, nuts
+7326 - Other articles of iron or steel
+5. Aluminium
+7601 - Unwrought aluminium
+7603 - Aluminium powders
+7604 - Aluminium bars
+7605 - Aluminium wire
+7606 - Aluminium plates
+7607 - Aluminium foil
+7608 - Aluminium tubes and pipes
+7609 00 00 - Aluminium tube or pipe fittings
+7610 - Aluminium structures
+7611 00 00 - Aluminium reservoirs
+7612 - Aluminium casks
+7613 00 00 - Aluminium containers
+7614 - Stranded wire, cables
+7616 99 90 - Other articles of aluminium
+Except: 7602 00 - Aluminium waste and scrap
+6. Hydrogen
+2804 10 00 - Hydrogen

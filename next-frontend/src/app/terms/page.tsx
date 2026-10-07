@@ -41,6 +41,20 @@ export default function TermsPage() {
             <li><strong>Liability:</strong> MatDataHub is not liable for any fines, penalties, or compliance failures resulting from the use of our estimates. Importers must independently verify their CN codes, origin countries, and emissions data.</li>
           </ul>
         </section>
+        <section>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white font-heading mb-3">6. Liability Cap</h2>
+          <p>To the maximum extent permitted by applicable law, MatDataHub’s total liability for any claims arising under these Terms shall not exceed the total amount paid by you to MatDataHub in the twelve (12) months preceding the claim. We are not liable for indirect, incidental, or consequential damages, including loss of profits or customs fines.</p>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white font-heading mb-3">7. Enterprise Data Processing Agreement (DPA)</h2>
+          <p>For Enterprise customers processing personal data on behalf of EU citizens, a standard Data Processing Agreement (DPA) is available upon request. Please contact enterprise@matdatahub.com to execute a DPA.</p>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white font-heading mb-3">8. Governing Law and Jurisdiction</h2>
+          <p>These terms are governed by the laws of Germany. Any disputes arising out of or in connection with these terms shall be subject to the exclusive jurisdiction of the courts of Berlin, Germany.</p>
+        </section>
       </div>
     </div>
   );
