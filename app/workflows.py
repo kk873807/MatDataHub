@@ -393,7 +393,7 @@ class BOMProcessor:
         self._match_cache[cache_key] = None
         return None
 
-    def process_bom(self, df, material_col, weight_col, strict_mode=True, disable_deminimis=False):
+    def process_bom(self, df, material_col, weight_col, strict_mode=True, disable_deminimis=False, delimiter=","):
         # Auto-detect column mappings if the explicit ones are missing
         actual_mat_col = material_col
         if material_col not in df.columns:
@@ -477,12 +477,27 @@ class BOMProcessor:
                     import math
                     if isinstance(raw_weight, str):
                         rw_str = str(raw_weight).strip()
-                        # If format is 1.500,50 (European with dot thousands and comma decimal)
-                        if re.match(r'^\d{1,3}(?:\.\d{3})*,\d+$', rw_str):
-                            rw_str = rw_str.replace('.', '').replace(',', '.')
+                        rw_str = rw_str.replace(' ', '')
+                        
+                        import re
+                        if delimiter == ';':
+                            # European convention: dot is thousands, comma is decimal
+                            if re.match(r'^\d{1,3}(?:\.\d{3})*,\d+$', rw_str):
+                                rw_str = rw_str.replace('.', '').replace(',', '.')
+                            elif re.match(r'^\d+,\d+$', rw_str):
+                                rw_str = rw_str.replace(',', '.')
+                            elif re.match(r'^\d{1,3}(?:\.\d{3})+$', rw_str):
+                                rw_str = rw_str.replace('.', '')
+                            else:
+                                rw_str = rw_str.replace('.', '') # catch all for remaining dots
                         else:
-                            # Standard US format or just comma thousands (1,500.50)
-                            rw_str = rw_str.replace(',', '')
+                            # US convention: comma is thousands, dot is decimal
+                            if re.match(r'^\d{1,3}(?:,\d{3})*\.\d+$', rw_str):
+                                rw_str = rw_str.replace(',', '')
+                            elif re.match(r'^\d{1,3}(?:,\d{3})+$', rw_str):
+                                rw_str = rw_str.replace(',', '')
+                            else:
+                                rw_str = rw_str.replace(',', '')
                         raw_weight = rw_str
                     weight_kg = float(raw_weight) * weight_multiplier
                     if math.isinf(weight_kg) or math.isnan(weight_kg):

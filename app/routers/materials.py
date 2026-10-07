@@ -900,7 +900,7 @@ def analyze_bom(
     print(f"BOMProcessor initialized in {time.time()-t0:.2f}s", flush=True)
     
     t1 = time.time()
-    enriched_df = processor.process_bom(df, material_col, weight_col, strict_mode=strict_mode, disable_deminimis=disable_deminimis)
+    enriched_df = processor.process_bom(df, material_col, weight_col, strict_mode=strict_mode, disable_deminimis=disable_deminimis, delimiter=sep)
     print(f"process_bom finished in {time.time()-t1:.2f}s", flush=True)
     
     from app.models import BOMAnalysis
