@@ -96,6 +96,7 @@ app.add_middleware(
         "https://matdatahub.com",
         "https://www.matdatahub.com"
     ],
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
