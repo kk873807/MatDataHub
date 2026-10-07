@@ -700,6 +700,11 @@ class BOMProcessor:
             missing_scope_msg = None
             if cn_status == "EXACT_MATCH":
                 sector_lower = cn_derived_sector
+                if 'electric' in sector_lower:
+                    errors.append("Electricity must be measured in MWh, not kg. Electricity is unsupported in material BOMs.")
+                    quarantine_reasons.append("Unsupported unit: Electricity requires MWh")
+                    is_out_of_scope = True
+                    notes.append("Electricity skipped (requires MWh unit)")
                 sector_valid = True
                 for keyword, cats in self.CBAM_SECTOR_CATEGORY_MAP.items():
                     if keyword in sector_lower:
@@ -729,13 +734,9 @@ class BOMProcessor:
                     notes.append(f"Sector '{declared_sector}' is not covered by CBAM")
             else:
                 if clean_cn:
-                    if clean_cn.startswith('2716'):
-                        errors.append("No default values published for Electricity. Need actual data.")
-                        quarantine_reasons.append("Electricity needs actual emissions data")
-                    else:
-                        # CN code positively identified as not in Annex I
-                        is_out_of_scope = True
-                        notes.append("CN code is not covered by CBAM Annex I")
+                    # CN code positively identified as not in Annex I
+                    is_out_of_scope = True
+                    notes.append("CN code is not covered by CBAM Annex I")
                 else:
                     # Coarse non-CBAM class check based on material name
                     mat_name_lower = str(raw_name).lower() if raw_name else ""
@@ -969,24 +970,11 @@ class BOMProcessor:
 
             
             is_deminimis_eligible = "NO"
-            is_exempt = "Origin is exempt" in " | ".join(notes) or "Destination outside EU" in " | ".join(notes)
-            
-            is_elec_or_hydro = False
-            if clean_cn:
-                if clean_cn.startswith('2716'):
-                    is_elec_or_hydro = True
-                    notes.append("De minimis exemption does not apply to Electricity")
-                elif clean_cn.startswith('2804'):
-                    is_elec_or_hydro = True
-                    notes.append("De minimis exemption does not apply to Hydrogen")
-            
-            if not is_elec_or_hydro:
-                if cn_status == "EXACT_MATCH" and sector_lower and any(x in sector_lower for x in ['electric', 'hydrogen']):
-                    is_elec_or_hydro = True
+            if cn_status == "EXACT_MATCH" and sector_lower:
+                if any(x in sector_lower for x in ['electric', 'hydrogen']):
                     notes.append(f"De minimis exemption does not apply to {sector_lower.title()}")
-
-            if not is_exempt and not is_elec_or_hydro and not is_out_of_scope and clean_cn:
-                is_deminimis_eligible = "YES"
+                elif "Origin is exempt" not in " | ".join(notes) and "Destination outside EU" not in " | ".join(notes):
+                    is_deminimis_eligible = "YES"
 
             raw_importer = extract_string(['importer', 'eori', 'importer_id', 'importer_name'])
             if raw_importer:

@@ -184,7 +184,7 @@ export default function CBAMAnalytics() {
 MAT-A1,Hot-Rolled Steel Coil,50000,Iron & Steel,7208 39 00,China,Germany,2026-06-15,Acme Metals,DE1234567890123
 MAT-A2,Aluminium Alloy Bar,15000,Aluminium,7604 29 10,India,Germany,2026-06-15,Global Alum,DE1234567890123
 MAT-A3,Plastic Dashboard,5000,,,Vietnam,Germany,2026-06-15,PolyCorp,DE1234567890123
-MAT-A4,Stainless Steel Fasteners,2000,Iron & Steel,7318 15 00,Taiwan,Germany,2026-06-15,FastenTech,DE1234567890123`,
+MAT-A4,Stainless Steel Fasteners,2000,Iron & Steel,7318 15 20,Taiwan,Germany,2026-06-15,FastenTech,DE1234567890123`,
     construction: `material_id,Material,Weight_kg,cbam_sector,cn_code,country_of_origin,destination,release_date,supplier,importer
 MAT-C1,Portland Cement,200000,Cement,2523 29 00,Turkey,France,2026-08-01,EuroCement,FR9876543210987
 MAT-C2,Steel Rebar,100000,Iron & Steel,7214 20 00,China,France,2026-08-01,SteelCo,FR9876543210987
