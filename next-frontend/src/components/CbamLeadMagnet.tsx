@@ -18,10 +18,10 @@ export function CbamLeadMagnet() {
           </h2>
           <p className="text-emerald-100/80 mb-8 leading-relaxed max-w-xl text-sm sm:text-base">
             The EU Carbon Border Adjustment Mechanism (CBAM) financial phase is active.
-            Exporters are now liable for embodied emissions. Use our audit tool to calculate your exact financial liability per shipment.
+            Importers into the EU may face carbon costs under CBAM. Use our tool to estimate your potential exposure per shipment.
           </p>
           <Link href="/analytics/cbam" className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-white rounded-xl font-bold transition-all shadow-lg shadow-emerald-900/50">
-            Run Free CBAM Audit <ArrowRight className="w-4 h-4" />
+            Run Free CBAM Estimate <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
 
@@ -30,18 +30,18 @@ export function CbamLeadMagnet() {
             <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/20 rounded-full blur-3xl"></div>
             
             <div className="flex justify-between text-sm mb-5">
-              <span className="text-emerald-200">Material Exported:</span>
+              <span className="text-emerald-200">Material Imported:</span>
               <span className="font-bold text-white">1,000 kg (Steel)</span>
             </div>
             <div className="flex justify-between text-sm mb-5">
-              <span className="text-emerald-200">Embodied Carbon Factor:</span>
-              <span className="font-bold text-white">4.80 kg CO₂ / kg</span>
+              <span className="text-emerald-200">EU Default Carbon Factor:</span>
+              <span className="font-bold text-white">2.01 kg CO₂e / kg</span>
             </div>
             <div className="w-full h-px bg-white/10 my-5"></div>
             <div className="flex flex-col gap-1 mb-2">
-              <span className="text-emerald-300/80 font-bold text-xs uppercase">Est. EU Tax Liability:</span>
+              <span className="text-emerald-300/80 font-bold text-xs uppercase">Est. CBAM Cost (estimate, 2026 defaults):</span>
               <div className="flex justify-between items-end">
-                 <span className="text-4xl font-black text-white">€360.00</span>
+                 <span className="text-4xl font-black text-white">~€151</span>
                  <span className="text-xs text-emerald-200 mb-2">@ €75/tCO₂e</span>
               </div>
             </div>

@@ -91,7 +91,7 @@ export default function LandingPage() {
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-cyan-400">Synthesize what&apos;s missing.</span>
             </h1>
             <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed font-light">
-              Search 6500+ engineering materials, let AI instantly synthesize custom grades, and integrate via API — pay once, use forever.
+              Search 1,000+ engineering materials, let AI instantly synthesize custom grades, and integrate via API — pay once, use forever.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
               {authChecked && !isLoggedIn && (
@@ -104,7 +104,7 @@ export default function LandingPage() {
             {/* Social Proof Stats */}
             <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
               {[
-                { value: "6500+", label: "Verified Materials" },
+                { value: "1,000+", label: "Verified Materials" },
                 { value: "AI", label: "Material Synthesizer" },
                 { value: "API", label: "Developer Access" },
               ].map((stat, i) => (

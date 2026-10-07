@@ -99,6 +99,7 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
+    expose_headers=["X-CBAM-Defaults-Count", "X-CBAM-Defaults-Version", "Content-Disposition"],
 )
 
 # Custom Middleware for Security Headers (Gap 2)

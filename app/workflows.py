@@ -3,7 +3,7 @@ import math
 import datetime
 import re
 from thefuzz import process, fuzz
-from functools import lru_cache
+from collections import defaultdict
 from sqlalchemy.orm import Session
 from app.models import Material, CBAMDefault
 
@@ -144,38 +144,96 @@ class BOMProcessor:
         "electricity": [],         # No natural DB category — skip pre-filter
     }
     
+    # ── Annex I Rule Table (Regulation (EU) 2023/956) ──
+    # Evaluated top-down; first matching prefix wins.
+    # (prefix, action, sector)  action: "include" or "exclude"
+    ANNEX_I_RULES = [
+        # Exclusions first (more specific beats less specific)
+        ("7204",   "exclude", None),       # Ferrous waste and scrap
+        ("72022",  "exclude", None),       # Ferro-silicon >55% Si
+        ("7602",   "exclude", None),       # Aluminium waste and scrap
+
+        # Cement
+        ("2507",   "include", "cement"),
+        ("2523",   "include", "cement"),
+
+        # Electricity
+        ("2716",   "include", "electricity"),
+
+        # Hydrogen — only hydrogen gas subheading, not all of 2804
+        ("28041000", "include", "hydrogen"),
+
+        # Fertilisers
+        ("2808",     "include", "fertiliser"),
+        ("2814",     "include", "fertiliser"),
+        ("28342100", "include", "fertiliser"),
+        ("3102",     "include", "fertiliser"),
+        ("3105",     "include", "fertiliser"),
+
+        # Iron ores (agglomerated)
+        ("26011200", "include", "iron & steel"),
+
+        # Iron & Steel: Chapter 72 (broad include, after exclusions above)
+        ("72",     "include", "iron & steel"),
+
+        # Iron & Steel: Chapter 73 (specific headings only)
+        ("7301",   "include", "iron & steel"),
+        ("7302",   "include", "iron & steel"),
+        ("7303",   "include", "iron & steel"),
+        ("7304",   "include", "iron & steel"),
+        ("7305",   "include", "iron & steel"),
+        ("7306",   "include", "iron & steel"),
+        ("7307",   "include", "iron & steel"),
+        ("7308",   "include", "iron & steel"),
+        ("7309",   "include", "iron & steel"),
+        ("7310",   "include", "iron & steel"),
+        ("7311",   "include", "iron & steel"),
+        ("7318",   "include", "iron & steel"),
+        # 7326: Only selected subheadings are covered
+        ("73261100", "include", "iron & steel"),
+        ("73261990", "include", "iron & steel"),
+        ("73262090", "include", "iron & steel"),
+
+        # Aluminium: Chapter 76 (specific headings, after exclusions above)
+        ("7601",   "include", "aluminium"),
+        ("7603",   "include", "aluminium"),
+        ("7604",   "include", "aluminium"),
+        ("7605",   "include", "aluminium"),
+        ("7606",   "include", "aluminium"),
+        ("7607",   "include", "aluminium"),
+        ("7608",   "include", "aluminium"),
+        ("7609",   "include", "aluminium"),
+        ("7610",   "include", "aluminium"),
+        ("7611",   "include", "aluminium"),
+        ("7612",   "include", "aluminium"),
+        ("7613",   "include", "aluminium"),
+        ("7614",   "include", "aluminium"),
+        ("7616",   "include", "aluminium"),
+    ]
+
     @classmethod
     def get_sector_from_cn(cls, clean_cn: str):
-        """Returns the CBAM sector based on Annex I CN code rules."""
+        """Data-driven Annex I lookup. First matching prefix wins."""
         if not clean_cn: return None
-        
-        # Exact prefixes based on Annex I of the CBAM regulation
-        if clean_cn.startswith(('25231000', '25232100', '25232900', '25233000', '25239000')): return "cement"
-        if clean_cn.startswith('25070080'): return "cement" # Kaolinitic clays
-        
-        if clean_cn.startswith('28041000'): return "hydrogen"
-        
-        if clean_cn.startswith(('28080000', '2814', '28342100', '3102', '3105')): return "fertiliser"
-        
-        # Iron and steel (Chapter 72 and 73, with specific exclusions)
-        if clean_cn.startswith('72'):
-            if clean_cn.startswith(('7204', '72022')): return None # Scrap and certain ferro-alloys excluded
-            return "iron & steel"
-        if clean_cn.startswith('73'):
-            # Specific headings only
-            if any(clean_cn.startswith(p) for p in ['7301', '7302', '7303', '7304', '7305', '7306', '7307', '7308', '7309', '7310', '7311', '7318', '7326']):
-                return "iron & steel"
-                
-        # Aluminium (Chapter 76, specific headings)
-        if clean_cn.startswith('76'):
-            if clean_cn.startswith('7602'): return None # Waste and scrap excluded
-            if any(clean_cn.startswith(p) for p in ['7601', '7603', '7604', '7605', '7606', '7607', '7608', '7609', '7610', '7611', '7612', '7613', '7614', '7616']):
-                return "aluminium"
-                
-        if clean_cn.startswith('27160000'): return "electricity"
-        if clean_cn.startswith('26011200'): return "iron & steel" # Agglomerated iron ores
-        
+        for prefix, action, sector in cls.ANNEX_I_RULES:
+            if clean_cn.startswith(prefix):
+                if action == "exclude":
+                    return None
+                return sector
         return None
+
+    # Country name aliases for normalisation
+    COUNTRY_ALIASES = {
+        "usa": "united states", "united states of america": "united states",
+        "uk": "united kingdom", "great britain": "united kingdom",
+        "the netherlands": "netherlands",
+        "viet nam": "vietnam", "vn": "vietnam",
+        "turkiye": "turkey", "türkiye": "turkey",
+        "republic of korea": "south korea", "korea": "south korea",
+        "prc": "china", "peoples republic of china": "china",
+        "uae": "united arab emirates",
+        "russian federation": "russia",
+    }
 
     def __init__(self, db: Session):
         self.db = db
@@ -189,14 +247,15 @@ class BOMProcessor:
                 cat = (m.category or "").strip()
                 self.cat_to_names.setdefault(cat, []).append(m.name)
         
+        # Per-instance fuzzy match cache (avoids lru_cache keying on self)
+        self._match_cache = {}
+        
         # Preload CBAM defaults into memory for fast lookups
         self.cbam_defaults_cache = {}
         self.cbam_defaults_stale = False
         self.cbam_defaults_count = 0
         self.cbam_defaults_version = None
-        
-        # Clear any stale lru_cache from previous instance
-        self._get_best_match.cache_clear()
+        self.cbam_defaults_load_error = None
 
         try:
             all_defaults = self.db.query(CBAMDefault).all()
@@ -209,10 +268,11 @@ class BOMProcessor:
                 self.cbam_defaults_version = latest.isoformat() if latest else None
                 if latest and (datetime.datetime.now(latest.tzinfo) - latest).days > 90:
                     self.cbam_defaults_stale = True
-        except Exception:
+        except Exception as e:
             # Table may not exist yet — fall back gracefully
             self.cbam_defaults_cache = {}
             self.cbam_defaults_count = 0
+            self.cbam_defaults_load_error = str(e)
 
     def _lookup_cbam_default(self, cn_code: str, origin_country: str, year: int):
         """
@@ -251,9 +311,12 @@ class BOMProcessor:
         
         return None, None, None, None
 
-    @lru_cache(maxsize=10000)
     def _get_best_match(self, raw_name: str, allowed_cats_tuple: tuple | None):
-        """Robust fuzzy matcher: top-5 candidates with stainless/SS304/inox guard."""
+        """Robust fuzzy matcher: top-5 candidates with stainless/SS304/inox guard. Per-instance cached."""
+        cache_key = (raw_name, allowed_cats_tuple)
+        if cache_key in self._match_cache:
+            return self._match_cache[cache_key]
+        
         candidates = self.mat_names
         if allowed_cats_tuple is not None:
             if not allowed_cats_tuple:
@@ -263,6 +326,7 @@ class BOMProcessor:
                 for cat in allowed_cats_tuple:
                     candidates.extend(self.cat_to_names.get(cat, []))
         if not candidates:
+            self._match_cache[cache_key] = None
             return None
         
         matches = process.extract(raw_name, candidates, scorer=fuzz.token_sort_ratio, limit=5)
@@ -282,7 +346,9 @@ class BOMProcessor:
             if q_is_stainless != m_is_stainless:
                 continue
                 
+            self._match_cache[cache_key] = m
             return m
+        self._match_cache[cache_key] = None
         return None
 
     def process_bom(self, df, material_col, weight_col, strict_mode=False):
@@ -492,10 +558,7 @@ class BOMProcessor:
 
             def clean_country(c):
                 c = c.lower().strip()
-                if c == 'the netherlands': return 'netherlands'
-                if c == 'usa' or c == 'united states of america': return 'united states'
-                if c == 'uk' or c == 'great britain': return 'united kingdom'
-                return c
+                return self.COUNTRY_ALIASES.get(c, c)
                 
             country = extract_exact_string(['country_of_origin', 'supplier_country', 'origin', 'country'])
             if not country:
@@ -595,15 +658,18 @@ class BOMProcessor:
             match_tuple = self._get_best_match(raw_name, tuple(allowed_cats) if allowed_cats else None)
             is_match = match_tuple is not None
             
-            # If quarantined due to missing scope, but we matched a Polymer, soften to OUT OF SCOPE
-            if missing_scope_msg and not sector_valid and not is_out_of_scope and missing_scope_msg in quarantine_reasons:
+            # If quarantined due to missing scope, but we matched a Polymer, soften to OUT OF SCOPE.
+            # GUARD: Only fire when there's NO in-scope CN code AND no recognised CBAM sector.
+            # A "plastic-coated steel pipe" with CN 7306 must stay in scope because CN evidence wins.
+            if missing_scope_msg and not sector_valid and not is_out_of_scope and not cn_derived_sector and missing_scope_msg in quarantine_reasons:
                 if is_match:
-                    mat_cat = self.mat_dict.get(match_tuple[0]).category
+                    mat_obj = self.mat_dict.get(match_tuple[0])
+                    mat_cat = mat_obj.category if mat_obj else None
                     if mat_cat and "polymer" in mat_cat.lower():
                         quarantine_reasons.remove(missing_scope_msg)
                         if missing_scope_msg in errors: errors.remove(missing_scope_msg)
                         is_out_of_scope = True
-                        notes.append("Likely out of scope (matched material is a polymer), please confirm")
+                        notes.append("Likely out of scope (matched material is a polymer, no CBAM CN code), please confirm")
 
             provided_carbon_factor = None
             # Indirect emissions: only for cement and fertilisers (CBAM definitive rules)
@@ -632,12 +698,18 @@ class BOMProcessor:
             emissions_basis = "SUPPLIED"
             
             # Determine the lookup year from shipment date (default to current year)
+            # NOTE: Calendar year should ideally be the date goods are released for free
+            # circulation, not shipment date. We warn near year boundaries.
             lookup_year = datetime.datetime.now().year
             if shipment_date:
                 try:
-                    lookup_year = int(shipment_date[:4])
+                    dt_ship = datetime.datetime.strptime(shipment_date, "%Y-%m-%d")
+                    lookup_year = dt_ship.year
                     if lookup_year < 2026:
                         lookup_year = 2026  # Use 2026 defaults for pre-2026 dates
+                    # Warn near year boundary: Dec shipments may arrive in Jan (different calendar year)
+                    if dt_ship.month == 12 and dt_ship.day >= 15:
+                        notes.append(f"Year boundary warning: Dec shipment may be released for free circulation in {lookup_year + 1}. De minimis year could differ.")
                 except (ValueError, IndexError):
                     pass
             
@@ -669,7 +741,10 @@ class BOMProcessor:
                         emissions_basis = "DEFAULT_FALLBACK"
                     else:
                         carbon_factor = _estimate_carbon_factor(mat.name, mat.category)
-                        emissions_basis = "LEGACY_FALLBACK"
+                        emissions_basis = "GENERIC_ESTIMATE"
+                        if sector_valid:
+                            errors.append("No Commission default found; using generic ICE-derived estimate (not suitable for compliance)")
+                            quarantine_reasons.append("In-scope row using generic estimate, not a Commission default")
                 obsolete_flag = "YES" if (mat and mat.is_obsolete) else "NO"
                 replacement = mat.replacement_standard if (mat and mat.replacement_standard) else "N/A"
                 recyclability = mat.recyclability_index if (mat and mat.recyclability_index) else 0.5
@@ -692,7 +767,10 @@ class BOMProcessor:
                             notes.append(f"Using approximate {match_level}-digit CN default (exact 8-digit match not found)")
                     else:
                         carbon_factor = _estimate_carbon_factor(raw_name, "")
-                        emissions_basis = "LEGACY_FALLBACK"
+                        emissions_basis = "GENERIC_ESTIMATE"
+                        if sector_valid:
+                            errors.append("No Commission default found; using generic ICE-derived estimate (not suitable for compliance)")
+                            quarantine_reasons.append("In-scope row using generic estimate, not a Commission default")
                 obsolete_flag = "N/A"
                 replacement = "N/A"
                 recyclability = 0.5
@@ -800,7 +878,6 @@ class BOMProcessor:
             })
 
         # Group by Importer and Calendar Year for De Minimis
-        from collections import defaultdict
         mass_by_importer_year = defaultdict(float)
         for r in enriched_rows:
             mass = r.get("DeMinimis_Eligible_Mass_kg", 0.0)
@@ -813,18 +890,39 @@ class BOMProcessor:
             if r.get("DeMinimis_Eligible_Mass_kg", 0.0) > 0:
                 key = (r["Importer"], r["Lookup_Year"])
                 total_mass = mass_by_importer_year[key]
+                headroom_kg = max(50000.0 - total_mass, 0.0)
+                headroom_t = headroom_kg / 1000.0
+                
+                importer_label = r["Importer"]
+                if importer_label == "UNKNOWN_IMPORTER":
+                    importer_label = "importer unknown, grouped together"
+                
                 # Allow strictly <= 50,000 kg (exactly 50t is exempt)
                 if total_mass <= 50000.0:
-                    r["DeMinimis_Status"] = "Possibly exempt (verify annual total <= 50t)"
-                    new_note = f"Possibly exempt from CBAM (file total for {r['Importer']} in {r['Lookup_Year']} is <= 50t. Verify annual net imports)"
+                    r["DeMinimis_Status"] = f"Possibly exempt (headroom: {headroom_t:.1f}t, verify annual total <= 50t)"
+                    new_note = f"Possibly exempt ({importer_label} in {r['Lookup_Year']}: {total_mass/1000:.1f}t in file, headroom {headroom_t:.1f}t. This file cannot see other imports.)"
                     current_notes = r.get("Notes", "None")
                     if current_notes == "None":
                         r["Notes"] = new_note
                     elif "Possibly exempt" not in current_notes:
                         r["Notes"] = current_notes + " | " + new_note
+                    # Warn if close to threshold
+                    if headroom_t <= 5.0:
+                        r["Notes"] = r["Notes"] + " | WARNING: Very close to 50t threshold"
                 else:
                     r["DeMinimis_Status"] = "Not exempt"
             else:
                 r["DeMinimis_Status"] = "N/A"
+        
+        # Add defaults diagnostics to every row for CSV/PDF traceability
+        defaults_info = f"CBAM defaults loaded: {self.cbam_defaults_count} entries"
+        if self.cbam_defaults_version:
+            defaults_info += f", version: {self.cbam_defaults_version}"
+        if self.cbam_defaults_load_error:
+            defaults_info += f", LOAD ERROR: {self.cbam_defaults_load_error}"
+        if self.cbam_defaults_count == 0:
+            defaults_info += " | WARNING: No Commission defaults loaded — all factors are estimates"
+        for r in enriched_rows:
+            r["CBAM_Defaults_Info"] = defaults_info
 
         return pd.DataFrame(enriched_rows)
