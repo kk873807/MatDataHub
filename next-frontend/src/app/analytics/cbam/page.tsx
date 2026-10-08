@@ -25,6 +25,9 @@ export default function CBAMAnalytics() {
   // Manual Entry State
   const [manualMaterial, setManualMaterial] = useState("");
   const [manualWeight, setManualWeight] = useState("");
+  const [manualCnCode, setManualCnCode] = useState("");
+  const [manualSector, setManualSector] = useState("");
+  const [manualOrigin, setManualOrigin] = useState("");
 
   const fetchHistory = async () => {
     setHistoryLoading(true);
@@ -231,7 +234,7 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
       }
       // Generate virtual CSV with proper quoting to handle commas in material names
       const escapedMaterial = manualMaterial.includes(",") ? `"${manualMaterial.replace(/"/g, '""')}"` : manualMaterial;
-      const csvContent = `Material,Weight_kg\n${escapedMaterial},${manualWeight}\n`;
+      const csvContent = `Material,Weight_kg,cn_code,cbam_sector,country_of_origin\n${escapedMaterial},${manualWeight},${manualCnCode},${manualSector},${manualOrigin}\n`;
       payloadFile = new File([csvContent], "manual_entry.csv", { type: "text/csv" });
       payloadMatCol = "Material";
       payloadWeightCol = "Weight_kg";
@@ -579,6 +582,42 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
                   onChange={e => setManualWeight(e.target.value)}
                   className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2.5 text-slate-900 dark:text-white outline-none focus:border-amber-500"
                   placeholder="e.g. 1500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2">CN Code (Optional)</label>
+                <input
+                  type="text"
+                  value={manualCnCode}
+                  onChange={e => setManualCnCode(e.target.value)}
+                  className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2.5 text-slate-900 dark:text-white outline-none focus:border-amber-500"
+                  placeholder="e.g. 7208 39 00"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2">CBAM Sector (Optional)</label>
+                <select
+                  value={manualSector}
+                  onChange={e => setManualSector(e.target.value)}
+                  className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2.5 text-slate-900 dark:text-white outline-none focus:border-amber-500"
+                >
+                  <option value="">Auto-detect / Not Sure</option>
+                  <option value="Iron & Steel">Iron & Steel</option>
+                  <option value="Aluminium">Aluminium</option>
+                  <option value="Cement">Cement</option>
+                  <option value="Fertilisers">Fertilisers</option>
+                  <option value="Hydrogen">Hydrogen</option>
+                  <option value="Electricity">Electricity</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2">Country of Origin (Optional)</label>
+                <input
+                  type="text"
+                  value={manualOrigin}
+                  onChange={e => setManualOrigin(e.target.value)}
+                  className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2.5 text-slate-900 dark:text-white outline-none focus:border-amber-500"
+                  placeholder="e.g. China, India, UK"
                 />
               </div>
             </div>
