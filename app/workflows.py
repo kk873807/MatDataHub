@@ -750,8 +750,12 @@ class BOMProcessor:
                         errors.append("Missing CN code and sector - cannot determine CBAM scope")
                         quarantine_reasons.append("Needs data: provide CN code or CBAM sector")
 
-            match_tuple = self._get_best_match(raw_name, tuple(allowed_cats) if allowed_cats else None)
-            is_match = match_tuple is not None
+            if cn_status == "EXACT_MATCH":
+                match_tuple = None
+                is_match = False
+            else:
+                match_tuple = self._get_best_match(raw_name, tuple(allowed_cats) if allowed_cats else None)
+                is_match = match_tuple is not None
             
             provided_carbon_factor = None
             # Indirect emissions: only for cement and fertilisers (CBAM definitive rules)
@@ -995,8 +999,8 @@ class BOMProcessor:
                 "Other_Imports_t": other_imports_t,
                 "Lookup_Year": lookup_year,
                 "DeMinimis_Eligible_Mass_kg": weight_kg if is_deminimis_eligible == "YES" else 0.0,
-                "Matched_Material": "N/A (CBAM Default applied)" if default_meta else (matched_name if is_match else "NO MATCH FOUND"),
-                "Match_Confidence": "N/A" if default_meta else (f"{confidence}%" if is_match else "0%"),
+                "Matched_Material": "N/A (CBAM Commodity)" if cn_status == "EXACT_MATCH" else ("N/A (CBAM Default applied)" if default_meta else (matched_name if is_match else "NO MATCH FOUND")),
+                "Match_Confidence": "N/A" if (cn_status == "EXACT_MATCH" or default_meta) else (f"{confidence}%" if is_match else "0%"),
                 "Carbon_Factor_kgCO2e_per_kg": round(carbon_factor, 3),
                 "Emissions_Basis": emissions_basis,
                 "Default_Dataset": default_meta["dataset"] if default_meta else "N/A",
