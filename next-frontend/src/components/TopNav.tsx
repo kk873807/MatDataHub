@@ -62,7 +62,7 @@ export function TopNav() {
             localStorage.removeItem("token");
             setIsLoggedIn(false);
             setUserInfo(null);
-            setAuthChecked(true);
+            setTimeout(() => setAuthChecked(true), 0);
             return null;
           }
           return r.json();
@@ -73,17 +73,17 @@ export function TopNav() {
             setUserInfo(data);
             setIsLoggedIn(true);
           }
-          setAuthChecked(true);
+          setTimeout(() => setAuthChecked(true), 0);
         })
         .catch(() => {
           // Network error — don't show stale "User" ghost
           localStorage.removeItem("token");
           setIsLoggedIn(false);
           setUserInfo(null);
-          setAuthChecked(true);
+          setTimeout(() => setAuthChecked(true), 0);
         });
     } else {
-      setAuthChecked(true);
+      setTimeout(() => setAuthChecked(true), 0);
     }
     const handleOpenModal = () => setShowLoginModal(true);
     window.addEventListener('openLoginModal', handleOpenModal);

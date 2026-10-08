@@ -10,6 +10,9 @@ import os
 import sys
 import threading
 
+# Fix for "python app/main.py" causing ModuleNotFoundError
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 print("--- APP MODULE LOADING ---", flush=True)
 
 from fastapi import FastAPI, Request
