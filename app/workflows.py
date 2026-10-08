@@ -479,12 +479,10 @@ class BOMProcessor:
                 weight_kg = 0.0
             else:
                 try:
-                    import math
                     if isinstance(raw_weight, str):
                         rw_str = str(raw_weight).strip()
                         rw_str = rw_str.replace(' ', '')
                         
-                        import re
                         if delimiter == ';':
                             # European convention: dot is thousands, comma is decimal
                             if re.match(r'^\d{1,3}(?:\.\d{3})*,\d+$', rw_str):
@@ -548,7 +546,6 @@ class BOMProcessor:
                                 elif ',' in val and '.' in val:
                                     val = val.replace(',', '')
                             fval = float(val)
-                            import math
                             if math.isinf(fval) or math.isnan(fval):
                                 raise ValueError("Infinity or NaN")
                             return fval
