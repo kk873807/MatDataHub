@@ -234,7 +234,8 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
       }
       // Generate virtual CSV with proper quoting to handle commas in material names
       const escapedMaterial = manualMaterial.includes(",") ? `"${manualMaterial.replace(/"/g, '""')}"` : manualMaterial;
-      const csvContent = `Material,Weight_kg,cn_code,cbam_sector,country_of_origin\n${escapedMaterial},${manualWeight},${manualCnCode},${manualSector},${manualOrigin}\n`;
+      const origin = manualOrigin || "India";
+      const csvContent = `material_id,Material,Weight_kg,cn_code,cbam_sector,country_of_origin,destination,release_date,supplier\nMANUAL-01,${escapedMaterial},${manualWeight},${manualCnCode},${manualSector},${origin},Germany,2026-01-01,Manual Entry\n`;
       payloadFile = new File([csvContent], "manual_entry.csv", { type: "text/csv" });
       payloadMatCol = "Material";
       payloadWeightCol = "Weight_kg";
@@ -251,7 +252,7 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
       formData.append("file", payloadFile as File);
       formData.append("material_col", payloadMatCol);
       formData.append("weight_col", payloadWeightCol);
-      formData.append("strict_mode", hardQuarantine.toString());
+      formData.append("strict_mode", activeTab === "manual" ? "false" : hardQuarantine.toString());
       formData.append("disable_deminimis", disableDeMinimis.toString());
 
       // Note: Make sure the backend doesn't expect authentication, or send token if needed
