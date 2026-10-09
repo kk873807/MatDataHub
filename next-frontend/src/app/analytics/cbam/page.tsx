@@ -386,7 +386,7 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
             <ArrowLeft className="w-4 h-4" /> Back to Analytics
           </Link>
           
-          <div className="p-10 mt-10 rounded-3xl bg-white dark:bg-slate-900 border border-amber-500/30 text-center relative overflow-hidden flex flex-col items-center justify-center">
+          <div className="p-10 mt-10 rounded-3xl bg-white dark:bg-slate-900 border border-amber-500/30 text-center relative overflow-hidden print:overflow-visible flex flex-col items-center justify-center">
             <div className="absolute inset-0 bg-gradient-to-br from-amber-900/20 to-transparent"></div>
             <div className="w-20 h-20 bg-amber-950 rounded-full flex items-center justify-center mb-6 relative z-10 border border-amber-500/50 shadow-[0_0_30px_rgba(245,158,11,0.2)]">
               <Lock className="w-10 h-10 text-amber-500" />
@@ -415,10 +415,10 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
 
   return (
     <main 
-      className="flex flex-col p-6 lg:p-10 w-full h-full overflow-y-auto print:overflow-visible print:h-auto print:p-0 print:bg-white"
+      className="flex flex-col p-6 lg:p-10 w-full h-full overflow-y-auto print:overflow-visible print:h-auto print:p-0 print:block print:bg-white"
       style={{ WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}
     >
-      <div className="w-full max-w-5xl mx-auto space-y-8">
+      <div className="w-full max-w-5xl mx-auto space-y-8 print:block">
         
         <Link href="/analytics" className="print:hidden inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white transition-colors">
           <ArrowLeft className="w-4 h-4" /> Back to Analytics
@@ -680,13 +680,13 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
                       <span className="ml-2 text-slate-500 dark:text-slate-400">Loading detailed results...</span>
                     </div>
                   ) : historyDetailData && historyDetailData.length > 0 ? (
-                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden">
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden print:overflow-visible">
                       <div className="p-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/50">
                         <h4 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
                           <Table className="w-4 h-4 text-amber-500" /> Line-by-Line Breakdown
                         </h4>
                       </div>
-                      <div className="overflow-x-auto max-h-[500px] overflow-y-auto">
+                      <div className="overflow-x-auto max-h-[500px] print:max-h-none print:overflow-visible overflow-y-auto">
                         <table className="w-full text-xs">
                           <thead className="sticky top-0 bg-slate-100 dark:bg-slate-950">
                             <tr>
@@ -766,8 +766,8 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
                   <p className="text-sm mt-1">Upload a BOM CSV or try demo data to get started.</p>
                 </div>
               ) : (
-                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden">
-                  <div className="overflow-x-auto">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden print:overflow-visible">
+                  <div className="overflow-x-auto print:overflow-visible">
                     <table className="w-full text-sm">
                       <thead>
                         <tr className="bg-slate-50 dark:bg-slate-950/50 border-b border-slate-200 dark:border-slate-800">
@@ -926,7 +926,7 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
               </div>
             </div>
 
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden print:overflow-visible">
               <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950/50">
                 <h3 className="font-bold text-slate-900 dark:text-white font-heading flex items-center gap-2"><Table className="w-5 h-5 text-amber-500" /> Results Breakdown</h3>
                 <button onClick={downloadResults} className="print:hidden flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-700 text-slate-900 dark:text-white text-xs font-bold rounded-2xl transition-colors border border-slate-200 dark:border-slate-700">
