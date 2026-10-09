@@ -937,15 +937,21 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
                 <table className="w-full text-left text-sm print:text-xs">
                   <thead className="bg-white dark:bg-slate-900">
                     <tr>
-                      {Object.keys(resultsData[0] || {}).map((header) => (
-                        <th key={header} className="p-4 print:p-2 text-slate-500 dark:text-slate-400 font-medium whitespace-nowrap print:whitespace-normal border-b border-slate-200 dark:border-slate-800">{header.replace(/_/g, " ")}</th>
-                      ))}
+                      {Object.keys(resultsData[0] || {}).map((header) => {
+                        const isDiagnostic = ["Parsed_Weight_kg", "Importer", "Other_Imports_t", "Lookup_Year", "DeMinimis_Eligible_Mass_kg", "Emissions_Basis", "Default_Dataset", "Default_Match_Digits", "Default_Geography", "Default_Base_Value", "Default_Markup_Pct", "Total_CO2_kg", "Provisional_CO2_kg", "Provisional_CO2_tonnes", "Domestic_Carbon_Price_Paid_EUR", "Reference_Price_EUR_per_tCO2e", "Is_Obsolete", "Replacement_Standard", "ESG_Risk_Score", "Notes", "CBAM_Estimate_Notice", "CBAM_Cost_If_Not_Exempt_EUR", "DeMinimis_Status", "CBAM_Defaults_Info"].includes(header);
+                        return (
+                          <th key={header} className={`p-4 print:p-2 text-slate-500 dark:text-slate-400 font-medium whitespace-nowrap print:whitespace-normal border-b border-slate-200 dark:border-slate-800 ${isDiagnostic ? 'print:hidden' : ''}`}>
+                            {header.replace(/_/g, " ")}
+                          </th>
+                        );
+                      })}
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-800/50">
                     {resultsData.map((row, idx) => (
                       <tr key={idx} className="hover:bg-slate-100 dark:hover:bg-slate-800/30 transition-colors">
                         {Object.keys(row).map((header) => {
+                          const isDiagnostic = ["Parsed_Weight_kg", "Importer", "Other_Imports_t", "Lookup_Year", "DeMinimis_Eligible_Mass_kg", "Emissions_Basis", "Default_Dataset", "Default_Match_Digits", "Default_Geography", "Default_Base_Value", "Default_Markup_Pct", "Total_CO2_kg", "Provisional_CO2_kg", "Provisional_CO2_tonnes", "Domestic_Carbon_Price_Paid_EUR", "Reference_Price_EUR_per_tCO2e", "Is_Obsolete", "Replacement_Standard", "ESG_Risk_Score", "Notes", "CBAM_Estimate_Notice", "CBAM_Cost_If_Not_Exempt_EUR", "DeMinimis_Status", "CBAM_Defaults_Info"].includes(header);
                           const val = row[header];
                           let display = val || "-";
                           
@@ -962,7 +968,7 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
                           }
                           
                           return (
-                            <td key={`${idx}-${header}`} className="p-4 print:p-2 text-slate-600 dark:text-slate-300 whitespace-nowrap print:whitespace-normal print:break-words">
+                            <td key={`${idx}-${header}`} className={`p-4 print:p-2 text-slate-600 dark:text-slate-300 whitespace-nowrap print:whitespace-normal print:break-words ${isDiagnostic ? 'print:hidden' : ''}`}>
                               {display}
                             </td>
                           );
