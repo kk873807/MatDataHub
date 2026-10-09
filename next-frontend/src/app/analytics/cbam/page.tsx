@@ -232,6 +232,10 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
         alert("Please enter both material and weight.");
         return;
       }
+      if (!manualCnCode && !manualSector) {
+        alert("Please select a CBAM Sector (e.g. Iron & Steel) or enter a CN Code. The calculator needs to know the material category to apply EU CBAM rules.");
+        return;
+      }
       // Generate virtual CSV with proper quoting to handle commas in material names
       const escapedMaterial = manualMaterial.includes(",") ? `"${manualMaterial.replace(/"/g, '""')}"` : manualMaterial;
       const origin = manualOrigin || "India";
@@ -828,7 +832,7 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
           <div className="mt-8 flex justify-end">
             <button
               onClick={processBOM}
-              disabled={(activeTab === "upload" && !file) || (activeTab === "manual" && (!manualMaterial || !manualWeight)) || loading}
+              disabled={(activeTab === "upload" && !file) || (activeTab === "manual" && (!manualMaterial || !manualWeight || (!manualCnCode && !manualSector))) || loading}
               className="px-8 py-3 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 text-white rounded-2xl font-bold transition-colors flex items-center gap-2 shadow-lg shadow-amber-900/20"
             >
               {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Factory className="w-5 h-5" />}
