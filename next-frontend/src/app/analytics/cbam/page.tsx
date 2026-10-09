@@ -381,7 +381,7 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
   if (isLocked) {
     return (
       <main className="flex flex-col p-6 lg:p-10 w-full h-full">
-        <div className="w-full max-w-5xl mx-auto space-y-6">
+        <div className="w-full max-w-5xl print:max-w-none mx-auto space-y-6">
           <Link href="/analytics" className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white transition-colors">
             <ArrowLeft className="w-4 h-4" /> Back to Analytics
           </Link>
@@ -415,10 +415,10 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
 
   return (
     <main 
-      className="flex flex-col p-6 lg:p-10 w-full h-full overflow-y-auto print:overflow-visible print:h-auto print:p-0 print:bg-white"
+      className="flex flex-col p-6 lg:p-10 w-full h-full overflow-y-auto print:overflow-visible print:h-auto print:p-8 print:bg-white"
       style={{ WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}
     >
-      <div className="w-full max-w-5xl mx-auto space-y-8 ">
+      <div className="w-full max-w-5xl print:max-w-none mx-auto space-y-8 ">
         
         <Link href="/analytics" className="print:hidden inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white transition-colors">
           <ArrowLeft className="w-4 h-4" /> Back to Analytics
@@ -845,7 +845,7 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
         {/* Live Preview Results */}
         {resultsData && (
           <div className="space-y-6" id="cbam-report">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+            <div className="flex flex-col sm:flex-row print:flex-row justify-between items-start sm:items-center print:items-center gap-4 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
               <div>
                 <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                   <FileText className="w-5 h-5 text-amber-500" />
@@ -863,7 +863,7 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 print:grid-cols-3 gap-4">
               <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl flex flex-col justify-center">
                 <p className="text-slate-500 dark:text-slate-400 font-medium mb-1 flex items-center gap-2"><Factory className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> Total Embodied Carbon (Included)</p>
                 <h3 className="text-3xl font-bold text-slate-900 dark:text-white font-heading">{(totalCO2/1000).toLocaleString(undefined, { maximumFractionDigits: 1 })} <span className="text-lg text-slate-500 dark:text-slate-400 font-normal">t CO₂</span></h3>

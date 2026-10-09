@@ -14,7 +14,7 @@
   * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
   
   /* Force Landscape for wide tables */
-  @page { margin: 10mm; size: landscape; }
+  @page { margin: 20mm; size: landscape; }
 
   /* Hide navigation and UI controls */
   aside, nav, header { display: none !important; }
