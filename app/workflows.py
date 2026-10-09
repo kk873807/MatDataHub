@@ -842,7 +842,8 @@ class BOMProcessor:
                         emissions_basis = "GENERIC_ESTIMATE"
                         if sector_valid:
                             errors.append("No Commission default found; using generic ICE-derived estimate (not suitable for compliance)")
-                            quarantine_reasons.append("In-scope row using generic estimate, not a Commission default")
+                            if strict_mode:
+                                quarantine_reasons.append("In-scope row using generic estimate, not a Commission default")
                 obsolete_flag = "YES" if (mat and mat.is_obsolete) else "NO"
                 replacement = mat.replacement_standard if (mat and mat.replacement_standard) else "N/A"
                 recyclability = mat.recyclability_index if (mat and mat.recyclability_index) else 0.5
@@ -876,7 +877,8 @@ class BOMProcessor:
                         emissions_basis = "GENERIC_ESTIMATE"
                         if sector_valid:
                             errors.append("No Commission default found; using generic ICE-derived estimate (not suitable for compliance)")
-                            quarantine_reasons.append("In-scope row using generic estimate, not a Commission default")
+                            if strict_mode:
+                                quarantine_reasons.append("In-scope row using generic estimate, not a Commission default")
                 obsolete_flag = "N/A"
                 replacement = "N/A"
                 recyclability = 0.5
