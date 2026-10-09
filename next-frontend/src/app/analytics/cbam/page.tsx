@@ -415,10 +415,10 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
 
   return (
     <main 
-      className="flex flex-col p-6 lg:p-10 w-full h-full overflow-y-auto print:overflow-visible print:h-auto print:p-0 print:block print:bg-white"
+      className="flex flex-col p-6 lg:p-10 w-full h-full overflow-y-auto print:overflow-visible print:h-auto print:p-0 print:bg-white"
       style={{ WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}
     >
-      <div className="w-full max-w-5xl mx-auto space-y-8 print:block">
+      <div className="w-full max-w-5xl mx-auto space-y-8 ">
         
         <Link href="/analytics" className="print:hidden inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white transition-colors">
           <ArrowLeft className="w-4 h-4" /> Back to Analytics

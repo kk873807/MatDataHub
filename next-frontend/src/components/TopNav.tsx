@@ -158,7 +158,7 @@ export function TopNav() {
 
   return (
     <>
-      <nav className="sticky top-0 w-full border-b border-slate-200 dark:border-slate-800/50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl z-50 transition-colors">
+      <nav className="sticky top-0 w-full border-b border-slate-200 dark:border-slate-800/50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl z-50 transition-colors print:hidden">
         <div className="max-w-[1600px] mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
           
           <div className="flex items-center gap-6">
@@ -182,7 +182,7 @@ export function TopNav() {
                         </button>
                         <div className="absolute top-full left-0 mt-2 w-48 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all flex flex-col p-2 z-50">
                           {item.subItems.map(sub => (
-                            <Link key={sub.name} href={sub.href} className="px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white rounded-xl transition-colors">
+                            <Link key={sub.name} href={sub.href} className="px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white rounded-xl transition-colors print:hidden">
                               {sub.name}
                             </Link>
                           ))}
@@ -228,10 +228,10 @@ export function TopNav() {
             
             {isLanding && (
               <div className="hidden md:flex items-center gap-6 mr-2">
-                <Link href="#problem" className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-600 dark:text-blue-400 transition-colors">Problem</Link>
-                <Link href="#solution" className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-600 dark:text-blue-400 transition-colors">Platform</Link>
-                <Link href="#pricing" className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-600 dark:text-blue-400 transition-colors">Pricing</Link>
-                <Link href="#blog" className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-600 dark:text-blue-400 transition-colors">Blogs</Link>
+                <Link href="#problem" className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-600 dark:text-blue-400 transition-colors print:hidden">Problem</Link>
+                <Link href="#solution" className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-600 dark:text-blue-400 transition-colors print:hidden">Platform</Link>
+                <Link href="#pricing" className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-600 dark:text-blue-400 transition-colors print:hidden">Pricing</Link>
+                <Link href="#blog" className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-600 dark:text-blue-400 transition-colors print:hidden">Blogs</Link>
               </div>
             )}
 
@@ -251,7 +251,7 @@ export function TopNav() {
                     </Link>
                   ) : (
                     <div className="relative group">
-                      <button onClick={() => setAccountMenuOpen(!accountMenuOpen)} className="tour-account flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                      <button onClick={() => setAccountMenuOpen(!accountMenuOpen)} className="tour-account flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors print:hidden">
                         <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center text-white font-bold text-xs">
                           {userInfo?.name.charAt(0).toUpperCase() || "U"}
                         </div>
@@ -267,18 +267,18 @@ export function TopNav() {
                           <p className="text-sm font-bold text-slate-900 dark:text-white truncate">{userInfo?.name || "User"}</p>
                           <p className="text-xs text-slate-500 dark:text-slate-400">{tierLabel} Plan</p>
                         </div>
-                        <button onClick={() => { setAccountMenuOpen(false); setActiveAccountModal('account'); }} className="w-full text-left flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white rounded-xl transition-colors">
+                        <button onClick={() => { setAccountMenuOpen(false); setActiveAccountModal('account'); }} className="w-full text-left flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white rounded-xl transition-colors print:hidden">
                             <Settings className="w-4 h-4" /> Account Management
                           </button>
                         {userInfo?.is_admin && (
-                          <Link href="/admin" className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-amber-600 dark:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-700 dark:hover:text-amber-400 rounded-xl transition-colors">
+                          <Link href="/admin" className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-amber-600 dark:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-700 dark:hover:text-amber-400 rounded-xl transition-colors print:hidden">
                             <ShieldAlert className="w-4 h-4" /> Admin Dashboard
                           </Link>
                         )}
-                        <button onClick={() => { setAccountMenuOpen(false); setActiveAccountModal('billing'); }} className="w-full text-left flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white rounded-xl transition-colors">
+                        <button onClick={() => { setAccountMenuOpen(false); setActiveAccountModal('billing'); }} className="w-full text-left flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white rounded-xl transition-colors print:hidden">
                             <CreditCard className="w-4 h-4" /> Transactions & Billing
                           </button>
-                        <button onClick={() => { setAccountMenuOpen(false); setActiveAccountModal('help'); }} className="w-full text-left flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white rounded-xl transition-colors">
+                        <button onClick={() => { setAccountMenuOpen(false); setActiveAccountModal('help'); }} className="w-full text-left flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white rounded-xl transition-colors print:hidden">
                             <LifeBuoy className="w-4 h-4" /> Help Centre & Legal
                           </button>
                         <button onClick={() => { setAccountMenuOpen(false); setShowShortcuts(true); }} className="w-full flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white rounded-xl transition-colors text-left">
@@ -400,7 +400,7 @@ export function TopNav() {
                 <kbd className="px-2 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded shadow-sm text-xs font-mono text-slate-500 dark:text-slate-400">Ctrl + J</kbd>
               </div>
             </div>
-            <button onClick={() => { setAccountMenuOpen(false); setShowShortcuts(false); }} className="w-full mt-6 py-2.5 bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 text-white dark:text-slate-900 rounded-xl font-bold text-sm transition-colors">
+            <button onClick={() => { setAccountMenuOpen(false); setShowShortcuts(false); }} className="w-full mt-6 py-2.5 bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 text-white dark:text-slate-900 rounded-xl font-bold text-sm transition-colors print:hidden">
               Got it
             </button>
           </div>
