@@ -729,6 +729,7 @@ class BOMProcessor:
                         quarantine_reasons.append("CN code not found in Annex I for declared sector")
                     else:
                         errors.append("CN code missing, relying on declared sector")
+                    sector_valid = True
                 else:
                     is_out_of_scope = True
                     notes.append(f"Sector '{declared_sector}' is not covered by CBAM")
