@@ -590,7 +590,7 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2">CN Code (Optional)</label>
+                <label className="block text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2">CN Code (Provide this or Sector)</label>
                 <input
                   type="text"
                   value={manualCnCode}
@@ -600,7 +600,7 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2">CBAM Sector (Optional)</label>
+                <label className="block text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2">CBAM Sector (Provide this or CN Code)</label>
                 <select
                   value={manualSector}
                   onChange={e => setManualSector(e.target.value)}
