@@ -724,8 +724,11 @@ class BOMProcessor:
                         sector_lower = declared_sector
                         break
                 if allowed_cats is not None or sector_lower:
-                    errors.append(f"CN code '{clean_cn}' not found in Annex I for declared sector '{declared_sector}'")
-                    quarantine_reasons.append("CN code not found in Annex I for declared sector")
+                    if clean_cn:
+                        errors.append(f"CN code '{clean_cn}' not found in Annex I for declared sector '{declared_sector}'")
+                        quarantine_reasons.append("CN code not found in Annex I for declared sector")
+                    else:
+                        errors.append("CN code missing, relying on declared sector")
                 else:
                     is_out_of_scope = True
                     notes.append(f"Sector '{declared_sector}' is not covered by CBAM")
