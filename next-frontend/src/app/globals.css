@@ -4,7 +4,13 @@
 
 @media print { 
   /* Allow full scrolling and ensure background colors print */
-  html, body, main { overflow: visible !important; height: auto !important; background-color: white !important; color: black !important; }
+  html, body, main, .print-scroll-visible { 
+    overflow: visible !important; 
+    height: auto !important; 
+    display: block !important;
+    background-color: white !important; 
+    color: black !important; 
+  }
   * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
   
   /* Force Landscape for wide tables */
