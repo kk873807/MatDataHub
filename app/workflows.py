@@ -2,6 +2,10 @@ import pandas as pd
 import math
 import datetime
 import re
+import os
+import time
+import unicodedata
+import collections
 from thefuzz import process, fuzz
 from collections import defaultdict
 from sqlalchemy.orm import Session
@@ -92,7 +96,9 @@ FALLBACK_CARBON_FACTORS = {
     "composite": 5.50,
 }
 
-CBAM_REFERENCE_PRICE_EUR = 75.0
+# Reference price used for every cost estimate. This is an ASSUMPTION, not the Commission-published
+# CBAM certificate price; override with the CBAM_REFERENCE_PRICE_EUR environment variable.
+CBAM_REFERENCE_PRICE_EUR = float(os.getenv("CBAM_REFERENCE_PRICE_EUR", "75.0"))
 
 
 def _estimate_carbon_factor(material_name, category=""):
@@ -107,6 +113,205 @@ def _estimate_carbon_factor(material_name, category=""):
         if ck in cat_lower:
             return dv
     return 2.50
+
+
+# ═════════════════════════════════════════════════════════════════════
+# Input-parsing helpers (whole-word column matching, safe weight parsing,
+# CN-code cleaning, country-name normalisation)
+# ═════════════════════════════════════════════════════════════════════
+
+_KG_TOKENS = {"kg", "kgs", "kilo", "kilos", "kilogram", "kilograms"}
+_TONNE_TOKENS = {"t", "ton", "tons", "tonne", "tonnes", "mt"}
+_LB_TOKENS = {"lb", "lbs", "pound", "pounds"}
+_G_TOKENS = {"g", "gram", "grams"}
+
+
+def detect_weight_unit(column_name):
+    """
+    Return (multiplier_to_kg, label) from the weight column's NAME, matching whole
+    words only. 'Piston_Weight_kg' is kg (the old substring test saw 'ton' inside
+    'Piston' and multiplied by 1000); 'Weight (t)' and 'WeightTonnes' are tonnes.
+    """
+    s = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", " ", str(column_name))
+    tokens = set(re.findall(r"[a-z0-9]+", s.lower()))
+    if tokens & _KG_TOKENS:
+        return 1.0, "kg (from column name)"
+    if tokens & _TONNE_TOKENS:
+        return 1000.0, "tonnes (from column name)"
+    if tokens & _LB_TOKENS:
+        return 0.45359237, "lb (from column name)"
+    if tokens & _G_TOKENS:
+        return 0.001, "g (from column name)"
+    return 1.0, "kg (assumed: no unit in column name)"
+
+
+def parse_weight_string(raw):
+    """
+    Parse a quantity written as text, in either number convention.
+    Returns (value, status) with status in {"ok", "ambiguous", "invalid"}.
+
+      '2500.75' -> 2500.75 ok          '1,5' / '12,5' -> 1.5 / 12.5 ok
+      '1.234,5' -> 1234.5 ok           '1,234.5'      -> 1234.5 ok
+      '1.234.567' -> 1234567 ok        '0,500'        -> 0.5 ok
+      '1.234' / '1,234' -> ambiguous (could be one-thousand-two-hundred-thirty-four
+                           or one-point-two-three-four): caller must quarantine.
+      '12abc', '1.2.3', '' -> invalid
+
+    A single separator followed by exactly three digits is the only genuinely
+    ambiguous shape; every other single-separator shape is a decimal point/comma.
+    """
+    s = str(raw).strip()
+    for ch in (" ", " ", " ", "'", "’"):
+        s = s.replace(ch, "")
+    if not s:
+        return None, "invalid"
+    sign = 1.0
+    if s[0] in "+-":
+        sign = -1.0 if s[0] == "-" else 1.0
+        s = s[1:]
+    if re.fullmatch(r"\d+(?:\.\d+)?[eE][+-]?\d+", s):
+        return sign * float(s), "ok"
+    if not re.fullmatch(r"[\d.,]+", s) or not re.search(r"\d", s):
+        return None, "invalid"
+    has_dot, has_comma = "." in s, "," in s
+    if has_dot and has_comma:
+        dec = "." if s.rfind(".") > s.rfind(",") else ","
+        thou = "," if dec == "." else "."
+        int_part, _, frac = s.rpartition(dec)
+        if (not frac or thou in frac
+                or not re.fullmatch(r"\d{1,3}(?:%s\d{3})+" % re.escape(thou), int_part)):
+            return None, "invalid"
+        return sign * float(int_part.replace(thou, "") + "." + frac), "ok"
+    if not has_dot and not has_comma:
+        return sign * float(s), "ok"
+    sep = "." if has_dot else ","
+    parts = s.split(sep)
+    if len(parts) == 2:
+        left, right = parts
+        if not right:
+            return None, "invalid"
+        if len(right) == 3 and left.isdigit() and len(left) <= 3 and int(left) != 0:
+            return sign * float(left + right), "ambiguous"
+        return sign * float((left or "0") + "." + right), "ok"
+    if parts[0].isdigit() and 1 <= len(parts[0]) <= 3 and all(len(p) == 3 for p in parts[1:]):
+        return sign * float("".join(parts)), "ok"
+    return None, "invalid"
+
+
+def _clean_cn(raw):
+    """Digits-only CN code. Repairs the pandas artefact '72085100.0' (an int column
+    with blanks becomes float), which the old digit-strip turned into '720851000'."""
+    s = str(raw).strip()
+    if re.fullmatch(r"\d+\.0", s):
+        s = s[:-2]
+    return re.sub(r"\D", "", s)
+
+
+def _col_key(name):
+    """Normalise a column name / alias: 'Direct Emissions (tCO2e/t)' -> 'direct_emissions_tco2e_t'."""
+    return re.sub(r"[^a-z0-9]+", "_", str(name).lower()).strip("_")
+
+
+def _norm_country(name):
+    """Lower-case, strip accents/punctuation: 'Côte d'Ivoire' -> 'cote d ivoire'."""
+    if name is None:
+        return ""
+    t = unicodedata.normalize("NFKD", str(name)).encode("ascii", "ignore").decode("ascii").lower()
+    t = t.replace("&", " and ")
+    t = re.sub(r"[^a-z0-9]+", " ", t).strip()
+    return re.sub(r"^the ", "", t)
+
+
+# Names that mean the same country. A user-supplied name is matched to whichever
+# spelling the cbam_defaults table actually uses (the EUR-Lex text says 'Viet Nam',
+# users type 'Vietnam'). Bare 'Korea' is deliberately NOT aliased (North or South?).
+_COUNTRY_ALIAS_GROUPS = [
+    ["Vietnam", "Viet Nam"],
+    ["Turkey", "Türkiye", "Turkiye"],
+    ["Russia", "Russian Federation"],
+    ["South Korea", "Korea, Republic of", "Republic of Korea", "Korea (Republic of)", "Korea, South"],
+    ["North Korea", "Korea, Democratic People's Republic of", "Democratic People's Republic of Korea"],
+    ["United States", "United States of America", "USA", "US", "U.S.", "U.S.A."],
+    ["United Kingdom", "UK", "Great Britain", "GB", "United Kingdom of Great Britain and Northern Ireland"],
+    ["China", "People's Republic of China", "PRC", "China (People's Republic of)", "Mainland China"],
+    ["United Arab Emirates", "UAE"],
+    ["Laos", "Lao People's Democratic Republic", "Lao PDR"],
+    ["Czechia", "Czech Republic"],
+    ["Iran", "Iran, Islamic Republic of", "Islamic Republic of Iran"],
+    ["Syria", "Syrian Arab Republic"],
+    ["Moldova", "Republic of Moldova", "Moldova, Republic of"],
+    ["Tanzania", "United Republic of Tanzania", "Tanzania, United Republic of"],
+    ["Bolivia", "Plurinational State of Bolivia", "Bolivia, Plurinational State of"],
+    ["Venezuela", "Bolivarian Republic of Venezuela", "Venezuela, Bolivarian Republic of"],
+    ["Brunei", "Brunei Darussalam"],
+    ["Cape Verde", "Cabo Verde"],
+    ["Ivory Coast", "Côte d'Ivoire"],
+    ["Eswatini", "Swaziland"],
+    ["North Macedonia", "Macedonia", "Republic of North Macedonia"],
+    ["Myanmar", "Burma", "Myanmar (Burma)"],
+    ["Taiwan", "Chinese Taipei", "Taiwan, Province of China"],
+    ["Hong Kong", "Hong Kong SAR", "Hong Kong, China"],
+    ["Macau", "Macao", "Macao SAR"],
+    ["Democratic Republic of the Congo", "DR Congo", "DRC", "Congo, Democratic Republic of the", "Congo (Kinshasa)"],
+    ["Republic of the Congo", "Congo-Brazzaville", "Congo (Brazzaville)", "Congo, Republic of the"],
+    ["Palestine", "State of Palestine", "Occupied Palestinian Territory"],
+    ["Bosnia and Herzegovina", "Bosnia-Herzegovina", "Bosnia"],
+    ["Micronesia", "Federated States of Micronesia", "Micronesia, Federated States of"],
+    ["East Timor", "Timor-Leste", "Timor Leste"],
+]
+_COUNTRY_GROUP = {}
+for _g in _COUNTRY_ALIAS_GROUPS:
+    _ng = frozenset(_norm_country(x) for x in _g)
+    for _n in _ng:
+        _COUNTRY_GROUP[_n] = _ng
+
+
+# ═════════════════════════════════════════════════════════════════════
+# Default-values table: loaded once per process (TTL), not once per request
+# ═════════════════════════════════════════════════════════════════════
+_DefaultRow = collections.namedtuple(
+    "_DefaultRow",
+    "cn_prefix year origin_country base_value markup_pct effective_value includes_indirect source updated_at",
+)
+_DEFAULTS_CACHE = {"expires": 0.0, "value": None}
+
+
+def invalidate_cbam_defaults_cache():
+    """Call after replacing the cbam_defaults table inside the same process (tests, admin tools)."""
+    _DEFAULTS_CACHE.update(expires=0.0, value=None)
+
+
+def _load_defaults_index(db):
+    """
+    Build {(cn_prefix, year, normalised_country|None): row} from the cbam_defaults table.
+
+    The old code loaded every row as an ORM object on every upload (about 100k rows). Rows are now copied into
+    plain tuples and kept for CBAM_DEFAULTS_TTL_SECONDS (default 600; 0 disables caching). Plain tuples, not ORM
+    objects, so nothing is tied to a request's database session. An empty or failed load is never cached.
+    """
+    ttl = float(os.getenv("CBAM_DEFAULTS_TTL_SECONDS", "600"))
+    now = time.monotonic()
+    cached = _DEFAULTS_CACHE["value"]
+    if ttl > 0 and cached is not None and now < _DEFAULTS_CACHE["expires"]:
+        return cached
+    index, countries, sources, stamps, count = {}, {}, set(), [], 0
+    for d in db.query(CBAMDefault).all():
+        row = _DefaultRow(d.cn_prefix, d.year, d.origin_country, d.base_value, d.markup_pct, d.effective_value,
+                          bool(d.includes_indirect), getattr(d, "source", None), getattr(d, "updated_at", None))
+        norm = _norm_country(row.origin_country) if row.origin_country else None
+        index[(row.cn_prefix, row.year, norm or None)] = row
+        if norm and row.origin_country != "UNKNOWN_ORIGIN":
+            countries.setdefault(norm, row.origin_country)
+        if row.source:
+            sources.add(row.source)
+        if row.updated_at:
+            stamps.append(row.updated_at)
+        count += 1
+    value = {"index": index, "countries": countries, "sources": sorted(sources), "count": count,
+             "latest": max(stamps) if stamps else None}
+    if ttl > 0 and count:
+        _DEFAULTS_CACHE.update(expires=now + ttl, value=value)
+    return value
 
 
 class BOMProcessor:
@@ -147,11 +352,23 @@ class BOMProcessor:
     # ── Annex I Rule Table (Regulation (EU) 2023/956) ──
     # Evaluated top-down; first matching prefix wins.
     # Rules list the exact string prefix to match.
-    # The seeded cbam_defaults table is a hand-built INTERIM approximation, NOT the
-    # definitive-period Commission dataset (Implementing Reg. (EU) 2025/2621 as corrected
-    # by (EU) 2026/1740 — per CN and per country, base values + separate mark-up).
-    # Until that dataset is imported, results must not be labelled as Commission defaults.
+    # Rows imported by scripts/import_cbam_defaults_2026_1740.py come from Implementing Regulation
+    # (EU) 2026/1740 (which corrects 2025/2621): per CN code and per country, base value plus a separate
+    # mark-up that the importer folds into effective_value. The label below is applied to every row in the
+    # table, so never load anything into cbam_defaults that is not from that Regulation (the old hand-typed
+    # seed in scripts/seed_cbam_defaults.py must not be run again).
     DEFAULTS_BASIS_LABEL = "COMMISSION_DEFAULT"
+    annex_version = "Regulation (EU) 2023/956, Annex I (CN-code scope)"
+
+    # How _lookup_cbam_default ranks candidates:
+    #   "specificity_first": longest CN prefix wins; country beats global only at the same length (original behaviour)
+    #   "country_first":     any country-specific row (any prefix length) beats every global row
+    # Which one matches the Regulation is a legal question: verify against the Official Journal text
+    # (see scripts/diagnose_cbam_defaults.py, section 3) before switching.
+    DEFAULT_LOOKUP_ORDER = "specificity_first"
+    # The default-values table is replaced when the Commission publishes a new regulation (about once a year),
+    # so only warn when the data is clearly old; the previous 90-day threshold put a warning on every row.
+    DEFAULTS_STALE_DAYS = 400
 
     ANNEX_I_RULES = [
         # Explicit exclusions in Chapter 72
@@ -290,17 +507,19 @@ class BOMProcessor:
         self.cbam_defaults_count = 0
         self.cbam_defaults_version = None
         self.cbam_defaults_load_error = None
+        self.cbam_default_countries = {}   # normalised name -> name as stored in the table
+        self.cbam_defaults_sources = []
 
         try:
-            all_defaults = self.db.query(CBAMDefault).all()
-            for d in all_defaults:
-                key = (d.cn_prefix, d.year, (d.origin_country or "").lower() if d.origin_country else None)
-                self.cbam_defaults_cache[key] = d
-            self.cbam_defaults_count = len(all_defaults)
-            if all_defaults:
-                latest = max(d.updated_at for d in all_defaults if d.updated_at)
-                self.cbam_defaults_version = latest.isoformat() if latest else None
-                if latest and (datetime.datetime.now(latest.tzinfo) - latest).days > 90:
+            idx = _load_defaults_index(self.db)
+            self.cbam_defaults_cache = idx["index"]
+            self.cbam_default_countries = idx["countries"]
+            self.cbam_defaults_sources = idx["sources"]
+            self.cbam_defaults_count = idx["count"]
+            latest = idx["latest"]
+            if idx["count"] and latest:
+                self.cbam_defaults_version = latest.isoformat()
+                if (datetime.datetime.now(latest.tzinfo) - latest).days > self.DEFAULTS_STALE_DAYS:
                     self.cbam_defaults_stale = True
         except Exception as e:
             # Table may not exist yet — fall back gracefully
@@ -320,39 +539,47 @@ class BOMProcessor:
         """
         if not self.cbam_defaults_cache or not cn_code:
             return None, None, None, None, None
-        
-        clean_cn = re.sub(r"\D", "", cn_code)
-        country_lower = origin_country.lower().strip() if origin_country else None
-        
-        # Try progressively shorter CN prefixes
-        prefixes = []
-        for length in range(len(clean_cn), 1, -1):
-            prefixes.append(clean_cn[:length])
-        
+
+        clean_cn = _clean_cn(cn_code)
+        if not clean_cn:
+            return None, None, None, None, None
+        country_key, country_name = self._resolve_default_country(origin_country)
+
+        prefixes = [clean_cn[:n] for n in range(len(clean_cn), 1, -1)]
         # Hardcoded ambiguous prefixes found via database crawl
         ambiguous_prefixes = {'761090'}
-        
-        for prefix in prefixes:
+
+        scopes = [country_key, None] if country_key else [None]
+        if self.DEFAULT_LOOKUP_ORDER == "country_first":
+            order = [(p, sc) for sc in scopes for p in prefixes]
+        else:
+            order = [(p, sc) for p in prefixes for sc in scopes]
+
+        for prefix, scope in order:
             if prefix in ambiguous_prefixes and prefix != clean_cn:
                 return None, None, 'AMBIGUOUS', None, None
-            match_digits = len(prefix)
-            # Try country-specific first
-            if country_lower:
-                key = (prefix, year, country_lower)
-                if key in self.cbam_defaults_cache:
-                    d = self.cbam_defaults_cache[key]
-                    return d.effective_value, d.includes_indirect, self.DEFAULTS_BASIS_LABEL, match_digits, {
-                        "geography": "COUNTRY", "markup_pct": d.markup_pct, "base_value": d.base_value, "dataset": getattr(d, "source", "Commission Implementing Regulation (EU) 2026/1740"),
-                    }
-            # Then try global default (origin_country = NULL)
-            key = (prefix, year, None)
-            if key in self.cbam_defaults_cache:
-                d = self.cbam_defaults_cache[key]
-                return d.effective_value, d.includes_indirect, self.DEFAULTS_BASIS_LABEL, match_digits, {
-                    "geography": "GLOBAL", "markup_pct": d.markup_pct, "base_value": d.base_value, "dataset": getattr(d, "source", "Commission Implementing Regulation (EU) 2026/1740"),
+            d = self.cbam_defaults_cache.get((prefix, year, scope))
+            if d is not None:
+                return d.effective_value, d.includes_indirect, self.DEFAULTS_BASIS_LABEL, len(prefix), {
+                    "geography": "COUNTRY" if scope else "GLOBAL",
+                    "country_matched": country_name if scope else None,
+                    "markup_pct": d.markup_pct, "base_value": d.base_value,
+                    "dataset": getattr(d, "source", "Commission Implementing Regulation (EU) 2026/1740"),
                 }
-        
         return None, None, None, None, None
+
+    def _resolve_default_country(self, origin_country):
+        """Map a user-supplied country to the spelling used in cbam_defaults ('Vietnam' -> 'Viet Nam').
+        Returns (normalised_key, stored_name) or (None, None) if the table has no country-specific
+        rows for it (the 'other countries and territories' rows then apply)."""
+        n = _norm_country(origin_country)
+        if not n:
+            return None, None
+        group = _COUNTRY_GROUP.get(n, frozenset())
+        for cand in [n] + sorted(group - {n}):
+            if cand in self.cbam_default_countries:
+                return cand, self.cbam_default_countries[cand]
+        return None, None
 
     def _get_best_match(self, raw_name: str, allowed_cats_tuple: tuple | None):
         """Robust fuzzy matcher: top-5 candidates with stainless/SS304/inox guard. Per-instance cached."""
@@ -418,9 +645,9 @@ class BOMProcessor:
                     break
         
         # Determine multiplier if weight is in tonnes
-        weight_multiplier = 1.0
-        if actual_weight_col in df.columns and ("tonne" in str(actual_weight_col).lower() or "ton" in str(actual_weight_col).lower()):
-            weight_multiplier = 1000.0
+        weight_multiplier, weight_unit_label = 1.0, "kg (assumed: no unit in column name)"
+        if actual_weight_col in df.columns:
+            weight_multiplier, weight_unit_label = detect_weight_unit(actual_weight_col)
 
         enriched_rows = []
         seen_ids = set()
@@ -434,7 +661,10 @@ class BOMProcessor:
             errors = []
             quarantine_reasons = []
             notes = []
-            
+            origin_exempt = False      # EU/EEA origin
+            dest_exempt = False        # destination outside the EU
+            pre_2026 = False           # released before the definitive period: reporting only
+
             def extract_string(aliases):
                 invalid_vals = {"nan", "n/a", "none", "null", "-", ""}
                 # Pass 1: exact column name match (highest priority)
@@ -480,36 +710,13 @@ class BOMProcessor:
             else:
                 try:
                     if isinstance(raw_weight, str):
-                        rw_str = str(raw_weight).strip()
-                        rw_str = rw_str.replace(' ', '')
-                        
-                        if delimiter == ';':
-                            # European convention: dot is thousands, comma is decimal
-                            if re.match(r'^\d{1,3}(?:\.\d{3})*,\d+$', rw_str):
-                                rw_str = rw_str.replace('.', '').replace(',', '.')
-                            elif re.match(r'^\d+,\d+$', rw_str):
-                                rw_str = rw_str.replace(',', '.')
-                            elif re.match(r'^\d{1,3}\.\d{3}$', rw_str):
-                                rw_str = rw_str.replace('.', '')
-                                errors.append(f"Ambiguous weight format: '{raw_weight}'")
-                                quarantine_reasons.append(f"Ambiguous weight format '{raw_weight}' - confirm if thousand or decimal")
-                            elif re.match(r'^\d{1,3}(?:\.\d{3})+$', rw_str):
-                                rw_str = rw_str.replace('.', '')
-                            else:
-                                rw_str = rw_str.replace('.', '') # catch all for remaining dots
-                        else:
-                            # US convention: comma is thousands, dot is decimal
-                            if re.match(r'^\d{1,3}(?:,\d{3})*\.\d+$', rw_str):
-                                rw_str = rw_str.replace(',', '')
-                            elif re.match(r'^\d{1,3},\d{3}$', rw_str):
-                                rw_str = rw_str.replace(',', '')
-                                errors.append(f"Ambiguous weight format: '{raw_weight}'")
-                                quarantine_reasons.append(f"Ambiguous weight format '{raw_weight}' - confirm if thousand or decimal")
-                            elif re.match(r'^\d{1,3}(?:,\d{3})+$', rw_str):
-                                rw_str = rw_str.replace(',', '')
-                            else:
-                                rw_str = rw_str.replace(',', '')
-                        raw_weight = rw_str
+                        parsed_w, w_status = parse_weight_string(raw_weight)
+                        if w_status == "invalid":
+                            raise ValueError("Non-numeric quantity")
+                        if w_status == "ambiguous":
+                            errors.append(f"Ambiguous weight format: '{raw_weight}'")
+                            quarantine_reasons.append(f"Ambiguous weight format '{raw_weight}' - confirm if thousand or decimal")
+                        raw_weight = parsed_w
                     weight_kg = float(raw_weight) * weight_multiplier
                     if math.isinf(weight_kg) or math.isnan(weight_kg):
                         raise ValueError("Infinity or NaN")
@@ -518,41 +725,54 @@ class BOMProcessor:
                         weight_kg = 0.0
                     elif weight_kg > 100_000_000:
                         quarantine_reasons.append("Quantity exceeds 100M kg limit")
-                except ValueError:
+                except (ValueError, TypeError):
                     errors.append("Non-numeric quantity")
                     quarantine_reasons.append("Non-numeric quantity")
                     weight_kg = 0.0
-                
+
             if not raw_name or str(raw_name).strip() == "" or str(raw_name).lower() == "nan":
                 errors.append("Missing material name")
                 raw_name = "UNKNOWN" 
                 
             def extract_float(aliases, field_name):
-                for k in row.keys():
-                    if any(a in str(k).lower() for a in aliases):
-                        val = row[k]
-                        if pd.isna(val) or str(val).strip() == "" or str(val).lower() == "nan":
-                            if field_name: errors.append(f"Missing {field_name}")
-                            return None
-                        try:
-                            if isinstance(val, str):
-                                val = str(val).replace('€', '').replace('$', '').strip()
-                                if ',' in val and '.' not in val:
-                                    parts = val.split(',')
-                                    if len(parts[-1]) == 3:
-                                        val = val.replace(',', '')
-                                    else:
-                                        val = val.replace(',', '.')
-                                elif ',' in val and '.' in val:
-                                    val = val.replace(',', '')
-                            fval = float(val)
-                            if math.isinf(fval) or math.isnan(fval):
-                                raise ValueError("Infinity or NaN")
-                            return fval
-                        except ValueError:
-                            if field_name: errors.append(f"Non-numeric {field_name}")
-                            return None
-                return None
+                # Whole-word column matching. The old substring test made 'direct_emissions' match
+                # 'indirect_emissions' and 'price_paid' match 'Unit_Price_Paid_EUR'.
+                alias_keys = [_col_key(a) for a in aliases]
+                hit = None
+                for k in row.keys():                      # pass 1: exact (normalised) name
+                    if _col_key(k) in alias_keys:
+                        hit = k
+                        break
+                if hit is None:
+                    for k in row.keys():                  # pass 2: alias as whole '_'-delimited words
+                        kk = _col_key(k)
+                        if any(re.search(r"(?:^|_)" + re.escape(a) + r"(?:_|$)", kk) for a in alias_keys):
+                            hit = k
+                            break
+                if hit is None:
+                    return None
+                val = row[hit]
+                if pd.isna(val) or str(val).strip() == "" or str(val).lower() == "nan":
+                    if field_name: errors.append(f"Missing {field_name}")
+                    return None
+                try:
+                    if isinstance(val, str):
+                        val = str(val).replace('€', '').replace('$', '').strip()
+                        if ',' in val and '.' not in val:
+                            parts = val.split(',')
+                            if len(parts[-1]) == 3:
+                                val = val.replace(',', '')
+                            else:
+                                val = val.replace(',', '.')
+                        elif ',' in val and '.' in val:
+                            val = val.replace(',', '')
+                    fval = float(val)
+                    if math.isinf(fval) or math.isnan(fval):
+                        raise ValueError("Infinity or NaN")
+                    return fval
+                except ValueError:
+                    if field_name: errors.append(f"Non-numeric {field_name}")
+                    return None
 
             direct_em = extract_float(['direct_emissions', 'direct emissions'], 'direct emissions')
             if direct_em is not None and direct_em < 0:
@@ -564,7 +784,7 @@ class BOMProcessor:
                 errors.append("Indirect emissions cannot be negative")
                 indirect_em = 0.0
                 
-            price_paid_val = extract_float(['carbon_price_paid_eur_per_tco2e', 'carbon_price_paid', 'price_paid', 'domestic_carbon'], None)
+            price_paid_val = extract_float(['carbon_price_paid_eur_per_tco2e', 'carbon_price_paid', 'domestic_carbon_price_paid', 'domestic_carbon_price', 'domestic_carbon'], None)
             price_paid = price_paid_val or 0.0
             if price_paid < 0:
                 errors.append("Carbon price cannot be negative")
@@ -611,7 +831,7 @@ class BOMProcessor:
                 errors.append("Missing CN Code")
             else:
                 # Normalise once: strip all non-digits (handles "7208.51.00", "7208 51 00", 72085100.0)
-                clean_cn = re.sub(r"\D", "", str(cn_code))
+                clean_cn = _clean_cn(cn_code)
                 if len(clean_cn) < 4 or not clean_cn.isdigit():
                     errors.append("Invalid CN Code format")
                     quarantine_reasons.append("Invalid CN Code format")
@@ -640,6 +860,7 @@ class BOMProcessor:
                     errors.append("Unrecognized country")
                     quarantine_reasons.append("Unrecognized origin country")
                 if c_lower in self.EU_EEA_COUNTRIES:
+                    origin_exempt = True
                     notes.append("Origin is exempt from CBAM (EU/EEA)")
                     
             destination = extract_exact_string(['destination', 'destination_country'])
@@ -653,6 +874,7 @@ class BOMProcessor:
                     errors.append("Unrecognized destination country")
                     quarantine_reasons.append("Unrecognized destination country")
                 elif d_lower not in self.EU_DESTINATION_COUNTRIES:
+                    dest_exempt = True
                     notes.append("Destination outside EU (exempt)")
                     
             release_date = extract_string(['release_for_free_circulation_date', 'release_date'])
@@ -674,6 +896,7 @@ class BOMProcessor:
                         errors.append("Date cannot be in the future")
                         quarantine_reasons.append("Date cannot be in the future")
                     elif dt < datetime.datetime(2026, 1, 1):
+                        pre_2026 = True
                         notes.append("Pre-2026 release (reporting-only phase, no financial liability)")
                 except ValueError:
                     errors.append("Invalid date format (requires YYYY-MM-DD)")
@@ -834,6 +1057,11 @@ class BOMProcessor:
                             f"Official Commission default: matched at {match_level}-digit level, "
                             f"{default_meta['geography'].lower()}, mark-up {round((default_meta['markup_pct'] or 0)*100)}% included"
                         )
+                        if default_meta["geography"] == "GLOBAL" and origin_country_raw:
+                            notes.append(
+                                f"No country-specific default found for origin '{origin_country_raw}'; the 'other countries and territories' "
+                                f"value was used. If this country has its own table in the Regulation, check the spelling."
+                            )
                     elif db_carbon > 0:
                         carbon_factor = db_carbon
                         emissions_basis = "DEFAULT_FALLBACK"
@@ -872,6 +1100,11 @@ class BOMProcessor:
                             f"Official Commission default: matched at {match_level}-digit level, "
                             f"{default_meta['geography'].lower()}, mark-up {round((default_meta['markup_pct'] or 0)*100)}% included"
                         )
+                        if default_meta["geography"] == "GLOBAL" and origin_country_raw:
+                            notes.append(
+                                f"No country-specific default found for origin '{origin_country_raw}'; the 'other countries and territories' "
+                                f"value was used. If this country has its own table in the Regulation, check the spelling."
+                            )
                     else:
                         carbon_factor = _estimate_carbon_factor(raw_name, "")
                         emissions_basis = "GENERIC_ESTIMATE"
@@ -895,9 +1128,10 @@ class BOMProcessor:
             elif price_paid > 0:
                 notes.append(f"Partial carbon price paid at origin ({price_paid} EUR/t) — documentary evidence required; net price {net_cbam_price} EUR/t")
             
-            is_exempt = False
-            if "Origin is exempt from CBAM (EU/EEA)" in notes or "Destination outside EU (exempt)" in notes or "Pre-2026 shipment (reporting-only phase, no financial liability)" in notes:
-                is_exempt = True
+            # Booleans, not note-text matching: the old pre-2026 check compared against a string
+            # ("Pre-2026 shipment...") that the note never contained, so pre-2026 rows were charged.
+            is_exempt = origin_exempt or dest_exempt or pre_2026
+            taxable_co2_tonnes = total_co2_tonnes if (sector_valid and not is_exempt) else 0.0
             
             cbam_cost_eur = total_co2_tonnes * net_cbam_price if sector_valid and not is_exempt else 0.0
             
@@ -958,12 +1192,14 @@ class BOMProcessor:
                 total_co2_kg = 0.0
                 total_co2_tonnes = 0.0
                 cbam_cost_eur = 0.0
+                taxable_co2_tonnes = 0.0
                 esg_risk = 0.0
             elif is_out_of_scope:
                 included_str = "OUT OF SCOPE"
                 total_co2_kg = 0.0
                 total_co2_tonnes = 0.0
                 cbam_cost_eur = 0.0
+                taxable_co2_tonnes = 0.0
                 # ESG risk is still calculated for out of scope
             else:
                 included_str = "YES"
@@ -980,7 +1216,7 @@ class BOMProcessor:
             if cn_status == "EXACT_MATCH" and sector_lower:
                 if any(x in sector_lower for x in ['electric', 'hydrogen']):
                     notes.append(f"De minimis exemption does not apply to {sector_lower.title()}")
-                elif "Origin is exempt" not in " | ".join(notes) and "Destination outside EU" not in " | ".join(notes):
+                elif not (origin_exempt or dest_exempt or pre_2026):
                     is_deminimis_eligible = "YES"
 
             raw_importer = extract_string(['importer', 'eori', 'importer_id', 'importer_name'])
@@ -1001,6 +1237,7 @@ class BOMProcessor:
             enriched_rows.append({
                 **clean_row,
                 "Parsed_Weight_kg": round(weight_kg, 2),
+                "Weight_Unit_Basis": weight_unit_label,
                 "Importer": importer,
                 "Other_Imports_t": other_imports_t,
                 "Lookup_Year": lookup_year,
@@ -1012,10 +1249,12 @@ class BOMProcessor:
                 "Default_Dataset": default_meta["dataset"] if default_meta else "N/A",
                 "Default_Match_Digits": default_match_digits if default_meta else "N/A",
                 "Default_Geography": default_meta["geography"] if default_meta else "N/A",
+                "Default_Country_Matched": (default_meta.get("country_matched") or "N/A") if default_meta else "N/A",
                 "Default_Base_Value": default_meta["base_value"] if default_meta else "N/A",
                 "Default_Markup_Pct": round((default_meta["markup_pct"] or 0) * 100, 1) if default_meta else "N/A",
                 "Total_CO2_kg": round(total_co2_kg, 3) if total_co2_kg > 0 else 0.0,
                 "Total_CO2_tonnes": round(total_co2_tonnes, 4) if total_co2_tonnes > 0 else 0.0,
+                "CBAM_Taxable_CO2_tonnes": round(taxable_co2_tonnes, 4) if taxable_co2_tonnes > 0 else 0.0,
                 "CBAM_Cost_EUR": cbam_cost_eur if cbam_cost_eur > 0 else 0.0,
                 "Provisional_CO2_kg": round(raw_total_co2_kg, 3),
                 "Provisional_CO2_tonnes": round(raw_total_co2_tonnes, 4),
@@ -1090,9 +1329,15 @@ class BOMProcessor:
                     r["DeMinimis_Status"] = "Not exempt (Once >50t, all embedded emissions for the year are in scope)"
             else:
                 r["DeMinimis_Status"] = "N/A"
+            # CBAM_Cost_EUR is the cost if the importer is NOT exempt (conservative headline).
+            # This column is the cost after applying the de minimis outcome for the importer-year.
+            r["CBAM_Cost_After_DeMinimis_EUR"] = (
+                0.0 if str(r.get("DeMinimis_Status", "")).startswith("Possibly exempt")
+                else r.get("CBAM_Cost_EUR", 0.0)
+            )
         
         # Add diagnostics to every row for CSV/PDF traceability
-        annex_version = "Regulation (EU) 2023/956 Annex I"
+        annex_version = self.annex_version
         defaults_info = f"CBAM rules: {annex_version} | Defaults loaded: {self.cbam_defaults_count} entries"
         if self.cbam_defaults_version:
             defaults_info += f", version: {self.cbam_defaults_version}"

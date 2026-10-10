@@ -11,6 +11,10 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 # Load environment variables from .env file
 load_dotenv()
 
+if not os.getenv("DATABASE_URL") and os.getenv("RENDER"):
+    # A missing variable used to fall back to a throw-away SQLite file on Render's ephemeral disk:
+    # the site would "work" while users, uploads and history silently vanished on every deploy.
+    raise RuntimeError("DATABASE_URL is not set; refusing to fall back to SQLite in production.")
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./matdatahub_dev.db")
 
 print(f"[database.py] Raw DATABASE_URL scheme: {DATABASE_URL.split('@')[0].split('://')[0] if '://' in DATABASE_URL else 'unknown'}", flush=True)

@@ -22,7 +22,11 @@ from app.models import User
 
 # ── Config ──
 # Secret key for JWT signing — read from env or generate a default for dev
-JWT_SECRET = os.getenv("JWT_SECRET", "matdatahub-dev-secret-change-in-production")
+_DEV_JWT_SECRET = "matdatahub-dev-secret-change-in-production"
+JWT_SECRET = os.getenv("JWT_SECRET", _DEV_JWT_SECRET)
+if JWT_SECRET == _DEV_JWT_SECRET and os.getenv("RENDER"):
+    # Anyone can read the default from this repository and mint admin tokens with it.
+    raise RuntimeError("JWT_SECRET is not set; refusing to start with the development default.")
 JWT_ALGORITHM = "HS256"
 JWT_EXPIRY_HOURS = 24
 
