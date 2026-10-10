@@ -6,6 +6,22 @@ import { useRouter } from "next/navigation";
 import { API } from "@/lib/api";
 import Papa from "papaparse";
 
+// Columns that are audit/diagnostic detail: shown on screen, hidden in the printed report.
+const DIAGNOSTIC_COLUMNS = new Set([
+  "Parsed_Weight_kg", "Weight_Unit_Basis", "Importer", "Other_Imports_t", "Lookup_Year", "DeMinimis_Eligible_Mass_kg",
+  "Emissions_Basis", "Default_Dataset", "Default_Match_Digits", "Default_Geography", "Default_Country_Matched",
+  "Default_Base_Value", "Default_Markup_Pct", "Total_CO2_kg", "Provisional_CO2_kg", "Provisional_CO2_tonnes",
+  "Domestic_Carbon_Price_Paid_EUR", "Reference_Price_EUR_per_tCO2e", "Is_Obsolete", "Replacement_Standard",
+  "ESG_Risk_Score", "Notes", "CBAM_Estimate_Notice", "CBAM_Cost_If_Not_Exempt_EUR", "CBAM_Cost_After_DeMinimis_EUR",
+  "CBAM_Taxable_CO2_tonnes", "DeMinimis_Status", "CBAM_Defaults_Info",
+]);
+
+// Phase-in share of the cost used by the what-if selector (the backend applies the full schedule per shipment year).
+const WHAT_IF_PHASE_IN: Record<"2026" | "2027" | "2034", number> = { "2026": 0.025, "2027": 0.05, "2034": 1.0 };
+
+// Quote a value for a hand-built CSV row (a comma, quote or newline in a cell would otherwise shift every later column).
+const csvCell = (v: string) => (/[",\r\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v);
+
 export default function CBAMAnalytics() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<"upload" | "manual" | "history">("upload");
@@ -133,6 +149,12 @@ export default function CBAMAnalytics() {
   const [deMinimisThreshold, setDeMinimisThreshold] = useState(50);
   const [isDeMinimisExempt, setIsDeMinimisExempt] = useState(false);
   const [eligibleMassTonnes, setEligibleMassTonnes] = useState(0);
+  const [costIfNotExempt, setCostIfNotExempt] = useState(0);
+  const [taxRows, setTaxRows] = useState<{ tonnes: number; net: number; deMin: boolean }[]>([]);
+  const [referencePrice, setReferencePrice] = useState(75);
+  const [defaultsSources, setDefaultsSources] = useState<string[]>([]);
+  const [generatedAt, setGeneratedAt] = useState("");
+  const [historyNotSaved, setHistoryNotSaved] = useState(false);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -237,9 +259,10 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
         return;
       }
       // Generate virtual CSV with proper quoting to handle commas in material names
-      const escapedMaterial = manualMaterial.includes(",") ? `"${manualMaterial.replace(/"/g, '""')}"` : manualMaterial;
+      // Every user-typed cell goes through csvCell (a weight typed as "1,5" used to add a column and shift the rest of the row).
       const origin = manualOrigin || "India";
-      const csvContent = `material_id,Material,Weight_kg,cn_code,cbam_sector,country_of_origin,destination,release_date,supplier\nMANUAL-01,${escapedMaterial},${manualWeight},${manualCnCode},${manualSector},${origin},Germany,2026-01-01,Manual Entry\n`;
+      const today = new Date().toISOString().slice(0, 10); // manual entries are priced at today's release date, not a fixed 2026-01-01
+      const csvContent = `material_id,Material,Weight_kg,cn_code,cbam_sector,country_of_origin,destination,release_date,supplier\nMANUAL-01,${csvCell(manualMaterial)},${csvCell(manualWeight)},${csvCell(manualCnCode)},${csvCell(manualSector)},${csvCell(origin)},Germany,${today},Manual Entry\n`;
       payloadFile = new File([csvContent], "manual_entry.csv", { type: "text/csv" });
       payloadMatCol = "Material";
       payloadWeightCol = "Weight_kg";
@@ -278,78 +301,84 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
         const parsed = Papa.parse(text, { header: true, skipEmptyLines: true });
         const parsedData = parsed.data as any[];
         
-        let total = 0; // Total physical kg included
-        let totalCbamEur = 0;
-        let revCount = 0;
+        const num = (v: any) => {
+          const n = parseFloat(v);
+          return Number.isFinite(n) ? n : 0;
+        };
+        const hasTaxableCol = parsedData.length > 0 && "CBAM_Taxable_CO2_tonnes" in parsedData[0];
+        const refHeader = parseFloat(res.headers.get("X-CBAM-Reference-Price") || "");
+        const refPrice = Number.isFinite(refHeader) ? refHeader : 75;
+
+        let total = 0;                 // CO2 (kg) of rows included in totals
+        let costNotExempt = 0;         // cost if the importer is NOT under the de minimis threshold
+        let costAfterDeMin = 0;        // cost after the de minimis outcome for each importer-year
+        let revCount = 0;              // quarantined rows
         let revTonnes = 0;
         let fallbackKg = 0;
         let interimRows = 0;
         let interimHeadingRows = 0;
         let interimGlobalRows = 0;
+        let deMinMassKg = 0;
         let taxableKg = 0;
-        
-        let eligibleMassKg = 0;
-        let eligibleTaxEur = 0;
-        let ineligibleTaxEur = 0;
-        
-        let totalCo2Kg = 0;
-        
+        let anyDeMin = false;
+        const rowsForTax: { tonnes: number; net: number; deMin: boolean }[] = [];
+        const sources = new Set<string>();
+
         parsedData.forEach((rowObj: any) => {
-          const included = rowObj["Included_In_Total"];
-          if (included && included.startsWith("YES")) {
-            const rowKg = parseFloat(rowObj["Total_CO2_kg"] || "0");
+          const included = String(rowObj["Included_In_Total"] || "");
+          if (included.startsWith("YES")) {
+            const rowKg = num(rowObj["Total_CO2_kg"]);
             total += rowKg;
-            
-            const co2Tonnes = parseFloat(rowObj["Total_CO2_tonnes"] || "0");
-            totalCo2Kg += (co2Tonnes * 1000); // Track exact CO2 mass for taxable calculation
-            
-            const rowEur = parseFloat(rowObj["CBAM_Cost_EUR"] || "0");
-            totalCbamEur += rowEur;
-            
-            const elMass = parseFloat(rowObj["DeMinimis_Eligible_Mass_kg"] || "0");
-            if (elMass > 0) {
-              eligibleMassKg += elMass;
-              eligibleTaxEur += rowEur;
+
+            const rowEur = num(rowObj["CBAM_Cost_EUR"]);
+            const deMin = String(rowObj["DeMinimis_Status"] || "").startsWith("Possibly exempt");
+            costNotExempt += rowEur;
+            costAfterDeMin += deMin ? 0 : rowEur;
+
+            const taxT = hasTaxableCol ? num(rowObj["CBAM_Taxable_CO2_tonnes"]) : num(rowObj["Total_CO2_tonnes"]);
+            const netPrice = rowObj["Reference_Price_EUR_per_tCO2e"] !== undefined && rowObj["Reference_Price_EUR_per_tCO2e"] !== ""
+              ? num(rowObj["Reference_Price_EUR_per_tCO2e"]) : refPrice;
+            rowsForTax.push({ tonnes: taxT, net: netPrice, deMin });
+            if (deMin) {
+              anyDeMin = true;
+              deMinMassKg += num(rowObj["DeMinimis_Eligible_Mass_kg"]);
             } else {
-              ineligibleTaxEur += rowEur;
+              taxableKg += taxT * 1000;
             }
-            
+
             const basis = rowObj["Emissions_Basis"];
             if (basis === "DEFAULT_FALLBACK" || basis === "LEGACY_FALLBACK" || basis === "GENERIC_ESTIMATE") {
-                fallbackKg += rowKg;
+              fallbackKg += rowKg;
             }
             if (basis === "COMMISSION_DEFAULT") {
-                interimRows += 1;
-                const digits = parseInt(rowObj["Default_Match_Digits"] || "0", 10);
-                if (digits < 8) interimHeadingRows += 1;
-                if (rowObj["Default_Geography"] !== "COUNTRY") interimGlobalRows += 1;
+              interimRows += 1;
+              if (parseInt(rowObj["Default_Match_Digits"] || "0", 10) < 8) interimHeadingRows += 1;
+              if (rowObj["Default_Geography"] !== "COUNTRY") interimGlobalRows += 1;
+              if (rowObj["Default_Dataset"] && rowObj["Default_Dataset"] !== "N/A") sources.add(rowObj["Default_Dataset"]);
             }
-          } else if (included && included.startsWith("NO")) {
+          } else if (included.startsWith("QUARANTINE")) {
+            // (the old test was startsWith("NO"), which never matched "QUARANTINED: ...", so this count was always 0)
             revCount += 1;
-            if (rowObj["Parsed_Weight_kg"]) {
-                revTonnes += parseFloat(rowObj["Parsed_Weight_kg"] || "0") / 1000.0;
-            }
+            revTonnes += num(rowObj["Parsed_Weight_kg"]) / 1000.0;
           }
         });
-        
-        const elMassTonnes = eligibleMassKg / 1000.0;
-        const isExempt = elMassTonnes <= 50 && elMassTonnes > 0;
-        // Tax is now fully processed by the backend per-row, so totalCbamEur is inherently correct
-        const activeTaxEur = totalCbamEur;
-        
-        // Use exact CO2 sum from backend (eliminates carbon-price division errors)
-        taxableKg = isExempt ? 0 : totalCo2Kg;
 
         setResultsData(parsedData);
         setTotalCO2(total);
-        setTotalCbamCost(activeTaxEur);
+        setTotalCbamCost(costAfterDeMin);
+        setCostIfNotExempt(costNotExempt);
+        setTaxRows(rowsForTax);
+        setReferencePrice(refPrice);
         setPendingReviewCount(revCount);
         setPendingReviewTonnes(revTonnes);
         setFallbackTonnes(fallbackKg / 1000.0);
         setInterimStats({ rows: interimRows, heading: interimHeadingRows, global: interimGlobalRows });
+        setDefaultsSources(Array.from(sources));
         setTaxableTonnes(taxableKg / 1000.0);
-        setIsDeMinimisExempt(isExempt);
-        setEligibleMassTonnes(elMassTonnes);
+        setIsDeMinimisExempt(anyDeMin);
+        setEligibleMassTonnes(deMinMassKg / 1000.0);
+        setGeneratedAt(new Date().toLocaleString());
+        setHistoryNotSaved(res.headers.get("X-CBAM-History-Saved") === "false");
       } else if (res.status === 403) {
         setIsLocked(true);
       } else {
@@ -398,20 +427,26 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
               Automatically scan bulk Bills of Materials (BOMs) for embargoed materials, geographic obsolescence, and carbon taxation thresholds.
             </p>
             
-            <button className="relative z-10 px-8 py-4 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-bold transition-all shadow-lg shadow-amber-900/50 hover:scale-105">
-              Contact Sales to Unlock
-            </button>
+            <div className="relative z-10 flex flex-col sm:flex-row gap-3 items-center">
+              <Link href="/account" className="px-8 py-4 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-bold transition-all shadow-lg shadow-amber-900/50 hover:scale-105">
+                Upgrade to Advanced
+              </Link>
+              <Link href="/contact" className="px-8 py-4 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-xl font-bold transition-colors">
+                Talk to us
+              </Link>
+            </div>
           </div>
         </div>
       </main>
     );
   }
 
-  // CBAM cost now comes from backend (€75/tCO2e reference price)
-  const phaseInFactor = selectedYear === "2026" ? 0.025 : selectedYear === "2027" ? 0.05 : 1.0;
-  // If the user selects a specific what-if year, recalculate based on the raw taxable tonnes.
-  // Otherwise, if they just uploaded, `totalCbamCost` contains the EXACT row-by-row computed tax.
-  const estimatedTaxEUR = selectedYear === "ACTUAL" ? totalCbamCost : taxableTonnes * 75.0 * phaseInFactor;
+  // Cost comes from the backend row by row (reference price, carbon price paid, phase-in for each shipment year, de minimis).
+  // A what-if year re-prices the SAME taxable tonnes: net of carbon price paid, excluding de minimis rows.
+  const whatIfCost = (year: "2026" | "2027" | "2034") =>
+    taxRows.reduce((sum, r) => (r.deMin ? sum : sum + r.tonnes * r.net * WHAT_IF_PHASE_IN[year]), 0);
+  const estimatedTaxEUR = selectedYear === "ACTUAL" ? totalCbamCost : whatIfCost(selectedYear);
+  const eur = (v: number) => v.toLocaleString(undefined, { maximumFractionDigits: 2 });
 
   return (
     <main 
@@ -852,8 +887,11 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
                   CBAM Executive Summary
                 </h2>
                 <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                  Generated by MatDataHub CBAM Engine &bull; {new Date().toLocaleDateString()} {new Date().toLocaleTimeString()}
+                  Generated by MatDataHub CBAM Engine &bull; {generatedAt}
                 </p>
+                {historyNotSaved && (
+                  <p className="print:hidden text-xs text-amber-600 dark:text-amber-400 mt-1">This run could not be saved to your history. Download the CSV if you need a record.</p>
+                )}
               </div>
               <button
                 onClick={generatePDF}
@@ -875,8 +913,8 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
                   ) : null}
                   {interimStats.rows > 0 && (
                     <p className="text-slate-500 dark:text-slate-400">
-                      Using official Commission defaults for {interimStats.rows} covered row{interimStats.rows === 1 ? "" : "s"}
-                      ({interimStats.heading} matched at heading level, {interimStats.global} using global fallback).
+                      Commission default values{defaultsSources.length > 0 ? ` (${defaultsSources.join("; ")})` : ""} used for {interimStats.rows} covered row{interimStats.rows === 1 ? "" : "s"}
+                      ({interimStats.heading} matched at heading level, {interimStats.global} using the "other countries" values).
                     </p>
                   )}
                   {pendingReviewCount > 0 && (
@@ -889,7 +927,7 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
                 <p className="text-slate-500 dark:text-slate-400 font-medium mb-1 flex items-center gap-2"><FileText className="w-4 h-4 text-blue-600 dark:text-blue-400" /> Embodied Carbon In Scope</p>
                 <h3 className="text-3xl font-bold text-slate-900 dark:text-white font-heading">{taxableTonnes.toLocaleString(undefined, { maximumFractionDigits: 1 })} <span className="text-lg text-slate-500 dark:text-slate-400 font-normal">t CO₂</span></h3>
                 <p className="text-xs text-slate-400 mt-2 font-medium">
-                  {((totalCO2/1000) - taxableTonnes).toLocaleString(undefined, { maximumFractionDigits: 1 })} t-equivalent excluded (exempt origin/dest, pre-2026, or carbon price paid)
+                  {Math.max((totalCO2/1000) - taxableTonnes, 0).toLocaleString(undefined, { maximumFractionDigits: 1 })} t excluded (EU/EEA origin, non-EU destination, pre-2026 release, or de minimis)
                 </p>
               </div>
 
@@ -910,16 +948,17 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
                 </div>
                 <h3 className="text-3xl font-bold text-amber-500">€{estimatedTaxEUR.toLocaleString(undefined, { maximumFractionDigits: 2 })}</h3>
                   <div className="bg-amber-50 dark:bg-amber-900/20 px-2 py-1 rounded inline-block mt-1 border border-amber-100 dark:border-amber-800/50">
-                    <p className="text-xs text-amber-700 dark:text-amber-400 font-medium">Ref 2034 (100%): €{(taxableTonnes * 75.0).toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                    <p className="text-xs text-amber-700 dark:text-amber-400 font-medium">Ref 2034 (100%): €{eur(whatIfCost("2034"))}</p>
                   </div>
-                <p className="text-xs text-slate-400 mt-2 font-medium">@ €75/tCO₂e (assumed — actual CBAM certificate price is a published quarterly EEX average)</p>
+                <p className="text-xs text-slate-400 mt-2 font-medium">@ €{referencePrice}/tCO₂e (assumed reference price, not the Commission-published CBAM certificate price)</p>
                   <p className="text-xs text-amber-500 mt-1 font-semibold text-balance">
                     ⚠️ Warning (simplified lower estimate): The phase-in model assumes product emissions equal the free-allocation benchmark. Because default values typically exceed benchmarks, actual 2026-2027 costs using defaults will likely be substantially higher.
                   </p>
                 {isDeMinimisExempt && (
                   <div className="mt-3 bg-emerald-50 dark:bg-emerald-900/20 p-2 rounded border border-emerald-100 dark:border-emerald-800">
                     <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">
-                      <span className="font-bold">De Minimis Applied:</span> {eligibleMassTonnes.toLocaleString(undefined, { maximumFractionDigits: 1 })} t of eligible goods excluded (≤ {deMinimisThreshold} t limit).
+                      <span className="font-bold">De minimis assumed:</span> {eligibleMassTonnes.toLocaleString(undefined, { maximumFractionDigits: 1 })} t of goods belong to importer-years at or below the {deMinimisThreshold} t threshold and are shown as exempt
+                      {costIfNotExempt > totalCbamCost ? ` (without the exemption: €${eur(costIfNotExempt)})` : ""}. Confirm the importer's full annual total before relying on this.
                     </p>
                   </div>
                 )}
@@ -938,7 +977,7 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
                   <thead className="bg-white dark:bg-slate-900">
                     <tr>
                       {Object.keys(resultsData[0] || {}).map((header) => {
-                        const isDiagnostic = ["Parsed_Weight_kg", "Importer", "Other_Imports_t", "Lookup_Year", "DeMinimis_Eligible_Mass_kg", "Emissions_Basis", "Default_Dataset", "Default_Match_Digits", "Default_Geography", "Default_Base_Value", "Default_Markup_Pct", "Total_CO2_kg", "Provisional_CO2_kg", "Provisional_CO2_tonnes", "Domestic_Carbon_Price_Paid_EUR", "Reference_Price_EUR_per_tCO2e", "Is_Obsolete", "Replacement_Standard", "ESG_Risk_Score", "Notes", "CBAM_Estimate_Notice", "CBAM_Cost_If_Not_Exempt_EUR", "DeMinimis_Status", "CBAM_Defaults_Info"].includes(header);
+                        const isDiagnostic = DIAGNOSTIC_COLUMNS.has(header);
                         return (
                           <th key={header} className={`p-4 print:p-2 text-slate-500 dark:text-slate-400 font-medium whitespace-nowrap print:whitespace-normal border-b border-slate-200 dark:border-slate-800 ${isDiagnostic ? 'print:hidden' : ''}`}>
                             {header.replace(/_/g, " ")}
@@ -951,7 +990,7 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
                     {resultsData.map((row, idx) => (
                       <tr key={idx} className="hover:bg-slate-100 dark:hover:bg-slate-800/30 transition-colors">
                         {Object.keys(row).map((header) => {
-                          const isDiagnostic = ["Parsed_Weight_kg", "Importer", "Other_Imports_t", "Lookup_Year", "DeMinimis_Eligible_Mass_kg", "Emissions_Basis", "Default_Dataset", "Default_Match_Digits", "Default_Geography", "Default_Base_Value", "Default_Markup_Pct", "Total_CO2_kg", "Provisional_CO2_kg", "Provisional_CO2_tonnes", "Domestic_Carbon_Price_Paid_EUR", "Reference_Price_EUR_per_tCO2e", "Is_Obsolete", "Replacement_Standard", "ESG_Risk_Score", "Notes", "CBAM_Estimate_Notice", "CBAM_Cost_If_Not_Exempt_EUR", "DeMinimis_Status", "CBAM_Defaults_Info"].includes(header);
+                          const isDiagnostic = DIAGNOSTIC_COLUMNS.has(header);
                           const val = row[header];
                           let display = val || "-";
                           
@@ -978,6 +1017,13 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
                   </tbody>
                 </table>
               </div>
+            </div>
+
+            <div className="hidden print:block border-t border-slate-300 pt-3 text-xs text-slate-700 space-y-1">
+              <p className="font-bold">Estimate only. This is not a CBAM declaration and not advice from a customs broker or accredited verifier.</p>
+              <p>Reference price assumed: €{referencePrice}/tCO₂e. Phase-in of the cost is simplified (assumes emissions close to the free-allocation benchmark), so actual costs using default values may be higher.</p>
+              <p>Emission default values: {defaultsSources.length > 0 ? defaultsSources.join("; ") : "none used"}. De minimis shown as a possibility only; confirm the importer's annual total.</p>
+              <p>Generated {generatedAt} by MatDataHub CBAM Engine.</p>
             </div>
           </div>
         )}
