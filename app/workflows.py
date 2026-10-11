@@ -545,12 +545,13 @@ class BOMProcessor:
             return None, None, None, None, None
         country_key, country_name = self._resolve_default_country(origin_country)
 
-        # Some codes (cement/clinker: 25231000, 25239000, 25070080) are published for many countries ONLY at 10 digits
-        # (white vs grey clinker, ...). An 8-digit input would silently fall through to the global value although the
-        # country has its own, different values, so ask for the 10-digit code instead of guessing.
-        if len(clean_cn) == 8 and country_key and (clean_cn, year, country_key) not in self.cbam_defaults_cache:
-            if any((f"{clean_cn}{i:02d}", year, country_key) in self.cbam_defaults_cache for i in range(100)):
-                return None, None, 'NEEDS_10_DIGIT', None, None
+        # Some codes (cement/clinker: 25231000, 25239000, 25070080) are published ONLY at 10 digits (white vs grey
+        # clinker, ...), per country and/or in the global 'other countries' table. An 8-digit input would silently
+        # fall through to a shorter prefix or to the generic estimate although the Commission has several different
+        # values underneath it, so ask for the 10-digit code instead of guessing.
+        ten_digit_scope = self._ten_digit_only_scope(clean_cn, year, country_key)
+        if ten_digit_scope:
+            return None, None, 'NEEDS_10_DIGIT', None, {"geography": ten_digit_scope}
 
         prefixes = [clean_cn[:n] for n in range(len(clean_cn), 1, -1)]
         # Hardcoded ambiguous prefixes found via database crawl
@@ -574,6 +575,25 @@ class BOMProcessor:
                     "dataset": getattr(d, "source", "Commission Implementing Regulation (EU) 2026/1740"),
                 }
         return None, None, None, None, None
+
+    def _ten_digit_only_scope(self, clean_cn: str, year: int, country_key):
+        """
+        For an 8-digit CN code: returns "COUNTRY" or "GLOBAL" when the first scope that has anything for this code holds
+        it ONLY as 10-digit rows (no 8-digit row), otherwise None. Scopes are tried country first, then global, so a
+        country with its own 8-digit row, or a global 8-digit row where the country has no 10-digit rows, still resolves
+        normally.
+        """
+        if len(clean_cn) != 8:
+            return None
+        cache = self.cbam_defaults_cache
+        for scope, label in ((country_key, "COUNTRY"), (None, "GLOBAL")):
+            if label == "COUNTRY" and not scope:
+                continue
+            if (clean_cn, year, scope) in cache:
+                return None
+            if any((f"{clean_cn}{i:02d}", year, scope) in cache for i in range(100)):
+                return label
+        return None
 
     def _resolve_default_country(self, origin_country):
         """Map a user-supplied country to the spelling used in cbam_defaults ('Vietnam' -> 'Viet Nam').
@@ -1055,10 +1075,14 @@ class BOMProcessor:
                         db_default = None
                         db_source = None
                     elif db_source == 'NEEDS_10_DIGIT':
-                        errors.append(f"CN code '{cn_code}': the Commission publishes this product's defaults for '{origin_country_raw}' per 10-digit CN code. Provide the 10-digit code.")
-                        quarantine_reasons.append("Needs 10-digit CN code (country defaults are published at 10 digits)")
+                        if (default_meta or {}).get("geography") == "COUNTRY":
+                            errors.append(f"CN code '{cn_code}': the Commission publishes this product's defaults for '{origin_country_raw}' per 10-digit CN code. Provide the 10-digit code.")
+                        else:
+                            errors.append(f"CN code '{cn_code}': the Commission publishes this product's defaults per 10-digit CN code only. Provide the 10-digit code.")
+                        quarantine_reasons.append("Needs 10-digit CN code (defaults are published at 10 digits)")
                         db_default = None
                         db_source = None
+                        default_meta = None      # carried only the scope for the message above; no default was applied
                     if db_default is not None:
                         carbon_factor = db_default
                         emissions_basis = db_source
@@ -1103,10 +1127,14 @@ class BOMProcessor:
                         db_default = None
                         db_source = None
                     elif db_source == 'NEEDS_10_DIGIT':
-                        errors.append(f"CN code '{cn_code}': the Commission publishes this product's defaults for '{origin_country_raw}' per 10-digit CN code. Provide the 10-digit code.")
-                        quarantine_reasons.append("Needs 10-digit CN code (country defaults are published at 10 digits)")
+                        if (default_meta or {}).get("geography") == "COUNTRY":
+                            errors.append(f"CN code '{cn_code}': the Commission publishes this product's defaults for '{origin_country_raw}' per 10-digit CN code. Provide the 10-digit code.")
+                        else:
+                            errors.append(f"CN code '{cn_code}': the Commission publishes this product's defaults per 10-digit CN code only. Provide the 10-digit code.")
+                        quarantine_reasons.append("Needs 10-digit CN code (defaults are published at 10 digits)")
                         db_default = None
                         db_source = None
+                        default_meta = None      # carried only the scope for the message above; no default was applied
                     if db_default is not None:
                         carbon_factor = db_default
                         emissions_basis = db_source

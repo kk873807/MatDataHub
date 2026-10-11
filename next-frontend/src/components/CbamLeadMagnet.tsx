@@ -54,6 +54,10 @@ export function CbamLeadMagnet() {
                 </div>
               </div>
             </div>
+            <p className="text-[11px] leading-snug text-emerald-200/70 mt-4">
+              Simplified illustration: emissions × price × phase-in %. The actual 2026 charge is computed from the
+              free-allocation adjustment and can differ materially. Not a compliance calculation.
+            </p>
           </div>
         </div>
       </div>

@@ -146,8 +146,11 @@ def analyse(rows, resolver=None, sample_size=25, seed=2026):
             ten[r["cn_prefix"][:8]].add(r["origin_country"])
     out["ten_digit"] = {
         "eight_digit_codes_with_only_ten_digit_rows_for_some_country": len(ten),
-        "examples": {k: sorted(map(str, v))[:5] for k, v in list(ten.items())[:8]},
-        "note": "A user typing the 8-digit code gets the global value for these countries (the 10-digit rows are never reached).",
+        "examples": {k: sorted("(global / other countries)" if c is None else str(c) for c in v)[:5]
+                     for k, v in list(ten.items())[:8]},
+        "note": "The engine (v2.1+) quarantines an 8-digit input for these codes with 'Needs 10-digit CN code' instead of "
+                "guessing; users must enter the 10-digit code. A scope listed as '(global / other countries)' means no "
+                "8-digit global row exists either.",
     }
 
     # 7 spot-check sample

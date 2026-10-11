@@ -350,6 +350,30 @@ def test_eight_digit_code_with_only_ten_digit_country_rows_asks_for_the_ten_digi
     assert r3["Emissions_Basis"] == "COMMISSION_DEFAULT" and r3["Default_Geography"] == "GLOBAL" and r3["Included_In_Total"] == "YES"
 
 
+def test_eight_digit_code_with_only_a_global_ten_digit_row_asks_for_the_ten_digit_code():
+    # was: 25070080 from a country without its own rows found no 8-digit row anywhere, fell through to the generic
+    # ICE estimate (or a 4-digit heading) although the Commission publishes it only as 10-digit rows (2507008080 ...).
+    defaults = DEFAULTS + [D("2507008080", None, 0.7), D("2507008090", "Turkmenistan", 0.9)]
+    for origin in ("Brazil", "Turkmenistan"):        # no country rows at all / country has its own 10-digit rows
+        r = one({"cn_code": "25070080", "country_of_origin": origin}, defaults=defaults)
+        assert r["Included_In_Total"].startswith("QUARANTINED") and "10-digit" in r["Included_In_Total"], (origin, r["Included_In_Total"])
+        assert r["Emissions_Basis"] != "COMMISSION_DEFAULT" and r["CBAM_Cost_EUR"] == 0.0, origin
+    r = one({"cn_code": "2507008080", "country_of_origin": "Brazil"}, defaults=defaults)   # the 10-digit code resolves to the global row
+    assert r["Default_Match_Digits"] == 10 and r["Default_Geography"] == "GLOBAL" and r["Included_In_Total"] == "YES"
+    r = one({"cn_code": "2507008090", "country_of_origin": "Turkmenistan"}, defaults=defaults)
+    assert r["Default_Match_Digits"] == 10 and r["Default_Geography"] == "COUNTRY" and r["Included_In_Total"] == "YES"
+
+
+def test_ten_digit_guard_does_not_fire_when_an_eight_digit_row_exists():
+    # 8-digit row present (global) next to a 10-digit child: the 8-digit input must still resolve to it
+    defaults = DEFAULTS + [D("25239000", None, 0.8), D("2523900010", None, 0.5)]
+    r = one({"cn_code": "25239000", "country_of_origin": "Brazil"}, defaults=defaults)
+    assert r["Default_Match_Digits"] == 8 and r["Emissions_Basis"] == "COMMISSION_DEFAULT" and r["Included_In_Total"] == "YES", r.to_dict()
+    # a code with no rows at all is untouched by the guard (still the normal 'no default' path, not '10-digit')
+    r = one({"cn_code": "72085100", "country_of_origin": "Brazil"})
+    assert "10-digit" not in r["Included_In_Total"] and r["Emissions_Basis"] == "COMMISSION_DEFAULT"
+
+
 if __name__ == "__main__":
     failed = 0
     for name, fn in sorted(globals().items()):
