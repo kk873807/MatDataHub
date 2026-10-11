@@ -53,6 +53,19 @@ def test_parse_basic_shape_markups_and_countries():
     assert stats["annex_i_tables"] == 3 and stats["annex_iv_tables"] == 1 and stats["rows_without_value"] == 3
 
 
+def test_parse_direct_for_annex_ii_uses_direct_column():
+    recs, _ = imp.parse_annexes(page(), direct_only_annex_ii=True)
+    key = lambda cn, yr, ctry: [r for r in recs if r["cn_prefix"] == cn and r["year"] == yr and r["origin_country"] == ctry]
+    steel = key("72085100", 2026, "Viet Nam")[0]
+    # Direct emissions column is 1.200; total was 1.500
+    assert steel["base_value"] == 1.2 and steel["sector"] == "Iron & Steel"
+    assert steel["includes_indirect"] is False
+    # Fertilisers still take total emissions (2.0)
+    fert = key("31021010", 2026, "Türkiye")[0]
+    assert fert["base_value"] == 2.0 and fert["sector"] == "Fertilisers"
+    assert fert["includes_indirect"] is True
+
+
 def test_validation_passes_on_clean_data():
     countries = tuple(f"Country{i}" for i in range(16))
     recs, _ = imp.parse_annexes(page(countries))

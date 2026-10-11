@@ -75,7 +75,7 @@ def _expand(code, desc, country, base, indirect_included, sector, source):
         }
 
 
-def parse_annexes(html: str):
+def parse_annexes(html: str, direct_only_annex_ii: bool = False):
     """Return (records, stats). Pure function: no database, no network."""
     soup = BeautifulSoup(html, "lxml")
     records = []
@@ -113,12 +113,23 @@ def parse_annexes(html: str):
                 if not code:
                     continue
                 total_val = parse_float_eu(total_str)
-                if total_val == 0.0:          # '-' = no default value published
+                direct_val = parse_float_eu(direct_str)
+                indirect_val = parse_float_eu(indirect_str)
+
+                # Annex II: Goods for which only direct emissions count (Iron & Steel, Aluminium, Hydrogen)
+                if direct_only_annex_ii and current_sector in ("Iron & Steel", "Aluminium", "Hydrogen"):
+                    val = direct_val if direct_val > 0.0 else total_val
+                    has_indirect = False
+                else:
+                    val = total_val
+                    has_indirect = indirect_val > 0
+
+                if val == 0.0:          # '-' = no default value published
                     stats["rows_without_value"] += 1
                     continue
                 if not saw_header:
                     stats["rows_with_inherited_sector"] += 1
-                records.extend(_expand(code, desc, country, total_val, parse_float_eu(indirect_str) > 0,
+                records.extend(_expand(code, desc, country, val, has_indirect,
                                        current_sector, SRC_ANNEX_I))
 
         elif ncols == 4:  # Annex IV: highest default values
@@ -237,6 +248,7 @@ def main():
     ap.add_argument("--html", default=DEFAULT_HTML)
     ap.add_argument("--dry-run", action="store_true", help="parse + validate, do not touch the database")
     ap.add_argument("--min-rows", type=int, default=20000)
+    ap.add_argument("--direct-for-annex-ii", action="store_true", help="use direct emissions column for Annex II sectors (Iron & Steel, Aluminium, Hydrogen)")
     args = ap.parse_args()
 
     if not os.path.exists(args.html):
@@ -252,7 +264,7 @@ def main():
         print(f"WARNING: no provenance file next to the HTML; cannot prove which bytes are being imported (sha256 {sha}).")
 
     print("Parsing HTML…")
-    records, stats = parse_annexes(raw.decode("utf-8", errors="replace"))
+    records, stats = parse_annexes(raw.decode("utf-8", errors="replace"), direct_only_annex_ii=args.direct_for_annex_ii)
     summary = summarise(records, stats)
     print(json.dumps(summary, indent=2))
     errors, warnings = validate(records, args.min_rows)
