@@ -15,13 +15,15 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 print("--- APP MODULE LOADING ---", flush=True)
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Depends, HTTPException
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from app.database import engine, Base, get_db
+from app.auth import get_current_user
+from app.models import User
 from sqlalchemy.orm import Session
 
 print("--- IMPORTS COMPLETE ---", flush=True)
@@ -86,9 +88,14 @@ app.include_router(blogs.router, prefix="/api/v1")
 
 
 # ── Middleware ─────────────────────────────────────────────────────
+_DEV_SESSION_SECRET = "super-secret-oauth-key-change-me"
+_session_secret = os.environ.get("OAUTH_SESSION_SECRET", _DEV_SESSION_SECRET)
+if os.environ.get("RENDER") and _session_secret == _DEV_SESSION_SECRET:
+    # Refuse to start in production with a publicly known signing secret.
+    raise RuntimeError("OAUTH_SESSION_SECRET is not set; refusing to start with the development default.")
 app.add_middleware(
     SessionMiddleware,
-    secret_key=os.environ.get("OAUTH_SESSION_SECRET", "super-secret-oauth-key-change-me"),
+    secret_key=_session_secret,
 )
 app.add_middleware(
     CORSMiddleware,
@@ -97,13 +104,18 @@ app.add_middleware(
         "http://localhost:3001", 
         "http://127.0.0.1:3000",
         "https://matdatahub.com",
-        "https://www.matdatahub.com"
+        "https://www.matdatahub.com",
+        "https://mat-data-hub.vercel.app",
+        *([os.environ["FRONTEND_URL"].rstrip("/")] if os.environ.get("FRONTEND_URL") else []),
+        *[o.strip() for o in os.environ.get("CORS_EXTRA_ORIGINS", "").split(",") if o.strip()],
     ],
-    allow_origin_regex=r"https://.*\.vercel\.app",
+    # The old pattern r"https://.*\.vercel\.app" allowed credentialed requests from ANY site hosted on Vercel.
+    # Preview deployments are opt-in: set CORS_ALLOW_ORIGIN_REGEX to a pattern you control.
+    allow_origin_regex=os.environ.get("CORS_ALLOW_ORIGIN_REGEX") or None,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
-    expose_headers=["X-CBAM-Defaults-Count", "X-CBAM-Defaults-Version", "Content-Disposition"],
+    expose_headers=["X-CBAM-Defaults-Count", "X-CBAM-Defaults-Version", "X-CBAM-History-Saved", "X-CBAM-Mode", "X-CBAM-Reference-Price", "Content-Disposition"],
 )
 
 # Custom Middleware for Security Headers (Gap 2)
@@ -136,31 +148,40 @@ def health():
     return {
         "status": "healthy",
         "db_ready": _db_ready,
-        "db_error": _db_error,
+        "db_error": bool(_db_error),   # detail is in the server log, not in a public response
     }
 
 
 # ── Seed endpoints (admin-only, no SSH on Render) ─────────────────
+def _require_admin(user: User):
+    if not user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin privileges required.")
+
+
 @app.get("/api/v1/admin/seed-demo")
-def seed_demo_data():
-    """Hidden endpoint to seed Render database without SSH access."""
+def seed_demo_data(current_user: User = Depends(get_current_user)):
+    """Seed the demo materials. Admin only (this endpoint used to be callable by anyone)."""
+    _require_admin(current_user)
     try:
         from scripts.seed_professor_materials import run_seed
         added = run_seed()
         return {"ok": True, "message": f"Successfully seeded {added} materials for the demo!"}
     except Exception as e:
-        return {"ok": False, "error": str(e)}
+        print(f"seed-demo failed: {e}", file=sys.stderr, flush=True)
+        return {"ok": False, "error": "Seeding failed; see server logs."}
 
 
 @app.get("/api/v1/admin/seed-aa1000")
-def seed_aa1000_data():
-    """Hidden endpoint to seed AA 1000 Series."""
+def seed_aa1000_data(current_user: User = Depends(get_current_user)):
+    """Seed the AA 1000 series. Admin only."""
+    _require_admin(current_user)
     try:
         from scripts.seed_aa1000_series import run_seed
         added = run_seed()
         return {"ok": True, "message": f"Successfully seeded {added} AA 1000 series materials!"}
     except Exception as e:
-        return {"ok": False, "error": str(e)}
+        print(f"seed-aa1000 failed: {e}", file=sys.stderr, flush=True)
+        return {"ok": False, "error": "Seeding failed; see server logs."}
 
 
 print("--- APP MODULE LOADED ---", flush=True)

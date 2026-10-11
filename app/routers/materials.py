@@ -14,7 +14,6 @@ Endpoints:
     GET  /materials/{id}     - Get one material by ID — public
     POST /materials          - Add a new material
 """
-from fastapi import APIRouter
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from datetime import datetime, timedelta
 from slowapi import Limiter
@@ -848,16 +847,15 @@ def analyze_bom(
             detail="Supply Chain Risk & CBAM modeling requires an Enterprise (Advanced) tier or Admin access."
         )
 
-    from app.workflows import BOMProcessor
+    from app.workflows import BOMProcessor, CBAM_REFERENCE_PRICE_EUR
     print("=== ANALYZE_BOM ENDPOINT HIT ===", flush=True)
     import time
     t0 = time.time()
-    contents = file.file.read()
-    
-    # --- Size limit: 10 MB ---
+    # --- Size limit: 10 MB (read at most limit+1 bytes so an oversized upload is never fully loaded) ---
     MAX_FILE_SIZE = 10 * 1024 * 1024
+    contents = file.file.read(MAX_FILE_SIZE + 1)
     if len(contents) > MAX_FILE_SIZE:
-        raise HTTPException(status_code=413, detail=f"File too large ({len(contents)/(1024*1024):.1f} MB). Maximum is 10 MB.")
+        raise HTTPException(status_code=413, detail="File too large. Maximum is 10 MB.")
     
     print(f"File read in {time.time()-t0:.2f}s, size: {len(contents)} bytes", flush=True)
     
@@ -882,10 +880,10 @@ def analyze_bom(
         sep = ','
         
     try:
-        if sep == ';':
-            df = pd.read_csv(io.StringIO(text), sep=sep, decimal=',')
-        else:
-            df = pd.read_csv(io.StringIO(text), sep=sep)
+        # dtype=str: keep every cell exactly as written. Without it pandas turns a CN-code column that
+        # has one blank cell into floats (72085100 -> '72085100.0') and drops leading zeros; numbers are
+        # parsed explicitly (and safely) by the engine instead.
+        df = pd.read_csv(io.StringIO(text), sep=sep, dtype=str)
         # --- Row limit: 5000 ---
         MAX_ROWS = 5000
         if len(df) > MAX_ROWS:
@@ -904,21 +902,19 @@ def analyze_bom(
     print(f"process_bom finished in {time.time()-t1:.2f}s", flush=True)
     
     from app.models import BOMAnalysis
+    history_saved = False
     try:
         included_mask = enriched_df["Included_In_Total"].astype(str).str.startswith("YES")
         total_co2 = enriched_df.loc[included_mask, "Total_CO2_tonnes"].sum()
         cbam_eur = enriched_df.loc[included_mask, "CBAM_Cost_EUR"].sum()
-        quarantined = int((~included_mask).sum())
+        # Only genuinely quarantined rows; "OUT OF SCOPE" rows are not errors (they used to be counted here too).
+        quarantined = int(enriched_df["Included_In_Total"].astype(str).str.startswith("QUARANTINE").sum())
         # Store enriched results as JSON for detail view (limit to key columns to save space)
         import json
-        detail_cols = ["material_id", "Material", "Parsed_Weight_kg", "Importer", "Lookup_Year", 
-                       "cbam_sector", "cn_code", "country_of_origin", "destination", "shipment_date",
-                       "Carbon_Factor_kgCO2e_per_kg", "Emissions_Basis",
-                       "DeMinimis_Eligible_Mass_kg", "CBAM_Cost_If_Not_Exempt_EUR", "DeMinimis_Status",
-                       "Total_CO2_kg", "Total_CO2_tonnes", "CBAM_Cost_EUR",
-                       "Net_CBAM_Price_EUR", "ESG_Risk_Score",
-                       "Notes", "Validation_Errors", "Included_In_Total", "CBAM_Estimate_Notice"]
-        available_cols = [c for c in detail_cols if c in enriched_df.columns]
+        # Keep every column (inputs + all computed columns, including Default_* provenance) so a stored
+        # run can be audited later. CBAM_Defaults_Info repeats the same long string on every row and is
+        # already captured once in run_metadata, so it is left out.
+        available_cols = [c for c in enriched_df.columns if c != "CBAM_Defaults_Info"]
         results_for_storage = enriched_df[available_cols].fillna("").to_dict(orient="records")
         
         import hashlib
@@ -927,22 +923,26 @@ def analyze_bom(
         engine_version = os.environ.get("RENDER_GIT_COMMIT", "dev-local")
         
         # Embed audit metadata
+        defaults_sources = list(getattr(processor, "cbam_defaults_sources", []) or [])
+        cost_after_deminimis = (
+            float(enriched_df.loc[included_mask, "CBAM_Cost_After_DeMinimis_EUR"].sum())
+            if "CBAM_Cost_After_DeMinimis_EUR" in enriched_df.columns else None
+        )
         run_metadata = {
             "strict_mode": strict_mode,
             "disable_deminimis": disable_deminimis,
             "cbam_defaults_count": processor.cbam_defaults_count,
             "cbam_defaults_version": str(processor.cbam_defaults_version) if processor.cbam_defaults_version else None,
-            "cbam_reference_price_eur": 75.0,
+            "cbam_reference_price_eur": CBAM_REFERENCE_PRICE_EUR,
             "annex_version": getattr(processor, 'annex_version', 'unknown'),
+            "default_lookup_order": getattr(processor, "DEFAULT_LOOKUP_ORDER", "unknown"),
+            "cbam_cost_after_deminimis_eur": cost_after_deminimis,
             "engine_version": engine_version,
             "input_file_hash_sha256": file_hash,
             "phase_in_factor_2026": 0.025,
-            "cbam_price_source": "European Energy Exchange (EEX)",
-            "cbam_price_date": "2026-Q1 (projected)",
-            "cbam_defaults_source": "INTERIM hand-built approximation (scripts/seed_cbam_defaults.py), NOT an official Commission dataset",
-            "cbam_defaults_official_target": "Implementing Regulation (EU) 2025/2621 as corrected by (EU) 2026/1740 — pending import and verification",
-            "cbam_defaults_markup_handling": "mark-up pre-applied in effective_value at seed time (10%/20%/30% by year); not re-applied in engine"
-
+            "cbam_price_source": "Assumption: constant reference price (env CBAM_REFERENCE_PRICE_EUR). Not the Commission-published CBAM certificate price.",
+            "cbam_defaults_source": "; ".join(defaults_sources) if defaults_sources else "NONE LOADED - all factors are estimates",
+            "cbam_defaults_markup_handling": "mark-up applied at import time (effective_value = base_value x (1 + mark-up)); not re-applied in engine"
         }
         
         t_json = time.time()
@@ -962,6 +962,7 @@ def analyze_bom(
         t_db = time.time()
         db.add(bom_record)
         db.commit()
+        history_saved = True
         print(f"DB commit took {time.time()-t_db:.2f}s", flush=True)
     except Exception as e:
         # Don't fail the request if logging fails
@@ -995,6 +996,8 @@ def analyze_bom(
     response = StreamingResponse(iter([stream.getvalue()]), media_type="text/csv")
     response.headers["Content-Disposition"] = "attachment; filename=enriched_bom.csv"
     response.headers["X-CBAM-Defaults-Count"] = str(processor.cbam_defaults_count)
+    response.headers["X-CBAM-Reference-Price"] = str(CBAM_REFERENCE_PRICE_EUR)
+    response.headers["X-CBAM-History-Saved"] = "true" if history_saved else "false"
     response.headers["X-CBAM-Mode"] = f"strict={strict_mode},deminimis_disabled={disable_deminimis}"
     if processor.cbam_defaults_version:
         response.headers["X-CBAM-Defaults-Version"] = str(processor.cbam_defaults_version)
