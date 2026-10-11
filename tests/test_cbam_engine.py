@@ -374,6 +374,20 @@ def test_ten_digit_guard_does_not_fire_when_an_eight_digit_row_exists():
     assert "10-digit" not in r["Included_In_Total"] and r["Emissions_Basis"] == "COMMISSION_DEFAULT"
 
 
+def test_ten_digit_rows_are_quarantined_in_both_modes_without_a_misleading_generic_estimate_warning():
+    # strict and non-strict must both quarantine, and neither may say a generic estimate is being "used" for a row
+    # that is simply waiting for a better CN code
+    defaults = DEFAULTS + [D("2507008080", None, 0.28)]
+    for strict in (True, False):
+        r = one({"cn_code": "25070080", "country_of_origin": "Brazil"}, defaults=defaults, strict_mode=strict)
+        assert r["Included_In_Total"].startswith("QUARANTINED") and "10-digit" in r["Included_In_Total"], (strict, r["Included_In_Total"])
+        assert r["CBAM_Cost_EUR"] == 0.0 and r["Total_CO2_tonnes"] == 0.0, strict
+        assert "generic" not in (r["Validation_Errors"] + r["Included_In_Total"]).lower(), (strict, r["Validation_Errors"])
+    # an in-scope row that really has no default anywhere keeps the generic-estimate warning
+    r = one({"cn_code": "72085100", "country_of_origin": "Brazil"}, defaults=[], strict_mode=False)
+    assert "generic" in r["Validation_Errors"].lower()
+
+
 if __name__ == "__main__":
     failed = 0
     for name, fn in sorted(globals().items()):

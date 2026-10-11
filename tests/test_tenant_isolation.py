@@ -241,6 +241,78 @@ def test_tenant_isolation():
     db.close()
 
 
+def _make_user(db, email, tier):
+    u = User(email=email, name=email.split("@")[0], hashed_password=hash_password("pass123"), tier=tier, is_active=True)
+    db.add(u)
+    db.commit()
+    db.refresh(u)
+    token = create_access_token(user_id=u.id, email=u.email, tier=u.tier)
+    return u, {"Authorization": f"Bearer {token}"}
+
+
+def test_bom_analyze_history_is_saved_per_tenant():
+    """Positive path. The existing test only proves a FREE user is refused; this proves an upload is stored under
+    the uploader and invisible to another Advanced tenant."""
+    db = TestingSessionLocal()
+    user_d, headers_d = _make_user(db, "tenant_d@example.com", "advanced")
+    user_e, headers_e = _make_user(db, "tenant_e@example.com", "advanced")
+
+    csv_bytes = (b"material_id,Material,Weight_kg,cbam_sector,cn_code,country_of_origin,destination,release_date\n"
+                 b"MAT-1,Steel,100,Iron & Steel,72083900,China,Germany,2026-03-10")
+    resp = client.post(
+        "/api/v1/materials/bom_analyze",
+        headers=headers_d,
+        files={"file": ("tenant_d_upload.csv", csv_bytes, "text/csv")},
+        data={"material_col": "Material", "weight_col": "Weight_kg"},
+    )
+    assert resp.status_code == 200, resp.text
+    assert resp.headers.get("X-CBAM-History-Saved") == "true", "history was not saved"
+
+    saved = db.query(BOMAnalysis).filter(BOMAnalysis.filename == "tenant_d_upload.csv").all()
+    assert len(saved) == 1 and saved[0].user_id == user_d.id
+
+    hist_d = client.get("/api/v1/account/bom-history", headers=headers_d).json()
+    assert [h["filename"] for h in hist_d] == ["tenant_d_upload.csv"]
+    assert client.get("/api/v1/account/bom-history", headers=headers_e).json() == [], "Tenant E can see Tenant D's upload!"
+    assert client.get(f"/api/v1/account/bom-history/{saved[0].id}", headers=headers_e).status_code == 404
+    db.close()
+
+
+def test_custom_material_url_not_blocked_across_tenants():
+    """Confirms Company B is NOT blocked when submitting the same public datasheet URL as Company A."""
+    db = TestingSessionLocal()
+    user_f, headers_f = _make_user(db, "tenant_f@example.com", "advanced")
+    user_g, headers_g = _make_user(db, "tenant_g@example.com", "advanced")
+
+    shared_url = "https://example.com/datasheet-public-alloy-99.pdf"
+    mat_f = CustomMaterial(
+        user_id=user_f.id,
+        name="Tenant F Alloy 99",
+        category="Metals",
+        source_url=shared_url,
+        status="verified",
+    )
+    db.add(mat_f)
+    db.commit()
+
+    # User F duplicate URL should be rejected for User F
+    dup_f = db.query(CustomMaterial).filter(
+        CustomMaterial.user_id == user_f.id,
+        CustomMaterial.source_url == shared_url
+    ).first()
+    assert dup_f is not None, "User F material should exist"
+
+    # User G querying custom materials by user_id should NOT find any duplicate for User G
+    dup_g = db.query(CustomMaterial).filter(
+        CustomMaterial.user_id == user_g.id,
+        CustomMaterial.source_url == shared_url
+    ).first()
+    assert dup_g is None, "User G should have no conflicting custom material with this URL"
+    db.close()
+
+
 if __name__ == "__main__":
     test_tenant_isolation()
-    print("ALL TENANT ISOLATION TESTS PASSED (8/8)")
+    test_bom_analyze_history_is_saved_per_tenant()
+    test_custom_material_url_not_blocked_across_tenants()
+    print("ALL TENANT ISOLATION TESTS PASSED (10/10)")

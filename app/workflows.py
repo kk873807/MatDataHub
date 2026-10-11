@@ -687,6 +687,7 @@ class BOMProcessor:
                 print(f"Processed {i} rows...", flush=True)
             errors = []
             quarantine_reasons = []
+            needs_exact_cn = False     # AMBIGUOUS / NEEDS_10_DIGIT: the CN code must be corrected, no estimate is 'used'
             notes = []
             origin_exempt = False      # EU/EEA origin
             dest_exempt = False        # destination outside the EU
@@ -1074,6 +1075,7 @@ class BOMProcessor:
                         quarantine_reasons.append("Needs exact 8-digit CN code (ambiguous prefix)")
                         db_default = None
                         db_source = None
+                        needs_exact_cn = True
                     elif db_source == 'NEEDS_10_DIGIT':
                         if (default_meta or {}).get("geography") == "COUNTRY":
                             errors.append(f"CN code '{cn_code}': the Commission publishes this product's defaults for '{origin_country_raw}' per 10-digit CN code. Provide the 10-digit code.")
@@ -1083,6 +1085,7 @@ class BOMProcessor:
                         db_default = None
                         db_source = None
                         default_meta = None      # carried only the scope for the message above; no default was applied
+                        needs_exact_cn = True
                     if db_default is not None:
                         carbon_factor = db_default
                         emissions_basis = db_source
@@ -1104,7 +1107,7 @@ class BOMProcessor:
                     else:
                         carbon_factor = _estimate_carbon_factor(mat.name, mat.category)
                         emissions_basis = "GENERIC_ESTIMATE"
-                        if sector_valid:
+                        if sector_valid and not needs_exact_cn:
                             errors.append("No Commission default found; using generic ICE-derived estimate (not suitable for compliance)")
                             if strict_mode:
                                 quarantine_reasons.append("In-scope row using generic estimate, not a Commission default")
@@ -1126,6 +1129,7 @@ class BOMProcessor:
                         quarantine_reasons.append("Needs exact 8-digit CN code (ambiguous prefix)")
                         db_default = None
                         db_source = None
+                        needs_exact_cn = True
                     elif db_source == 'NEEDS_10_DIGIT':
                         if (default_meta or {}).get("geography") == "COUNTRY":
                             errors.append(f"CN code '{cn_code}': the Commission publishes this product's defaults for '{origin_country_raw}' per 10-digit CN code. Provide the 10-digit code.")
@@ -1135,6 +1139,7 @@ class BOMProcessor:
                         db_default = None
                         db_source = None
                         default_meta = None      # carried only the scope for the message above; no default was applied
+                        needs_exact_cn = True
                     if db_default is not None:
                         carbon_factor = db_default
                         emissions_basis = db_source
@@ -1153,7 +1158,7 @@ class BOMProcessor:
                     else:
                         carbon_factor = _estimate_carbon_factor(raw_name, "")
                         emissions_basis = "GENERIC_ESTIMATE"
-                        if sector_valid:
+                        if sector_valid and not needs_exact_cn:
                             errors.append("No Commission default found; using generic ICE-derived estimate (not suitable for compliance)")
                             if strict_mode:
                                 quarantine_reasons.append("In-scope row using generic estimate, not a Commission default")

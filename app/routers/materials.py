@@ -676,9 +676,14 @@ def create_custom_material(
     if existing_name:
         raise HTTPException(status_code=400, detail=f"You have already added a material named '{mat.name}'.")
 
-    existing_url = db.query(CustomMaterial).filter(CustomMaterial.source_url == str(mat.source_url)).first()
+    # Per tenant: a public datasheet URL is not a secret, and another company having used it must neither block
+    # this user nor reveal that it did.
+    existing_url = db.query(CustomMaterial).filter(
+        CustomMaterial.user_id == current_user.id,
+        CustomMaterial.source_url == str(mat.source_url)
+    ).first()
     if existing_url:
-        raise HTTPException(status_code=400, detail="This Source URL has already been submitted. Duplicate links are not permitted.")
+        raise HTTPException(status_code=400, detail="You have already submitted this Source URL. Duplicate links are not permitted.")
     
     existing_main_url = db.query(Material).filter(Material.source_url == str(mat.source_url)).first()
     if existing_main_url:
