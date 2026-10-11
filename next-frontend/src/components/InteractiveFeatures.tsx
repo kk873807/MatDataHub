@@ -40,7 +40,7 @@ const features = [
   {
     id: "analytics",
     title: "Analytics Suite",
-    desc: "Deep-dive analysis tools for material substitution and ESG compliance.",
+    desc: "Deep-dive analysis tools for material substitution and EU CBAM carbon-cost estimation.",
     icon: Target,
     color: "bg-amber-500",
     tools: [

@@ -19,6 +19,19 @@ const DIAGNOSTIC_COLUMNS = new Set([
 // Phase-in share of the cost used by the what-if selector (the backend applies the full schedule per shipment year).
 const WHAT_IF_PHASE_IN: Record<"2026" | "2027" | "2034", number> = { "2026": 0.025, "2027": 0.05, "2034": 1.0 };
 
+// Phase-in share of the cost by shipment year (mirrors CBAM_PHASE_IN_SCHEDULE in app/workflows.py).
+const PHASE_IN_BY_YEAR: Record<number, number> = {
+  2026: 0.025, 2027: 0.05, 2028: 0.10, 2029: 0.225, 2030: 0.485, 2031: 0.61, 2032: 0.735, 2033: 0.86, 2034: 1.0,
+};
+
+// CBAM certificate prices published by the Commission (taxation-customs.ec.europa.eu, "Price of CBAM certificates").
+// 2026 prices are quarterly; weekly prices start in 2027. Update this list when a new price is published.
+const PUBLISHED_PRICES: { label: string; value: number }[] = [
+  { label: "Q1 2026", value: 75.36 },
+  { label: "Q2 2026", value: 75.28 },
+  { label: "Q3 2026", value: 82.32 },
+];
+
 // Quote a value for a hand-built CSV row (a comma, quote or newline in a cell would otherwise shift every later column).
 const csvCell = (v: string) => (/[",\r\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v);
 
@@ -150,7 +163,8 @@ export default function CBAMAnalytics() {
   const [isDeMinimisExempt, setIsDeMinimisExempt] = useState(false);
   const [eligibleMassTonnes, setEligibleMassTonnes] = useState(0);
   const [costIfNotExempt, setCostIfNotExempt] = useState(0);
-  const [taxRows, setTaxRows] = useState<{ tonnes: number; net: number; deMin: boolean }[]>([]);
+  const [taxRows, setTaxRows] = useState<{ tonnes: number; paid: number; phaseIn: number; deMin: boolean }[]>([]);
+  const [priceAssumption, setPriceAssumption] = useState<number | null>(null); // null = use the backend reference price
   const [referencePrice, setReferencePrice] = useState(75);
   const [defaultsSources, setDefaultsSources] = useState<string[]>([]);
   const [generatedAt, setGeneratedAt] = useState("");
@@ -321,7 +335,7 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
         let deMinMassKg = 0;
         let taxableKg = 0;
         let anyDeMin = false;
-        const rowsForTax: { tonnes: number; net: number; deMin: boolean }[] = [];
+        const rowsForTax: { tonnes: number; paid: number; phaseIn: number; deMin: boolean }[] = [];
         const sources = new Set<string>();
 
         parsedData.forEach((rowObj: any) => {
@@ -336,14 +350,14 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
             costAfterDeMin += deMin ? 0 : rowEur;
 
             const taxT = hasTaxableCol ? num(rowObj["CBAM_Taxable_CO2_tonnes"]) : num(rowObj["Total_CO2_tonnes"]);
-            const netPrice = rowObj["Reference_Price_EUR_per_tCO2e"] !== undefined && rowObj["Reference_Price_EUR_per_tCO2e"] !== ""
-              ? num(rowObj["Reference_Price_EUR_per_tCO2e"]) : refPrice;
-            rowsForTax.push({ tonnes: taxT, net: netPrice, deMin });
+            // carbon price already paid at origin is deducted from whatever price the user assumes
+            const paid = num(rowObj["Domestic_Carbon_Price_Paid_EUR"]);
+            const phaseIn = PHASE_IN_BY_YEAR[parseInt(rowObj["Lookup_Year"] || "0", 10)] ?? 1.0;
+            rowsForTax.push({ tonnes: taxT, paid, phaseIn, deMin });
+            taxableKg += taxT * 1000;          // gross: de minimis rows stay in scope; the exemption is shown as a scenario
             if (deMin) {
               anyDeMin = true;
               deMinMassKg += num(rowObj["DeMinimis_Eligible_Mass_kg"]);
-            } else {
-              taxableKg += taxT * 1000;
             }
 
             const basis = rowObj["Emissions_Basis"];
@@ -441,11 +455,17 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
     );
   }
 
-  // Cost comes from the backend row by row (reference price, carbon price paid, phase-in for each shipment year, de minimis).
-  // A what-if year re-prices the SAME taxable tonnes: net of carbon price paid, excluding de minimis rows.
-  const whatIfCost = (year: "2026" | "2027" | "2034") =>
-    taxRows.reduce((sum, r) => (r.deMin ? sum : sum + r.tonnes * r.net * WHAT_IF_PHASE_IN[year]), 0);
-  const estimatedTaxEUR = selectedYear === "ACTUAL" ? totalCbamCost : whatIfCost(selectedYear);
+  // Gross cost: before any de minimis exemption. A de minimis exemption depends on the importer's TOTAL annual imports of
+  // CBAM goods (all suppliers), which one file cannot show, so the exemption is presented as a scenario, never as the headline.
+  // With the default price and "Actual Shipment Year" the figures are the backend's row-by-row sums (they match the CSV);
+  // otherwise the same taxable tonnes are re-priced here: tonnes x max(price - carbon price paid, 0) x phase-in.
+  const price = priceAssumption ?? referencePrice;
+  const costFor = (mode: "ACTUAL" | "2026" | "2027" | "2034", includeDeMin: boolean) =>
+    taxRows.reduce((sum, r) => (r.deMin && !includeDeMin ? sum
+      : sum + r.tonnes * Math.max(price - r.paid, 0) * (mode === "ACTUAL" ? r.phaseIn : WHAT_IF_PHASE_IN[mode])), 0);
+  const useBackendTotals = priceAssumption === null && selectedYear === "ACTUAL";
+  const estimatedTaxEUR = useBackendTotals ? costIfNotExempt : costFor(selectedYear, true);
+  const costIfDeMinimisApplies = useBackendTotals ? totalCbamCost : costFor(selectedYear, false);
   const eur = (v: number) => v.toLocaleString(undefined, { maximumFractionDigits: 2 });
 
   return (
@@ -927,13 +947,13 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
                 <p className="text-slate-500 dark:text-slate-400 font-medium mb-1 flex items-center gap-2"><FileText className="w-4 h-4 text-blue-600 dark:text-blue-400" /> Embodied Carbon In Scope</p>
                 <h3 className="text-3xl font-bold text-slate-900 dark:text-white font-heading">{taxableTonnes.toLocaleString(undefined, { maximumFractionDigits: 1 })} <span className="text-lg text-slate-500 dark:text-slate-400 font-normal">t CO₂</span></h3>
                 <p className="text-xs text-slate-400 mt-2 font-medium">
-                  {Math.max((totalCO2/1000) - taxableTonnes, 0).toLocaleString(undefined, { maximumFractionDigits: 1 })} t excluded (EU/EEA origin, non-EU destination, pre-2026 release, or de minimis)
+                  {Math.max((totalCO2/1000) - taxableTonnes, 0).toLocaleString(undefined, { maximumFractionDigits: 1 })} t excluded (EU/EEA origin, non-EU destination, or pre-2026 release)
                 </p>
               </div>
 
               <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl flex flex-col justify-center">
                 <div className="flex justify-between items-start mb-1">
-                  <p className="text-slate-500 dark:text-slate-400 font-medium flex items-center gap-2"><FileText className="w-4 h-4 text-amber-600 dark:text-amber-400" /> Est. CBAM Tax Payable</p>
+                  <p className="text-slate-500 dark:text-slate-400 font-medium flex items-center gap-2"><FileText className="w-4 h-4 text-amber-600 dark:text-amber-400" /> Est. CBAM Cost (before any de minimis)</p>
                   <select 
                     value={selectedYear} 
                     onChange={e => setSelectedYear(e.target.value as any)}
@@ -948,17 +968,44 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
                 </div>
                 <h3 className="text-3xl font-bold text-amber-500">€{estimatedTaxEUR.toLocaleString(undefined, { maximumFractionDigits: 2 })}</h3>
                   <div className="bg-amber-50 dark:bg-amber-900/20 px-2 py-1 rounded inline-block mt-1 border border-amber-100 dark:border-amber-800/50">
-                    <p className="text-xs text-amber-700 dark:text-amber-400 font-medium">Ref 2034 (100%): €{eur(whatIfCost("2034"))}</p>
+                    <p className="text-xs text-amber-700 dark:text-amber-400 font-medium">Ref 2034 (100%): €{eur(costFor("2034", true))}</p>
                   </div>
-                <p className="text-xs text-slate-400 mt-2 font-medium">@ €{referencePrice}/tCO₂e (assumed reference price, not the Commission-published CBAM certificate price)</p>
+                <p className="text-xs text-slate-400 mt-2 font-medium">@ €{price}/tCO₂e — {priceAssumption === null ? "default assumption" : "your assumption"}. Not a price quote.</p>
+                <div className="print:hidden mt-2 space-y-2">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="range" min={40} max={150} step={0.01} value={price}
+                      onChange={e => setPriceAssumption(Number(e.target.value))}
+                      aria-label="Carbon price assumption in euro per tonne CO2e"
+                      className="flex-1 accent-amber-500"
+                    />
+                    <input
+                      type="number" min={0} step={0.01} value={price}
+                      onChange={e => { const v = parseFloat(e.target.value); setPriceAssumption(Number.isFinite(v) && v >= 0 ? v : null); }}
+                      className="w-20 text-xs bg-slate-100 dark:bg-slate-800 rounded p-1 text-slate-700 dark:text-slate-200"
+                    />
+                  </div>
+                  <div className="flex flex-wrap items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400">
+                    <span>Commission-published prices:</span>
+                    {PUBLISHED_PRICES.map(p => (
+                      <button key={p.label} type="button" onClick={() => setPriceAssumption(p.value)}
+                        className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 hover:bg-amber-100 dark:hover:bg-amber-900/40 font-medium">
+                        {p.label} €{p.value}
+                      </button>
+                    ))}
+                    {priceAssumption !== null && (
+                      <button type="button" onClick={() => setPriceAssumption(null)} className="underline">reset</button>
+                    )}
+                  </div>
+                </div>
                   <p className="text-xs text-amber-500 mt-1 font-semibold text-balance">
                     ⚠️ Warning (simplified lower estimate): The phase-in model assumes product emissions equal the free-allocation benchmark. Because default values typically exceed benchmarks, actual 2026-2027 costs using defaults will likely be substantially higher.
                   </p>
                 {isDeMinimisExempt && (
-                  <div className="mt-3 bg-emerald-50 dark:bg-emerald-900/20 p-2 rounded border border-emerald-100 dark:border-emerald-800">
-                    <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">
-                      <span className="font-bold">De minimis assumed:</span> {eligibleMassTonnes.toLocaleString(undefined, { maximumFractionDigits: 1 })} t of goods belong to importer-years at or below the {deMinimisThreshold} t threshold and are shown as exempt
-                      {costIfNotExempt > totalCbamCost ? ` (without the exemption: €${eur(costIfNotExempt)})` : ""}. Confirm the importer's full annual total before relying on this.
+                  <div className="mt-3 bg-blue-50 dark:bg-blue-900/20 p-2 rounded border border-blue-100 dark:border-blue-800">
+                    <p className="text-xs text-blue-700 dark:text-blue-300 font-medium">
+                      <span className="font-bold">De minimis scenario:</span> {eligibleMassTonnes.toLocaleString(undefined, { maximumFractionDigits: 1 })} t of goods in this file sit in importer-years at or below the {deMinimisThreshold} t annual threshold. The figure above is shown <span className="font-bold">without</span> the exemption.
+                      If the importer&apos;s total imports of CBAM goods for the year (all suppliers, not only this file) stay at or below {deMinimisThreshold} t, the cost would be €{eur(costIfDeMinimisApplies)}. Above {deMinimisThreshold} t, all of that year&apos;s imports count.
                     </p>
                   </div>
                 )}
@@ -1021,7 +1068,7 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
 
             <div className="hidden print:block border-t border-slate-300 pt-3 text-xs text-slate-700 space-y-1">
               <p className="font-bold">Estimate only. This is not a CBAM declaration and not advice from a customs broker or accredited verifier.</p>
-              <p>Reference price assumed: €{referencePrice}/tCO₂e. Phase-in of the cost is simplified (assumes emissions close to the free-allocation benchmark), so actual costs using default values may be higher.</p>
+              <p>Carbon price assumed: €{price}/tCO₂e. Phase-in of the cost is simplified (assumes emissions close to the free-allocation benchmark), so actual costs using default values may be higher.</p>
               <p>Emission default values: {defaultsSources.length > 0 ? defaultsSources.join("; ") : "none used"}. De minimis shown as a possibility only; confirm the importer's annual total.</p>
               <p>Generated {generatedAt} by MatDataHub CBAM Engine.</p>
             </div>

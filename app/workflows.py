@@ -545,6 +545,13 @@ class BOMProcessor:
             return None, None, None, None, None
         country_key, country_name = self._resolve_default_country(origin_country)
 
+        # Some codes (cement/clinker: 25231000, 25239000, 25070080) are published for many countries ONLY at 10 digits
+        # (white vs grey clinker, ...). An 8-digit input would silently fall through to the global value although the
+        # country has its own, different values, so ask for the 10-digit code instead of guessing.
+        if len(clean_cn) == 8 and country_key and (clean_cn, year, country_key) not in self.cbam_defaults_cache:
+            if any((f"{clean_cn}{i:02d}", year, country_key) in self.cbam_defaults_cache for i in range(100)):
+                return None, None, 'NEEDS_10_DIGIT', None, None
+
         prefixes = [clean_cn[:n] for n in range(len(clean_cn), 1, -1)]
         # Hardcoded ambiguous prefixes found via database crawl
         ambiguous_prefixes = {'761090'}
@@ -1047,6 +1054,11 @@ class BOMProcessor:
                         quarantine_reasons.append("Needs exact 8-digit CN code (ambiguous prefix)")
                         db_default = None
                         db_source = None
+                    elif db_source == 'NEEDS_10_DIGIT':
+                        errors.append(f"CN code '{cn_code}': the Commission publishes this product's defaults for '{origin_country_raw}' per 10-digit CN code. Provide the 10-digit code.")
+                        quarantine_reasons.append("Needs 10-digit CN code (country defaults are published at 10 digits)")
+                        db_default = None
+                        db_source = None
                     if db_default is not None:
                         carbon_factor = db_default
                         emissions_basis = db_source
@@ -1088,6 +1100,11 @@ class BOMProcessor:
                     if db_source == 'AMBIGUOUS':
                         errors.append(f"CN code '{cn_code}' matches an ambiguous prefix. Needs exact 8-digit CN code.")
                         quarantine_reasons.append("Needs exact 8-digit CN code (ambiguous prefix)")
+                        db_default = None
+                        db_source = None
+                    elif db_source == 'NEEDS_10_DIGIT':
+                        errors.append(f"CN code '{cn_code}': the Commission publishes this product's defaults for '{origin_country_raw}' per 10-digit CN code. Provide the 10-digit code.")
+                        quarantine_reasons.append("Needs 10-digit CN code (country defaults are published at 10 digits)")
                         db_default = None
                         db_source = None
                     if db_default is not None:

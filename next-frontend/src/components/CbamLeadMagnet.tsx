@@ -21,7 +21,7 @@ export function CbamLeadMagnet() {
             Importers into the EU may face carbon costs under CBAM. Use our tool to estimate your potential exposure per shipment.
           </p>
           <Link href="/analytics/cbam" className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-white rounded-xl font-bold transition-all shadow-lg shadow-emerald-900/50">
-            Run Free CBAM Estimate <ArrowRight className="w-4 h-4" />
+            Open the CBAM Estimator (Advanced plan) <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
 
@@ -34,7 +34,7 @@ export function CbamLeadMagnet() {
               <span className="font-bold text-white">1,000 kg (Thick steel plate, CN 72085100)</span>
             </div>
             <div className="flex justify-between text-sm mb-5">
-              <span className="text-emerald-200">EU Default Carbon Factor:</span>
+              <span className="text-emerald-200">Illustrative carbon factor:</span>
               <span className="font-bold text-white">2.23 kg CO₂e / kg</span>
             </div>
             <div className="w-full h-px bg-white/10 my-4"></div>
@@ -49,7 +49,7 @@ export function CbamLeadMagnet() {
               <div className="bg-black/20 rounded-lg p-3 mt-2">
                 <span className="text-emerald-400/80 font-bold text-xs uppercase block mb-1">Est. 2034 CBAM Cost (100% phase-in):</span>
                 <div className="flex justify-between items-end">
-                   <span className="text-2xl font-bold text-white">~€167</span>
+                   <span className="text-2xl font-bold text-white">~€168</span>
                    <span className="text-xs text-emerald-200/80 mb-1">illustrative</span>
                 </div>
               </div>

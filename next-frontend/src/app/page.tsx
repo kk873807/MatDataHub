@@ -316,7 +316,7 @@ export default function LandingPage() {
               <p className="text-slate-600 dark:text-slate-400 text-sm mb-6 h-10">Full financial & physics capabilities.</p>
               <div className="text-4xl font-extrabold text-slate-900 dark:text-white mb-8">Custom<span className="text-sm font-medium text-slate-500 dark:text-slate-400">/enterprise</span></div>
               <ul className="space-y-3 mb-8 flex-1">
-                {["Dedicated Support & SLAs", "SAML SSO Integration", "Continuous Regulation Updates", "Full CBAM Calculator & Exports", "Unlimited API Access"].map((f, i) => (
+                {["Priority email support", "Google sign-in (OAuth 2.0)", "Regulation data updates when the Commission republishes", "Full CBAM Calculator & Exports", "REST API access (10,000 requests/day)"].map((f, i) => (
                   <li key={i} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
                     <CheckCircle2 className="w-4 h-4 text-amber-500" /> {f}
                   </li>

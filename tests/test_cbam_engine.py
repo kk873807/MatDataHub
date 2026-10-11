@@ -338,6 +338,18 @@ def test_taxable_co2_follows_the_cost_rules():
     assert taxable[1:] == [0.0, 0.0, 0.0]     # EU origin, pre-2026 release, quarantined
 
 
+# ───────────── 10-digit-only defaults (white/grey clinker etc.) ─────────────
+def test_eight_digit_code_with_only_ten_digit_country_rows_asks_for_the_ten_digit_code():
+    # was: 25231000 from Turkmenistan silently got the GLOBAL value (0.9) although Turkmenistan has its own 10-digit value
+    r = one({"cn_code": "25231000", "country_of_origin": "Turkmenistan"})
+    assert r["Included_In_Total"].startswith("QUARANTINED") and "10-digit" in r["Included_In_Total"], r["Included_In_Total"]
+    assert r["Emissions_Basis"] != "COMMISSION_DEFAULT"
+    r2 = one({"cn_code": "2523100090", "country_of_origin": "Turkmenistan"})      # the 10-digit code resolves to the country row
+    assert r2["Default_Match_Digits"] == 10 and r2["Included_In_Total"] == "YES"
+    r3 = one({"cn_code": "25231000", "country_of_origin": "Viet Nam"})            # a country without 10-digit rows keeps the global value
+    assert r3["Emissions_Basis"] == "COMMISSION_DEFAULT" and r3["Default_Geography"] == "GLOBAL" and r3["Included_In_Total"] == "YES"
+
+
 if __name__ == "__main__":
     failed = 0
     for name, fn in sorted(globals().items()):
