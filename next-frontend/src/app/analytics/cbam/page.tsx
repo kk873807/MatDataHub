@@ -999,7 +999,7 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
                   </div>
                 </div>
                   <p className="text-xs text-amber-500 mt-1 font-semibold text-balance">
-                    ⚠️ Warning (simplified lower estimate): The phase-in model assumes product emissions equal the free-allocation benchmark. Because default values typically exceed benchmarks, actual 2026-2027 costs using defaults will likely be substantially higher.
+                    ⚠️ Warning (simplified lower estimate): This tool does not yet apply the free-allocation adjustment under Implementing Regulation (EU) 2025/2620. The phase-in model assumes product emissions equal the free-allocation benchmark. Because default values typically exceed benchmarks, actual costs using defaults will be substantially higher.
                   </p>
                 {isDeMinimisExempt && (
                   <div className="mt-3 bg-blue-50 dark:bg-blue-900/20 p-2 rounded border border-blue-100 dark:border-blue-800">
@@ -1068,7 +1068,7 @@ MAT-C4,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
 
             <div className="hidden print:block border-t border-slate-300 pt-3 text-xs text-slate-700 space-y-1">
               <p className="font-bold">Estimate only. This is not a CBAM declaration and not advice from a customs broker or accredited verifier.</p>
-              <p>Carbon price assumed: €{price}/tCO₂e. Phase-in of the cost is simplified (assumes emissions close to the free-allocation benchmark), so actual costs using default values may be higher.</p>
+              <p>Carbon price assumed: €{price}/tCO₂e. This tool does not yet apply the free-allocation adjustment under Implementing Regulation (EU) 2025/2620. Phase-in of the cost is a simplified lower estimate (assumes emissions close to the benchmark), so actual costs using default values will be substantially higher.</p>
               <p>Emission default values: {defaultsSources.length > 0 ? defaultsSources.join("; ") : "none used"}. De minimis shown as a possibility only; confirm the importer's annual total.</p>
               <p>Generated {generatedAt} by MatDataHub CBAM Engine.</p>
             </div>
