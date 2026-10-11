@@ -279,35 +279,52 @@ def test_bom_analyze_history_is_saved_per_tenant():
 
 
 def test_custom_material_url_not_blocked_across_tenants():
-    """Confirms Company B is NOT blocked when submitting the same public datasheet URL as Company A."""
+    """Positive test for endpoint /api/v1/materials/custom.
+    Confirms Company B is NOT blocked from adding a custom material with the same public datasheet
+    URL that Company A registered, whereas Company A submitting it twice IS blocked."""
+    from unittest.mock import MagicMock, patch
+
     db = TestingSessionLocal()
     user_f, headers_f = _make_user(db, "tenant_f@example.com", "advanced")
     user_g, headers_g = _make_user(db, "tenant_g@example.com", "advanced")
 
     shared_url = "https://example.com/datasheet-public-alloy-99.pdf"
-    mat_f = CustomMaterial(
-        user_id=user_f.id,
-        name="Tenant F Alloy 99",
-        category="Metals",
-        source_url=shared_url,
-        status="verified",
-    )
-    db.add(mat_f)
-    db.commit()
+    payload_f1 = {
+        "name": "Tenant F Alloy 99",
+        "category": "Metals",
+        "source_url": shared_url,
+    }
+    payload_f2 = {
+        "name": "Tenant F Alloy 99 Duplicate",
+        "category": "Metals",
+        "source_url": shared_url,
+    }
+    payload_g = {
+        "name": "Tenant G Alloy 99 Independent",
+        "category": "Metals",
+        "source_url": shared_url,
+    }
 
-    # User F duplicate URL should be rejected for User F
-    dup_f = db.query(CustomMaterial).filter(
-        CustomMaterial.user_id == user_f.id,
-        CustomMaterial.source_url == shared_url
-    ).first()
-    assert dup_f is not None, "User F material should exist"
+    mock_resp = MagicMock()
+    mock_resp.status_code = 200
+    mock_resp.close = MagicMock()
 
-    # User G querying custom materials by user_id should NOT find any duplicate for User G
-    dup_g = db.query(CustomMaterial).filter(
-        CustomMaterial.user_id == user_g.id,
-        CustomMaterial.source_url == shared_url
-    ).first()
-    assert dup_g is None, "User G should have no conflicting custom material with this URL"
+    # Scope the mock strictly to this test block so nothing leaks into later tests
+    with patch("app.routers.materials.is_safe_url", return_value=True), \
+         patch("app.routers.materials.requests.get", return_value=mock_resp):
+        # 1. Tenant F creates material with shared_url -> succeeds
+        res_f1 = client.post("/api/v1/materials/custom", headers=headers_f, json=payload_f1)
+        assert res_f1.status_code == 200, res_f1.text
+
+        # 2. Tenant F submits duplicate URL -> blocked (400)
+        res_f2 = client.post("/api/v1/materials/custom", headers=headers_f, json=payload_f2)
+        assert res_f2.status_code == 400, f"Tenant F duplicate URL was not blocked! {res_f2.status_code} {res_f2.text}"
+        assert "already submitted" in res_f2.text.lower()
+
+        # 3. Tenant G submits SAME shared_url -> MUST SUCCEED (200), not leak Tenant F's use
+        res_g = client.post("/api/v1/materials/custom", headers=headers_g, json=payload_g)
+        assert res_g.status_code == 200, f"Tenant G was blocked by Tenant F's URL! Status: {res_g.status_code}, Body: {res_g.text}"
+
     db.close()
 
 
