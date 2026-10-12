@@ -388,6 +388,23 @@ def test_ten_digit_rows_are_quarantined_in_both_modes_without_a_misleading_gener
     assert "generic" in r["Validation_Errors"].lower()
 
 
+def test_natural_spreadsheet_headers_for_identity_columns_are_recognised():
+    # was: 'Origin_Country', 'Country of Origin', 'Material ID', ... were not recognised by the validator, so EVERY row of a
+    # perfectly valid file was quarantined as "Missing origin country" / "Missing material ID"
+    variants = [{"country_of_origin": "Origin_Country"}, {"country_of_origin": "Country of Origin"},
+                {"country_of_origin": "country-of-origin"}, {"material_id": "Material ID"},
+                {"destination": "Destination Country"}, {"cn_code": "CN Code"}, {"release_date": "Release Date"},
+                {"supplier_name": "Supplier Name"}]
+    for renames in variants:
+        rec = {renames.get(k, k): v for k, v in BASE.items()}
+        r = BOMProcessor(FakeDB(DEFAULTS)).process_bom(pd.DataFrame([rec]), "name", "weight_kg").iloc[0]
+        assert r["Included_In_Total"] == "YES" and r["Emissions_Basis"] == "COMMISSION_DEFAULT", (renames, r["Included_In_Total"])
+    # a file that really has no origin column is still quarantined
+    rec = {k: v for k, v in BASE.items() if k != "country_of_origin"}
+    r = BOMProcessor(FakeDB(DEFAULTS)).process_bom(pd.DataFrame([rec]), "name", "weight_kg").iloc[0]
+    assert "Missing origin country" in r["Included_In_Total"]
+
+
 if __name__ == "__main__":
     failed = 0
     for name, fn in sorted(globals().items()):

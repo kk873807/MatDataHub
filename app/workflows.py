@@ -6,6 +6,7 @@ import os
 import time
 import unicodedata
 import collections
+import functools
 from thefuzz import process, fuzz
 from collections import defaultdict
 from sqlalchemy.orm import Session
@@ -312,6 +313,13 @@ def _load_defaults_index(db):
     if ttl > 0 and count:
         _DEFAULTS_CACHE.update(expires=now + ttl, value=value)
     return value
+
+
+@functools.lru_cache(maxsize=4096)
+def _norm_header(h) -> str:
+    """Header/alias key: lower-case, trimmed, runs of spaces or hyphens become one underscore.
+    'Country of Origin', 'country-of-origin' and 'country_of_origin' are the same column; 'Material ID' is 'material_id'."""
+    return re.sub(r"[\s\-]+", "_", str(h).strip().lower())
 
 
 class BOMProcessor:
@@ -695,9 +703,10 @@ class BOMProcessor:
 
             def extract_string(aliases):
                 invalid_vals = {"nan", "n/a", "none", "null", "-", ""}
+                aliases = [_norm_header(a) for a in aliases]
                 # Pass 1: exact column name match (highest priority)
                 for k in row.keys():
-                    k_lower = str(k).lower().strip()
+                    k_lower = _norm_header(k)
                     if any(a == k_lower for a in aliases):
                         val = row[k]
                         if pd.notna(val) and str(val).strip() != "" and str(val).lower().strip() not in invalid_vals:
@@ -705,7 +714,7 @@ class BOMProcessor:
                         return None  # Exact match found but value is blank
                 # Pass 2: prefix/suffix boundary match (e.g. 'id' matches 'material_id')
                 for k in row.keys():
-                    k_lower = str(k).lower().strip()
+                    k_lower = _norm_header(k)
                     if any(k_lower.startswith(a + '_') or k_lower.endswith('_' + a) for a in aliases):
                         val = row[k]
                         if pd.notna(val) and str(val).strip() != "" and str(val).lower().strip() not in invalid_vals:
@@ -866,8 +875,9 @@ class BOMProcessor:
                 
             def extract_exact_string(aliases):
                 invalid_vals = {"nan", "n/a", "none", "null", "-", ""}
+                aliases = [_norm_header(a) for a in aliases]
                 for k in row.keys():
-                    if any(a == str(k).lower().strip() for a in aliases):
+                    if any(a == _norm_header(k) for a in aliases):
                         val = row[k]
                         if pd.notna(val) and str(val).strip() != "" and str(val).lower().strip() not in invalid_vals:
                             return str(val).strip()
@@ -877,7 +887,7 @@ class BOMProcessor:
                 c = c.lower().strip()
                 return self.COUNTRY_ALIASES.get(c, c)
                 
-            country = extract_exact_string(['country_of_origin', 'supplier_country', 'origin', 'country'])
+            country = extract_exact_string(['country_of_origin', 'origin_country', 'supplier_country', 'origin', 'country'])
             if not country:
                 errors.append("Missing supplier country")
                 quarantine_reasons.append("Missing origin country")
@@ -1194,7 +1204,7 @@ class BOMProcessor:
                 phase_in = phase_in_schedule.get(lookup_year, 1.0)
                 cbam_cost_eur = cbam_cost_eur * phase_in
                 if phase_in < 1.0:
-                    notes.append(f"Cost estimated as {phase_in*100:.1f}% of emissions (Simplified lower estimate: does not yet apply the free-allocation adjustment under (EU) 2025/2620; assumes emissions ≈ benchmark. Actual cost will be higher if using defaults)")
+                    notes.append(f"Cost estimated as {phase_in*100:.1f}% of emissions (simplified estimate; may be lower or higher: does not yet apply the free-allocation adjustment under (EU) 2025/2620; assumes emissions ≈ benchmark. Actual cost will be higher if using defaults)")
                     
             cbam_cost_eur = round(cbam_cost_eur, 2)
             

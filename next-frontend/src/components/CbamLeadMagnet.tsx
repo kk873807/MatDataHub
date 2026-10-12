@@ -31,7 +31,7 @@ export function CbamLeadMagnet() {
             
             <div className="flex justify-between text-sm mb-5">
               <span className="text-emerald-200">Material Imported:</span>
-              <span className="font-bold text-white">1,000 kg (Thick steel plate, CN 72085100)</span>
+              <span className="font-bold text-white">1,000 kg (Thick steel plate, CN 7208 51)</span>
             </div>
             <div className="flex justify-between text-sm mb-5">
               <span className="text-emerald-200">Illustrative carbon factor:</span>
