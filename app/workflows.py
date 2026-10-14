@@ -295,8 +295,23 @@ def _load_defaults_index(db):
     cached = _DEFAULTS_CACHE["value"]
     if ttl > 0 and cached is not None and now < _DEFAULTS_CACHE["expires"]:
         return cached
+    try:
+        loaded_rows = db.query(CBAMDefault).all()
+    except Exception as e:  # noqa: BLE001  (timeout, dropped connection, ...)
+        try:
+            db.rollback()       # leave the session usable for the rest of the request
+        except Exception:       # noqa: BLE001
+            pass
+        if cached is not None:
+            # A refresh failed but a good table was loaded earlier: keep serving it instead of silently dropping every
+            # row to generic estimates. Retry in at most a minute (not on every request: each failing attempt can
+            # take as long as the statement timeout).
+            print(f"[cbam] defaults refresh failed ({e}); serving the table loaded earlier", flush=True)
+            _DEFAULTS_CACHE["expires"] = now + (min(ttl, 60.0) if ttl > 0 else 0.0)
+            return dict(cached, served_stale=True)
+        raise
     index, countries, sources, stamps, count = {}, {}, set(), [], 0
-    for d in db.query(CBAMDefault).all():
+    for d in loaded_rows:
         row = _DefaultRow(d.cn_prefix, d.year, d.origin_country, d.base_value, d.markup_pct, d.effective_value,
                           bool(d.includes_indirect), getattr(d, "source", None), getattr(d, "updated_at", None))
         norm = _norm_country(row.origin_country) if row.origin_country else None
@@ -515,6 +530,7 @@ class BOMProcessor:
         self.cbam_defaults_count = 0
         self.cbam_defaults_version = None
         self.cbam_defaults_load_error = None
+        self.cbam_defaults_served_stale = False   # True when a failed refresh was covered by the last good table
         self.cbam_default_countries = {}   # normalised name -> name as stored in the table
         self.cbam_defaults_sources = []
 
@@ -524,6 +540,7 @@ class BOMProcessor:
             self.cbam_default_countries = idx["countries"]
             self.cbam_defaults_sources = idx["sources"]
             self.cbam_defaults_count = idx["count"]
+            self.cbam_defaults_served_stale = bool(idx.get("served_stale"))
             latest = idx["latest"]
             if idx["count"] and latest:
                 self.cbam_defaults_version = latest.isoformat()
@@ -579,6 +596,9 @@ class BOMProcessor:
                 return d.effective_value, d.includes_indirect, self.DEFAULTS_BASIS_LABEL, len(prefix), {
                     "geography": "COUNTRY" if scope else "GLOBAL",
                     "country_matched": country_name if scope else None,
+                    # set when the origin HAS its own table in the Regulation but no value for this code there
+                    # (e.g. Türkiye, 2523 29 00, which the Regulation lists with '-'), so the note can say so
+                    "country_table_without_value": country_name if (country_key and not scope) else None,
                     "markup_pct": d.markup_pct, "base_value": d.base_value,
                     "dataset": getattr(d, "source", "Commission Implementing Regulation (EU) 2026/1740"),
                 }
@@ -1107,10 +1127,17 @@ class BOMProcessor:
                             f"{default_meta['geography'].lower()}, mark-up {round((default_meta['markup_pct'] or 0)*100)}% included"
                         )
                         if default_meta["geography"] == "GLOBAL" and origin_country_raw:
-                            notes.append(
-                                f"No country-specific default found for origin '{origin_country_raw}'; the 'other countries and territories' "
-                                f"value was used. If this country has its own table in the Regulation, check the spelling."
-                            )
+                            if default_meta.get("country_table_without_value"):
+                                notes.append(
+                                    f"The Regulation's table for '{default_meta['country_table_without_value']}' has no value for this CN code "
+                                    f"(listed as '-' or not listed), so the 'other countries and territories' value was used, as the "
+                                    f"introduction to Annex I of Implementing Regulation (EU) 2025/2621 (as replaced by (EU) 2026/1740) requires."
+                                )
+                            else:
+                                notes.append(
+                                    f"No country-specific default found for origin '{origin_country_raw}'; the 'other countries and territories' "
+                                    f"value was used. If this country has its own table in the Regulation, check the spelling."
+                                )
                     elif db_carbon > 0:
                         carbon_factor = db_carbon
                         emissions_basis = "DEFAULT_FALLBACK"
@@ -1161,10 +1188,17 @@ class BOMProcessor:
                             f"{default_meta['geography'].lower()}, mark-up {round((default_meta['markup_pct'] or 0)*100)}% included"
                         )
                         if default_meta["geography"] == "GLOBAL" and origin_country_raw:
-                            notes.append(
-                                f"No country-specific default found for origin '{origin_country_raw}'; the 'other countries and territories' "
-                                f"value was used. If this country has its own table in the Regulation, check the spelling."
-                            )
+                            if default_meta.get("country_table_without_value"):
+                                notes.append(
+                                    f"The Regulation's table for '{default_meta['country_table_without_value']}' has no value for this CN code "
+                                    f"(listed as '-' or not listed), so the 'other countries and territories' value was used, as the "
+                                    f"introduction to Annex I of Implementing Regulation (EU) 2025/2621 (as replaced by (EU) 2026/1740) requires."
+                                )
+                            else:
+                                notes.append(
+                                    f"No country-specific default found for origin '{origin_country_raw}'; the 'other countries and territories' "
+                                    f"value was used. If this country has its own table in the Regulation, check the spelling."
+                                )
                     else:
                         carbon_factor = _estimate_carbon_factor(raw_name, "")
                         emissions_basis = "GENERIC_ESTIMATE"
@@ -1403,6 +1437,8 @@ class BOMProcessor:
             defaults_info += f", version: {self.cbam_defaults_version}"
         if self.cbam_defaults_load_error:
             defaults_info += f", LOAD ERROR: {self.cbam_defaults_load_error}"
+        if self.cbam_defaults_served_stale:
+            defaults_info += " | NOTE: database refresh failed; values come from the last successfully loaded table"
         if self.cbam_defaults_count == 0:
             defaults_info += " | WARNING: No Commission defaults loaded — all factors are estimates"
         for r in enriched_rows:

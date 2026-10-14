@@ -328,8 +328,47 @@ def test_custom_material_url_not_blocked_across_tenants():
     db.close()
 
 
+def test_bom_analyze_returns_503_and_saves_nothing_when_defaults_cannot_be_loaded():
+    """v2.4: if the Commission defaults cannot be loaded at all (e.g. the statement timeout on the first request after a
+    restart), the route must refuse with 503 instead of returning, and saving to history, a file of generic estimates.
+    An EMPTY table (as in this SQLite database) is a different case and still returns 200: see the test above."""
+    from unittest.mock import patch
+
+    db = TestingSessionLocal()
+    user_h, headers_h = _make_user(db, "tenant_h@example.com", "advanced")
+    csv_bytes = (b"material_id,Material,Weight_kg,cbam_sector,cn_code,country_of_origin,destination,release_date\n"
+                 b"MAT-1,Steel,100,Iron & Steel,72083900,China,Germany,2026-03-10")
+
+    # Scoped: the defaults load raises exactly as a Postgres statement timeout would; restored on exit.
+    with patch("app.workflows._load_defaults_index",
+               side_effect=RuntimeError("canceling statement due to statement timeout")):
+        resp = client.post(
+            "/api/v1/materials/bom_analyze",
+            headers=headers_h,
+            files={"file": ("tenant_h_upload.csv", csv_bytes, "text/csv")},
+            data={"material_col": "Material", "weight_col": "Weight_kg"},
+        )
+    assert resp.status_code == 503, f"expected 503, got {resp.status_code}: {resp.text[:200]}"
+    assert "could not be loaded" in resp.json()["detail"]
+    assert db.query(BOMAnalysis).filter(BOMAnalysis.user_id == user_h.id).count() == 0, "an estimate file was saved to history"
+    assert client.get("/api/v1/account/bom-history", headers=headers_h).json() == []
+
+    # patch restored: the same upload now succeeds (empty table -> 200), so the mock did not leak
+    resp_ok = client.post(
+        "/api/v1/materials/bom_analyze",
+        headers=headers_h,
+        files={"file": ("tenant_h_upload.csv", csv_bytes, "text/csv")},
+        data={"material_col": "Material", "weight_col": "Weight_kg"},
+    )
+    assert resp_ok.status_code == 200, resp_ok.text
+    db.close()
+
+
 if __name__ == "__main__":
-    test_tenant_isolation()
-    test_bom_analyze_history_is_saved_per_tenant()
-    test_custom_material_url_not_blocked_across_tenants()
-    print("ALL TENANT ISOLATION TESTS PASSED (10/10)")
+    tests = [test_tenant_isolation, test_bom_analyze_history_is_saved_per_tenant,
+             test_custom_material_url_not_blocked_across_tenants,
+             test_bom_analyze_returns_503_and_saves_nothing_when_defaults_cannot_be_loaded]
+    for fn in tests:
+        fn()
+        print("PASS", fn.__name__)
+    print(f"ALL TENANT ISOLATION TESTS PASSED ({len(tests)} test functions)")

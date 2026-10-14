@@ -930,6 +930,10 @@ def analyze_bom(
         raise HTTPException(status_code=400, detail="Invalid CSV format: unable to parse file.")
     
     processor = BOMProcessor(db)
+    if processor.cbam_defaults_load_error:
+        # Do not produce (or save to history) a file of generic estimates because the database was briefly unreachable.
+        print(f"CBAM defaults could not be loaded: {processor.cbam_defaults_load_error}", flush=True)
+        raise HTTPException(status_code=503, detail="The Commission default values could not be loaded right now, so no estimate was produced. Please retry in a minute.")
     print(f"BOMProcessor initialized in {time.time()-t0:.2f}s", flush=True)
     
     t1 = time.time()

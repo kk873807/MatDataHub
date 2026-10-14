@@ -405,6 +405,47 @@ def test_natural_spreadsheet_headers_for_identity_columns_are_recognised():
     assert "Missing origin country" in r["Included_In_Total"]
 
 
+class _BoomDB:
+    """Everything works except the defaults query, which times out (e.g. a slow cross-region link)."""
+    rolled_back = False
+
+    def query(self, *a):
+        if a and a[0] is CBAMDefault:
+            raise RuntimeError("canceling statement due to statement timeout")
+        return _Q([])
+
+    def rollback(self):
+        self.rolled_back = True
+
+
+def test_failed_defaults_refresh_serves_the_last_good_table_instead_of_zeroing_it():
+    old_ttl = os.environ.get("CBAM_DEFAULTS_TTL_SECONDS")
+    os.environ["CBAM_DEFAULTS_TTL_SECONDS"] = "600"          # this test needs the real cache
+    w.invalidate_cbam_defaults_cache()
+    try:
+        good = BOMProcessor(FakeDB(DEFAULTS))
+        assert good.cbam_defaults_count == len(DEFAULTS) and not good.cbam_defaults_served_stale
+        w._DEFAULTS_CACHE["expires"] = 0.0                    # the 10-minute cache has just expired ...
+        boom = _BoomDB()
+        p = BOMProcessor(boom)                                  # ... and the refresh times out
+        assert p.cbam_defaults_count == len(DEFAULTS) and p.cbam_defaults_served_stale and p.cbam_defaults_load_error is None
+        assert boom.rolled_back, "the failed session must be rolled back so the rest of the request can use it"
+        out = p.process_bom(pd.DataFrame([BASE]), "name", "weight_kg").iloc[0]
+        assert out["Emissions_Basis"] == "COMMISSION_DEFAULT" and out["Included_In_Total"] == "YES"
+        assert "last successfully loaded" in out["CBAM_Defaults_Info"]
+        assert w._DEFAULTS_CACHE["expires"] > 0.0              # not retried on every single request
+        # nothing cached yet: nothing to fall back to, the error is reported (the route answers 503)
+        w.invalidate_cbam_defaults_cache()
+        p2 = BOMProcessor(_BoomDB())
+        assert p2.cbam_defaults_count == 0 and "statement timeout" in p2.cbam_defaults_load_error
+    finally:
+        if old_ttl is None:
+            os.environ.pop("CBAM_DEFAULTS_TTL_SECONDS", None)
+        else:
+            os.environ["CBAM_DEFAULTS_TTL_SECONDS"] = old_ttl
+        w.invalidate_cbam_defaults_cache()
+
+
 if __name__ == "__main__":
     failed = 0
     for name, fn in sorted(globals().items()):
