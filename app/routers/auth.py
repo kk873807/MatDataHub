@@ -215,9 +215,16 @@ def register(req: RegisterRequest, request: Request, db: Session = Depends(get_d
             detail="Invalid email domain or name. Please use a real email address."
         )
 
+    # Check terms acceptance
+    if not req.terms_accepted:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="You must accept the Terms of Service and Privacy Policy to create an account."
+        )
+
     # Create user
     is_admin_user = (req.email.lower().strip() == "kishankapoor35@gmail.com")
-    accepted_at = datetime.now(timezone.utc) if req.terms_accepted else None
+    accepted_at = datetime.now(timezone.utc)
     user = User(
         email=req.email.lower().strip(),
         hashed_password=hash_password(req.password),
@@ -225,7 +232,7 @@ def register(req: RegisterRequest, request: Request, db: Session = Depends(get_d
         tier="free",
         is_admin=is_admin_user,
         terms_accepted_at=accepted_at,
-        terms_version=req.terms_version if req.terms_accepted else None
+        terms_version=req.terms_version or "2026-10-14"
     )
     raw_key, raw_secret = generate_api_credentials()
     import hashlib

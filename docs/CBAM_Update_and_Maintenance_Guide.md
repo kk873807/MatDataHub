@@ -184,7 +184,10 @@ To prevent legal exposure from early customer reliance:
 * Treat any discrepancy as valuable domain feedback to adjust Annex I scope mappings or benchmark assumptions.
 
 ### 5.3 Low-Cost Professional Verification
-* **Startup Legal Clinic**: 1–2 hours fixed scope to review Terms of Service, liability cap, and governing-law clause.
+* **Startup Legal Clinic / 1-Hour Attorney Session**:
+  * **Priority 1: Governing Law & Jurisdiction**: Review the choice of Indian law / New Delhi jurisdiction versus buyer jurisdiction. German law (*AGB-Recht*, §§ 305–310 BGB) strictly strikes down standard liability exclusions and caps (leaving companies exposed to unlimited statutory liability in Berlin). Verify that Indian governing law effectively shields the entity while remaining commercially acceptable to EU pilots.
+  * **Priority 2: Enforceability of Liability Cap During Free Beta**: Review Section 5 of Terms. When users pay €0 during a free beta, a clause capping liability to "fees paid in the prior 12 months" can be challenged as illusory or unconscionable if damages occur. Confirm whether an explicit nominal cap (e.g., €100 or INR 10,000) or pure gratuitous-use disclaimer best insulates the business under relevant consumer and commercial protection rules.
+  * **Priority 3: Mandatory Pre-Litigation Escalation**: Include 30-day informal negotiation before formal arbitration or court filing.
 * **Licensed Customs Broker**: 2–3 hours fixed scope to spot-check Annex I prefix tables and 20 representative commodity lines.
 * **E&O Insurance**: Solicit quotes for tech errors & omissions insurance before charging paying customers.
 

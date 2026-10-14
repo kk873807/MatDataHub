@@ -8,7 +8,7 @@ export default function PrivacyPage() {
         <section>
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white font-heading mb-3">1. Data Controller & Contact</h2>
           <p>
-            MatDataHub is the data controller responsible for your personal data. For questions about this policy, access requests, or to request permanent deletion of your account and uploaded data, contact our dedicated privacy team at <a href="mailto:privacy@matdatahub.com" className="text-indigo-600 dark:text-indigo-400 underline font-medium">privacy@matdatahub.com</a>.
+            MatDataHub is the data controller responsible for your personal data. For questions about this policy, access requests, or to request permanent deletion of your account and uploaded data, contact our dedicated privacy team at <a href="mailto:matdatahub.support@gmail.com" className="text-indigo-600 dark:text-indigo-400 underline font-medium">matdatahub.support@gmail.com</a>.
           </p>
         </section>
 
@@ -47,7 +47,7 @@ export default function PrivacyPage() {
           <ul className="list-disc pl-6 space-y-2 mb-3">
             <li><strong>Stored Until Deleted:</strong> Analyses and BOM records remain stored in full in your account until you choose to delete them.</li>
             <li><strong>Single-Analysis Deletion:</strong> You can delete any individual historical analysis directly at any time from your account history dashboard.</li>
-            <li><strong>Full Account & Data Deletion:</strong> You may request complete and permanent deletion of your account, profile, and all associated BOM history by emailing <a href="mailto:privacy@matdatahub.com" className="text-indigo-600 dark:text-indigo-400 underline font-medium">privacy@matdatahub.com</a>. Deletion requests are processed within 30 days.</li>
+            <li><strong>Full Account & Data Deletion:</strong> You may request complete and permanent deletion of your account, profile, and all associated BOM history by emailing <a href="mailto:matdatahub.support@gmail.com" className="text-indigo-600 dark:text-indigo-400 underline font-medium">matdatahub.support@gmail.com</a>. Deletion requests are processed within 30 days.</li>
           </ul>
         </section>
 
@@ -61,7 +61,7 @@ export default function PrivacyPage() {
         <section>
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white font-heading mb-3">6. Your Rights Under GDPR & UK GDPR</h2>
           <p>
-            If you are located in the European Economic Area (EEA), the United Kingdom, or Switzerland, you have the right to access, rectify, export, restrict processing, or request permanent erasure of your personal data. To exercise any of these rights, contact our privacy officer at <a href="mailto:privacy@matdatahub.com" className="text-indigo-600 dark:text-indigo-400 underline font-medium">privacy@matdatahub.com</a>.
+            If you are located in the European Economic Area (EEA), the United Kingdom, or Switzerland, you have the right to access, rectify, export, restrict processing, or request permanent erasure of your personal data. To exercise any of these rights, contact our privacy officer at <a href="mailto:matdatahub.support@gmail.com" className="text-indigo-600 dark:text-indigo-400 underline font-medium">matdatahub.support@gmail.com</a>.
           </p>
         </section>
       </div>

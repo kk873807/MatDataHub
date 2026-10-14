@@ -49,6 +49,8 @@ def override_get_db():
 
 
 app.dependency_overrides[get_db] = override_get_db
+from app.routers.materials import limiter as materials_limiter
+materials_limiter.enabled = False
 client = TestClient(app)
 
 
@@ -364,10 +366,90 @@ def test_bom_analyze_returns_503_and_saves_nothing_when_defaults_cannot_be_loade
     db.close()
 
 
+def test_bom_analyze_records_estimate_acknowledged():
+    """Verify ack_estimate is recorded in analysis metadata and non-breaking when omitted."""
+    import json
+    db = TestingSessionLocal()
+    user_i, headers_i = _make_user(db, "tenant_i@example.com", "advanced")
+    csv_bytes = (b"material_id,Material,Weight_kg,cbam_sector,cn_code,country_of_origin,destination,release_date\n"
+                 b"MAT-1,Steel,100,Iron & Steel,72083900,China,Germany,2026-03-10")
+
+    # 1. With ack_estimate=true
+    resp1 = client.post(
+        "/api/v1/materials/bom_analyze",
+        headers=headers_i,
+        files={"file": ("ack_test.csv", csv_bytes, "text/csv")},
+        data={"material_col": "Material", "weight_col": "Weight_kg", "ack_estimate": "true"},
+    )
+    assert resp1.status_code == 200
+    item1 = db.query(BOMAnalysis).filter(BOMAnalysis.filename == "ack_test.csv").first()
+    assert item1 is not None
+    parsed1 = json.loads(item1.results_json)
+    meta1 = parsed1.get("metadata", {})
+    assert meta1.get("estimate_acknowledged") is True
+    assert meta1.get("estimate_acknowledged_at") is not None
+
+    # 2. With ack_estimate omitted (backward-compatibility for REST API clients)
+    resp2 = client.post(
+        "/api/v1/materials/bom_analyze",
+        headers=headers_i,
+        files={"file": ("no_ack_test.csv", csv_bytes, "text/csv")},
+        data={"material_col": "Material", "weight_col": "Weight_kg"},
+    )
+    assert resp2.status_code == 200, f"resp2 failed: {resp2.status_code} {resp2.text}"
+    item2 = db.query(BOMAnalysis).filter(BOMAnalysis.filename == "no_ack_test.csv").first()
+    assert item2 is not None
+    parsed2 = json.loads(item2.results_json)
+    meta2 = parsed2.get("metadata", {})
+    assert meta2.get("estimate_acknowledged") is False
+    db.close()
+
+
+def test_auth_register_rejects_missing_or_false_terms():
+    """Verify /auth/register rejects missing or false terms_accepted and records version when true."""
+    from app.routers.auth import _auth_attempts
+    _auth_attempts.clear()
+
+    # 1. Missing terms_accepted -> 400 Bad Request
+    resp_fail = client.post(
+        "/api/v1/auth/register",
+        json={"email": "unagreed@example.com", "password": "securepassword123", "name": "Unagreed User"}
+    )
+    assert resp_fail.status_code == 400, f"Expected 400, got {resp_fail.status_code}"
+    assert "You must accept the Terms of Service" in resp_fail.json()["detail"]
+
+    # 2. terms_accepted=False -> 400 Bad Request
+    _auth_attempts.clear()
+    resp_false = client.post(
+        "/api/v1/auth/register",
+        json={"email": "false_agreed@example.com", "password": "securepassword123", "name": "False User", "terms_accepted": False}
+    )
+    assert resp_false.status_code == 400, f"Expected 400, got {resp_false.status_code} {resp_false.text}"
+
+    # 3. terms_accepted=True -> 201 Created and fields recorded
+    _auth_attempts.clear()
+    db = TestingSessionLocal()
+    resp_ok = client.post(
+        "/api/v1/auth/register",
+        json={"email": "agreed@example.com", "password": "securepassword123", "name": "Agreed User", "terms_accepted": True, "terms_version": "2026-10-14"}
+    )
+    assert resp_ok.status_code == 201, f"Expected 201, got {resp_ok.status_code}"
+    user = db.query(User).filter(User.email == "agreed@example.com").first()
+    assert user is not None
+    assert user.terms_accepted_at is not None
+    assert user.terms_version == "2026-10-14"
+    db.close()
+
+
 if __name__ == "__main__":
-    tests = [test_tenant_isolation, test_bom_analyze_history_is_saved_per_tenant,
-             test_custom_material_url_not_blocked_across_tenants,
-             test_bom_analyze_returns_503_and_saves_nothing_when_defaults_cannot_be_loaded]
+    tests = [
+        test_tenant_isolation, 
+        test_bom_analyze_history_is_saved_per_tenant,
+        test_custom_material_url_not_blocked_across_tenants,
+        test_bom_analyze_returns_503_and_saves_nothing_when_defaults_cannot_be_loaded,
+        test_bom_analyze_records_estimate_acknowledged,
+        test_auth_register_rejects_missing_or_false_terms
+    ]
     for fn in tests:
         fn()
         print("PASS", fn.__name__)

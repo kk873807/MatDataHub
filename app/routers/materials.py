@@ -15,7 +15,7 @@ Endpoints:
     POST /materials          - Add a new material
 """
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 
@@ -869,6 +869,7 @@ def analyze_bom(
     weight_col: str = Form(...),
     strict_mode: bool = Form(True),
     disable_deminimis: bool = Form(False),
+    ack_estimate: bool = Form(False),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
@@ -970,6 +971,8 @@ def analyze_bom(
         run_metadata = {
             "strict_mode": strict_mode,
             "disable_deminimis": disable_deminimis,
+            "estimate_acknowledged": bool(ack_estimate),
+            "estimate_acknowledged_at": datetime.now(timezone.utc).isoformat() if ack_estimate else None,
             "cbam_defaults_count": processor.cbam_defaults_count,
             "cbam_defaults_version": str(processor.cbam_defaults_version) if processor.cbam_defaults_version else None,
             "cbam_reference_price_eur": CBAM_REFERENCE_PRICE_EUR,

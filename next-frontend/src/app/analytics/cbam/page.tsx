@@ -298,6 +298,7 @@ MAT-C5,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
       formData.append("weight_col", payloadWeightCol);
       formData.append("strict_mode", activeTab === "manual" ? "false" : hardQuarantine.toString());
       formData.append("disable_deminimis", disableDeMinimis.toString());
+      formData.append("ack_estimate", acknowledgedEstimates ? "true" : "false");
 
       // Note: Make sure the backend doesn't expect authentication, or send token if needed
       const token = localStorage.getItem("token");

@@ -49,12 +49,12 @@ export default function TermsPage() {
 
         <section>
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white font-heading mb-3">7. Enterprise Data Processing Agreement (DPA)</h2>
-          <p>For Enterprise customers processing personal data on behalf of EU citizens, a standard Data Processing Agreement (DPA) is available upon request. Please contact enterprise@matdatahub.com to execute a DPA.</p>
+          <p>For Enterprise customers processing personal data on behalf of EU citizens, a standard Data Processing Agreement (DPA) is available upon request. Please contact <a href="mailto:matdatahub.support@gmail.com" className="text-indigo-600 dark:text-indigo-400 underline font-medium">matdatahub.support@gmail.com</a> (Subject: Enterprise DPA) to execute a DPA.</p>
         </section>
 
         <section>
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white font-heading mb-3">8. Governing Law and Jurisdiction</h2>
-          <p>These terms are governed by the laws of Germany. Any disputes arising out of or in connection with these terms shall be subject to the exclusive jurisdiction of the courts of Berlin, Germany.</p>
+          <p>These Terms and any disputes arising out of or related to the service are governed by and construed in accordance with the laws of India, without giving effect to any choice or conflict of law principles. Any legal suit, action, or proceeding arising out of or related to these Terms shall be instituted exclusively in the competent courts of New Delhi, India.</p>
         </section>
       </div>
     </div>
