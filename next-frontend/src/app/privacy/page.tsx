@@ -6,7 +6,7 @@ export default function PrivacyPage() {
       <div className="space-y-6">
         <section>
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white font-heading mb-3">1. Data Controller</h2>
-          <p>MatDataHub GmbH (fictional placeholder for demo), located at Example Street 1, 10115 Berlin, Germany, is the data controller responsible for your personal data. Contact us at privacy@matdatahub.com.</p>
+          <p>MatDataHub is the data controller responsible for your personal data. For any questions, data requests, or to exercise your privacy rights, please contact our privacy team at privacy@matdatahub.com.</p>
         </section>
 
         <section>

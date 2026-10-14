@@ -33,12 +33,13 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white font-heading mb-3">5. EU CBAM & Regulatory Disclaimer</h2>
-          <p>The CBAM analytics and reporting tools provided by MatDataHub are designed for estimation and internal planning purposes only.</p>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white font-heading mb-3">5. EU CBAM & Regulatory Disclaimer (No Reliance)</h2>
+          <p>The CBAM analytics and reporting tools provided by MatDataHub are designed for preliminary evaluation, informational modeling, and cost estimation purposes only.</p>
           <ul className="list-disc pl-6 mt-3 space-y-2">
-            <li><strong>Not Legal Advice:</strong> Our outputs do not constitute professional compliance, tax, or legal advice.</li>
-            <li><strong>Data Accuracy:</strong> While we strive to map CN codes to EU Commission default factors accurately, you are solely responsible for the final declarations submitted to customs authorities.</li>
-            <li><strong>Liability:</strong> MatDataHub is not liable for any fines, penalties, or compliance failures resulting from the use of our estimates. Importers must independently verify their CN codes, origin countries, and emissions data.</li>
+            <li><strong>Not Legal or Customs Advice:</strong> Our calculations, reports, and data outputs do not constitute professional compliance, tax, customs, or legal advice.</li>
+            <li><strong>No Reliance for Official Filings:</strong> You acknowledge and agree not to rely on any outputs from this service for the purpose of official customs declarations, registry filings, or statutory compliance under Regulation (EU) 2023/956. Importers must independently verify all Combined Nomenclature (CN) codes, country-of-origin rules, and carbon factor defaults with a licensed customs broker or qualified trade legal counsel.</li>
+            <li><strong>Adjustment Scope:</strong> Estimates use published Commission default factors and simplified phase-in calculations; the tool does not yet apply the definitive free-allocation benchmark adjustment under Implementing Regulation (EU) 2025/2620. Actual regulatory liabilities may differ materially.</li>
+            <li><strong>Liability Limitation:</strong> To the maximum extent permitted by law, MatDataHub disclaims all liability for customs fines, surcharges, penalties, or compliance disputes resulting from your reliance on our preliminary estimates.</li>
           </ul>
         </section>
         <section>

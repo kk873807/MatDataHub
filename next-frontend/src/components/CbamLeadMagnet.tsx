@@ -11,7 +11,7 @@ export function CbamLeadMagnet() {
       <div className="max-w-5xl mx-auto relative z-10 flex flex-col md:flex-row items-center gap-12">
         <div className="flex-1 text-left">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-800 text-emerald-300 text-xs font-bold rounded-full uppercase tracking-wider mb-6">
-            <Leaf className="w-3 h-3" /> EU CBAM Compliance 2026
+            <Leaf className="w-3 h-3" /> EU CBAM Cost Estimator (Beta)
           </div>
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-6 font-heading">
             Don't get hit by unexpected EU Carbon Taxes.

@@ -159,6 +159,20 @@ export function LoginModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =
               {loading ? "Please wait..." : isRegister ? "Create Account" : "Sign In"}
               {!loading && <ArrowRight className="w-4 h-4" />}
             </button>
+
+            {isRegister && (
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 text-center leading-relaxed mt-2">
+                By creating an account, you accept our{" "}
+                <a href="/terms" target="_blank" rel="noopener noreferrer" className="underline hover:text-slate-800 dark:hover:text-slate-200">
+                  Terms of Service
+                </a>{" "}
+                and{" "}
+                <a href="/privacy" target="_blank" rel="noopener noreferrer" className="underline hover:text-slate-800 dark:hover:text-slate-200">
+                  Privacy Policy
+                </a>
+                . All CBAM outputs are estimates for preliminary planning and not official compliance advice.
+              </p>
+            )}
           </form>
 
           <div className="mt-6 text-center">
