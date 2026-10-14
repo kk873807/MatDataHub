@@ -88,6 +88,8 @@ class RegisterRequest(BaseModel):
     email: str = Field(..., examples=["kishan@example.com"])
     password: str = Field(..., min_length=6, examples=["securepass123"])
     name: Optional[str] = Field(None, max_length=100, examples=["Kishan"])
+    terms_accepted: Optional[bool] = Field(False, description="Whether user accepted terms and privacy policy")
+    terms_version: Optional[str] = Field(None, max_length=50, description="Terms version accepted")
 
 
 class LoginRequest(BaseModel):

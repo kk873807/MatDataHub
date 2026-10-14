@@ -217,12 +217,15 @@ def register(req: RegisterRequest, request: Request, db: Session = Depends(get_d
 
     # Create user
     is_admin_user = (req.email.lower().strip() == "kishankapoor35@gmail.com")
+    accepted_at = datetime.now(timezone.utc) if req.terms_accepted else None
     user = User(
         email=req.email.lower().strip(),
         hashed_password=hash_password(req.password),
         name=req.name,
         tier="free",
-        is_admin=is_admin_user
+        is_admin=is_admin_user,
+        terms_accepted_at=accepted_at,
+        terms_version=req.terms_version if req.terms_accepted else None
     )
     raw_key, raw_secret = generate_api_credentials()
     import hashlib

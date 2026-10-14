@@ -50,6 +50,7 @@ export default function CBAMAnalytics() {
   const [weightCol, setWeightCol] = useState("Weight_kg");
   const [hardQuarantine, setHardQuarantine] = useState(true);
   const [disableDeMinimis, setDisableDeMinimis] = useState(false);
+  const [acknowledgedEstimates, setAcknowledgedEstimates] = useState(false);
   
   // Manual Entry State
   const [manualMaterial, setManualMaterial] = useState("");
@@ -233,6 +234,7 @@ MAT-C5,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
   };
 
   const handleLoadDemo = (type: "automotive" | "construction") => {
+    setAcknowledgedEstimates(true);
     const csvStr = DEMO_BOMS[type];
     const demoFile = new File([csvStr], `${type}_bom_demo.csv`, { type: "text/csv" });
     setFile(demoFile);
@@ -481,10 +483,15 @@ MAT-C5,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
         </Link>
 
         <div className="print:hidden">
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white font-heading flex items-center gap-3">
-            <Factory className="w-8 h-8 text-amber-500" />
-            CBAM Estimate & Supply Chain Risk
-          </h1>
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-white font-heading flex items-center gap-3">
+              <Factory className="w-8 h-8 text-amber-500" />
+              CBAM Estimate & Supply Chain Risk
+            </h1>
+            <span className="px-2.5 py-0.5 text-xs font-bold rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 uppercase tracking-wider">
+              Beta
+            </span>
+          </div>
           <p className="text-slate-600 dark:text-slate-300 mt-2">Upload your Bill of Materials or enter manually to estimate CBAM carbon costs and supply chain risk.</p>
           
           <div className="mt-4 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg flex items-start gap-3 text-amber-800 dark:text-amber-200 text-sm max-w-4xl">
@@ -885,11 +892,22 @@ MAT-C5,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
           )}
 
           {activeTab !== "history" && (
-          <div className="mt-8 flex justify-end">
+          <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-200 dark:border-slate-800 pt-6">
+            <label className="flex items-start gap-2.5 cursor-pointer max-w-xl text-left select-none group">
+              <input
+                type="checkbox"
+                checked={acknowledgedEstimates}
+                onChange={e => setAcknowledgedEstimates(e.target.checked)}
+                className="mt-0.5 h-4 w-4 rounded border-slate-300 dark:border-slate-700 text-amber-600 focus:ring-amber-500 cursor-pointer flex-shrink-0"
+              />
+              <span className="text-xs text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-200 leading-snug">
+                I understand these calculations are preliminary estimates for internal modeling and <strong className="text-slate-800 dark:text-slate-200">not for official customs filings</strong>.
+              </span>
+            </label>
             <button
               onClick={processBOM}
-              disabled={(activeTab === "upload" && !file) || (activeTab === "manual" && (!manualMaterial || !manualWeight || (!manualCnCode && !manualSector))) || loading}
-              className="px-8 py-3 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 text-white rounded-2xl font-bold transition-colors flex items-center gap-2 shadow-lg shadow-amber-900/20"
+              disabled={!acknowledgedEstimates || (activeTab === "upload" && !file) || (activeTab === "manual" && (!manualMaterial || !manualWeight || (!manualCnCode && !manualSector))) || loading}
+              className="px-8 py-3 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 text-white rounded-2xl font-bold transition-colors flex items-center gap-2 shadow-lg shadow-amber-900/20 whitespace-nowrap self-end sm:self-auto cursor-pointer disabled:cursor-not-allowed"
             >
               {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Factory className="w-5 h-5" />}
               {loading ? "Analyzing..." : "Estimate CBAM Cost"}

@@ -9,6 +9,7 @@ export function LoginModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [isRegister, setIsRegister] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -17,11 +18,25 @@ export function LoginModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    if (isRegister && !termsAccepted) {
+      setError("Please accept the Terms of Service and Privacy Policy to create an account.");
+      return;
+    }
+
     setLoading(true);
 
     try {
       const endpoint = isRegister ? `${API}/auth/register` : `${API}/auth/login`;
-      const payload = isRegister ? { email, password, name: name || email.split("@")[0] } : { email, password };
+      const payload = isRegister 
+        ? { 
+            email, 
+            password, 
+            name: name || email.split("@")[0],
+            terms_accepted: true,
+            terms_version: "2026-10-14"
+          } 
+        : { email, password };
       
       const res = await fetch(endpoint, {
         method: "POST",
@@ -34,8 +49,10 @@ export function LoginModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =
 
       localStorage.setItem("token", data.access_token);
       
-      // If this is a new registration, clear the tour flags so the tour runs
+      // If this is a new registration, record terms acceptance and clear tour flags so the tour runs
       if (isRegister) {
+        localStorage.setItem("terms_accepted_version", "2026-10-14");
+        localStorage.setItem("terms_accepted_at", new Date().toISOString());
         localStorage.removeItem("tourCompleted");
         localStorage.removeItem("ai_chat_history");
       }
@@ -151,28 +168,38 @@ export function LoginModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =
               </div>
             </div>
 
+            {isRegister && (
+              <div className="flex items-start gap-2.5 pt-2 text-left">
+                <input 
+                  type="checkbox" 
+                  id="register-terms"
+                  required
+                  checked={termsAccepted}
+                  onChange={(e) => setTermsAccepted(e.target.checked)}
+                  className="mt-1 h-4 w-4 rounded border-slate-300 dark:border-slate-700 text-blue-600 focus:ring-blue-500 cursor-pointer flex-shrink-0"
+                />
+                <label htmlFor="register-terms" className="text-xs text-slate-600 dark:text-slate-400 leading-snug cursor-pointer select-none">
+                  I agree to the{" "}
+                  <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 underline font-medium hover:underline">
+                    Terms of Service
+                  </a>{" "}
+                  and{" "}
+                  <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 underline font-medium hover:underline">
+                    Privacy Policy
+                  </a>
+                  . I understand that all CBAM calculations are preliminary estimates and not official compliance declarations.
+                </label>
+              </div>
+            )}
+
             <button 
               type="submit" 
-              disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-colors disabled:opacity-50 mt-6"
+              disabled={loading || (isRegister && !termsAccepted)}
+              className="w-full bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-colors disabled:opacity-50 mt-4"
             >
               {loading ? "Please wait..." : isRegister ? "Create Account" : "Sign In"}
               {!loading && <ArrowRight className="w-4 h-4" />}
             </button>
-
-            {isRegister && (
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 text-center leading-relaxed mt-2">
-                By creating an account, you accept our{" "}
-                <a href="/terms" target="_blank" rel="noopener noreferrer" className="underline hover:text-slate-800 dark:hover:text-slate-200">
-                  Terms of Service
-                </a>{" "}
-                and{" "}
-                <a href="/privacy" target="_blank" rel="noopener noreferrer" className="underline hover:text-slate-800 dark:hover:text-slate-200">
-                  Privacy Policy
-                </a>
-                . All CBAM outputs are estimates for preliminary planning and not official compliance advice.
-              </p>
-            )}
           </form>
 
           <div className="mt-6 text-center">

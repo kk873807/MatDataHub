@@ -136,6 +136,8 @@ class User(Base):
     is_blocked = Column(Boolean, default=False)
     is_admin = Column(Boolean, default=False)
     session_token = Column(String(64), nullable=True)  # For single-session enforcement
+    terms_accepted_at = Column(DateTime(timezone=True), nullable=True)
+    terms_version = Column(String(50), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     def __repr__(self):

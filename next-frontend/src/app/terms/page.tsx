@@ -28,8 +28,8 @@ export default function TermsPage() {
         </section>
         
         <section>
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white font-heading mb-3">4. Pricing and Data Reliability</h2>
-          <p>All macroeconomic pricing and CBAM calculations are derived from proxy indices for trend analysis. They do not constitute live commercial quotes.</p>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white font-heading mb-3">4. Pricing and Regulatory Factor Reliability</h2>
+          <p>Material pricing is derived from market proxy indices for trend analysis and does not constitute live commercial quotes. CBAM carbon factor defaults are mapped from Commission Implementing Regulation (EU) 2025/2621 (as amended by (EU) 2026/1740). Outputs are preliminary estimates and not live commercial or customs quotes.</p>
         </section>
 
         <section>
