@@ -105,7 +105,7 @@ def list_materials(
     request: Request,
     # Pagination
     page: int = Query(1, ge=1, description="Page number"),
-    per_page: int = Query(20, ge=1, le=50, description="Items per page"),
+    per_page: int = Query(20, ge=1, le=2000, description="Items per page"),
     # Filters
     category: Optional[str] = Query(None, description="Filter by category: Metal, Polymer, Ceramic, Composite"),
     subcategory: Optional[str] = Query(None, description="Filter by subcategory"),
@@ -195,14 +195,15 @@ def list_materials(
     # Get total count (before pagination)
     total = query.count()
 
-    # Paginate
-    offset = (page - 1) * per_page
-    materials = query.offset(offset).limit(per_page).all()
+    # Paginate safely (cap at 200 to prevent excessive DB load)
+    safe_limit = min(per_page, 200)
+    offset = (page - 1) * safe_limit
+    materials = query.offset(offset).limit(safe_limit).all()
 
     return MaterialListResponse(
         total=total,
         page=page,
-        per_page=per_page,
+        per_page=safe_limit,
         materials=materials,
     )
 
@@ -211,12 +212,40 @@ def list_materials(
 # GET /materials/autocomplete  — Search suggestions
 # ──────────────────────────────────────────────
 
+_MENU_CACHE = {"expires": 0.0, "data": []}
+
 @router.get("/menu", response_model=List[MaterialMenuResponse])
-@limiter.limit("60/minute")
+@limiter.limit("300/minute")
 def get_material_menu(request: Request, db: Session = Depends(get_db)):
-    """Returns only ID, Name, and Category for frontend dropdowns to prevent bulk data scraping."""
-    results = db.query(Material.id, Material.name, Material.category).order_by(Material.name).all()
-    return [{"id": r.id, "name": r.name, "category": r.category} for r in results]
+    """Returns only lightweight fields for frontend dropdowns to prevent bulk data scraping."""
+    global _MENU_CACHE
+    now = time.time()
+    if _MENU_CACHE["data"] and now < _MENU_CACHE["expires"]:
+        return _MENU_CACHE["data"]
+
+    results = (
+        db.query(
+            Material.id,
+            Material.name,
+            Material.category,
+            Material.density,
+            Material.cost_per_kg_min,
+        )
+        .order_by(Material.name)
+        .all()
+    )
+    data = [
+        {
+            "id": r.id,
+            "name": r.name or "Unnamed Material",
+            "category": r.category or "Other",
+            "density": r.density,
+            "cost_per_kg_min": r.cost_per_kg_min,
+        }
+        for r in results
+    ]
+    _MENU_CACHE = {"expires": now + 600, "data": data}
+    return data
 
 @router.get("/autocomplete")
 @limiter.limit("600/minute")
@@ -255,7 +284,7 @@ def search_materials(
     request: Request,
     q: str = Query(..., min_length=1, description="Search query (searches name, grade, applications, equivalent_grades)"),
     page: int = Query(1, ge=1),
-    per_page: int = Query(20, ge=1, le=50),  # SECURITY: Hard cap to 50 to prevent DB dumping
+    per_page: int = Query(20, ge=1, le=2000),
     db: Session = Depends(get_db),
     current_user: Optional[User] = Depends(get_optional_user),  # public
 ):
@@ -285,14 +314,15 @@ def search_materials(
             )
         )
 
+    safe_limit = min(per_page, 200)
     total = query.count()
-    offset = (page - 1) * per_page
-    materials = query.order_by(Material.name).offset(offset).limit(per_page).all()
+    offset = (page - 1) * safe_limit
+    materials = query.order_by(Material.name).offset(offset).limit(safe_limit).all()
 
     return MaterialListResponse(
         total=total,
         page=page,
-        per_page=per_page,
+        per_page=safe_limit,
         materials=materials,
     )
 

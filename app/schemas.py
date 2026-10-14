@@ -23,7 +23,7 @@ class MaterialBase(BaseModel):
     yield_strength_min: Optional[float] = Field(None, ge=0, examples=[205.0])
     yield_strength_max: Optional[float] = Field(None, ge=0, examples=[310.0])
     elongation: Optional[float] = Field(None, ge=0, examples=[40.0])
-    hardness: Optional[str] = Field(None, max_length=50, examples=["85 HRB"])
+    hardness: Optional[str] = Field(None, max_length=500, examples=["85 HRB"])
     elastic_modulus: Optional[float] = Field(None, ge=0, examples=[193.0])
 
     # Thermal
@@ -294,6 +294,8 @@ class PriceHistoryResponse(BaseModel):
 class MaterialMenuResponse(BaseModel):
     id: int
     name: str
-    category: str
+    category: Optional[str] = "Other"
+    density: Optional[float] = None
+    cost_per_kg_min: Optional[float] = None
     class Config:
         from_attributes = True

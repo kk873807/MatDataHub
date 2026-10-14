@@ -55,9 +55,25 @@ function CompareMaterialsContent() {
 
   // Fetch list of materials for dropdowns
   useEffect(() => {
-    fetch(`${API}/materials?per_page=2000`)
-      .then(res => res.json())
-      .then(data => setAllMaterials(data.materials || []));
+    fetch(`${API}/materials/menu`)
+      .then(res => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then(data => {
+        if (Array.isArray(data)) {
+          setAllMaterials(data);
+        } else if (data && Array.isArray(data.materials)) {
+          setAllMaterials(data.materials);
+        }
+      })
+      .catch(err => {
+        console.error("Failed to load materials menu:", err);
+        fetch(`${API}/materials?per_page=50`)
+          .then(r => r.ok ? r.json() : null)
+          .then(d => { if (d?.materials) setAllMaterials(d.materials); })
+          .catch(() => {});
+      });
   }, []);
 
   // Fetch comparison
@@ -307,8 +323,8 @@ function CompareMaterialsContent() {
             <MaterialSearchSelect
               materials={allMaterials}
               excludeIds={selectedIds}
-              disabled={selectedIds.length >= maxCompare}
-              placeholder={selectedIds.length >= maxCompare ? `Maximum reached (${userTier} tier limit: ${maxCompare})` : "Search and add material..."}
+              disabled={selectedIds.length >= maxCompare || allMaterials.length === 0}
+              placeholder={allMaterials.length === 0 ? "Loading materials..." : selectedIds.length >= maxCompare ? `Maximum reached (${userTier} tier limit: ${maxCompare})` : "Search and add material..."}
               onSelect={(id) => {
                 if (!selectedIds.includes(id) && selectedIds.length < maxCompare) {
                   setSelectedIds([...selectedIds, id]);

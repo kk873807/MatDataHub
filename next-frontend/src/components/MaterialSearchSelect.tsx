@@ -29,10 +29,13 @@ export default function MaterialSearchSelect({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const filtered = materials.filter(m => 
-    !excludeIds.includes(m.id.toString()) &&
-    m.name.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = (materials || [])
+    .filter(m => 
+      m &&
+      !excludeIds.includes(m.id?.toString()) &&
+      (m.name ? m.name.toLowerCase().includes(search.toLowerCase()) : false)
+    )
+    .slice(0, 100);
 
   return (
     <div className="relative w-full max-w-sm" ref={ref}>
@@ -58,7 +61,9 @@ export default function MaterialSearchSelect({
             />
           </div>
           <div className="overflow-y-auto flex-1 p-2 space-y-1">
-            {filtered.length === 0 ? (
+            {(!materials || materials.length === 0) ? (
+              <div className="p-3 text-center text-sm text-slate-500 dark:text-slate-400">Loading materials...</div>
+            ) : filtered.length === 0 ? (
               <div className="p-3 text-center text-sm text-slate-500 dark:text-slate-400">No materials found.</div>
             ) : (
               filtered.map(m => (
