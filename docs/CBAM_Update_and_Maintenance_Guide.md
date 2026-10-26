@@ -185,9 +185,12 @@ To prevent legal exposure from early customer reliance:
 
 ### 5.3 Low-Cost Professional Verification
 * **Startup Legal Clinic / 1-Hour Attorney Session**:
-  * **Priority 1: Governing Law & Jurisdiction**: Review the choice of Indian law / New Delhi jurisdiction versus buyer jurisdiction. German law (*AGB-Recht*, §§ 305–310 BGB) strictly strikes down standard liability exclusions and caps (leaving companies exposed to unlimited statutory liability in Berlin). Verify that Indian governing law effectively shields the entity while remaining commercially acceptable to EU pilots.
-  * **Priority 2: Enforceability of Liability Cap During Free Beta**: Review Section 5 of Terms. When users pay €0 during a free beta, a clause capping liability to "fees paid in the prior 12 months" can be challenged as illusory or unconscionable if damages occur. Confirm whether an explicit nominal cap (e.g., €100 or INR 10,000) or pure gratuitous-use disclaimer best insulates the business under relevant consumer and commercial protection rules.
-  * **Priority 3: Mandatory Pre-Litigation Escalation**: Include 30-day informal negotiation before formal arbitration or court filing.
+  * **Priority 1: Governing Law, Venue & Neutral Arbitration**: Review the choice of Indian law / exclusive New Delhi court jurisdiction in Section 8. While shifting away from German law (*AGB-Recht*, §§ 305–310 BGB) removes the risk of automatic invalidation of standard liability caps and litigation in Berlin, EU enterprise buyers frequently resist exclusive court jurisdiction on another continent. Ask whether neutral institutional arbitration (e.g., SIAC, ICC, or LCIA rules in English) is the standard middle ground for paid B2B contracts.
+  * **Priority 2: Enforceability of Liability Cap During Free Beta**: Review Sections 3, 5, and 6 of Terms. When users pay €0 during a free beta, a clause capping liability to "fees paid in the prior 12 months" can be challenged as illusory or unconscionable if damages occur. Confirm whether an explicit nominal cap (e.g., €100 or INR 10,000) alongside the free-beta "AS-IS / no uptime commitment" clause best insulates the business.
+  * **Priority 3: India DPDP Act (2023) & GDPR Art. 27 EU Representative**: Because the business operates from India and serves EU beta importers, ask:
+    1. Which phased-in obligations of India's Digital Personal Data Protection Act, 2023 (DPDP Act) apply now?
+    2. Does offering the service to EU users and stating GDPR rights in `/privacy` trigger the Article 27 GDPR requirement to designate an EU Representative, or does the occasional/low-risk B2B exception apply during a small beta?
+  * **Priority 4: Mandatory Pre-Litigation Escalation**: Include 30-day informal negotiation before formal arbitration or court filing.
 * **Licensed Customs Broker**: 2–3 hours fixed scope to spot-check Annex I prefix tables and 20 representative commodity lines.
 * **E&O Insurance**: Solicit quotes for tech errors & omissions insurance before charging paying customers.
 
@@ -196,6 +199,26 @@ Do not incur retainer expenses prematurely. Engage qualified legal and trade cou
 1. The first paid enterprise contract is negotiated.
 2. An enterprise client requests a custom Data Processing Agreement (DPA) or bespoke liability terms.
 3. A client states intent to submit platform numbers directly in a statutory registry declaration.
+
+### 5.5 Legal Document Versioning & Git Tagging Protocol
+To ensure every recorded `terms_version` in `public.users` maps unambiguously to the exact wording the user saw:
+1. **Never use dynamic dates** (`new Date()`) on `/terms` or `/privacy`. Both pages render the static constants `LEGAL_LAST_UPDATED` and `LEGAL_VERSION` from `next-frontend/src/lib/legal.ts`.
+2. **Bump both constants on every wording change**:
+   * Update `CURRENT_TERMS_VERSION` in `app/legal.py`.
+   * Update `LEGAL_VERSION` and `LEGAL_LAST_UPDATED` in `next-frontend/src/lib/legal.ts`.
+   * Run `python tests/test_tenant_isolation.py` (`test_frontend_and_backend_legal_versions_match` fails if the two files diverge).
+3. **Tag the commit in Git**:
+   ```bash
+   git tag -a legal-YYYY-MM-DD -m "Terms of Service and Privacy Policy version YYYY-MM-DD"
+   git push origin legal-YYYY-MM-DD
+   ```
+   Historical tags:
+   * `legal-2026-10-14-de` (`ea21ac0`): Initial 14 Oct 2026 Terms (German governing law) & 6-section Privacy Policy.
+   * `legal-2026-10-14-in` (`4b2ace6`): 14 Oct 2026 revision changing governing law to India and contact email to `matdatahub.support@gmail.com` before version bump.
+   * `legal-2026-10-26`: Version `2026-10-26` (explicit version header, free beta clause, accurate Groq AI disclosure, India DPDP Act rights, and re-acceptance gate).
+4. **Automatic Re-Acceptance (`TermsGate`)**:
+   * Whenever `CURRENT_TERMS_VERSION` is bumped, `GET /api/v1/auth/me` returns `terms_current: false` for all users on an older or missing version (including Google OAuth users).
+   * `TermsGate` (`next-frontend/src/components/TermsGate.tsx`) blocks access and prompts the signed-in user to accept the new version via `POST /api/v1/auth/accept-terms`, which records `terms_version` and a server-generated UTC `terms_accepted_at` timestamp.
 
 ---
 

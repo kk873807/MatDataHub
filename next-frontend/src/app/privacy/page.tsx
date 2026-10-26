@@ -1,8 +1,10 @@
+import { LEGAL_VERSION, LEGAL_LAST_UPDATED } from "@/lib/legal";
+
 export default function PrivacyPage() {
   return (
     <div className="max-w-4xl mx-auto p-12 text-slate-600 dark:text-slate-300">
       <h1 className="text-4xl font-bold text-slate-900 dark:text-white font-heading mb-6">Privacy Policy</h1>
-      <p className="mb-4">Last updated: {new Date().toLocaleDateString()}</p>
+      <p className="mb-4">Last updated: {LEGAL_LAST_UPDATED} &middot; Version {LEGAL_VERSION}</p>
       
       <div className="space-y-6">
         <section>
@@ -35,7 +37,7 @@ export default function PrivacyPage() {
             <li><strong>Frontend & Edge Delivery:</strong> Web interfaces, static assets, and edge routing are deployed via Vercel Inc.</li>
             <li><strong>Authentication:</strong> Google Sign-In is provided via Google OAuth (Google LLC, USA) for single sign-on authentication alongside email-based registration.</li>
             <li><strong>Payment Processing:</strong> Transactions and tier subscriptions are processed by Razorpay (Razorpay Software Private Limited).</li>
-            <li><strong>AI Advisory (Optional):</strong> The AI Material Adviser processes user queries through OpenAI and Google Cloud APIs. Customer BOM data and queries are never used to train public foundation models.</li>
+            <li><strong>AI Material Adviser (Optional):</strong> When you use the AI Material Adviser chat, the text you type, together with matching entries from our public materials catalogue, is sent to Groq, Inc. (USA) to generate the reply. Uploaded BOM files and CBAM analyses are <strong>not</strong> sent to Groq or to any other AI provider; please do not paste confidential BOM data into the chat. Groq&apos;s published data policy states that it does not retain inference inputs by default, but may log inputs and outputs for up to 30 days to troubleshoot errors or investigate abuse, and stores such data in the United States.</li>
           </ul>
         </section>
 
@@ -59,9 +61,9 @@ export default function PrivacyPage() {
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white font-heading mb-3">6. Your Rights Under GDPR & UK GDPR</h2>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white font-heading mb-3">6. Your Data Protection Rights (GDPR, UK GDPR &amp; India DPDP Act)</h2>
           <p>
-            If you are located in the European Economic Area (EEA), the United Kingdom, or Switzerland, you have the right to access, rectify, export, restrict processing, or request permanent erasure of your personal data. To exercise any of these rights, contact our privacy officer at <a href="mailto:matdatahub.support@gmail.com" className="text-indigo-600 dark:text-indigo-400 underline font-medium">matdatahub.support@gmail.com</a>.
+            Depending on your location—including the European Economic Area (EEA), the United Kingdom, Switzerland, or India (under the Digital Personal Data Protection Act, 2023)—you have the right to access, correct, rectify, export, restrict processing, withdraw consent, or request permanent erasure of your personal data, as well as the right to grievance redressal. To exercise any of these rights, contact our privacy and grievance officer at <a href="mailto:matdatahub.support@gmail.com" className="text-indigo-600 dark:text-indigo-400 underline font-medium">matdatahub.support@gmail.com</a>.
           </p>
         </section>
       </div>

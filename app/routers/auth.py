@@ -66,7 +66,9 @@ from app.schemas import (
     UserProfile,
     UpgradeRequest,
     UpgradeRequestResponse,
+    AcceptTermsRequest,
 )
+from app.legal import CURRENT_TERMS_VERSION
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -221,6 +223,13 @@ def register(req: RegisterRequest, request: Request, db: Session = Depends(get_d
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="You must accept the Terms of Service and Privacy Policy to create an account."
         )
+    # The version must be the one currently served, so the record names the
+    # exact wording the user saw. A stale browser tab gets a 409, not a wrong record.
+    if req.terms_version != CURRENT_TERMS_VERSION:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"The Terms of Service have been updated (current version {CURRENT_TERMS_VERSION}). Please reload the page and accept the current Terms."
+        )
 
     # Create user
     is_admin_user = (req.email.lower().strip() == "kishankapoor35@gmail.com")
@@ -232,7 +241,7 @@ def register(req: RegisterRequest, request: Request, db: Session = Depends(get_d
         tier="free",
         is_admin=is_admin_user,
         terms_accepted_at=accepted_at,
-        terms_version=req.terms_version or "2026-10-14"
+        terms_version=CURRENT_TERMS_VERSION
     )
     raw_key, raw_secret = generate_api_credentials()
     import hashlib
@@ -349,9 +358,39 @@ def get_profile(current_user: User = Depends(get_current_user), db: Session = De
         "requested_tier": current_user.requested_tier,
         "upgrade_status": current_user.upgrade_status,
         "saved_count": saved_count,
-        "ai_credits": current_user.ai_credits
+        "ai_credits": current_user.ai_credits,
+        "terms_version": current_user.terms_version,
+        "terms_accepted_at": current_user.terms_accepted_at,
+        "terms_current": current_user.terms_version == CURRENT_TERMS_VERSION and current_user.terms_accepted_at is not None,
+        "current_terms_version": CURRENT_TERMS_VERSION,
     }
     return profile_data
+
+
+# ──────────────────────────────────────────────
+# POST /auth/accept-terms
+# ──────────────────────────────────────────────
+@router.post("/accept-terms")
+def accept_terms(req: AcceptTermsRequest, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    """
+    Record that the signed-in user accepted the current Terms and Privacy Policy.
+
+    Used for Google sign-ups (which never pass through /register) and for
+    users who accepted an earlier version. The timestamp is set here, never by
+    the client. A version other than the one currently served is rejected.
+    """
+    if req.terms_version != CURRENT_TERMS_VERSION:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"The Terms of Service have been updated (current version {CURRENT_TERMS_VERSION}). Please reload the page and accept the current Terms."
+        )
+    current_user.terms_version = CURRENT_TERMS_VERSION
+    current_user.terms_accepted_at = datetime.now(timezone.utc)
+    db.commit()
+    return {
+        "terms_version": current_user.terms_version,
+        "terms_accepted_at": current_user.terms_accepted_at.isoformat(),
+    }
 
 
 # ──────────────────────────────────────────────

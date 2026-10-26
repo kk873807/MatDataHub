@@ -125,7 +125,20 @@ class UserProfile(BaseModel):
     requested_tier: Optional[str] = None
     upgrade_status: Optional[str] = None
 
+    # Legal acceptance state. terms_current is False when the user has never
+    # accepted (e.g. Google sign-up, pre-versioning accounts) or accepted an
+    # older version; the frontend then blocks use until they re-accept.
+    terms_version: Optional[str] = None
+    terms_accepted_at: Optional[datetime] = None
+    terms_current: bool = False
+    current_terms_version: Optional[str] = None
+
     model_config = {"from_attributes": True}
+
+
+class AcceptTermsRequest(BaseModel):
+    """Body for POST /auth/accept-terms. The version must equal the one the server currently serves."""
+    terms_version: str = Field(..., max_length=50)
 
 
 # ══════════════════════════════════════════════

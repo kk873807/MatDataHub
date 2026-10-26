@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { X, Mail, Lock, ArrowRight } from "lucide-react";
 import { API } from "@/lib/api";
+import { LEGAL_VERSION } from "@/lib/legal";
 
 export function LoginModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const router = useRouter();
@@ -34,7 +35,7 @@ export function LoginModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =
             password, 
             name: name || email.split("@")[0],
             terms_accepted: true,
-            terms_version: "2026-10-14"
+            terms_version: LEGAL_VERSION
           } 
         : { email, password };
       
@@ -49,10 +50,9 @@ export function LoginModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =
 
       localStorage.setItem("token", data.access_token);
       
-      // If this is a new registration, record terms acceptance and clear tour flags so the tour runs
+      // If this is a new registration, clear tour flags so the tour runs.
+      // Terms acceptance is recorded server-side (users.terms_version / terms_accepted_at).
       if (isRegister) {
-        localStorage.setItem("terms_accepted_version", "2026-10-14");
-        localStorage.setItem("terms_accepted_at", new Date().toISOString());
         localStorage.removeItem("tourCompleted");
         localStorage.removeItem("ai_chat_history");
       }

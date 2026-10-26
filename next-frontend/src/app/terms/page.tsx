@@ -1,8 +1,10 @@
+import { LEGAL_VERSION, LEGAL_LAST_UPDATED } from "@/lib/legal";
+
 export default function TermsPage() {
   return (
     <div className="max-w-4xl mx-auto p-12 text-slate-600 dark:text-slate-300">
       <h1 className="text-4xl font-bold text-slate-900 dark:text-white font-heading mb-6">Terms and Conditions</h1>
-      <p className="mb-4">Last updated: {new Date().toLocaleDateString()}</p>
+      <p className="mb-4">Last updated: {LEGAL_LAST_UPDATED} &middot; Version {LEGAL_VERSION}</p>
       
       <div className="space-y-6">
         <section>
@@ -11,20 +13,20 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white font-heading mb-3">2. Intellectual Property & Anti-Scraping</h2>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white font-heading mb-3">2. Intellectual Property &amp; Anti-Scraping</h2>
           <p>
             All content, database schemas, material datasets, proprietary algorithms (including the Rule of Mixtures and CBAM equations), and user interfaces on MatDataHub are the exclusive intellectual property of MatDataHub and are protected by international copyright laws. 
           </p>
           <ul className="list-disc pl-6 mt-3 space-y-2">
             <li><strong>No Data Scraping:</strong> Automated scraping, crawling, or mass-downloading of our material database is strictly prohibited. Violators will face immediate permanent IP bans and legal action.</li>
             <li><strong>No Derivative Works:</strong> You may not copy, reverse-engineer, or resell our datasets, calculators, or platform features to build a competing product.</li>
-            <li><strong>Watermarking:</strong> Data exports and generated PDF reports contain cryptographic and visual watermarks to track unauthorized redistribution of our proprietary data.</li>
           </ul>
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white font-heading mb-3">3. Description of Service</h2>
-          <p>MatDataHub provides users with access to a rich collection of engineering materials data, tools, and analytics. You understand and agree that the service is provided "AS-IS".</p>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white font-heading mb-3">3. Description of Service &amp; Free Beta Status</h2>
+          <p>MatDataHub provides users with access to a rich collection of engineering materials data, tools, and analytics. You understand and agree that the service is provided &quot;AS-IS&quot;.</p>
+          <p className="mt-3"><strong>Free Beta:</strong> The EU CBAM cost estimator and related platform tools are currently offered as a free beta, with no uptime or availability commitment and features that may change, be suspended, or be withdrawn at any time without notice.</p>
         </section>
         
         <section>
@@ -55,6 +57,11 @@ export default function TermsPage() {
         <section>
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white font-heading mb-3">8. Governing Law and Jurisdiction</h2>
           <p>These Terms and any disputes arising out of or related to the service are governed by and construed in accordance with the laws of India, without giving effect to any choice or conflict of law principles. Any legal suit, action, or proceeding arising out of or related to these Terms shall be instituted exclusively in the competent courts of New Delhi, India.</p>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white font-heading mb-3">9. Changes to These Terms</h2>
+          <p>Each version of these Terms and of our Privacy Policy carries the version identifier shown at the top of the page. When we change the wording, we publish a new version and ask signed-in users to accept it before continuing to use the service. We keep a record of which version each account accepted and when.</p>
         </section>
       </div>
     </div>

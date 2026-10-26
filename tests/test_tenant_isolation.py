@@ -426,19 +426,82 @@ def test_auth_register_rejects_missing_or_false_terms():
     )
     assert resp_false.status_code == 400, f"Expected 400, got {resp_false.status_code} {resp_false.text}"
 
-    # 3. terms_accepted=True -> 201 Created and fields recorded
+    # 3. terms_accepted=True with a stale version -> 409, nothing recorded
+    from app.legal import CURRENT_TERMS_VERSION
     _auth_attempts.clear()
     db = TestingSessionLocal()
+    resp_stale = client.post(
+        "/api/v1/auth/register",
+        json={"email": "stale@example.com", "password": "securepassword123", "name": "Stale User", "terms_accepted": True, "terms_version": "2026-10-14"}
+    )
+    assert resp_stale.status_code == 409, f"Expected 409, got {resp_stale.status_code}"
+    assert db.query(User).filter(User.email == "stale@example.com").first() is None
+
+    # 4. terms_accepted=True with the current version -> 201 and server-side version recorded
+    _auth_attempts.clear()
     resp_ok = client.post(
         "/api/v1/auth/register",
-        json={"email": "agreed@example.com", "password": "securepassword123", "name": "Agreed User", "terms_accepted": True, "terms_version": "2026-10-14"}
+        json={"email": "agreed@example.com", "password": "securepassword123", "name": "Agreed User", "terms_accepted": True, "terms_version": CURRENT_TERMS_VERSION}
     )
     assert resp_ok.status_code == 201, f"Expected 201, got {resp_ok.status_code}"
     user = db.query(User).filter(User.email == "agreed@example.com").first()
     assert user is not None
     assert user.terms_accepted_at is not None
-    assert user.terms_version == "2026-10-14"
+    assert user.terms_version == CURRENT_TERMS_VERSION
     db.close()
+
+
+def test_accept_terms_covers_google_and_earlier_version_users():
+    """A user with no acceptance (Google sign-up) or an older version is reported as not current
+    by /auth/me, can accept only the current version, and gets a server-set timestamp."""
+    from datetime import datetime, timezone
+    from app.legal import CURRENT_TERMS_VERSION
+    db = TestingSessionLocal()
+
+    google_user = User(email="google_user@example.com", name="G", hashed_password="OAUTH_USER_NO_PASSWORD",
+                       auth_provider="google", tier="free", is_active=True)
+    old_user = User(email="old_terms@example.com", name="O", hashed_password=hash_password("pass123"),
+                    tier="free", is_active=True, terms_version="2026-10-14",
+                    terms_accepted_at=datetime(2026, 10, 14, 12, 0, tzinfo=timezone.utc))
+    db.add_all([google_user, old_user])
+    db.commit()
+    db.refresh(google_user)
+    db.refresh(old_user)
+
+    for u in (google_user, old_user):
+        headers = {"Authorization": f"Bearer {create_access_token(user_id=u.id, email=u.email, tier=u.tier)}"}
+
+        me = client.get("/api/v1/auth/me", headers=headers).json()
+        assert me["terms_current"] is False
+        assert me["current_terms_version"] == CURRENT_TERMS_VERSION
+
+        stale = client.post("/api/v1/auth/accept-terms", headers=headers, json={"terms_version": "2026-10-14"})
+        assert stale.status_code == 409
+
+        before = datetime.now(timezone.utc)
+        ok = client.post("/api/v1/auth/accept-terms", headers=headers, json={"terms_version": CURRENT_TERMS_VERSION})
+        assert ok.status_code == 200, ok.text
+        assert ok.json()["terms_version"] == CURRENT_TERMS_VERSION
+        accepted_at = datetime.fromisoformat(ok.json()["terms_accepted_at"])
+        if accepted_at.tzinfo is None:
+            accepted_at = accepted_at.replace(tzinfo=timezone.utc)
+        assert accepted_at >= before.replace(microsecond=0)
+
+        me_after = client.get("/api/v1/auth/me", headers=headers).json()
+        assert me_after["terms_current"] is True
+        assert me_after["terms_version"] == CURRENT_TERMS_VERSION
+    db.close()
+
+
+def test_frontend_and_backend_legal_versions_match():
+    """Bumping one constant without the other would make every acceptance fail with 409."""
+    import re
+    from app.legal import CURRENT_TERMS_VERSION
+    with open(os.path.join(ROOT, "next-frontend", "src", "lib", "legal.ts"), encoding="utf-8") as f:
+        ts = f.read()
+    m = re.search(r'LEGAL_VERSION\s*=\s*"([^"]+)"', ts)
+    assert m, "LEGAL_VERSION not found in legal.ts"
+    assert m.group(1) == CURRENT_TERMS_VERSION, f"legal.ts {m.group(1)} != app/legal.py {CURRENT_TERMS_VERSION}"
 
 
 if __name__ == "__main__":
@@ -448,7 +511,9 @@ if __name__ == "__main__":
         test_custom_material_url_not_blocked_across_tenants,
         test_bom_analyze_returns_503_and_saves_nothing_when_defaults_cannot_be_loaded,
         test_bom_analyze_records_estimate_acknowledged,
-        test_auth_register_rejects_missing_or_false_terms
+        test_auth_register_rejects_missing_or_false_terms,
+        test_accept_terms_covers_google_and_earlier_version_users,
+        test_frontend_and_backend_legal_versions_match,
     ]
     for fn in tests:
         fn()

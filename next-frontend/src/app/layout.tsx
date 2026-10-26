@@ -6,6 +6,7 @@ import { AuthGuard } from "@/components/AuthGuard";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AiChatWidget } from "@/components/AiChatWidget";
 import { OnboardingTour } from "@/components/OnboardingTour";
+import { TermsGate } from "@/components/TermsGate";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
@@ -36,6 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </ThemeProvider>
         <AiChatWidget />
         <OnboardingTour />
+        <TermsGate />
       </body>
     </html>
   );
