@@ -61,7 +61,7 @@ export default function LandingPage() {
 
   useEffect(() => {
     fetch(`${API}/feedback/public`)
-      .then(res => res.json())
+      .then(res => (res.ok ? res.json() : []))
       .then(data => {
         if (Array.isArray(data)) {
           // get top 3 most helpful feedbacks or just latest 3
@@ -69,7 +69,9 @@ export default function LandingPage() {
           setFeedbacks(sorted);
         }
       })
-      .catch(console.error);
+      .catch(() => {
+        // Backend or database offline — keep empty feedback list without triggering Next.js error overlay
+      });
   }, []);
 
   return (

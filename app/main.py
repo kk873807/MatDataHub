@@ -37,15 +37,21 @@ def _init_db():
     """Run DB table creation in a background thread so it never blocks
     Uvicorn from binding the port.  Render's health-check sees the open
     port immediately and marks the deploy as successful."""
+    import time as _time
     global _db_ready, _db_error
-    try:
-        print("Background thread: connecting to DB and creating tables...", flush=True)
-        Base.metadata.create_all(bind=engine)
-        _db_ready = True
-        print("Background thread: tables created successfully.", flush=True)
-    except Exception as e:
-        _db_error = str(e)
-        print(f"Background thread: DB init error: {e}", file=sys.stderr, flush=True)
+    for attempt in range(1, 4):
+        try:
+            print(f"Background thread: connecting to DB and creating tables (attempt {attempt}/3)...", flush=True)
+            Base.metadata.create_all(bind=engine)
+            _db_ready = True
+            _db_error = None
+            print("Background thread: tables created successfully.", flush=True)
+            return
+        except Exception as e:
+            _db_error = str(e)
+            print(f"Background thread: DB init error (attempt {attempt}/3): {e}", file=sys.stderr, flush=True)
+            if attempt < 3:
+                _time.sleep(2 * attempt)
 
 
 # ── Build the FastAPI app ─────────────────────────────────────────
@@ -66,10 +72,23 @@ def startup_event():
     t.start()
 
 
-# ── Rate limiting ─────────────────────────────────────────────────
+# ── Rate limiting & DB error handling ─────────────────────────────
+from fastapi.responses import JSONResponse
+from sqlalchemy.exc import OperationalError
+
 limiter = Limiter(key_func=get_remote_address, default_limits=["2000/minute"])
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+
+@app.exception_handler(OperationalError)
+async def db_operational_error_handler(request: Request, exc: OperationalError):
+    """Return a handled 503 so CORSMiddleware attaches Access-Control-Allow-Origin headers
+    instead of letting an unhandled 500 trigger browser TypeError: Failed to fetch."""
+    return JSONResponse(
+        status_code=503,
+        content={"detail": "Database is temporarily unavailable. Please check that the Supabase instance is active."},
+    )
 
 
 # ── Register route modules ────────────────────────────────────────

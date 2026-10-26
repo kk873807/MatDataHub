@@ -100,7 +100,7 @@ export default function ProjectWorkspace() {
         fetch(`${API}/auth/me`, { headers: authHeaders() })
           .then(res => res.ok ? res.json() : null)
           .then(data => setProfile(data))
-          .catch(console.error);
+          .catch(() => {});
       }
       await Promise.all([fetchProject(), fetchMaterials()]);
       setLoading(false);

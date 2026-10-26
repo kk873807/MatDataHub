@@ -58,7 +58,7 @@ export default function WorkspacesPage() {
       .then(data => {
         if (Array.isArray(data)) setProjects(data);
       })
-      .catch(console.error)
+      .catch(() => {})
       .finally(() => setLoading(false));
   };
 

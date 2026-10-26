@@ -31,7 +31,7 @@ export default function AppDashboard() {
             .then(r => r.ok ? r.json() : [])
             .then(projData => {
               if (Array.isArray(projData)) setProjects(projData.slice(0, 3));
-            }).catch(console.error);
+            }).catch(() => {});
           }
         }
       })

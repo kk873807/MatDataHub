@@ -16,9 +16,9 @@ export default function FeedbackCommunityPage() {
 
   useEffect(() => {
     fetch(`${API}/feedback/public`)
-      .then(res => res.json())
+      .then(res => (res.ok ? res.json() : []))
       .then(data => setFeedbacks(Array.isArray(data) ? data : []))
-      .catch(console.error)
+      .catch(() => setFeedbacks([]))
       .finally(() => setLoading(false));
   }, []);
 

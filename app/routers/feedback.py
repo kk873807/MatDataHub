@@ -130,13 +130,16 @@ def mark_resolved(feedback_id: int, _: bool = Depends(verify_admin), db: Session
 @router.get("/public", response_model=list[FeedbackOut])
 def list_public_feedback(db: Session = Depends(get_db)):
     """Public: list all feedback to display as reviews."""
-    # Fetch all visible feedback/replies
-    fb = db.query(Feedback).filter(Feedback.status != "hidden").order_by(Feedback.helpful_votes.desc(), Feedback.created_at.desc()).all()
-    # Mask emails for privacy
-    for f in fb:
-        f.email = None
-        f.image_data = None  # CRITICAL: Prevent giant base64 images from crashing the public feed
-    return fb
+    try:
+        # Fetch all visible feedback/replies
+        fb = db.query(Feedback).filter(Feedback.status != "hidden").order_by(Feedback.helpful_votes.desc(), Feedback.created_at.desc()).all()
+        # Mask emails for privacy
+        for f in fb:
+            f.email = None
+            f.image_data = None  # CRITICAL: Prevent giant base64 images from crashing the public feed
+        return fb
+    except Exception:
+        return []
 
 @router.delete("/{feedback_id}", response_model=FeedbackResponse)
 def delete_feedback(feedback_id: int, _: bool = Depends(verify_admin), db: Session = Depends(get_db)):
