@@ -23,11 +23,11 @@ const PHASES: DemoPhase[] = [
 
 const STEPS: DemoStep[] = [
   // === MATERIALS LIST VIEW === (phase 0)
-  { label: "Materials page — browse 1000+ verified engineering materials", cursor: { x: 240, y: 60 }, duration: 4000, scroll: 0, phaseIndex: 0 },
-  { label: "Material cards show name, category, key properties & est. cost", cursor: { x: 130, y: 150 }, duration: 4500, scroll: 0, phaseIndex: 0 },
-  { label: "Each card shows Yield Strength, Density, and Est. Cost/kg", cursor: { x: 370, y: 150 }, duration: 5000, scroll: 0, phaseIndex: 0 },
+  { label: "Materials page — browse 6,500+ verified engineering materials", cursor: { x: 240, y: 60 }, duration: 4000, scroll: 0, phaseIndex: 0 },
+  { label: "Material cards show name, category, and key mechanical properties", cursor: { x: 130, y: 150 }, duration: 4500, scroll: 0, phaseIndex: 0 },
+  { label: "Each card shows Yield Strength, Density, and Tensile Strength", cursor: { x: 370, y: 150 }, duration: 5000, scroll: 0, phaseIndex: 0 },
   { label: "Use Category filter: Metals, Polymers, Ceramics, Composites", cursor: { x: 100, y: 95 }, duration: 4000, click: true, scroll: 0, phaseIndex: 0 },
-  { label: "Sort results using the dropdown (e.g., Name, Cost, Tensile, Density)", cursor: { x: 350, y: 95 }, duration: 4000, click: true, scroll: 0, phaseIndex: 0 },
+  { label: "Sort results using the dropdown (e.g., Name, Tensile, Yield, Density)", cursor: { x: 350, y: 95 }, duration: 4000, click: true, scroll: 0, phaseIndex: 0 },
 
   // === SEARCH FLOW === (phase 1)
   { label: "Search by material name, grade, or standard...", cursor: { x: 200, y: 55 }, duration: 3000, click: true, scroll: 0, phaseIndex: 1 },
@@ -40,11 +40,9 @@ const STEPS: DemoStep[] = [
   { label: "'Find Substitution' — AI multi-objective alternative finder", cursor: { x: 190, y: 168 }, duration: 4000, click: true, scroll: 0, phaseIndex: 2 },
   { label: "'Use in Synthesizer' — blend as matrix or reinforcement", cursor: { x: 300, y: 168 }, duration: 4000, click: true, scroll: 0, phaseIndex: 2 },
   { label: "'Export PDF' — download full material datasheet", cursor: { x: 400, y: 168 }, duration: 3000, click: true, scroll: 0, phaseIndex: 2 },
-  { label: "Market Price — estimated baseline cost with trend indicator", cursor: { x: 130, y: 225 }, duration: 4500, scroll: -80, phaseIndex: 2 },
-  { label: "Standards & Identifiers — Standard, Grade, Equivalent, Data Source", cursor: { x: 370, y: 225 }, duration: 5500, scroll: -80, phaseIndex: 2 },
+  { label: "Standards & Identifiers — Standard, Grade, Equivalent, Data Source", cursor: { x: 240, y: 225 }, duration: 5500, scroll: -80, phaseIndex: 2 },
   { label: "Full properties: Yield, Tensile, Modulus, Density, Hardness, etc.", cursor: { x: 240, y: 305 }, duration: 5500, scroll: -160, phaseIndex: 2 },
-  { label: "Historical Price Tracking (12M) — SVG area chart showing trends", cursor: { x: 240, y: 380 }, duration: 6000, scroll: -320, phaseIndex: 2 },
-  { label: "Similar Materials — discover related alloys and alternatives", cursor: { x: 240, y: 445 }, duration: 4500, scroll: -450, phaseIndex: 2 },
+  { label: "Similar Materials — discover related alloys and alternatives", cursor: { x: 240, y: 390 }, duration: 4500, scroll: -260, phaseIndex: 2 },
   // Reset
   { label: "", cursor: { x: 460, y: 500 }, duration: 1000, scroll: 0, phaseIndex: 2 },
 ];
@@ -117,10 +115,10 @@ function MaterialsContent({ step }: { step: number }) {
 
             <div className="grid grid-cols-2 gap-2">
               {[
-                { n: "AISI 304 Stainless", cat: "Metal", d: "8.0", y: "215", c: "2.80" },
-                { n: "Al 7075-T6", cat: "Metal", d: "2.81", y: "503", c: "3.20" },
-                { n: "Ti-6Al-4V Grade 5", cat: "Metal", d: "4.43", y: "880", c: "25.0" },
-                { n: "PEEK", cat: "Polymer", d: "1.30", y: "100", c: "90.0" },
+                { n: "AISI 304 Stainless", cat: "Metal", d: "8.0", y: "215", t: "505" },
+                { n: "Al 7075-T6", cat: "Metal", d: "2.81", y: "503", t: "572" },
+                { n: "Ti-6Al-4V Grade 5", cat: "Metal", d: "4.43", y: "880", t: "950" },
+                { n: "PEEK", cat: "Polymer", d: "1.30", y: "100", t: "110" },
               ].map((m, i) => (
                 <div key={i} className={`p-2.5 rounded-xl border bg-white dark:bg-slate-900 transition-all duration-300 ${(step === 1 && i === 0) || (step === 2 && i === 1) ? hl(true) : "border-slate-200 dark:border-slate-800"}`}>
                   <div className="flex items-center gap-1.5 mb-2">
@@ -139,8 +137,8 @@ function MaterialsContent({ step }: { step: number }) {
                       <span className="text-[8px] font-bold text-slate-700 dark:text-slate-300">{m.d} <span className="font-normal text-[7px] text-slate-400">g/cm³</span></span>
                     </div>
                     <div className="flex justify-between items-center mt-2 pt-1 border-t border-slate-100 dark:border-slate-800">
-                      <span className="text-[7px] text-slate-400 uppercase font-bold">Est. Cost</span>
-                      <span className="text-[9px] font-bold text-emerald-600">₹{m.c}<span className="font-normal text-[7px]">/kg</span></span>
+                      <span className="text-[7px] text-slate-400 uppercase font-bold">Tensile</span>
+                      <span className="text-[9px] font-bold text-emerald-600">{m.t} <span className="font-normal text-[7px]">MPa</span></span>
                     </div>
                   </div>
                 </div>
@@ -203,31 +201,20 @@ function MaterialsContent({ step }: { step: number }) {
               </div>
             </div>
 
-            {/* Market Price + Standards */}
-            <div className="grid grid-cols-2 gap-2">
-              <div className={`p-3 rounded-xl border transition-all duration-300 ${step === 13 ? "border-emerald-400 ring-2 ring-emerald-400/60 shadow-[0_0_16px_rgba(16,185,129,0.15)] bg-slate-50 dark:bg-slate-950" : "border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950"}`}>
-                <p className="text-[9px] font-bold text-slate-500 uppercase mb-1">Market Price</p>
-                <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">&#8377;50,000<span className="text-[10px] text-slate-500 font-normal">/kg</span></p>
-                <p className="text-[8px] text-slate-500 uppercase font-bold mb-1">Estimated Baseline</p>
-                <div className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-500">
-                  <TrendingUp className="w-3 h-3" />
-                  <span className="text-[8px] font-semibold">Market Trend</span>
-                </div>
-              </div>
-              <div className={`p-3 rounded-xl border transition-all duration-300 ${step === 14 ? "border-violet-400 ring-2 ring-violet-400/60 shadow-[0_0_16px_rgba(139,92,246,0.15)] bg-white dark:bg-slate-900" : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900"}`}>
-                <p className="text-[9px] font-bold text-slate-800 dark:text-white mb-2 pb-1 border-b border-slate-200 dark:border-slate-800">Standards & Identifiers</p>
-                {[{l:"Standard",v:"—"},{l:"Grade",v:"18K Rose"},{l:"Equivalent",v:"—"}].map(r => (
-                  <div key={r.l} className="flex justify-between mb-1"><span className="text-[9px] text-slate-500">{r.l}</span><span className="text-[9px] font-semibold text-slate-800 dark:text-white">{r.v}</span></div>
-                ))}
-                <div className="mt-1.5 pt-1.5 border-t border-slate-100 dark:border-slate-800">
-                  <span className="text-[8px] text-slate-500 block">Data Source</span>
-                  <span className="text-[9px] font-medium text-emerald-600 border-b border-dashed border-emerald-400/50 inline-block">Verified Internal Database</span>
-                </div>
+            {/* Standards */}
+            <div className={`p-3 rounded-xl border transition-all duration-300 ${step === 13 ? "border-violet-400 ring-2 ring-violet-400/60 shadow-[0_0_16px_rgba(139,92,246,0.15)] bg-white dark:bg-slate-900" : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900"}`}>
+              <p className="text-[9px] font-bold text-slate-800 dark:text-white mb-2 pb-1 border-b border-slate-200 dark:border-slate-800">Standards & Identifiers</p>
+              {[{l:"Standard",v:"—"},{l:"Grade",v:"18K Rose"},{l:"Equivalent",v:"—"}].map(r => (
+                <div key={r.l} className="flex justify-between mb-1"><span className="text-[9px] text-slate-500">{r.l}</span><span className="text-[9px] font-semibold text-slate-800 dark:text-white">{r.v}</span></div>
+              ))}
+              <div className="mt-1.5 pt-1.5 border-t border-slate-100 dark:border-slate-800">
+                <span className="text-[8px] text-slate-500 block">Data Source</span>
+                <span className="text-[9px] font-medium text-emerald-600 border-b border-dashed border-emerald-400/50 inline-block">Verified Internal Database</span>
               </div>
             </div>
 
             {/* Properties */}
-            <div className={`rounded-xl border p-3 transition-all duration-300 ${step === 15 ? "border-blue-400 ring-2 ring-blue-400/60 shadow-[0_0_16px_rgba(59,130,246,0.15)] bg-white dark:bg-slate-900" : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900"}`}>
+            <div className={`rounded-xl border p-3 transition-all duration-300 ${step === 14 ? "border-blue-400 ring-2 ring-blue-400/60 shadow-[0_0_16px_rgba(59,130,246,0.15)] bg-white dark:bg-slate-900" : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900"}`}>
               <p className="text-[10px] font-bold text-slate-800 dark:text-white mb-2 flex items-center gap-1.5"><Beaker className="w-3.5 h-3.5 text-blue-600" /> Mechanical Properties</p>
               <div className="grid grid-cols-3 gap-2">
                 {[{l:"Yield Strength",v:"200", u:"MPa"},{l:"Tensile Strength",v:"350", u:"MPa"},{l:"Elastic Modulus",v:"80", u:"GPa"},{l:"Density",v:"15.5", u:"g/cm³"},{l:"Hardness",v:"150", u:"HV"},{l:"Max Temp",v:"900", u:"°C"}].map(p => (
@@ -239,37 +226,8 @@ function MaterialsContent({ step }: { step: number }) {
               </div>
             </div>
 
-            {/* Historical Price Chart */}
-            <div className={`rounded-xl border p-3 transition-all duration-300 ${step === 16 ? "border-emerald-400 ring-2 ring-emerald-400/60 shadow-[0_0_16px_rgba(16,185,129,0.15)] bg-white dark:bg-slate-900" : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900"}`}>
-              <p className="text-[10px] font-bold text-slate-800 dark:text-white mb-1 flex items-center gap-1.5">
-                <TrendingUp className="w-3.5 h-3.5 text-emerald-600" /> Historical Price Tracking (12M)
-              </p>
-              <p className="text-[7px] text-slate-500 mb-3 leading-relaxed flex gap-1">
-                <Info className="w-2.5 h-2.5 shrink-0" /> Proxy indexing for trend analysis. Not a live spot-price.
-              </p>
-              <div className="relative h-20 border-t border-slate-200 dark:border-slate-800 pt-3">
-                <svg viewBox="0 0 200 50" className="w-full h-full" preserveAspectRatio="none">
-                  <defs>
-                    <linearGradient id="priceGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#10b981" stopOpacity="0.4"/>
-                      <stop offset="100%" stopColor="#10b981" stopOpacity="0.0"/>
-                    </linearGradient>
-                  </defs>
-                  <path d="M0,35 L20,32 L40,38 L60,30 L80,28 L100,25 L120,22 L140,20 L160,18 L180,15 L200,12 L200,50 L0,50 Z" fill="url(#priceGrad)" />
-                  <path d="M0,35 L20,32 L40,38 L60,30 L80,28 L100,25 L120,22 L140,20 L160,18 L180,15 L200,12" fill="none" stroke="#34d399" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-                <span className="absolute top-2 left-0 text-[7px] text-slate-400">&#8377;52k</span>
-                <span className="absolute bottom-4 left-0 text-[7px] text-slate-400">&#8377;48k</span>
-                <div className="absolute bottom-[-4px] left-4 right-4 flex justify-between">
-                  {["Jan","Mar","May","Jul","Sep","Nov"].map(m => (
-                    <span key={m} className="text-[6px] text-slate-400">{m}</span>
-                  ))}
-                </div>
-              </div>
-            </div>
-
             {/* Similar Materials */}
-            <div className={`rounded-xl border p-3 transition-all duration-300 ${step === 17 ? "border-purple-400 ring-2 ring-purple-400/60 shadow-[0_0_16px_rgba(168,85,247,0.15)] bg-white dark:bg-slate-900" : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900"}`}>
+            <div className={`rounded-xl border p-3 transition-all duration-300 ${step === 15 ? "border-purple-400 ring-2 ring-purple-400/60 shadow-[0_0_16px_rgba(168,85,247,0.15)] bg-white dark:bg-slate-900" : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900"}`}>
               <p className="text-[10px] font-bold text-slate-800 dark:text-white mb-2 flex items-center gap-1.5"><SearchCode className="w-3.5 h-3.5 text-purple-600" /> Find Similar Materials</p>
               <div className="space-y-1.5">
                 {["24K Pure Gold", "14K White Gold"].map(m => (

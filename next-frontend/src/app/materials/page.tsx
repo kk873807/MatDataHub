@@ -16,8 +16,8 @@ export default function MaterialsPage() {
   
   const tourSteps: Step[] = [
     { target: ".tour-search-bar", content: "Search for specific materials using keywords, standards, or grades. The autocomplete will help you find matches fast.", placement: "bottom" },
-    { target: ".tour-sort-options", content: "Sort results by name, density, or cost to find exactly what you need.", placement: "bottom" },
-    { target: ".tour-filters-button", content: "Use advanced filters to narrow down by material category, pricing, or carbon footprint.", placement: "left" },
+    { target: ".tour-sort-options", content: "Sort results by name, tensile strength, yield strength, or density to find the right grade.", placement: "bottom" },
+    { target: ".tour-filters-button", content: "Use advanced filters to narrow down by material category, tensile strength, or thermal conductivity.", placement: "left" },
     { target: ".tour-materials-demo", content: "Watch this interactive demo to see how Material Search works in action.", placement: "bottom" },
     { target: ".tour-material-card", content: "Click on any material card to view its full datasheet and engineering properties.", placement: "top" }
   ];
@@ -35,7 +35,6 @@ export default function MaterialsPage() {
   const [category, setCategory] = useState("");
   const [metallurgyType, setMetallurgyType] = useState<"" | "ferrous" | "non-ferrous">("");
   const [minTensile, setMinTensile] = useState<number | "">("");
-  const [maxCost, setMaxCost] = useState<number | "">("");
   const [minThermal, setMinThermal] = useState<number | "">("");
   const [perPage, setPerPage] = useState(50);
   
@@ -98,7 +97,6 @@ export default function MaterialsPage() {
           if (category) url += `&category=${encodeURIComponent(category)}`;
           if (metallurgyType) url += `&metal_type=${encodeURIComponent(metallurgyType)}`;
           if (minTensile !== "") url += `&min_tensile=${minTensile}`;
-          if (maxCost !== "") url += `&max_cost=${maxCost}`;
           if (minThermal !== "") url += `&min_thermal_conductivity=${minThermal}`;
         }
 
@@ -114,14 +112,13 @@ export default function MaterialsPage() {
 
     const debounce = setTimeout(fetchMaterials, 300);
     return () => clearTimeout(debounce);
-  }, [search, category, metallurgyType, minTensile, maxCost, minThermal, perPage]);
+  }, [search, category, metallurgyType, minTensile, minThermal, perPage]);
 
   // Client-side sorting
   const sortedAll = [...materials].sort((a, b) => {
     if (sortBy === "name_asc") return a.name.localeCompare(b.name);
-    if (sortBy === "cost_asc") return (a.cost_per_kg_min || 999999) - (b.cost_per_kg_min || 999999);
-    if (sortBy === "cost_desc") return (b.cost_per_kg_min || 0) - (a.cost_per_kg_min || 0);
     if (sortBy === "tensile_desc") return (b.tensile_strength_min || 0) - (a.tensile_strength_min || 0);
+    if (sortBy === "yield_desc") return (b.yield_strength_min || 0) - (a.yield_strength_min || 0);
     if (sortBy === "density_asc") return (a.density || 999999) - (b.density || 999999);
     return 0;
   });
@@ -142,7 +139,7 @@ export default function MaterialsPage() {
   const isFreeCapped = isFree && filteredAll.length > FREE_BROWSE_LIMIT;
   const sortedMaterials = isFree ? filteredAll.slice(0, FREE_BROWSE_LIMIT) : filteredAll;
 
-  const activeFiltersCount = (category ? 1 : 0) + (metallurgyType ? 1 : 0) + (minTensile !== "" ? 1 : 0) + (maxCost !== "" ? 1 : 0) + (minThermal !== "" ? 1 : 0);
+  const activeFiltersCount = (category ? 1 : 0) + (metallurgyType ? 1 : 0) + (minTensile !== "" ? 1 : 0) + (minThermal !== "" ? 1 : 0);
 
   return (
     <main className="flex flex-col p-6 lg:p-10 w-full overflow-y-auto">
@@ -219,9 +216,8 @@ export default function MaterialsPage() {
                   className="h-full appearance-none bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl pl-4 pr-10 py-3 text-slate-600 dark:text-slate-300 font-medium hover:border-slate-200 dark:hover:border-slate-200 dark:border-slate-700 focus:border-emerald-500 outline-none transition-colors"
                 >
                   <option value="name_asc">Name (A-Z)</option>
-                  <option value="cost_asc">Cost (Low-High)</option>
-                  <option value="cost_desc">Cost (High-Low)</option>
                   <option value="tensile_desc">Tensile (High-Low)</option>
+                  <option value="yield_desc">Yield (High-Low)</option>
                   <option value="density_asc">Density (Low-High)</option>
                 </select>
                 <ArrowDownAZ className="w-4 h-4 text-slate-500 dark:text-slate-400 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -248,7 +244,7 @@ export default function MaterialsPage() {
                 exit={{ height: 0, opacity: 0 }}
                 className="overflow-hidden border-t border-slate-200 dark:border-slate-800/60 pt-5 mt-1"
               >
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5">
                   <div>
                     <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Material Category</label>
                     <select
@@ -282,16 +278,6 @@ export default function MaterialsPage() {
                       placeholder="e.g. 300"
                       value={minTensile}
                       onChange={(e) => setMinTensile(e.target.value ? Number(e.target.value) : "")}
-                      className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2.5 text-sm text-slate-900 dark:text-white outline-none focus:border-emerald-500 transition-colors"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Max Cost (₹/kg)</label>
-                    <input
-                      type="number"
-                      placeholder="e.g. 500"
-                      value={maxCost}
-                      onChange={(e) => setMaxCost(e.target.value ? Number(e.target.value) : "")}
                       className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2.5 text-sm text-slate-900 dark:text-white outline-none focus:border-emerald-500 transition-colors"
                     />
                   </div>
@@ -345,19 +331,13 @@ export default function MaterialsPage() {
                   <button onClick={() => setMinTensile("")} className="hover:text-blue-200"><X className="w-3 h-3" /></button>
                 </span>
               )}
-              {maxCost !== "" && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800/50 rounded-full text-xs font-medium">
-                  Cost &lt; ₹{maxCost}/kg
-                  <button onClick={() => setMaxCost("")} className="hover:text-amber-200"><X className="w-3 h-3" /></button>
-                </span>
-              )}
               {minThermal !== "" && (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-800/50 rounded-full text-xs font-medium">
                   Thermal &gt; {minThermal}
                   <button onClick={() => setMinThermal("")} className="hover:text-orange-200"><X className="w-3 h-3" /></button>
                 </span>
               )}
-              <button onClick={() => { setCategory(""); setMetallurgyType(""); setMinTensile(""); setMaxCost(""); setMinThermal(""); }} className="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white ml-2 underline underline-offset-2">
+              <button onClick={() => { setCategory(""); setMetallurgyType(""); setMinTensile(""); setMinThermal(""); }} className="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white ml-2 underline underline-offset-2">
                 Clear all
               </button>
             </div>
@@ -386,7 +366,7 @@ export default function MaterialsPage() {
             <h3 className="text-xl font-bold text-slate-900 dark:text-white font-heading mb-2">No materials found</h3>
             <p className="text-slate-500 dark:text-slate-400 max-w-md mx-auto mb-6">We couldn't find any materials matching your specific filters and search criteria.</p>
             <button 
-              onClick={() => { setSearch(""); setCategory(""); setMetallurgyType(""); setMinTensile(""); setMaxCost(""); setMinThermal(""); }}
+              onClick={() => { setSearch(""); setCategory(""); setMetallurgyType(""); setMinTensile(""); setMinThermal(""); }}
               className="px-6 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-white rounded-2xl font-semibold transition-colors"
             >
               Clear all filters
@@ -461,8 +441,8 @@ export default function MaterialsPage() {
                       </div>
 
                       <div className="flex justify-between items-center pt-3 mt-3 border-t border-slate-200 dark:border-slate-800">
-                        <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider"><Zap className="w-3.5 h-3.5" /> Est. Cost</span>
-                        <span className="text-emerald-600 dark:text-emerald-400 font-black text-base">₹{mat.cost_per_kg_min || '-'}<span className="text-xs font-medium text-emerald-600/70 dark:text-emerald-400/70">/kg</span></span>
+                        <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider"><Zap className="w-3.5 h-3.5" /> Tensile</span>
+                        <span className="text-emerald-600 dark:text-emerald-400 font-black text-base">{mat.tensile_strength_min || '-'} <span className="text-xs font-medium text-emerald-600/70 dark:text-emerald-400/70">MPa</span></span>
                       </div>
                     </div>
                   </Link>
@@ -504,7 +484,7 @@ export default function MaterialsPage() {
           <div>
             <h4 className="text-slate-900 dark:text-white font-heading font-bold text-sm mb-1">Enterprise-Grade Data Reliability</h4>
             <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed max-w-4xl">
-              All material properties, chemical compositions, and engineering specifications are rigorously sourced and cross-verified against verified industry standards (ASTM, ISO, DIN) and databases like MatWeb, ASM International, SpringerMaterials, Special Metals Corporation, PubChem, and OQMD. Live spot pricing is dynamically pulled from Yahoo Finance. MatDataHub prioritizes absolute mathematical accuracy for engineering workflows.
+              All material properties, chemical compositions, and engineering specifications are rigorously sourced and cross-verified against verified industry standards (ASTM, ISO, DIN) and databases like MatWeb, ASM International, SpringerMaterials, Special Metals Corporation, PubChem, and OQMD. MatDataHub prioritizes mathematical accuracy and traceable standards for engineering workflows.
             </p>
           </div>
         </div>

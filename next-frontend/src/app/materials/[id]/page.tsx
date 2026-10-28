@@ -23,15 +23,11 @@ import { SecurityWrapper } from "@/components/SecurityWrapper";
 export default function MaterialDetail() {
   const { id } = useParams();
   const [material, setMaterial] = useState<any>(null);
-  const [livePrice, setLivePrice] = useState<any>(null);
-  const [priceHistory, setPriceHistory] = useState<any[]>([]);
   const [similar, setSimilar] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isSimilarLocked, setIsSimilarLocked] = useState(false);
-  const [isPriceLocked, setIsPriceLocked] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [userTier, setUserTier] = useState("free");
   
   // Toast state
   const [toastMessage, setToastMessage] = useState("");
@@ -69,23 +65,6 @@ export default function MaterialDetail() {
         // Fetch Details
         const res = await fetch(`${API}/materials/${id}`);
         if (res.ok) setMaterial(await res.json());
-
-        // Fetch Live Price
-        const liveRes = await fetch(`${API}/materials/${id}/live-price`);
-        if (liveRes.ok) {
-          setLivePrice(await liveRes.json());
-        }
-
-        // Fetch Price History
-        const priceRes = await fetch(
-          `${API}/materials/${id}/price-history`,
-          { headers }
-        );
-        if (priceRes.ok) {
-          setPriceHistory(await priceRes.json());
-        } else if (priceRes.status === 403 || priceRes.status === 401) {
-          setIsPriceLocked(true);
-        }
 
         // Fetch Saved Status
         const savedRes = await fetch(`${API}/materials/me/saved`, { headers });
@@ -136,52 +115,6 @@ export default function MaterialDetail() {
       </span>
     </span>
   );
-
-  const maxPrice =
-    priceHistory.length > 0
-      ? Math.max(...priceHistory.map((p) => p.cost_per_kg))
-      : 1;
-  const minPrice =
-    priceHistory.length > 0
-      ? Math.min(...priceHistory.map((p) => p.cost_per_kg))
-      : 0;
-
-  // SVG Area Chart Calculations
-  const generatePath = () => {
-    if (priceHistory.length === 0) return "";
-    const width = 1000;
-    const height = 200;
-    const range = maxPrice - minPrice || 1;
-    const paddedMin = minPrice - range * 0.1;
-    const paddedRange = range * 1.2;
-
-    const points = priceHistory.map((ph, idx) => {
-      const x = (idx / (priceHistory.length - 1)) * width;
-      const y = height - ((ph.cost_per_kg - paddedMin) / paddedRange) * height;
-      return `${x},${y}`;
-    });
-    return `M0,${height} L${points.join(" L")} L${width},${height} Z`;
-  };
-
-  const generateLine = () => {
-    if (priceHistory.length === 0) return "";
-    const width = 1000;
-    const height = 200;
-    const range = maxPrice - minPrice || 1;
-    const paddedMin = minPrice - range * 0.1;
-    const paddedRange = range * 1.2;
-
-    return (
-      "M " +
-      priceHistory
-        .map((ph, idx) => {
-          const x = (idx / (priceHistory.length - 1)) * width;
-          const y = height - ((ph.cost_per_kg - paddedMin) / paddedRange) * height;
-          return `${x},${y}`;
-        })
-        .join(" L ")
-    );
-  };
 
   return (
     <SecurityWrapper>
@@ -261,35 +194,6 @@ export default function MaterialDetail() {
                   <Download className="w-4 h-4 text-slate-600 dark:text-slate-300" /> Export PDF
                 </button>
               </div>
-            </div>
-            
-            <div className="bg-slate-50 dark:bg-slate-950 p-6 rounded-xl border border-slate-200 dark:border-slate-800 text-right min-w-[220px] shadow-inner self-stretch flex flex-col justify-center">
-              <p className="text-slate-500 dark:text-slate-400 text-sm mb-1 uppercase tracking-wider font-semibold flex items-center justify-end">
-                Market Price {isAiEstimated && <AiBadge />}
-              </p>
-              <p className="text-4xl font-bold text-emerald-600 dark:text-emerald-400 mb-2">
-                ₹{livePrice?.live_price !== null && livePrice?.live_price !== undefined ? livePrice.live_price : material.cost_per_kg_min}
-                <span className="text-xl text-slate-500 dark:text-slate-400 font-medium">/kg</span>
-              </p>
-              <p className="text-[10px] text-slate-500 dark:text-slate-400 mb-2 mt-[-4px] uppercase tracking-wide font-bold">
-                {livePrice?.source ? (
-                  <>
-                    Source:{' '}
-                    {livePrice.source_url ? (
-                      <a href={livePrice.source_url} target="_blank" rel="noopener noreferrer" className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-medium border-b border-dashed border-emerald-400/50">
-                        {livePrice.source} <ExternalLink className="w-2.5 h-2.5 inline-block -mt-0.5" />
-                      </a>
-                    ) : (
-                      livePrice.source
-                    )}
-                  </>
-                ) : "Price Data Not Available"}
-              </p>
-              {priceHistory.length > 0 && (
-                <div className="flex items-center justify-end gap-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-500 bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-500 px-2 py-1 rounded inline-flex self-end">
-                  <TrendingUp className="w-3.5 h-3.5" /> Market Trend
-                </div>
-              )}
             </div>
           </div>
         </div>
@@ -428,121 +332,6 @@ export default function MaterialDetail() {
                 </div>
               </div>
             )}
-
-            {/* Historical Price Tracking Graph */}
-            <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white font-heading mb-6 flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-emerald-600 dark:text-emerald-400" /> Historical
-                Price Tracking (12M)
-              </h3>
-              <p className="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400 mb-6 flex items-start gap-1.5">
-                <Info className="w-4 h-4 shrink-0 mt-0.5" /> Data is generated via macroeconomic proxy indexing for trend analysis. It is not a live spot-price. Please consult a supplier for exact procurement pricing.
-              </p>
-
-              {isPriceLocked ? (
-                <div className="p-5 h-48 mt-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-emerald-500/30 text-center relative overflow-hidden group flex flex-col items-center justify-center">
-                  <div className="absolute inset-0 bg-gradient-to-t from-emerald-900/20 to-transparent"></div>
-                  <Lock className="w-8 h-8 text-emerald-600 dark:text-emerald-400 mx-auto mb-3 relative z-10" />
-                  <h4 className="font-bold text-slate-900 dark:text-white font-heading text-sm mb-1 relative z-10">
-                    Pro Feature Locked
-                  </h4>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 relative z-10 mb-4 max-w-sm">
-                    Upgrade to Pro to unlock 12-month historical price trends
-                    and market forecasting.
-                  </p>
-                  <button className="relative z-10 px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-xs font-bold transition-colors">
-                    Upgrade to Pro
-                  </button>
-                </div>
-              ) : priceHistory.length > 0 ? (
-                <div className="relative h-56 mt-4 pt-4 border-t border-slate-200 dark:border-slate-800">
-                  {/* SVG Line Chart */}
-                  <div className="absolute inset-x-0 bottom-6 top-4 left-4 right-4">
-                    <svg
-                      viewBox="0 0 1000 200"
-                      className="w-full h-full overflow-visible preserve-3d"
-                      preserveAspectRatio="none"
-                    >
-                      <defs>
-                        <linearGradient
-                          id="chartGradient"
-                          x1="0"
-                          x2="0"
-                          y1="0"
-                          y2="1"
-                        >
-                          <stop
-                            offset="0%"
-                            stopColor="#10b981"
-                            stopOpacity="0.4"
-                          />
-                          <stop
-                            offset="100%"
-                            stopColor="#10b981"
-                            stopOpacity="0.0"
-                          />
-                        </linearGradient>
-                      </defs>
-                      <path d={generatePath()} fill="url(#chartGradient)" />
-                      <path
-                        d={generateLine()}
-                        fill="none"
-                        stroke="#34d399"
-                        strokeWidth="4"
-                        strokeLinejoin="round"
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                  </div>
-
-                  {/* Y-Axis Min/Max Labels */}
-                  <div className="absolute top-0 left-0 text-[10px] text-slate-500 dark:text-slate-400">
-                    ₹{maxPrice.toFixed(0)}
-                  </div>
-                  <div className="absolute bottom-5 left-0 text-[10px] text-slate-500 dark:text-slate-400">
-                    ₹{minPrice.toFixed(0)}
-                  </div>
-
-                  {/* Data Points & X-Axis */}
-                  <div className="absolute inset-x-4 bottom-0 top-4 flex justify-between items-end pb-0">
-                    {priceHistory.map((ph, idx) => {
-                      return (
-                        <div
-                          key={idx}
-                          className="flex flex-col items-center group relative h-full flex-1"
-                        >
-                          {/* Invisible hover target column */}
-                          <div className="absolute inset-0 z-20 hover:bg-emerald-500/10 transition-colors cursor-crosshair"></div>
-
-                          {/* Tooltip */}
-                          <div className="absolute top-0 opacity-0 group-hover:opacity-100 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white text-xs py-1 px-2 rounded pointer-events-none transition-opacity z-30 whitespace-nowrap shadow-lg border border-slate-200 dark:border-slate-700">
-                            ₹{ph.cost_per_kg.toFixed(2)}
-                          </div>
-
-                          {/* X Axis Label */}
-                          <div className="absolute -bottom-5 text-[10px] text-slate-500 dark:text-slate-400 w-full text-center truncate">
-                            {new Date(ph.recorded_date).toLocaleString(
-                              "default",
-                              { month: "short" },
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              ) : (
-                <div className="h-48 mt-4 pt-4 border-t border-slate-200 dark:border-slate-800 flex flex-col items-center justify-center text-center">
-                  <TrendingUp className="w-8 h-8 text-slate-700 dark:text-slate-200 mb-2" />
-                  <p className="text-slate-500 dark:text-slate-400 text-sm">
-                    No historical pricing data available.
-                  </p>
-                  <p className="text-slate-500 dark:text-slate-400 text-xs mt-1">
-                    This material lacks baseline cost data in our database.
-                  </p>
-                </div>
-              )}
-            </div>
           </div>
 
           {/* Sidebar Panel */}
@@ -564,7 +353,17 @@ export default function MaterialDetail() {
                     Upgrade to automatically discover physically similar
                     materials.
                   </p>
-                  <button className="relative z-10 w-full py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-2xl text-xs font-bold transition-colors">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (localStorage.getItem("token")) {
+                        window.dispatchEvent(new CustomEvent("openAccountModal", { detail: "account" }));
+                      } else {
+                        window.dispatchEvent(new Event("openLoginModal"));
+                      }
+                    }}
+                    className="relative z-10 w-full py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-2xl text-xs font-bold transition-colors cursor-pointer"
+                  >
                     Upgrade to Pro
                   </button>
                 </div>
