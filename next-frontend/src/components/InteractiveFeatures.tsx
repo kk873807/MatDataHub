@@ -46,7 +46,7 @@ const features = [
     tools: [
       { name: "Side-by-Side Compare", desc: "Visual radar fingerprinting.", icon: Scale, use: "Select up to 3 materials to overlay their properties on a radar chart and extract AI-driven takeaways." },
       { name: "AI Substitution", desc: "Multi-objective optimization.", icon: Replace, use: "Input a baseline material and set weights for Cost, Density, and Carbon Footprint to find the optimal replacement." },
-      { name: "CBAM Cost Estimator (Beta)", desc: "Preliminary EU CBAM exposure.", icon: Factory, use: "Estimate preliminary Carbon Border Adjustment Mechanism exposure across 100,000+ Commission default values." },
+      { name: "CBAM Cost Estimator (Beta)", desc: "Preliminary EU CBAM exposure.", icon: Factory, use: "Estimate preliminary Carbon Border Adjustment Mechanism exposure by CN prefix, origin country, and shipment weight." },
       { name: "Composite Synthesizer", desc: "Predict hybrid properties.", icon: Layers, use: "Blend a matrix and fiber using the Rule of Mixtures to generate theoretical properties for a custom composite." }
     ]
   },

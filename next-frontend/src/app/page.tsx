@@ -106,7 +106,7 @@ export default function LandingPage() {
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 max-w-3xl mx-auto pt-4 border-t border-slate-200/70 dark:border-slate-800/70">
               {[
                 { value: "6,500+", label: "Engineering Materials" },
-                { value: "100K+", label: "CBAM Default Factors" },
+                { value: "6", label: "Global Standards" },
                 { value: "AI", label: "Material Synthesizer" },
                 { value: "REST API", label: "Developer Access" },
               ].map((stat, i) => (
@@ -212,9 +212,9 @@ export default function LandingPage() {
               },
               {
                 icon: ShieldCheck,
-                title: "100,000+ CBAM Reference Factors",
-                badge: "EU Reg. 2025/2621 & 2026/1740",
-                desc: "Indexed Commission default values by CN code, country of origin, and production route across Iron & Steel, Aluminium, Cement, Fertilisers, and Hydrogen.",
+                title: "BOM & CBAM Cost Estimator (Beta)",
+                badge: "Preliminary Exposure",
+                desc: "Upload multi-part Bills of Materials to roll up assembly weight, cost, and preliminary EU CBAM carbon-cost estimates by CN prefix and origin country.",
               },
             ].map((card, i) => (
               <div key={i} className="p-8 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-lg flex flex-col">
