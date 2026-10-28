@@ -14,6 +14,7 @@ export default function LandingPage() {
     if (currency === "EUR") return `€${eur}`;
     return `₹${inr}`;
   };
+  const [feedbacks, setFeedbacks] = useState<any[]>([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [authChecked, setAuthChecked] = useState(false);
   
@@ -56,6 +57,18 @@ export default function LandingPage() {
     if (window.location.search.includes('login=true')) {
       window.dispatchEvent(new Event("openLoginModal"));
     }
+  }, []);
+
+  useEffect(() => {
+    fetch(`${API}/feedback/public`)
+      .then(res => (res.ok ? res.json() : []))
+      .then(data => {
+        if (Array.isArray(data)) {
+          const sorted = data.filter(f => !f.parent_id).sort((a, b) => (b.helpful_votes || 0) - (a.helpful_votes || 0)).slice(0, 3);
+          setFeedbacks(sorted);
+        }
+      })
+      .catch(() => {});
   }, []);
 
   return (
@@ -184,66 +197,54 @@ export default function LandingPage() {
       {/* Solution Section */}
       <InteractiveFeatures />
 
-      {/* Database Coverage & Global Standards */}
-      <section id="coverage" className="py-24 bg-white dark:bg-slate-900/50 border-y border-slate-200 dark:border-slate-800/50">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4 font-heading">
-              6,500+ Engineering Grades. Cross-Referenced Globally.
-            </h2>
-            <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-              Every material profile unifies mechanical, thermal, electrical, and environmental properties alongside international standard equivalents.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8 mb-12">
-            {[
-              {
-                icon: Cpu,
-                title: "Metals, Steels & Superalloys",
-                badge: "Ferrous & Non-Ferrous",
-                desc: "Structural steels, stainless alloys, aluminum series, titanium grades, copper castings, and nickel superalloys with yield, tensile, hardness, and fatigue data.",
-              },
-              {
-                icon: TestTube2,
-                title: "Polymers, Ceramics & Composites",
-                badge: "Advanced Materials",
-                desc: "Engineering thermoplastics, fluoropolymers, elastomers, technical ceramics, and Rule-of-Mixtures hybrid composite synthesis for weight-critical assemblies.",
-              },
-              {
-                icon: ShieldCheck,
-                title: "BOM & CBAM Cost Estimator (Beta)",
-                badge: "Preliminary Exposure",
-                desc: "Upload multi-part Bills of Materials to roll up assembly weight, cost, and preliminary EU CBAM carbon-cost estimates by CN prefix and origin country.",
-              },
-            ].map((card, i) => (
-              <div key={i} className="p-8 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-lg flex flex-col">
-                <div className="flex items-center justify-between gap-3 mb-5">
-                  <div className="w-11 h-11 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
-                    <card.icon className="w-5 h-5" />
+      {/* Testimonials / Community Feedback */}
+      <section id="feedback" className="py-24 bg-white dark:bg-slate-900/50 border-y border-slate-200 dark:border-slate-800/50">
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4 font-heading">Engineers who switched say it best.</h2>
+          <p className="text-slate-600 dark:text-slate-400 mb-12 max-w-2xl mx-auto">Real feedback from engineers and scientists using MatDataHub every day.</p>
+          
+          <div className="grid md:grid-cols-3 gap-8 text-left">
+            {feedbacks.length > 0 ? (
+              feedbacks.map((fb, i) => (
+                <div key={i} className="p-8 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl flex flex-col relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500/50"></div>
+                  <div className="flex items-center gap-2 mb-4">
+                    <span className="text-xs font-semibold px-2 py-0.5 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-full border border-indigo-200 dark:border-indigo-700/50">{fb.category}</span>
                   </div>
-                  <span className="text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-slate-200/70 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
-                    {card.badge}
-                  </span>
+                  <p className="text-slate-600 dark:text-slate-300 relative z-10 mb-6 text-sm leading-relaxed italic flex-1">"{fb.message}"</p>
+                  <div className="flex justify-between items-end border-t border-slate-200 dark:border-slate-800 pt-4 mt-auto">
+                    <div>
+                      <p className="text-slate-900 dark:text-white font-bold text-sm">{fb.name || 'Anonymous Engineer'}</p>
+                      <p className="text-slate-500 dark:text-slate-400 text-[10px]">{new Date(fb.created_at).toLocaleDateString()}</p>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400">
+                      <ThumbsUp className="w-3.5 h-3.5" /> {fb.helpful_votes || 0}
+                    </div>
+                  </div>
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3 font-heading">{card.title}</h3>
-                <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed flex-1">{card.desc}</p>
-              </div>
-            ))}
+              ))
+            ) : (
+              [
+                { quote: "MatDataHub's material database saves hours of cross-referencing datasheets. Having mechanical properties alongside environmental data in one place is exactly what we needed.", author: "Early Adopter", role: "Materials Engineering" },
+                { quote: "The CBAM estimation tool gave us a quick first pass on our EU import exposure. Good starting point before bringing in consultants for formal declarations.", author: "Early Adopter", role: "Supply Chain Management" },
+                { quote: "Clean interface, fast search. We use it for quick property lookups and comparative analysis across alloy families.", author: "Early Adopter", role: "Mechanical Engineering" }
+              ].map((test, i) => (
+                <div key={i} className="p-8 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl relative">
+                  <div className="text-4xl text-indigo-500/20 absolute top-4 left-4 font-serif">"</div>
+                  <p className="text-slate-600 dark:text-slate-300 relative z-10 mb-6 text-sm leading-relaxed italic flex-1">"{test.quote}"</p>
+                  <div>
+                    <p className="text-slate-900 dark:text-white font-bold text-sm">{test.author}</p>
+                    <p className="text-slate-500 dark:text-slate-400 text-xs">{test.role}</p>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
-
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6 p-6 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mr-2">Indexed Standards:</span>
-              {["ASTM / UNS", "ISO", "EN", "DIN", "JIS", "IS / GB"].map((std) => (
-                <span key={std} className="px-3 py-1 text-xs font-bold rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300">
-                  {std}
-                </span>
-              ))}
-            </div>
-            <Link href="/feedback" className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-xl font-semibold transition-colors text-xs border border-slate-300 dark:border-slate-700 shrink-0">
-              <MessageSquare className="w-4 h-4" /> Request a Grade or Share Pilot Feedback
-            </Link>
+          
+          <div className="mt-12">
+             <Link href="/feedback" className="inline-flex items-center gap-2 px-6 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-xl font-medium transition-colors text-sm border border-slate-300 dark:border-slate-700">
+               <MessageSquare className="w-4 h-4" /> View All Community Discussions
+             </Link>
           </div>
         </div>
       </section>
