@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { LayoutGrid, List, Search, ArrowLeft, Filter, Loader2, Database, SlidersHorizontal, X, ArrowDownAZ, TrendingUp, Scale, Zap, Beaker, FileBox, Lock, Shield, HelpCircle } from "lucide-react";
+import { LayoutGrid, List, Search, ArrowLeft, ArrowRight, Filter, Loader2, Database, SlidersHorizontal, X, ArrowDownAZ, TrendingUp, Scale, Zap, Beaker, FileBox, Lock, Shield, HelpCircle, Bookmark } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { API } from "@/lib/api";
 import { PageDemo } from "@/components/demos/PageDemo";
@@ -25,6 +25,8 @@ export default function MaterialsPage() {
   const [materials, setMaterials] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [savedOnly, setSavedOnly] = useState(false);
+  const [urlChecked, setUrlChecked] = useState(false);
   
   // Autocomplete
   const [suggestions, setSuggestions] = useState<any[]>([]);
@@ -47,6 +49,30 @@ export default function MaterialsPage() {
   const [userTier, setUserTier] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const isFree = !isAdmin && (!userTier || userTier === "free");
+
+  // Check URL for ?saved=true on mount
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("saved") === "true" || params.get("saved") === "1") {
+        setSavedOnly(true);
+      }
+      setUrlChecked(true);
+    }
+  }, []);
+
+  const toggleSavedMode = (nextVal: boolean) => {
+    setSavedOnly(nextVal);
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      if (nextVal) {
+        url.searchParams.set("saved", "true");
+      } else {
+        url.searchParams.delete("saved");
+      }
+      window.history.replaceState({}, "", url.pathname + url.search);
+    }
+  };
 
   // Fetch user tier
   useEffect(() => {
@@ -86,9 +112,28 @@ export default function MaterialsPage() {
   }, [search]);
 
   useEffect(() => {
+    if (!urlChecked) return;
     const fetchMaterials = async () => {
       setLoading(true);
       try {
+        if (savedOnly) {
+          const token = localStorage.getItem("token");
+          if (!token) {
+            setMaterials([]);
+            return;
+          }
+          const res = await fetch(`${API}/materials/me/saved?limit=100`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (res.ok) {
+            const data = await res.json();
+            setMaterials(Array.isArray(data) ? data : []);
+          } else {
+            setMaterials([]);
+          }
+          return;
+        }
+
         let url = `${API}/materials/?per_page=${perPage}`;
         
         if (search) {
@@ -112,7 +157,7 @@ export default function MaterialsPage() {
 
     const debounce = setTimeout(fetchMaterials, 300);
     return () => clearTimeout(debounce);
-  }, [search, category, metallurgyType, minTensile, minThermal, perPage]);
+  }, [urlChecked, savedOnly, search, category, metallurgyType, minTensile, minThermal, perPage]);
 
   // Client-side sorting
   const sortedAll = [...materials].sort((a, b) => {
@@ -123,34 +168,75 @@ export default function MaterialsPage() {
     return 0;
   });
 
-  // Client-side Ferrous / Non-Ferrous filter (applies only when category is Metal)
+  // Client-side filtering (including search/category/properties when in savedOnly mode, plus Ferrous/Non-Ferrous)
   const FERROUS_KEYWORDS = ["steel", "iron", "cast iron", "wrought iron", "stainless"];
-  const filteredAll = metallurgyType ? sortedAll.filter((mat) => {
-    const cat = (mat.category || "").toLowerCase();
-    const isMetalCategory = cat.includes("metal") || cat.includes("alloy") || cat.includes("steel") || cat.includes("iron") || cat.includes("aluminum") || cat.includes("copper") || cat.includes("titanium") || cat.includes("nickel");
-    if (!isMetalCategory) return false;
-    const sub = (mat.subcategory || "").toLowerCase();
-    const name = (mat.name || "").toLowerCase();
-    const isFerrous = FERROUS_KEYWORDS.some(kw => sub.includes(kw) || name.includes(kw) || cat.includes(kw));
-    return metallurgyType === "ferrous" ? isFerrous : !isFerrous;
-  }) : sortedAll;
+  const filteredAll = sortedAll.filter((mat) => {
+    if (savedOnly) {
+      if (search) {
+        const q = search.toLowerCase();
+        const matchesName = (mat.name || "").toLowerCase().includes(q);
+        const matchesCat = (mat.category || "").toLowerCase().includes(q);
+        const matchesGrade = (mat.grade || "").toLowerCase().includes(q);
+        const matchesStd = (mat.standard || "").toLowerCase().includes(q);
+        if (!matchesName && !matchesCat && !matchesGrade && !matchesStd) return false;
+      }
+      if (category && (mat.category || "").toLowerCase() !== category.toLowerCase()) return false;
+      if (minTensile !== "" && (mat.tensile_strength_min || 0) < Number(minTensile)) return false;
+      if (minThermal !== "" && (mat.thermal_conductivity || 0) < Number(minThermal)) return false;
+    }
+    if (metallurgyType) {
+      const cat = (mat.category || "").toLowerCase();
+      const isMetalCategory = cat.includes("metal") || cat.includes("alloy") || cat.includes("steel") || cat.includes("iron") || cat.includes("aluminum") || cat.includes("copper") || cat.includes("titanium") || cat.includes("nickel");
+      if (!isMetalCategory) return false;
+      const sub = (mat.subcategory || "").toLowerCase();
+      const name = (mat.name || "").toLowerCase();
+      const isFerrous = FERROUS_KEYWORDS.some(kw => sub.includes(kw) || name.includes(kw) || cat.includes(kw));
+      return metallurgyType === "ferrous" ? isFerrous : !isFerrous;
+    }
+    return true;
+  });
 
-  // Cap for free users
-  const isFreeCapped = isFree && filteredAll.length > FREE_BROWSE_LIMIT;
-  const sortedMaterials = isFree ? filteredAll.slice(0, FREE_BROWSE_LIMIT) : filteredAll;
+  // Cap for free users (never cap user's own saved items)
+  const isFreeCapped = !savedOnly && isFree && filteredAll.length > FREE_BROWSE_LIMIT;
+  const sortedMaterials = (!savedOnly && isFree) ? filteredAll.slice(0, FREE_BROWSE_LIMIT) : filteredAll;
 
   const activeFiltersCount = (category ? 1 : 0) + (metallurgyType ? 1 : 0) + (minTensile !== "" ? 1 : 0) + (minThermal !== "" ? 1 : 0);
 
   return (
     <main className="flex flex-col p-6 lg:p-10 w-full overflow-y-auto">
       <div className="w-full max-w-7xl mx-auto flex flex-col gap-6">
-        <Link href="/" className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-emerald-600 dark:text-slate-400 dark:hover:text-emerald-400 transition-colors w-fit mb-2"><ArrowLeft className="w-4 h-4" /> Back to Home</Link>
+        <div className="flex items-center justify-between">
+          <Link href={savedOnly ? "/dashboard" : "/"} className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-emerald-600 dark:text-slate-400 dark:hover:text-emerald-400 transition-colors w-fit mb-2">
+            <ArrowLeft className="w-4 h-4" /> {savedOnly ? "Back to Dashboard" : "Back to Home"}
+          </Link>
+          {savedOnly && (
+            <button
+              type="button"
+              onClick={() => toggleSavedMode(false)}
+              className="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline cursor-pointer mb-2"
+            >
+              Browse All 6,500+ Materials →
+            </button>
+          )}
+        </div>
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div className="space-y-1">
             <h1 className="text-3xl font-bold text-slate-900 dark:text-white font-heading flex items-center gap-3">
-              <Database className="w-8 h-8 text-emerald-500" /> Material Database
+              {savedOnly ? (
+                <>
+                  <Bookmark className="w-8 h-8 text-amber-500 fill-amber-500" /> Saved Materials
+                </>
+              ) : (
+                <>
+                  <Database className="w-8 h-8 text-emerald-500" /> Material Database
+                </>
+              )}
             </h1>
-            <p className="text-slate-600 dark:text-slate-300">Search and filter verified engineering materials.</p>
+            <p className="text-slate-600 dark:text-slate-300">
+              {savedOnly
+                ? "Your bookmarked engineering materials. Click any material card to open its full detail view."
+                : "Search and filter verified engineering materials."}
+            </p>
           </div>
           <button onClick={() => tourRef.current?.startTour()} className="flex items-center gap-1.5 text-xs font-bold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-900/20 dark:hover:bg-emerald-900/40 px-3 py-1.5 rounded-full transition-colors shrink-0">
             <HelpCircle className="w-4 h-4" /> Page Guide
@@ -158,11 +244,13 @@ export default function MaterialsPage() {
         </div>
 
         {/* Interactive Demo */}
-        <div className="tour-materials-demo">
-          <PageDemo pageKey="materials" title="See how Material Search works">
-            <SimulatedMaterialsDemo />
-          </PageDemo>
-        </div>
+        {!savedOnly && (
+          <div className="tour-materials-demo">
+            <PageDemo pageKey="materials" title="See how Material Search works">
+              <SimulatedMaterialsDemo />
+            </PageDemo>
+          </div>
+        )}
 
         <PageTour ref={tourRef} steps={tourSteps} storageKey="materialTourCompleted" />
 
@@ -173,7 +261,7 @@ export default function MaterialsPage() {
               <Search className="absolute left-4 top-3.5 w-5 h-5 text-slate-500 dark:text-slate-400" />
               <input
                 type="text"
-                placeholder="Search materials (e.g. Aluminum 6061)..."
+                placeholder={savedOnly ? "Search within your saved materials..." : "Search materials (e.g. Aluminum 6061)..."}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 onFocus={() => setShowSuggestions(suggestions.length > 0)}
@@ -208,7 +296,20 @@ export default function MaterialsPage() {
               </AnimatePresence>
             </div>
             
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={() => toggleSavedMode(!savedOnly)}
+                className={`flex items-center gap-2 px-4 py-3 rounded-xl border transition-all font-semibold cursor-pointer ${
+                  savedOnly
+                    ? "bg-amber-100 dark:bg-amber-900/40 border-amber-500 text-amber-700 dark:text-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.15)]"
+                    : "bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                }`}
+              >
+                <Bookmark className={`w-4 h-4 ${savedOnly ? "fill-current" : ""}`} />
+                Saved
+              </button>
+
               <div className="relative tour-sort-options">
                 <select
                   value={sortBy}
@@ -222,8 +323,6 @@ export default function MaterialsPage() {
                 </select>
                 <ArrowDownAZ className="w-4 h-4 text-slate-500 dark:text-slate-400 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
               </div>
-
-              
 
               <button 
                 onClick={() => setShowFilters(!showFilters)}
@@ -361,16 +460,39 @@ export default function MaterialsPage() {
         ) : sortedMaterials.length === 0 ? (
           <div className="text-center py-24 bg-white dark:bg-slate-900/40 rounded-2xl border border-slate-200 dark:border-slate-800/60 border-dashed flex flex-col items-center justify-center">
             <div className="w-20 h-20 bg-slate-100 dark:bg-slate-800/50 rounded-full flex items-center justify-center mb-6">
-              <FileBox className="w-10 h-10 text-slate-500 dark:text-slate-400" />
+              {savedOnly ? (
+                <Bookmark className="w-10 h-10 text-amber-500" />
+              ) : (
+                <FileBox className="w-10 h-10 text-slate-500 dark:text-slate-400" />
+              )}
             </div>
-            <h3 className="text-xl font-bold text-slate-900 dark:text-white font-heading mb-2">No materials found</h3>
-            <p className="text-slate-500 dark:text-slate-400 max-w-md mx-auto mb-6">We couldn't find any materials matching your specific filters and search criteria.</p>
-            <button 
-              onClick={() => { setSearch(""); setCategory(""); setMetallurgyType(""); setMinTensile(""); setMinThermal(""); }}
-              className="px-6 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-white rounded-2xl font-semibold transition-colors"
-            >
-              Clear all filters
-            </button>
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white font-heading mb-2">
+              {savedOnly ? "No saved materials found" : "No materials found"}
+            </h3>
+            <p className="text-slate-500 dark:text-slate-400 max-w-md mx-auto mb-6">
+              {savedOnly
+                ? "You haven't bookmarked any materials matching these criteria yet. Browse the database and click 'Save' on any material detail page."
+                : "We couldn't find any materials matching your specific filters and search criteria."}
+            </p>
+            <div className="flex flex-wrap justify-center gap-3">
+              {savedOnly && (
+                <button
+                  type="button"
+                  onClick={() => toggleSavedMode(false)}
+                  className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-semibold transition-colors cursor-pointer"
+                >
+                  Browse All Materials
+                </button>
+              )}
+              {(search || category || metallurgyType || minTensile !== "" || minThermal !== "") && (
+                <button 
+                  onClick={() => { setSearch(""); setCategory(""); setMetallurgyType(""); setMinTensile(""); setMinThermal(""); }}
+                  className="px-6 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-2xl font-semibold transition-colors cursor-pointer"
+                >
+                  Clear all filters
+                </button>
+              )}
+            </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
@@ -395,6 +517,9 @@ export default function MaterialsPage() {
                     
                     <div className="flex justify-between items-start mb-3 relative z-10">
                       <h3 className="font-bold text-slate-900 dark:text-white font-heading text-lg group-hover:text-emerald-600 dark:text-emerald-400 transition-colors line-clamp-1 pr-2" title={mat.name}>{mat.name}</h3>
+                      {savedOnly && (
+                        <Bookmark className="w-4 h-4 text-amber-500 fill-amber-500 shrink-0 mt-1" />
+                      )}
                     </div>
                     
                     <div className="mb-3 relative z-10">
@@ -444,6 +569,11 @@ export default function MaterialsPage() {
                         <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider"><Zap className="w-3.5 h-3.5" /> Tensile</span>
                         <span className="text-emerald-600 dark:text-emerald-400 font-black text-base">{mat.tensile_strength_min || '-'} <span className="text-xs font-medium text-emerald-600/70 dark:text-emerald-400/70">MPa</span></span>
                       </div>
+                    </div>
+
+                    <div className="mt-3 pt-2 flex items-center justify-between text-xs font-bold text-emerald-600 dark:text-emerald-400 relative z-10">
+                      <span>View Detail Datasheet</span>
+                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </Link>
                 </motion.div>

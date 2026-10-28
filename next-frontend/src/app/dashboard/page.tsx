@@ -132,13 +132,19 @@ export default function AppDashboard() {
             </p>
           </div>
         </div>
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 shadow-sm">
-          <div className="p-3 bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 rounded-xl"><Star className="w-6 h-6" /></div>
-          <div>
-            <p className="text-[10px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Saved Items</p>
-            <p className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white font-heading">{profile?.saved_count || 0}</p>
+        <Link
+          href="/materials?saved=true"
+          className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-amber-400 dark:hover:border-amber-500 rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm hover:shadow-md transition-all group cursor-pointer"
+        >
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <div className="p-3 bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 rounded-xl group-hover:scale-110 transition-transform"><Star className="w-6 h-6" /></div>
+            <div>
+              <p className="text-[10px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">Saved Items</p>
+              <p className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white font-heading">{profile?.saved_count || 0}</p>
+            </div>
           </div>
-        </div>
+          <ArrowRight className="hidden sm:block w-4 h-4 text-slate-300 dark:text-slate-700 group-hover:text-amber-500 group-hover:translate-x-1 transition-all shrink-0" />
+        </Link>
       </div>
 
       <div className="grid md:grid-cols-3 gap-8">
