@@ -13,11 +13,11 @@ const features = [
   {
     id: "database",
     title: "Parametric Database",
-    desc: "Search, filter, and extract verified material properties from our global database.",
+    desc: "Search, filter, and extract material properties across 6,500+ engineering materials.",
     icon: Database,
     color: "bg-blue-500",
     tools: [
-      { name: "Global Search", desc: "Instantly lookup materials verified by ASTM, ISO, and DIN standards.", icon: Search, use: "Type a material name or grade to view its complete mechanical, thermal, and electrical properties." },
+      { name: "Global Search", desc: "Instantly lookup 6,500+ materials across ASTM, ISO, DIN, EN, and JIS standards.", icon: Search, use: "Type a material name or grade to view its mechanical, thermal, and electrical properties." },
       { name: "Advanced Filtering", desc: "Filter materials by exact property thresholds.", icon: SlidersHorizontal, use: "Use sliders to restrict results (e.g., Density < 3.0 g/cm3, Yield Strength > 400 MPa)." },
       { name: "Export & Share", desc: "Download datasheets for offline analysis.", icon: Share2, use: "Export any material profile to CSV or share its unique secure link with your engineering team." }
     ]
@@ -46,7 +46,7 @@ const features = [
     tools: [
       { name: "Side-by-Side Compare", desc: "Visual radar fingerprinting.", icon: Scale, use: "Select up to 3 materials to overlay their properties on a radar chart and extract AI-driven takeaways." },
       { name: "AI Substitution", desc: "Multi-objective optimization.", icon: Replace, use: "Input a baseline material and set weights for Cost, Density, and Carbon Footprint to find the optimal replacement." },
-      { name: "CBAM Emissions", desc: "EU Carbon Tax prediction.", icon: Factory, use: "Calculate predictive Carbon Border Adjustment Mechanism taxes based on your procurement volume." },
+      { name: "CBAM Cost Estimator (Beta)", desc: "Preliminary EU CBAM exposure.", icon: Factory, use: "Estimate preliminary Carbon Border Adjustment Mechanism exposure across 100,000+ Commission default values." },
       { name: "Composite Synthesizer", desc: "Predict hybrid properties.", icon: Layers, use: "Blend a matrix and fiber using the Rule of Mixtures to generate theoretical properties for a custom composite." }
     ]
   },
@@ -101,7 +101,7 @@ export function InteractiveFeatures() {
             One platform. <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-violet-600">Every material decision.</span>
           </h2>
           <p className="text-slate-600 dark:text-slate-400 max-w-3xl mx-auto text-lg">
-            From searching a material database to building a Bill of Materials to predicting EU carbon taxes — MatDataHub replaces the spreadsheets, PDFs, and guesswork.
+            From searching 6,500+ engineering materials to building a Bill of Materials to estimating preliminary EU CBAM exposure — MatDataHub replaces scattered spreadsheets, PDFs, and guesswork.
           </p>
         </div>
 

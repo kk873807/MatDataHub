@@ -14,7 +14,6 @@ export default function LandingPage() {
     if (currency === "EUR") return `€${eur}`;
     return `₹${inr}`;
   };
-  const [feedbacks, setFeedbacks] = useState<any[]>([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [authChecked, setAuthChecked] = useState(false);
   
@@ -59,21 +58,6 @@ export default function LandingPage() {
     }
   }, []);
 
-  useEffect(() => {
-    fetch(`${API}/feedback/public`)
-      .then(res => (res.ok ? res.json() : []))
-      .then(data => {
-        if (Array.isArray(data)) {
-          // get top 3 most helpful feedbacks or just latest 3
-          const sorted = data.filter(f => !f.parent_id).sort((a, b) => (b.helpful_votes || 0) - (a.helpful_votes || 0)).slice(0, 3);
-          setFeedbacks(sorted);
-        }
-      })
-      .catch(() => {
-        // Backend or database offline — keep empty feedback list without triggering Next.js error overlay
-      });
-  }, []);
-
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-200 transition-colors duration-300 selection:bg-indigo-500/30 overflow-x-hidden font-sans">
       
@@ -93,22 +77,38 @@ export default function LandingPage() {
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-cyan-400">Synthesize what&apos;s missing.</span>
             </h1>
             <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed font-light">
-              Search 1,000+ engineering materials, let AI instantly synthesize custom grades, and integrate via API — pay once, use forever.
+              Search 6,500+ engineering materials, let AI synthesize custom grades, estimate preliminary EU CBAM exposure, and integrate via API — pay once, use forever.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
               {authChecked && !isLoggedIn && (
-                <button onClick={() => window.dispatchEvent(new Event("openLoginModal"))} className="flex items-center gap-2 px-8 py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold transition-all shadow-xl shadow-indigo-600/20 w-full sm:w-auto justify-center">
-                  Access Platform <ArrowRight className="w-4 h-4" />
-                </button>
+                <>
+                  <button onClick={() => window.dispatchEvent(new Event("openLoginModal"))} className="flex items-center gap-2 px-8 py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold transition-all shadow-xl shadow-indigo-600/20 w-full sm:w-auto justify-center">
+                    Access Platform <ArrowRight className="w-4 h-4" />
+                  </button>
+                  <Link href="/materials" className="flex items-center gap-2 px-7 py-3.5 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 rounded-xl font-bold transition-all w-full sm:w-auto justify-center">
+                    Explore 6,500+ Materials
+                  </Link>
+                </>
+              )}
+              {authChecked && isLoggedIn && (
+                <>
+                  <Link href="/dashboard" className="flex items-center gap-2 px-8 py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold transition-all shadow-xl shadow-indigo-600/20 w-full sm:w-auto justify-center">
+                    Go to Dashboard <ArrowRight className="w-4 h-4" />
+                  </Link>
+                  <Link href="/materials" className="flex items-center gap-2 px-7 py-3.5 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 rounded-xl font-bold transition-all w-full sm:w-auto justify-center">
+                    Browse 6,500+ Materials
+                  </Link>
+                </>
               )}
             </div>
 
             {/* Social Proof Stats */}
-            <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 max-w-3xl mx-auto pt-4 border-t border-slate-200/70 dark:border-slate-800/70">
               {[
-                { value: "1,000+", label: "Verified Materials" },
+                { value: "6,500+", label: "Engineering Materials" },
+                { value: "100K+", label: "CBAM Default Factors" },
                 { value: "AI", label: "Material Synthesizer" },
-                { value: "API", label: "Developer Access" },
+                { value: "REST API", label: "Developer Access" },
               ].map((stat, i) => (
                 <div key={i} className="text-center">
                   <div className="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white">{stat.value}</div>
@@ -130,7 +130,7 @@ export default function LandingPage() {
                 Engineers and material scientists waste hours cross-referencing scattered databases, supplier PDFs, and pricing spreadsheets just to make a single material decision.
               </p>
               <ul className="space-y-4">
-                {["Supplier datasheets that contradict each other on the same alloy", "No way to quickly compare cost vs. strength vs. carbon footprint", "Hours spent on BOM estimates that could be automated in seconds"].map((item, i) => (
+                {["Supplier datasheets that contradict each other on the same alloy", "No way to quickly compare cost vs. strength vs. embodied carbon", "Hours spent on BOM and CBAM estimates that can be modeled in seconds"].map((item, i) => (
                   <li key={i} className="flex items-start gap-3 text-slate-600 dark:text-slate-300">
                     <Target className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
                     <span>{item}</span>
@@ -142,39 +142,38 @@ export default function LandingPage() {
             <div className="bg-white dark:bg-slate-950 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 blur-[50px]"></div>
               
-              <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4 mb-6 relative z-10">
+              <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4 mb-5 relative z-10">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-indigo-100 dark:bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center border border-indigo-500/20">
-                    <Database className="w-5 h-5 text-indigo-600 dark:text-indigo-600 dark:text-indigo-400" />
+                  <div className="w-10 h-10 rounded-lg bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center border border-indigo-500/20">
+                    <Database className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                   </div>
                   <div>
-                    <div className="h-2.5 w-24 bg-slate-700 rounded mb-1.5"></div>
-                    <div className="h-2 w-16 bg-slate-100 dark:bg-slate-800 rounded"></div>
+                    <div className="text-sm font-bold text-slate-900 dark:text-white">Unified Material Matrix</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400">6,511 indexed grades • ASTM / ISO / DIN / EN / JIS</div>
                   </div>
                 </div>
-                <div className="flex gap-1.5">
-                  <div className="w-2.5 h-2.5 rounded-full bg-slate-700"></div>
-                  <div className="w-2.5 h-2.5 rounded-full bg-slate-700"></div>
-                  <div className="w-2.5 h-2.5 rounded-full bg-slate-700"></div>
-                </div>
+                <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                  Live Index
+                </span>
               </div>
 
-              <div className="space-y-4 relative z-10 opacity-70 group-hover:opacity-100 transition-opacity">
-                <div className="flex gap-4">
-                  <div className="flex-1 h-24 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-4">
-                    <div className="h-2 w-1/3 bg-slate-700 rounded mb-4"></div>
-                    <div className="h-8 w-2/3 bg-indigo-500/20 rounded"></div>
+              <div className="space-y-3 relative z-10">
+                {[
+                  { name: "AISI 4140 Alloy Steel", std: "ASTM A29 • Metal", yield: "415–655 MPa", density: "7.85 g/cm³", badge: "Cross-Validated" },
+                  { name: "Titanium Grade 2 (CP)", std: "ASTM B265 • Titanium", yield: "275–345 MPa", density: "4.51 g/cm³", badge: "Aerospace / Marine" },
+                  { name: "PTFE (Fluoropolymer)", std: "ASTM D4894 • Polymer", yield: "20–35 MPa", density: "2.15 g/cm³", badge: "327°C Melt" },
+                ].map((mat, i) => (
+                  <div key={i} className="p-3.5 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-4">
+                    <div>
+                      <div className="text-sm font-bold text-slate-900 dark:text-white">{mat.name}</div>
+                      <div className="text-xs text-slate-500 dark:text-slate-400">{mat.std}</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-xs font-semibold text-indigo-600 dark:text-indigo-400">{mat.yield}</div>
+                      <div className="text-[11px] text-slate-500 dark:text-slate-400">{mat.density} • {mat.badge}</div>
+                    </div>
                   </div>
-                  <div className="flex-1 h-24 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-4">
-                    <div className="h-2 w-1/3 bg-slate-700 rounded mb-4"></div>
-                    <div className="h-8 w-2/3 bg-emerald-500/20 rounded"></div>
-                  </div>
-                </div>
-                <div className="h-32 w-full bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-4 flex items-end gap-2">
-                  {[40, 70, 45, 90, 65, 80, 50, 100, 75, 85].map((h, i) => (
-                    <div key={i} className="flex-1 bg-indigo-500/40 rounded-t-sm" style={{ height: `${h}%` }}></div>
-                  ))}
-                </div>
+                ))}
               </div>
             </div>
 
@@ -185,81 +184,66 @@ export default function LandingPage() {
       {/* Solution Section */}
       <InteractiveFeatures />
 
-      {/* Featured Blog Banner */}
-      <section id="blog" className="py-12 px-6">
-        <div className="max-w-5xl mx-auto">
-          <Link href="/blogs/1"  className="group relative block overflow-hidden rounded-3xl border border-indigo-500/30 bg-white dark:bg-indigo-950/20 text-left transition-all hover:shadow-2xl shadow-lg border-slate-200 dark:border-indigo-500/30 hover:border-indigo-500/60 hover:shadow-[0_0_40px_-10px_rgba(99,102,241,0.2)] backdrop-blur-sm">
-            <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-indigo-400 to-purple-500"></div>
-            <div className="p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
-              <div className="space-y-3 max-w-2xl">
-                <div className="flex items-center gap-3">
-                  <span className="px-2.5 py-1 text-[10px] font-black uppercase tracking-widest bg-indigo-500 text-white rounded-md shadow-lg">New Research</span>
-                  <span className="text-xs font-bold text-slate-600 dark:text-slate-400">Sept 4, 2026 • 8 min read</span>
-                </div>
-                <h2 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white group-hover:text-indigo-700 dark:hover:text-indigo-600 dark:text-indigo-300 transition-colors leading-tight font-heading">Modeling Thermal Expansion in Aerospace Alloys</h2>
-                <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed max-w-xl">
-                  A deep dive into how our new predictive modeling engine handles extreme temperature deltas in titanium composites compared to legacy FEM solvers.
-                </p>
-              </div>
-              <div className="shrink-0 flex items-center justify-center w-12 h-12 rounded-full bg-indigo-500/20 text-indigo-600 dark:text-indigo-600 dark:text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white dark:hover:text-white transition-all">
-                <ArrowRight className="w-5 h-5" />
-              </div>
-            </div>
-          </Link>
-        </div>
-      </section>
-
-
-
-      {/* Testimonials / Community Feedback */}
-      <section className="py-24 bg-white dark:bg-slate-900/50 border-y border-slate-200 dark:border-slate-800/50">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4 font-heading">Engineers who switched say it best.</h2>
-          <p className="text-slate-600 dark:text-slate-400 mb-12 max-w-2xl mx-auto">Real feedback from engineers and scientists using MatDataHub every day.</p>
-          
-          <div className="grid md:grid-cols-3 gap-8 text-left">
-            {feedbacks.length > 0 ? (
-              feedbacks.map((fb, i) => (
-                <div key={i} className="p-8 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl flex flex-col relative overflow-hidden">
-                  <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500/50"></div>
-                  <div className="flex items-center gap-2 mb-4">
-                    <span className="text-xs font-semibold px-2 py-0.5 bg-indigo-100 dark:bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-600 dark:text-indigo-400 rounded-full border border-indigo-200 dark:border-indigo-700/50">{fb.category}</span>
-                  </div>
-                  <p className="text-slate-600 dark:text-slate-300 relative z-10 mb-6 text-sm leading-relaxed italic flex-1">"{fb.message}"</p>
-                  <div className="flex justify-between items-end border-t border-slate-200 dark:border-slate-800 pt-4 mt-auto">
-                    <div>
-                      <p className="text-slate-900 dark:text-white font-bold text-sm">{fb.name || 'Anonymous Engineer'}</p>
-                      <p className="text-slate-500 dark:text-slate-400 text-[10px]">{new Date(fb.created_at).toLocaleDateString()}</p>
-                    </div>
-                    <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400">
-                      <ThumbsUp className="w-3.5 h-3.5" /> {fb.helpful_votes || 0}
-                    </div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              // Fallback if no feedbacks loaded yet
-              [
-                { quote: "MatDataHub's material database saves hours of cross-referencing datasheets. Having mechanical properties alongside environmental data in one place is exactly what we needed.", author: "Early Adopter", role: "Materials Engineering" },
-                { quote: "The CBAM estimation tool gave us a quick first pass on our EU import exposure. Good starting point before bringing in consultants for formal declarations.", author: "Early Adopter", role: "Supply Chain Management" },
-                { quote: "Clean interface, fast search. We use it for quick property lookups and comparative analysis across alloy families.", author: "Early Adopter", role: "Mechanical Engineering" }
-              ].map((test, i) => (
-                <div key={i} className="p-8 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl relative">
-                  <div className="text-4xl text-indigo-500/20 absolute top-4 left-4 font-serif">"</div>
-                  <p className="text-slate-600 dark:text-slate-300 relative z-10 mb-6 text-sm leading-relaxed italic flex-1">"{test.quote}"</p>
-                  <div>
-                    <p className="text-slate-900 dark:text-white font-bold text-sm">{test.author}</p>
-                    <p className="text-slate-500 dark:text-slate-400 text-xs">{test.role}</p>
-                  </div>
-                </div>
-              ))
-            )}
+      {/* Database Coverage & Global Standards */}
+      <section id="coverage" className="py-24 bg-white dark:bg-slate-900/50 border-y border-slate-200 dark:border-slate-800/50">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4 font-heading">
+              6,500+ Engineering Grades. Cross-Referenced Globally.
+            </h2>
+            <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+              Every material profile unifies mechanical, thermal, electrical, and environmental properties alongside international standard equivalents.
+            </p>
           </div>
-          
-          <div className="mt-12">
-             <Link href="/feedback" className="inline-flex items-center gap-2 px-6 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-xl font-medium transition-colors text-sm border border-slate-700">
-               <MessageSquare className="w-4 h-4" /> View All Community Discussions
-             </Link>
+
+          <div className="grid md:grid-cols-3 gap-8 mb-12">
+            {[
+              {
+                icon: Cpu,
+                title: "Metals, Steels & Superalloys",
+                badge: "Ferrous & Non-Ferrous",
+                desc: "Structural steels, stainless alloys, aluminum series, titanium grades, copper castings, and nickel superalloys with yield, tensile, hardness, and fatigue data.",
+              },
+              {
+                icon: TestTube2,
+                title: "Polymers, Ceramics & Composites",
+                badge: "Advanced Materials",
+                desc: "Engineering thermoplastics, fluoropolymers, elastomers, technical ceramics, and Rule-of-Mixtures hybrid composite synthesis for weight-critical assemblies.",
+              },
+              {
+                icon: ShieldCheck,
+                title: "100,000+ CBAM Reference Factors",
+                badge: "EU Reg. 2025/2621 & 2026/1740",
+                desc: "Indexed Commission default values by CN code, country of origin, and production route across Iron & Steel, Aluminium, Cement, Fertilisers, and Hydrogen.",
+              },
+            ].map((card, i) => (
+              <div key={i} className="p-8 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-lg flex flex-col">
+                <div className="flex items-center justify-between gap-3 mb-5">
+                  <div className="w-11 h-11 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                    <card.icon className="w-5 h-5" />
+                  </div>
+                  <span className="text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-slate-200/70 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                    {card.badge}
+                  </span>
+                </div>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3 font-heading">{card.title}</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed flex-1">{card.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6 p-6 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mr-2">Indexed Standards:</span>
+              {["ASTM / UNS", "ISO", "EN", "DIN", "JIS", "IS / GB"].map((std) => (
+                <span key={std} className="px-3 py-1 text-xs font-bold rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300">
+                  {std}
+                </span>
+              ))}
+            </div>
+            <Link href="/feedback" className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-xl font-semibold transition-colors text-xs border border-slate-300 dark:border-slate-700 shrink-0">
+              <MessageSquare className="w-4 h-4" /> Request a Grade or Share Pilot Feedback
+            </Link>
           </div>
         </div>
       </section>
@@ -303,7 +287,7 @@ export default function LandingPage() {
               <p className="text-slate-600 dark:text-slate-400 text-sm mb-6 h-10">For independent engineers and small firms.</p>
               <div className="text-4xl font-extrabold text-slate-900 dark:text-white mb-8">{getPrice(499, "5.99", "5.49")}<span className="text-sm font-medium text-slate-500 dark:text-slate-400">/lifetime</span></div>
               <ul className="space-y-3 mb-8 flex-1">
-                {["Full 1,000+ material database", "Export detailed PDFs", "Advanced AI Adviser", "Unlimited Workspaces"].map((f, i) => (
+                {["Full 6,500+ material database", "Export detailed PDFs", "Advanced AI Adviser", "Unlimited Workspaces"].map((f, i) => (
                   <li key={i} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
                     <CheckCircle2 className="w-4 h-4 text-indigo-600 dark:text-indigo-600 dark:text-indigo-400" /> {f}
                   </li>
@@ -318,7 +302,7 @@ export default function LandingPage() {
               <p className="text-slate-600 dark:text-slate-400 text-sm mb-6 h-10">Full financial & physics capabilities.</p>
               <div className="text-4xl font-extrabold text-slate-900 dark:text-white mb-8">Custom<span className="text-sm font-medium text-slate-500 dark:text-slate-400">/enterprise</span></div>
               <ul className="space-y-3 mb-8 flex-1">
-                {["Priority email support", "Google sign-in (OAuth 2.0)", "Regulation data updates when the Commission republishes", "Full CBAM Calculator & Exports", "REST API access (10,000 requests/day)"].map((f, i) => (
+                {["Priority email support", "Google sign-in (OAuth 2.0)", "Regulation data updates when the Commission republishes", "CBAM Cost Estimator (Beta) & Exports", "REST API access (10,000 requests/day)"].map((f, i) => (
                   <li key={i} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
                     <CheckCircle2 className="w-4 h-4 text-amber-500" /> {f}
                   </li>

@@ -230,8 +230,8 @@ export function TopNav() {
               <div className="hidden md:flex items-center gap-6 mr-2">
                 <Link href="#problem" className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-600 dark:text-blue-400 transition-colors print:hidden">Problem</Link>
                 <Link href="#solution" className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-600 dark:text-blue-400 transition-colors print:hidden">Platform</Link>
+                <Link href="#coverage" className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-600 dark:text-blue-400 transition-colors print:hidden">Coverage</Link>
                 <Link href="#pricing" className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-600 dark:text-blue-400 transition-colors print:hidden">Pricing</Link>
-                <Link href="#blog" className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-600 dark:text-blue-400 transition-colors print:hidden">Blogs</Link>
               </div>
             )}
 
@@ -311,8 +311,8 @@ export function TopNav() {
               <div className="flex flex-col gap-4 p-2">
                 <Link href="#problem" onClick={() => setMobileMenuOpen(false)} className="font-medium text-slate-700 dark:text-slate-200">Problem</Link>
                 <Link href="#solution" onClick={() => setMobileMenuOpen(false)} className="font-medium text-slate-700 dark:text-slate-200">Platform</Link>
+                <Link href="#coverage" onClick={() => setMobileMenuOpen(false)} className="font-medium text-slate-700 dark:text-slate-200">Coverage</Link>
                 <Link href="#pricing" onClick={() => setMobileMenuOpen(false)} className="font-medium text-slate-700 dark:text-slate-200">Pricing</Link>
-                <Link href="#blog" onClick={() => setMobileMenuOpen(false)} className="font-medium text-slate-700 dark:text-slate-200">Blogs</Link>
               </div>
             ) : (
               appNavItems.map(item => {

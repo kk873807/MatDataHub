@@ -183,7 +183,7 @@ export function AccountModals({ activeModal, setActiveModal, userInfo }: Account
                     {profile.tier === "advanced" && <span className="text-emerald-600 dark:text-emerald-400 text-sm font-bold bg-emerald-100 dark:bg-emerald-900/30 px-2 py-1 rounded">Maximum Access</span>}
                   </div>
                   {profile.tier === "free" && <p className="text-sm text-slate-600 dark:text-slate-300">Upgrade to Pro or Advanced to unlock full database access, advanced AI features, and more.</p>}
-                  {profile.tier === "pro" && <p className="text-sm text-slate-600 dark:text-slate-300">You have access to 1000+ materials, advanced AI tools, and PDF exports. Upgrade to Advanced for API access and Enterprise SSO.</p>}
+                  {profile.tier === "pro" && <p className="text-sm text-slate-600 dark:text-slate-300">You have access to 6,500+ materials, advanced AI tools, and PDF exports. Upgrade to Advanced for API access and Enterprise SSO.</p>}
                   {profile.tier === "advanced" && <p className="text-sm text-slate-600 dark:text-slate-300">You have unlimited access to all features, custom materials, programmatic REST APIs, and priority support.</p>}
                 </div>
 

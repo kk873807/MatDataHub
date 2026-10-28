@@ -359,7 +359,7 @@ function AccountDashboardInner() {
                       <span className="text-sm font-medium text-slate-500 dark:text-slate-400">/lifetime</span>
                     </div>
                     <ul className="space-y-3 mb-8">
-                      <li className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300"><CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> Full 1000+ material database</li>
+                      <li className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300"><CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> Full 6,500+ material database</li>
                       <li className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300"><CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> Export detailed professional PDFs</li>
                       <li className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300"><CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> Advanced AI Adviser capabilities</li>
                       <li className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300"><CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> Unlimited engineering workspaces</li>

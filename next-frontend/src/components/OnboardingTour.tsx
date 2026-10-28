@@ -56,12 +56,12 @@ export function OnboardingTour() {
     },
     {
       target: ".tour-materials",
-      content: "The Material Database — search, filter, and explore 1000+ verified engineering materials with detailed property datasheets.",
+      content: "The Material Database — search, filter, and explore 6,500+ engineering materials with detailed property datasheets.",
       placement: "bottom" as const,
     },
     {
       target: ".tour-analytics",
-      content: "Advanced Analytics — run side-by-side material comparisons, AI-powered substitutions, CBAM emissions modeling, and composite material synthesis.",
+      content: "Advanced Analytics — run side-by-side material comparisons, AI-powered substitutions, preliminary CBAM cost estimation, and composite material synthesis.",
       placement: "bottom" as const,
     },
     {
