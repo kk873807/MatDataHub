@@ -294,7 +294,7 @@ export default function LandingPage() {
                   </li>
                 ))}
               </ul>
-              {isLoggedIn ? <Link href="/account" className="block text-center w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold transition-colors">Upgrade in Account</Link> : <button onClick={() => window.dispatchEvent(new Event("openLoginModal"))} className="block text-center w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold transition-colors">Upgrade to Pro</button>}
+              {isLoggedIn ? <button type="button" onClick={() => window.dispatchEvent(new CustomEvent("openAccountModal", { detail: "account" }))} className="block text-center w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold transition-colors cursor-pointer">Upgrade in Account</button> : <button onClick={() => window.dispatchEvent(new Event("openLoginModal"))} className="block text-center w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold transition-colors">Upgrade to Pro</button>}
             </div>
 
             {/* Advanced */}
@@ -309,7 +309,7 @@ export default function LandingPage() {
                   </li>
                 ))}
               </ul>
-              {isLoggedIn ? <Link href="/account" className="block text-center w-full py-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-bold transition-colors">Upgrade in Account</Link> : <button onClick={() => window.dispatchEvent(new Event("openLoginModal"))} className="block text-center w-full py-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-bold transition-colors">Get Advanced</button>}
+              {isLoggedIn ? <button type="button" onClick={() => window.dispatchEvent(new CustomEvent("openAccountModal", { detail: "account" }))} className="block text-center w-full py-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-bold transition-colors cursor-pointer">Upgrade in Account</button> : <button onClick={() => window.dispatchEvent(new Event("openLoginModal"))} className="block text-center w-full py-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-bold transition-colors">Get Advanced</button>}
             </div>
 
           </div>

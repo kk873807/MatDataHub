@@ -480,9 +480,19 @@ export default function MaterialsPage() {
               <h3 className="text-lg font-bold text-slate-900 dark:text-white font-heading">Showing first {FREE_BROWSE_LIMIT} of {sortedAll.length}+ materials</h3>
             </div>
             <p className="text-slate-600 dark:text-slate-300 text-sm mb-4">Upgrade to Pro to browse the full materials database with unlimited search and advanced filters.</p>
-            <Link href="/account" className="inline-block px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold transition-all hover:scale-105">
+            <button
+              type="button"
+              onClick={() => {
+                if (localStorage.getItem("token")) {
+                  window.dispatchEvent(new CustomEvent("openAccountModal", { detail: "account" }));
+                } else {
+                  window.dispatchEvent(new Event("openLoginModal"));
+                }
+              }}
+              className="inline-block px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold transition-all hover:scale-105 cursor-pointer"
+            >
               Upgrade to Pro
-            </Link>
+            </button>
           </div>
         )}
 

@@ -446,9 +446,9 @@ MAT-C5,Glass Panes,5000,,,India,France,2026-08-01,ClearGlass,FR9876543210987`
             </p>
             
             <div className="relative z-10 flex flex-col sm:flex-row gap-3 items-center">
-              <Link href="/account" className="px-8 py-4 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-bold transition-all shadow-lg shadow-amber-900/50 hover:scale-105">
+              <button type="button" onClick={() => window.dispatchEvent(new CustomEvent("openAccountModal", { detail: "account" }))} className="px-8 py-4 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-bold transition-all shadow-lg shadow-amber-900/50 hover:scale-105 cursor-pointer">
                 Upgrade to Advanced
-              </Link>
+              </button>
               <Link href="/contact" className="px-8 py-4 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-xl font-bold transition-colors">
                 Talk to us
               </Link>

@@ -78,7 +78,7 @@ export default function AppDashboard() {
               )}
             </div>
             <h1 className="text-3xl md:text-4xl font-extrabold font-heading mb-2">
-              Welcome back{profile?.username ? `, ${profile.username}` : ''}!
+              Welcome back{profile?.name || profile?.username ? `, ${profile?.name || profile?.username}` : ''}!
             </h1>
             <p className="text-white/80 max-w-lg">
               {isProOrAbove 
@@ -88,9 +88,13 @@ export default function AppDashboard() {
           </div>
           <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto shrink-0">
             {!isProOrAbove && (
-              <Link href="/account" className="bg-amber-500 hover:bg-amber-400 text-slate-900 px-6 py-3 rounded-2xl text-sm font-bold transition-colors text-center">
+              <button
+                type="button"
+                onClick={() => window.dispatchEvent(new CustomEvent("openAccountModal", { detail: "account" }))}
+                className="bg-amber-500 hover:bg-amber-400 text-slate-900 px-6 py-3 rounded-2xl text-sm font-bold transition-colors text-center cursor-pointer"
+              >
                 Upgrade to Pro
-              </Link>
+              </button>
             )}
             <Link href="/projects" className="bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 px-6 py-3 rounded-2xl text-sm font-bold transition-colors text-center flex items-center justify-center gap-2">
               <Plus className="w-4 h-4" /> New Workspace
@@ -122,7 +126,9 @@ export default function AppDashboard() {
           <div>
             <p className="text-[10px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">API Access</p>
             <p className="text-lg sm:text-xl font-black text-slate-900 dark:text-white font-heading">
-              {profile?.api_key ? "Active" : profile?.tier === "advanced" || profile?.is_admin ? "Not Generated" : "Locked"}
+              {profile?.tier === "advanced" || profile?.is_admin
+                ? (profile?.api_key ? "Active" : "Not Generated")
+                : "Locked"}
             </p>
           </div>
         </div>
@@ -156,9 +162,13 @@ export default function AppDashboard() {
               <Workflow className="w-12 h-12 text-slate-300 dark:text-slate-700 mx-auto mb-4 group-hover:scale-110 transition-transform duration-500" />
               <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Workspaces are locked</h3>
               <p className="text-slate-500 dark:text-slate-400 mb-6 max-w-sm mx-auto">You need a Professional or Advanced subscription to create Engineering Workspaces and Bill of Materials.</p>
-              <Link href="/account" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2.5 rounded-xl font-bold transition-colors">
+              <button
+                type="button"
+                onClick={() => window.dispatchEvent(new CustomEvent("openAccountModal", { detail: "account" }))}
+                className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2.5 rounded-xl font-bold transition-colors cursor-pointer"
+              >
                 <Zap className="w-4 h-4" /> Unlock Workspaces
-              </Link>
+              </button>
             </div>
           ) : projects.length === 0 ? (
             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 border-dashed rounded-3xl p-10 text-center">
@@ -201,7 +211,7 @@ export default function AppDashboard() {
               <div className="shrink-0 w-10 h-10 bg-blue-50 dark:bg-blue-900/20 text-blue-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform"><Search className="w-5 h-5" /></div>
               <div>
                 <h3 className="font-bold text-slate-900 dark:text-white text-sm">Material Search</h3>
-                <p className="text-slate-500 text-xs">Search 6500+ database</p>
+                <p className="text-slate-500 text-xs">Search 6,500+ database</p>
               </div>
             </Link>
             <Link href="/analytics/compare" className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl hover:border-purple-400 hover:shadow-md transition-all group flex items-center gap-4">
@@ -214,8 +224,8 @@ export default function AppDashboard() {
             <Link href="/analytics/cbam" className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl hover:border-amber-400 hover:shadow-md transition-all group flex items-center gap-4">
               <div className="shrink-0 w-10 h-10 bg-amber-50 dark:bg-amber-900/20 text-amber-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform"><Calculator className="w-5 h-5" /></div>
               <div>
-                <h3 className="font-bold text-slate-900 dark:text-white text-sm">CBAM Calculator</h3>
-                <p className="text-slate-500 text-xs">Carbon tax estimates</p>
+                <h3 className="font-bold text-slate-900 dark:text-white text-sm">CBAM Cost Estimator (Beta)</h3>
+                <p className="text-slate-500 text-xs">Preliminary carbon cost estimates</p>
               </div>
             </Link>
             <Link href="/analytics/synthesizer" className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl hover:border-emerald-400 hover:shadow-md transition-all group flex items-center gap-4">

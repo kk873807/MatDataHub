@@ -40,25 +40,21 @@ function AccountDashboardInner() {
   useEffect(() => {
     // Capture token from Google OAuth redirect (?t=TOKEN)
     const oauthToken = searchParams.get("t");
-    const oauthError = searchParams.get("error");
-    
     if (oauthToken) {
       localStorage.setItem("token", oauthToken);
-      // Clean the URL so the token isn't visible in the address bar
-      window.history.replaceState({}, "", "/account");
     }
-    if (oauthError) {
-      setError("Google authentication failed. Please try again.");
-      window.history.replaceState({}, "", "/account");
+    const token = oauthToken || localStorage.getItem("token");
+    if (!token) {
+      window.location.href = "/?login=true";
+      return;
     }
-    
-    fetchProfile();
+    // Redirect legacy /account route to Dashboard and open the modern AccountModals overlay
+    window.location.replace("/dashboard?openAccount=true");
   }, [searchParams]);
 
   const fetchProfile = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
-      // Force redirect to login if no token is found, preventing infinite "Authenticating..." spinner
       window.location.href = "/?login=true";
       return;
     }

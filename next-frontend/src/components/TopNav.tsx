@@ -86,8 +86,27 @@ export function TopNav() {
       setTimeout(() => setAuthChecked(true), 0);
     }
     const handleOpenModal = () => setShowLoginModal(true);
+    const handleOpenAccountModal = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      setActiveAccountModal(typeof detail === "string" && detail ? detail : "account");
+    };
     window.addEventListener('openLoginModal', handleOpenModal);
-    return () => window.removeEventListener('openLoginModal', handleOpenModal);
+    window.addEventListener('openAccountModal', handleOpenAccountModal);
+
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("openAccount") === "true") {
+        setActiveAccountModal("account");
+        params.delete("openAccount");
+        const cleanSearch = params.toString();
+        window.history.replaceState({}, "", `${window.location.pathname}${cleanSearch ? `?${cleanSearch}` : ""}`);
+      }
+    }
+
+    return () => {
+      window.removeEventListener('openLoginModal', handleOpenModal);
+      window.removeEventListener('openAccountModal', handleOpenAccountModal);
+    };
   }, [pathname]);
 
   useEffect(() => {

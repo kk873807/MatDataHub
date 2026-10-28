@@ -18,6 +18,8 @@ export function AccountModals({ activeModal, setActiveModal, userInfo }: Account
   const [transactions, setTransactions] = useState<any[]>([]);
 
   useEffect(() => {
+    if (!activeModal) return;
+    fetchProfile();
     if (activeModal === 'billing') {
       const token = localStorage.getItem("token");
       if (token) {

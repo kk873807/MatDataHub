@@ -130,9 +130,9 @@ export default function WorkspacesPage() {
               You must be signed in to use Engineering Workspaces. 
             </p>
             
-            <Link href="/account" className="relative z-10 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-all shadow-lg hover:scale-105">
+            <button type="button" onClick={() => window.dispatchEvent(new Event("openLoginModal"))} className="relative z-10 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-all shadow-lg hover:scale-105 cursor-pointer">
               Sign In or Register
-            </Link>
+            </button>
           </div>
         </div>
       </main>
@@ -153,9 +153,9 @@ export default function WorkspacesPage() {
               {errorMessage}
             </p>
             
-            <Link href="/account" className="relative z-10 px-8 py-4 bg-yellow-600 hover:bg-yellow-700 text-slate-900 dark:text-white rounded-xl font-bold transition-all shadow-lg hover:scale-105">
+            <button type="button" onClick={() => window.dispatchEvent(new CustomEvent("openAccountModal", { detail: "account" }))} className="relative z-10 px-8 py-4 bg-yellow-600 hover:bg-yellow-700 text-slate-900 dark:text-white rounded-xl font-bold transition-all shadow-lg hover:scale-105 cursor-pointer">
               Upgrade Account
-            </Link>
+            </button>
           </div>
         </div>
       </main>

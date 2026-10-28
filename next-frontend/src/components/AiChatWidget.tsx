@@ -290,9 +290,9 @@ export function AiChatWidget() {
                     <div className="bg-amber-100 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 p-4 rounded-2xl rounded-tl-none max-w-[85%] space-y-3 shadow-sm">
                       <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400 font-bold text-sm"><Lock className="w-4 h-4" /> Pro Feature Required</div>
                       <p className="text-slate-700 dark:text-slate-300 text-xs leading-relaxed">The AI Adviser is available to <strong>Pro</strong> and <strong>Advanced</strong> members. Upgrade your account to unlock AI-powered recommendations.</p>
-                      <Link href="/account" className="inline-flex items-center gap-1 px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold rounded-xl transition-colors">
+                      <button type="button" onClick={() => window.dispatchEvent(new CustomEvent("openAccountModal", { detail: "account" }))} className="inline-flex items-center gap-1 px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold rounded-xl transition-colors cursor-pointer">
                         Upgrade Now <ArrowUpRight className="w-3 h-3" />
-                      </Link>
+                      </button>
                     </div>
                   ) : (
                     <div className={`p-4 rounded-2xl text-sm max-w-[90%] shadow-sm overflow-hidden ${
