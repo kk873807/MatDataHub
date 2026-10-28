@@ -28,23 +28,43 @@ from sqlalchemy.orm import Session
 
 print("--- IMPORTS COMPLETE ---", flush=True)
 
-# ── Track DB readiness (used by /health) ──────────────────────────
+# ── Track DB readiness & keep-alive (used by /health) ─────────────
+import time as _time
+from sqlalchemy import text as _sql_text
+
 _db_ready = False
 _db_error: str | None = None
+_last_db_ping_ts: float = 0.0
+
+
+def _ping_db() -> bool:
+    """Execute a lightweight SELECT 1 query so Supabase registers active DB traffic
+    and never auto-pauses on the free tier."""
+    global _db_ready, _db_error, _last_db_ping_ts
+    try:
+        with engine.connect() as conn:
+            conn.execute(_sql_text("SELECT 1"))
+        _db_ready = True
+        _db_error = None
+        _last_db_ping_ts = _time.time()
+        return True
+    except Exception as e:
+        _db_error = str(e)
+        return False
 
 
 def _init_db():
     """Run DB table creation in a background thread so it never blocks
     Uvicorn from binding the port.  Render's health-check sees the open
     port immediately and marks the deploy as successful."""
-    import time as _time
-    global _db_ready, _db_error
+    global _db_ready, _db_error, _last_db_ping_ts
     for attempt in range(1, 4):
         try:
             print(f"Background thread: connecting to DB and creating tables (attempt {attempt}/3)...", flush=True)
             Base.metadata.create_all(bind=engine)
             _db_ready = True
             _db_error = None
+            _last_db_ping_ts = _time.time()
             print("Background thread: tables created successfully.", flush=True)
             return
         except Exception as e:
@@ -52,6 +72,13 @@ def _init_db():
             print(f"Background thread: DB init error (attempt {attempt}/3): {e}", file=sys.stderr, flush=True)
             if attempt < 3:
                 _time.sleep(2 * attempt)
+
+
+def _keepalive_db_loop():
+    """Periodic in-process keep-alive query every 6 hours while the container is running."""
+    while True:
+        _time.sleep(6 * 3600)
+        _ping_db()
 
 
 # ── Build the FastAPI app ─────────────────────────────────────────
@@ -68,8 +95,8 @@ def startup_event():
     """Fire-and-forget DB init so the ASGI server can start accepting
     connections without waiting for a potentially slow remote DB."""
     print("--- STARTUP EVENT: launching DB init thread ---", flush=True)
-    t = threading.Thread(target=_init_db, daemon=True)
-    t.start()
+    threading.Thread(target=_init_db, daemon=True).start()
+    threading.Thread(target=_keepalive_db_loop, daemon=True).start()
 
 
 # ── Rate limiting & DB error handling ─────────────────────────────
@@ -162,8 +189,11 @@ def root():
 
 
 @app.get("/health")
-def health():
-    """Detailed health check for monitoring and Render zero-downtime deploys."""
+def health(ping_db: bool = False):
+    """Detailed health check for monitoring, Render zero-downtime deploys, and Supabase keep-alive."""
+    now = _time.time()
+    if ping_db or (not _db_ready and _last_db_ping_ts > 0) or (now - _last_db_ping_ts > 3600):
+        _ping_db()
     return {
         "status": "healthy",
         "db_ready": _db_ready,

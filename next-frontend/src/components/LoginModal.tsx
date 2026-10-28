@@ -12,6 +12,7 @@ export function LoginModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =
   const [isRegister, setIsRegister] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [error, setError] = useState("");
+  const [staleTerms, setStaleTerms] = useState(false);
   const [loading, setLoading] = useState(false);
 
   if (!isOpen) return null;
@@ -19,6 +20,7 @@ export function LoginModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setStaleTerms(false);
 
     if (isRegister && !termsAccepted) {
       setError("Please accept the Terms of Service and Privacy Policy to create an account.");
@@ -45,8 +47,13 @@ export function LoginModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =
         body: JSON.stringify(payload)
       });
       
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail || "Authentication failed");
+      const data = await res.json().catch(() => ({}));
+      if (isRegister && res.status === 409 && typeof data.detail === "string" && data.detail.toLowerCase().includes("terms")) {
+        setStaleTerms(true);
+        setError("Our Terms of Service were updated since you opened this tab. Please refresh the page to review and accept the latest version.");
+        return;
+      }
+      if (!res.ok) throw new Error(data.detail || "Unable to complete sign-in. Please check your details and try again.");
 
       localStorage.setItem("token", data.access_token);
       
@@ -61,7 +68,7 @@ export function LoginModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =
       // Redirect to homepage
       window.location.href = "/";
     } catch (err: any) {
-      setError(err.message);
+      setError(err?.message || "Unable to connect to the server. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -86,8 +93,17 @@ export function LoginModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =
           </div>
 
           {error && (
-            <div className="bg-red-500/10 border border-red-500/50 text-red-500 text-sm p-3 rounded-2xl mb-6">
-              {error}
+            <div className="bg-red-500/10 border border-red-500/50 text-red-500 text-sm p-3 rounded-2xl mb-6 space-y-2">
+              <p>{error}</p>
+              {staleTerms && (
+                <button
+                  type="button"
+                  onClick={() => window.location.reload()}
+                  className="inline-block font-semibold underline hover:text-red-400"
+                >
+                  Refresh page now
+                </button>
+              )}
             </div>
           )}
 

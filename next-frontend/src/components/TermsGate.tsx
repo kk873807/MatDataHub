@@ -57,10 +57,14 @@ export function TermsGate() {
         body: JSON.stringify({ terms_version: LEGAL_VERSION }),
       });
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.detail || "Could not record your acceptance. Please try again.");
+      if (res.status === 409) {
+        setError("Our Terms of Service were updated since you opened this tab. Please refresh the page to accept the latest version.");
+        return;
+      }
+      if (!res.ok) throw new Error(data.detail || "Could not record your acceptance. Please refresh the page and try again.");
       setNeedsAcceptance(false);
     } catch (e: any) {
-      setError(e.message);
+      setError(e?.message || "Could not record your acceptance. Please refresh the page and try again.");
     } finally {
       setSaving(false);
     }

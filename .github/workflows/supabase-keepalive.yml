@@ -1,0 +1,17 @@
+name: Supabase Database Keep-Alive
+
+on:
+  schedule:
+    # Run every 12 hours so the Supabase Free Tier project never pauses after 7 days of inactivity
+    - cron: '0 */12 * * *'
+  workflow_dispatch:
+
+jobs:
+  ping-db:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wake Render API and run SELECT 1 on Supabase
+        run: |
+          response=$(curl -sS --retry 3 --retry-delay 10 --max-time 60 "https://matdatahub-api.onrender.com/health?ping_db=true")
+          echo "Health response: $response"
+          echo "$response" | grep -q '"db_ready":true'

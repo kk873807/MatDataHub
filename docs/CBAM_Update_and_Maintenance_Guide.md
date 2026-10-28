@@ -216,22 +216,30 @@ To ensure every recorded `terms_version` in `public.users` maps unambiguously to
    * `legal-2026-10-14-de` (`ea21ac0`): Initial 14 Oct 2026 Terms (German governing law) & 6-section Privacy Policy.
    * `legal-2026-10-14-in` (`4b2ace6`): 14 Oct 2026 revision changing governing law to India and contact email to `matdatahub.support@gmail.com` before version bump.
    * `legal-2026-10-26`: Version `2026-10-26` (explicit version header, free beta clause, accurate Groq AI disclosure, India DPDP Act rights, and re-acceptance gate).
-4. **Automatic Re-Acceptance (`TermsGate`)**:
+4. **In-App Re-Acceptance Recording (`TermsGate`)**:
    * Whenever `CURRENT_TERMS_VERSION` is bumped, `GET /api/v1/auth/me` returns `terms_current: false` for all users on an older or missing version (including Google OAuth users).
-   * `TermsGate` (`next-frontend/src/components/TermsGate.tsx`) blocks access and prompts the signed-in user to accept the new version via `POST /api/v1/auth/accept-terms`, which records `terms_version` and a server-generated UTC `terms_accepted_at` timestamp.
+   * `TermsGate` (`next-frontend/src/components/TermsGate.tsx`) is a client-side web UI modal that prompts the signed-in user to accept the new version via `POST /api/v1/auth/accept-terms`, which **records** `terms_version` and a server-generated UTC `terms_accepted_at` timestamp.
+   * Note: Because `TermsGate` is client-side only, a user calling the REST API directly with a bearer token is not blocked at the API layer by `terms_current`; for CBAM usage, the server-recorded per-analysis `estimate_acknowledged` / `estimate_acknowledged_at` in `bom_analyses.results_json` is the primary audit record.
+5. **Groq Data Controls (Zero Data Retention Opt-Out)**:
+   * To disable Groq's default 30-day diagnostic/abuse logging for the AI Material Adviser: log in to `https://console.groq.com/settings/data-controls` and enable **Zero Data Retention (ZDR)** / opt out of system reliability logging.
+   * Once enabled in the Groq Console, you may shorten the AI Material Adviser bullet in `next-frontend/src/app/privacy/page.tsx` (and bump `LEGAL_VERSION` + tag the commit) to state that Zero Data Retention is enabled on GroqCloud.
 
 ---
 
-## 6. Infrastructure Roadmap: EU Regional Co-Location
+## 6. Infrastructure Operations, Keep-Alive & Backups
 
-### Current Architecture & Risks
-* **Database**: Supabase PostgreSQL in Tokyo (`ap-northeast-1`).
-* **Backend**: Render Web Service in Oregon (`us-west`).
-* **Operational Risk**: `database.py` enforces `-c statement_timeout=10000` (10s). Under trans-Pacific latency spikes, reloading 100,521 rows can exceed 10 seconds.
-* **Mitigation Built in v2.4**: Stale-cache serving and HTTP 503 guard prevent bad data from being stored, but latency remains present.
+### 6.1 Preventing Supabase Free-Tier Auto-Pausing
+Supabase Free Tier pauses projects after 7 days without database queries, and paused free projects are only restorable for 90 days. Two layers prevent inactivity pauses:
+1. **Active DB Query on `/health`**: `GET /health?ping_db=true` (and any `/health` request when the last DB ping was >1 hour ago) executes a real `SELECT 1` query against PostgreSQL (`_ping_db()` in `app/main.py`), plus an in-process background thread that runs `SELECT 1` every 6 hours while the Render container is awake.
+2. **Scheduled GitHub Action (`.github/workflows/supabase-keepalive.yml`)**: Runs every 12 hours (`cron: '0 */12 * * *'`), waking the Render web service and calling `https://matdatahub-api.onrender.com/health?ping_db=true` so Supabase registers active SQL queries twice daily.
 
-### Long-Term Production Target
-* Migrate both Supabase PostgreSQL and Render API runtime to **AWS Frankfurt (`eu-central-1`)**.
-* **Benefits**:
-  1. Reduces database query latency from $\sim 150\text{ms}$ to $<5\text{ms}$, eliminating statement timeout risks during cache refreshes.
-  2. Ensures all supply chain data (supplier names, origins, EORI numbers) resides within the European Union, satisfying GDPR Chapter V and EU enterprise data sovereignty standards.
+### 6.2 Manual Database Backups
+Because Supabase Free Tier does not include automated daily backups, run a manual snapshot before onboarding new pilot cohorts or applying schema migrations:
+```powershell
+.\.venv\Scripts\python.exe scripts/backup_supabase.py
+```
+This exports all application tables (`users`, `materials`, `custom_materials`, `bom_analyses`, `transactions`, `upgrade_requests`, `feedback`, `projects`, `project_items`, `saved_materials`, `blogs`) and `cbam_defaults` metadata to a timestamped JSON file under `backups/` (gitignored).
+
+### 6.3 Long-Term Production Target: EU Regional Co-Location
+* **Current Setup**: Supabase PostgreSQL in Tokyo (`ap-northeast-1`) and Render Web Service in Oregon (`us-west`).
+* **Target before Paid Enterprise Contracts**: Upgrade to a paid Supabase plan (automated daily backups, no inactivity pausing) and co-locate both Supabase PostgreSQL and Render API runtime in **AWS Frankfurt (`eu-central-1`)** to reduce query latency from $\sim 150\text{ms}$ to $<5\text{ms}$ and keep all EU importer supply-chain data within the EU.
