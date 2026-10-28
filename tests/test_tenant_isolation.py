@@ -504,6 +504,29 @@ def test_frontend_and_backend_legal_versions_match():
     assert m.group(1) == CURRENT_TERMS_VERSION, f"legal.ts {m.group(1)} != app/legal.py {CURRENT_TERMS_VERSION}"
 
 
+def test_health_ping_db_is_throttled():
+    """/health?ping_db=true is public; rapid calls must not run SELECT 1 on every request."""
+    import app.main as main_mod
+    from unittest.mock import patch
+
+    main_mod._last_db_ping_ts = 0.0
+    call_count = 0
+    real_connect = main_mod.engine.connect
+
+    def counting_connect(*args, **kwargs):
+        nonlocal call_count
+        call_count += 1
+        return real_connect(*args, **kwargs)
+
+    with patch.object(main_mod.engine, "connect", side_effect=counting_connect):
+        r1 = client.get("/health?ping_db=true")
+        r2 = client.get("/health?ping_db=true")
+        r3 = client.get("/health?ping_db=true")
+
+    assert r1.status_code == 200 and r2.status_code == 200 and r3.status_code == 200
+    assert call_count == 1, f"Expected 1 DB ping within 60s throttle window, got {call_count}"
+
+
 if __name__ == "__main__":
     tests = [
         test_tenant_isolation, 
@@ -514,6 +537,7 @@ if __name__ == "__main__":
         test_auth_register_rejects_missing_or_false_terms,
         test_accept_terms_covers_google_and_earlier_version_users,
         test_frontend_and_backend_legal_versions_match,
+        test_health_ping_db_is_throttled,
     ]
     for fn in tests:
         fn()

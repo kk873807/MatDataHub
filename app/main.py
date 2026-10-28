@@ -35,22 +35,32 @@ from sqlalchemy import text as _sql_text
 _db_ready = False
 _db_error: str | None = None
 _last_db_ping_ts: float = 0.0
+_MIN_DB_PING_INTERVAL: float = 60.0  # At most 1 real SELECT 1 query per 60 seconds
+_ping_lock = threading.Lock()
 
 
-def _ping_db() -> bool:
+def _ping_db(force: bool = False) -> bool:
     """Execute a lightweight SELECT 1 query so Supabase registers active DB traffic
-    and never auto-pauses on the free tier."""
+    and never auto-pauses on the free tier. Throttled to at most once per 60s
+    so public callers of /health?ping_db=true cannot hammer the database."""
     global _db_ready, _db_error, _last_db_ping_ts
-    try:
-        with engine.connect() as conn:
-            conn.execute(_sql_text("SELECT 1"))
-        _db_ready = True
-        _db_error = None
-        _last_db_ping_ts = _time.time()
+    now = _time.time()
+    if not force and _db_ready and (now - _last_db_ping_ts) < _MIN_DB_PING_INTERVAL:
         return True
-    except Exception as e:
-        _db_error = str(e)
-        return False
+    with _ping_lock:
+        now = _time.time()
+        if not force and _db_ready and (now - _last_db_ping_ts) < _MIN_DB_PING_INTERVAL:
+            return True
+        try:
+            with engine.connect() as conn:
+                conn.execute(_sql_text("SELECT 1"))
+            _db_ready = True
+            _db_error = None
+            _last_db_ping_ts = _time.time()
+            return True
+        except Exception as e:
+            _db_error = str(e)
+            return False
 
 
 def _init_db():
@@ -74,13 +84,6 @@ def _init_db():
                 _time.sleep(2 * attempt)
 
 
-def _keepalive_db_loop():
-    """Periodic in-process keep-alive query every 6 hours while the container is running."""
-    while True:
-        _time.sleep(6 * 3600)
-        _ping_db()
-
-
 # ── Build the FastAPI app ─────────────────────────────────────────
 app = FastAPI(
     title="MatDataHub API",
@@ -96,7 +99,6 @@ def startup_event():
     connections without waiting for a potentially slow remote DB."""
     print("--- STARTUP EVENT: launching DB init thread ---", flush=True)
     threading.Thread(target=_init_db, daemon=True).start()
-    threading.Thread(target=_keepalive_db_loop, daemon=True).start()
 
 
 # ── Rate limiting & DB error handling ─────────────────────────────

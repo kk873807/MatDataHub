@@ -229,16 +229,20 @@ To ensure every recorded `terms_version` in `public.users` maps unambiguously to
 ## 6. Infrastructure Operations, Keep-Alive & Backups
 
 ### 6.1 Preventing Supabase Free-Tier Auto-Pausing
-Supabase Free Tier pauses projects after 7 days without database queries, and paused free projects are only restorable for 90 days. Two layers prevent inactivity pauses:
-1. **Active DB Query on `/health`**: `GET /health?ping_db=true` (and any `/health` request when the last DB ping was >1 hour ago) executes a real `SELECT 1` query against PostgreSQL (`_ping_db()` in `app/main.py`), plus an in-process background thread that runs `SELECT 1` every 6 hours while the Render container is awake.
+Supabase Free Tier pauses projects after 7 days without database queries, and paused free projects are only restorable for 90 days. Two mechanisms prevent inactivity pauses safely:
+1. **Throttled DB Query on `/health`**: `GET /health?ping_db=true` (and any `/health` request when the last DB ping was >1 hour ago) executes a real `SELECT 1` query against PostgreSQL (`_ping_db()` in `app/main.py`). Because `/health` is public, `_ping_db()` enforces a strict **60-second minimum throttle** (`_MIN_DB_PING_INTERVAL = 60.0`) under a thread lock so repeated public calls cannot hammer the database. (No in-process background sleep thread is used because Render's free tier sleeps after ~15 minutes idle.)
 2. **Scheduled GitHub Action (`.github/workflows/supabase-keepalive.yml`)**: Runs every 12 hours (`cron: '0 */12 * * *'`), waking the Render web service and calling `https://matdatahub-api.onrender.com/health?ping_db=true` so Supabase registers active SQL queries twice daily.
+   * **Maintenance Note**: GitHub disables scheduled workflows on public repositories after 60 days without repository activity. Check the GitHub **Actions** tab after the first day and periodically to confirm green runs.
 
-### 6.2 Manual Database Backups
+### 6.2 Manual Database Backups, Redaction & 25-Day Auto-Purge
 Because Supabase Free Tier does not include automated daily backups, run a manual snapshot before onboarding new pilot cohorts or applying schema migrations:
 ```powershell
 .\.venv\Scripts\python.exe scripts/backup_supabase.py
 ```
-This exports all application tables (`users`, `materials`, `custom_materials`, `bom_analyses`, `transactions`, `upgrade_requests`, `feedback`, `projects`, `project_items`, `saved_materials`, `blogs`) and `cbam_defaults` metadata to a timestamped JSON file under `backups/` (gitignored).
+`scripts/backup_supabase.py` enforces three safety and privacy guarantees on every run:
+1. **Credential Redaction**: Exports all application tables (`users`, `materials`, `custom_materials`, `bom_analyses`, `transactions`, `upgrade_requests`, `feedback`, `projects`, `project_items`, `saved_materials`, `blogs`) and column schemas to `backups/supabase_backup_<timestamp>.json` (gitignored), while stripping `hashed_password`, `api_key`, `api_secret`, and `session_token` from `users`.
+2. **25-Day Auto-Purge (`RETENTION_DAYS = 25`)**: Automatically deletes local `supabase_backup_*.json` snapshots older than 25 days so local backups never retain user or BOM data beyond the 30-day deletion SLA promised in `/privacy`. Encrypt or delete local backup files when no longer needed on a developer machine.
+3. **Automatic Scratch Restore Verification (`verify_restore_to_scratch`)**: Immediately creates an isolated in-memory SQLite database from the exported table schemas, loads every exported row across all tables, and asserts both that redacted columns are absent and that restored row counts match 100%.
 
 ### 6.3 Long-Term Production Target: EU Regional Co-Location
 * **Current Setup**: Supabase PostgreSQL in Tokyo (`ap-northeast-1`) and Render Web Service in Oregon (`us-west`).

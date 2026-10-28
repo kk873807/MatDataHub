@@ -20,7 +20,8 @@ export function TermsGate() {
 
   useEffect(() => {
     if (SKIP_ROUTES.includes(pathname)) return;
-    const token = localStorage.getItem("token");
+    const urlToken = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("t") : null;
+    const token = localStorage.getItem("token") || urlToken;
     if (!token) {
       setNeedsAcceptance(false);
       return;
@@ -88,7 +89,18 @@ export function TermsGate() {
         </p>
 
         {error && (
-          <div className="bg-red-500/10 border border-red-500/50 text-red-500 text-sm p-3 rounded-xl mb-4">{error}</div>
+          <div className="bg-red-500/10 border border-red-500/50 text-red-500 text-sm p-3 rounded-xl mb-4">
+            <div>{error}</div>
+            {error.toLowerCase().includes("refresh") && (
+              <button
+                type="button"
+                onClick={() => window.location.reload()}
+                className="mt-2 inline-block text-xs font-semibold underline hover:text-red-400"
+              >
+                Refresh page now
+              </button>
+            )}
+          </div>
         )}
 
         <div className="flex items-start gap-2.5 mb-6 text-left">
